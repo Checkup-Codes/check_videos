@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 use App\Http\Controllers\IndexController;
+use App\Http\Controllers\WriteController;
 
 
 Route::get('/', function () {
@@ -30,6 +31,8 @@ Route::middleware('auth')->group(function () {
 Route::get('/', [IndexController::class, 'index']);
 Route::get('/factory', [IndexController::class, 'factory']);
 Route::get('/typescript-tutorial', [IndexController::class, 'typescriptTutorial']);
+
+Route::resource('/writes', WriteController::class);
 
 
 require __DIR__ . '/auth.php';

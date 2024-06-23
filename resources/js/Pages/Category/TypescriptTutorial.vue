@@ -12,35 +12,27 @@
             Array nedir ve ts'de yeri nedir bu video bunlardan bahsettik.
             <br /><br />
             ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️ <br />
-            Merhaba! Kanalıma hoş geldiniz! Bu eğitim serisinde amacımız,
-            sıfırdan TypeScript öğrenmek ve birlikte gerçek dünya projeleri
-            geliştirmek. Ben bir profesyonel eğitimci olmayabilirim, ancak
-            öğreterek öğrenme metoduyla kendimi geliştiriyorum ve bu süreçte
-            sizlere de yardımcı olabilmek beni mutlu ediyor. Bu eğitim
-            serisinde, TypeScript'in temellerinden başlayarak adım adım
-            ilerleyeceğiz. TypeScript'i neden kullanmanız gerektiğini anlatacak,
-            nasıl kurulacağını ve temel özelliklerini öğreneceğiz. Ardından,
-            gerçek dünya projeleri üzerinde birlikte çalışarak, Mobil, Masaüstü,
-            Web ve Mobil Uygulamalar geliştireceğiz. Eğer web geliştirmeye yeni
-            başlıyorsanız veya TypeScript'i daha iyi anlamak istiyorsanız, bu
-            eğitim serisi tam size göre! Sadece öğreterek öğrenme metoduyla
-            ilerleyeceğiz, böylece birlikte projeler geliştirirken hem siz
-            öğrenecek hem de ben kendimi geliştireceğim. Bu seriyi izledikten
-            sonra, TypeScript'i kullanarak gerçek dünya projelerine
-            başlayabilecek, farklı platformlarda uygulamalar geliştirebilecek ve
-            kendinizi geliştirme yolculuğunuzda önemli bir adım atmış
-            olacaksınız. Videoları beğenmeyi ve kanalıma abone olmayı unutmayın,
-            böylece yeni videolarımdan haberdar olabilirsiniz. Sizlere yardımcı
-            olabilmek ve birlikte öğrenmek için sabırsızlanıyorum! Haydi, hemen
-            başlayalım ve birlikte TypeScript'in büyülü dünyasına adım atalım!
+            Merhaba! Kanalıma hoş geldiniz! Bu eğitim serisinde amacımız, sıfırdan TypeScript öğrenmek ve birlikte
+            gerçek dünya projeleri geliştirmek. Ben bir profesyonel eğitimci olmayabilirim, ancak öğreterek öğrenme
+            metoduyla kendimi geliştiriyorum ve bu süreçte sizlere de yardımcı olabilmek beni mutlu ediyor. Bu eğitim
+            serisinde, TypeScript'in temellerinden başlayarak adım adım ilerleyeceğiz. TypeScript'i neden kullanmanız
+            gerektiğini anlatacak, nasıl kurulacağını ve temel özelliklerini öğreneceğiz. Ardından, gerçek dünya
+            projeleri üzerinde birlikte çalışarak, Mobil, Masaüstü, Web ve Mobil Uygulamalar geliştireceğiz. Eğer web
+            geliştirmeye yeni başlıyorsanız veya TypeScript'i daha iyi anlamak istiyorsanız, bu eğitim serisi tam size
+            göre! Sadece öğreterek öğrenme metoduyla ilerleyeceğiz, böylece birlikte projeler geliştirirken hem siz
+            öğrenecek hem de ben kendimi geliştireceğim. Bu seriyi izledikten sonra, TypeScript'i kullanarak gerçek
+            dünya projelerine başlayabilecek, farklı platformlarda uygulamalar geliştirebilecek ve kendinizi geliştirme
+            yolculuğunuzda önemli bir adım atmış olacaksınız. Videoları beğenmeyi ve kanalıma abone olmayı unutmayın,
+            böylece yeni videolarımdan haberdar olabilirsiniz. Sizlere yardımcı olabilmek ve birlikte öğrenmek için
+            sabırsızlanıyorum! Haydi, hemen başlayalım ve birlikte TypeScript'in büyülü dünyasına adım atalım!
             <br /><br />
             ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️ <br />
-            Laravel Oynatma Listemiz : • Laravel Bootcamp Ekranda yazdığım
-            kodların kaynak dosyası : https://github.com/checkupcodes/Workb...
+            Laravel Oynatma Listemiz : • Laravel Bootcamp Ekranda yazdığım kodların kaynak dosyası :
+            https://github.com/checkupcodes/Workb...
             <br /><br />
             ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️ <br />
-            ⭐️ Timestamps ⭐️ 00:00 | İntro 00:03 | Neden kullanırız 01:10 |
-            Konuya Giriş 05:40 | Örnek verelim 09:30 | Son
+            ⭐️ Timestamps ⭐️ 00:00 | İntro 00:03 | Neden kullanırız 01:10 | Konuya Giriş 05:40 | Örnek verelim 09:30 |
+            Son
             <br /><br />
             ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️ <br />
             💙💙💙Check-up Codes <br />
@@ -57,9 +49,8 @@
             <br /><br />
             ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️ <br />
             ⭐️ Tags ⭐️ <br />
-            -TypeScript -TypeScript nedir -TypeScript avantajları -TypeScript
-            kurulumu -TypeScript öğreniyoruz -TypeScript tutorial -TypeScript
-            bootcamp -TypeScript framework
+            -TypeScript -TypeScript nedir -TypeScript avantajları -TypeScript kurulumu -TypeScript öğreniyoruz
+            -TypeScript tutorial -TypeScript bootcamp -TypeScript framework
             <br /><br />
             ⭐️ Hashtags⭐️ <br />
             #typescript #typescripttutorial #typescriptbootcamp
@@ -78,49 +69,26 @@
             rows="4"
           ></textarea>
           <div class="flex justify-end">
-            <button
-              @click="copyToClipboard"
-              class="mt-3 w-1/3 rounded bg-gray-500 p-1 px-4 text-white"
-            >
-              Kopyala
-            </button>
+            <button @click="copyToClipboard" class="mt-3 w-1/3 rounded bg-gray-500 p-1 px-4 text-white">Kopyala</button>
           </div>
         </div>
       </div>
 
       <div class="container mx-auto p-4">
         <h1 class="mb-4 text-xl">YouTube Playlist Videos</h1>
-        <input
-          v-model="playlistId"
-          class="mb-4 w-full border p-2"
-          placeholder="Enter YouTube Playlist ID"
-        />
+        <input v-model="playlistId" class="mb-4 w-full border p-2" placeholder="Enter YouTube Playlist ID" />
         <div class="flex justify-end">
-          <button
-            @click="fetchVideos"
-            class="mt-3 w-1/3 rounded bg-gray-500 p-1 px-4 text-white"
-          >
-            Fetch Videos
-          </button>
+          <button @click="fetchVideos" class="mt-3 w-1/3 rounded bg-gray-500 p-1 px-4 text-white">Fetch Videos</button>
         </div>
         <div v-if="loading" class="text-blue-500">Loading...</div>
-        <ul>
-          <li v-for="video in videos" :key="video.id" class="mb-2">
-            <a
-              :href="`https://www.youtube.com/watch?v=${video.id}`"
-              target="_blank"
-              class="text-blue-500"
-            >
-              {{ video.title }}
-            </a>
-            <p>Duration: {{ video.duration }}</p>
-            <div v-if="video.timestamps.length > 0">
-              <p>Timestamps:</p>
-              <ul>
-                <li v-for="timestamp in video.timestamps" :key="timestamp">
-                  {{ timestamp }}
-                </li>
-              </ul>
+        <ul class="video-list">
+          <li v-for="video in videos" :key="video.id" class="mb-2 flex items-center">
+            <img :src="video.thumbnail" alt="Video Thumbnail" class="mr-4 h-16 w-28" />
+            <div>
+              <a :href="`https://www.youtube.com/watch?v=${video.id}`" target="_blank" class="text-blue-500">
+                {{ video.title }}
+              </a>
+              <p>Duration: {{ video.duration }}</p>
             </div>
           </li>
         </ul>
@@ -132,8 +100,8 @@
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
-// Güvenlik açısından API anahtarınızı bir ortam değişkeninden veya yapılandırma dosyasından almayı tercih edin
-const API_KEY = 'AIzaSyCoIcX9-KNL9aOYwsvdDpflXxHImczwFlQ';
+
+const API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY;
 const BASE_URL = 'https://www.googleapis.com/youtube/v3';
 
 const playlistId = ref('PLXcQxEjxyk31WyqhATafLwZoTm7whKh_l');
@@ -183,6 +151,7 @@ const fetchVideos = async () => {
     videos.value = videoDetails.data.items.map((item) => ({
       id: item.id,
       title: item.snippet.title,
+      thumbnail: item.snippet.thumbnails.default.url,
       duration: parseDuration(item.contentDetails.duration),
       timestamps: extractTimestamps(item.snippet.description),
     }));
@@ -225,5 +194,22 @@ textarea {
   white-space: pre-wrap;
   word-wrap: break-word;
   overflow: auto;
+}
+.video-list li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.video-list img {
+  margin-right: 1rem;
+  width: 100px;
+  height: 75px;
+  object-fit: cover;
+}
+.video-list a {
+  font-weight: bold;
+}
+.video-list p {
+  margin: 0.25rem 0;
 }
 </style>

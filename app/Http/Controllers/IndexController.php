@@ -25,4 +25,9 @@ class IndexController extends Controller
     {
         return inertia('Category/TypescriptTutorial');
     }
+
+    public function vueTutorial()
+    {
+        return inertia('Category/VueTutorial');
+    }
 }

@@ -20,9 +20,7 @@
         </div>
       </div>
 
-      <h2 class="py-5">
-        Bu sayfada izlenmelerin takip edilmesi sağlanacaktır.
-      </h2>
+      <h2 class="py-5">Bu sayfada izlenmelerin takip edilmesi sağlanacaktır.</h2>
 
       <div class="py-5">
         <h2 class="text-xl">İstatistiklerin</h2>
@@ -31,30 +29,22 @@
 
       <div class="py-5">
         <h2 class="text-lg">Youtube</h2>
-        <div class="flex">
-          Burada youtube kanalına özel istatistiklerin sıralanacaktır.
-        </div>
+        <div class="flex">Burada youtube kanalına özel istatistiklerin sıralanacaktır.</div>
       </div>
 
       <div class="py-5">
         <h2 class="text-lg">Facebook</h2>
-        <div class="flex">
-          Burada facebook kanalına özel istatistiklerin sıralanacaktır.
-        </div>
+        <div class="flex">Burada facebook kanalına özel istatistiklerin sıralanacaktır.</div>
       </div>
 
       <div class="py-5">
         <h2 class="text-lg">Instagram</h2>
-        <div class="flex">
-          Burada instagram kanalına özel istatistiklerin sıralanacaktır.
-        </div>
+        <div class="flex">Burada instagram kanalına özel istatistiklerin sıralanacaktır.</div>
       </div>
 
       <div class="py-5">
         <h2 class="text-lg">Tiktok</h2>
-        <div class="flex">
-          Burada tiktok kanalına özel istatistiklerin sıralanacaktır.
-        </div>
+        <div class="flex">Burada tiktok kanalına özel istatistiklerin sıralanacaktır.</div>
       </div>
     </div>
     <div class="">

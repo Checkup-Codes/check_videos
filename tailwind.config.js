@@ -18,6 +18,13 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                'sidebar': '#fafafa',
+            },
+            gridTemplateColumns: {
+                'withsidebar': '1.8fr 3.3fr 6.9fr',
+                'withoutsidebar': '1.8fr 10.2fr',
+            },
         },
     },
 
