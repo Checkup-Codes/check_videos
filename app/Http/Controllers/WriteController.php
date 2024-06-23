@@ -13,20 +13,21 @@ class WriteController extends Controller
     {
         $writes = Write::all();
 
-        // Check if the request expects a JSON response
-        if (request()->wantsJson()) {
-            return response()->json([
-                'writes' => $writes,
-            ]);
-        }
-
-        // Otherwise, return an Inertia response
         return inertia(
             'Write/IndexWrite',
             [
                 'writes' => $writes,
             ]
         );
+    }
+
+    public function indexApi()
+    {
+        $writes = Write::all();
+
+        return response()->json([
+            'writes' => $writes,
+        ]);
     }
 
 
@@ -98,8 +99,11 @@ class WriteController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Write $write)
+    public function destroy($id)
     {
-        //
+        $write = Write::findOrFail($id);
+        $write->delete();
+
+        return redirect()->route('writes.index')->with('success', 'Write deleted successfully.');
     }
 }
