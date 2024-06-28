@@ -23,12 +23,40 @@
           <input v-model="form.title" type="text" id="title" class="mt-1 block w-full rounded" required />
         </div>
         <div class="mb-4">
+          <label for="slug" class="mb-1 block text-sm font-bold">Slug:</label>
+          <input v-model="form.slug" type="text" id="slug" class="mt-1 block w-full rounded" required />
+        </div>
+        <div class="mb-4">
           <label for="content" class="mb-1 block text-sm font-bold">Content:</label>
           <ckeditor :editor="editor" v-model="form.content" :config="editorConfig" />
         </div>
         <div class="mb-4">
+          <label for="author_id" class="mb-1 block text-sm font-bold">Author ID:</label>
+          <input v-model="form.author_id" type="number" id="author_id" class="mt-1 block w-full rounded" required />
+        </div>
+        <div class="mb-4">
+          <label for="published_at" class="mb-1 block text-sm font-bold">Published At:</label>
+          <input
+            v-model="form.published_at"
+            type="datetime-local"
+            id="published_at"
+            class="mt-1 block w-full rounded"
+          />
+        </div>
+        <div class="mb-4">
           <label for="summary" class="mb-1 block text-sm font-bold">Summary:</label>
           <textarea v-model="form.summary" id="summary" class="mt-1 block w-full rounded" rows="3"></textarea>
+        </div>
+        <div class="mb-4">
+          <label for="status" class="mb-1 block text-sm font-bold">Status:</label>
+          <select v-model="form.status" id="status" class="mt-1 block w-full">
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+          </select>
+        </div>
+        <div class="mb-4">
+          <label for="cover_image" class="mb-1 block text-sm font-bold">Cover Image:</label>
+          <input v-model="form.cover_image" type="text" id="cover_image" class="mt-1 block w-full rounded" />
         </div>
         <div class="mb-4">
           <button type="submit" class="rounded bg-gray-700 px-4 py-2 text-white hover:bg-gray-800">Update Write</button>
@@ -56,6 +84,7 @@ const form = useForm({
   status: write.status,
   cover_image: write.cover_image,
 });
+
 const updateWrite = () => {
   form
     .put(`/writes/${write.id}`)

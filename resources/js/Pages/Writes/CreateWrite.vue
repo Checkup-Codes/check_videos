@@ -97,14 +97,13 @@ const editorConfig = {
   },
 };
 
-// Slug'ı dinamik olarak güncellemek için title'ı izleyin
 watch(
   () => form.title,
   (newTitle) => {
     form.slug = newTitle
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-') // Boşluk ve özel karakterleri tire ile değiştirir
-      .replace(/^-+|-+$/g, ''); // Başında ve sonunda olan tireleri kaldırır
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
   }
 );
 
@@ -112,7 +111,3 @@ const goBack = () => {
   window.history.back();
 };
 </script>
-
-<style scoped>
-/* Stil dosyalarınızı buraya ekleyebilirsiniz */
-</style>
