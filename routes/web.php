@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 use App\Http\Controllers\IndexController;
-use App\Http\Controllers\WriteController;
+use App\Http\Controllers\WritesController;
+use App\Http\Controllers\BookmarksController;
 
 
 Route::get('/', function () {
@@ -32,7 +33,8 @@ Route::get('/', [IndexController::class, 'index']);
 Route::get('/factory', [IndexController::class, 'factory']);
 Route::get('/typescript-tutorial', [IndexController::class, 'typescriptTutorial']);
 
-Route::resource('/writes', WriteController::class);
+Route::resource('/writes', WritesController::class);
+Route::resource('/bookmarks', BookmarksController::class);
 
 
 require __DIR__ . '/auth.php';

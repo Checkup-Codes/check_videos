@@ -1,5 +1,5 @@
 <template>
-  <div class="z-20 col-span-1 shadow-lg">
+  <div class="z-20 col-span-1 shadow-lg shadow-blue-600">
     <div class="h-full bg-sidebar text-sm">
       <Link
         href="/"
@@ -19,6 +19,9 @@
       </Link>
       <Link href="/writes" :class="getLinkClasses('writes')" @click.prevent="setActiveMenu('writes')">
         <font-awesome-icon icon="fa-solid fa-pencil" /> Yazılar
+      </Link>
+      <Link href="bookmarks" :class="getLinkClasses('bookmarks')" @click.prevent="setActiveMenu('bookmarks')">
+        <font-awesome-icon :icon="['fas', 'bookmark']" class="mr-2" /> Yer İmleri
       </Link>
       <Link href="/factory" :class="getLinkClasses('factory')" @click.prevent="setActiveMenu('factory')">
         <font-awesome-icon icon="industry" class="mr-2" /> Fabrika

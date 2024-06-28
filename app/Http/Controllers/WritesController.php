@@ -7,18 +7,15 @@ use App\Http\Requests\UpdateWriteRequest;
 use Illuminate\Http\Request;
 use App\Models\Write;
 
-class WriteController extends Controller
+class WritesController extends Controller
 {
     public function index()
     {
-        $writes = Write::all();
 
-        return inertia(
-            'Write/IndexWrite',
-            [
-                'writes' => $writes,
-            ]
-        );
+        $writes = Write::all();
+        return inertia('Writes/IndexWrite', [
+            'writes' => $writes,
+        ]);
     }
 
     public function indexApi()
@@ -36,7 +33,10 @@ class WriteController extends Controller
      */
     public function create()
     {
-        return inertia('Write/CreateWrite');
+        $writes = Write::all();
+        return inertia('Writes/CreateWrite', [
+            'writes' => $writes
+        ]);
     }
 
     public function store(Request $request)
@@ -62,8 +62,10 @@ class WriteController extends Controller
      */
     public function show($slug)
     {
+        $writes = Write::all();
         $write = Write::where('slug', $slug)->firstOrFail();
-        return inertia('Write/ShowWrite', [
+        return inertia('Writes/ShowWrite', [
+            'writes' => $writes,
             'write' => $write,
         ]);
     }
@@ -73,8 +75,9 @@ class WriteController extends Controller
      */
     public function edit($id)
     {
+        $writes = Write::all();
         $write = Write::findOrFail($id);
-        return inertia('Write/EditWrite', ['write' => $write]);
+        return inertia('Writes/EditWrite', ['write' => $write, 'writes' => $writes]);
     }
 
     public function update(Request $request, $id)

@@ -22,9 +22,12 @@ export default {
                 'sidebar': '#fafafa',
             },
             gridTemplateColumns: {
-                'withsidebar': '1.8fr 3.3fr 6.9fr',
-                'withoutsidebar': '1.8fr 10.2fr',
+                'subsidebar': '1fr 2fr',
+                'sidebar': '1.8fr 10.2fr',
             },
+            boxShadow: {
+                'right': '10px 0 10px -3px rgba(0, 0, 0, 0.1)', // Sağa gölge
+            }
         },
     },
 
