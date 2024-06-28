@@ -59,12 +59,8 @@ const form = useForm({
 const updateWrite = () => {
   form
     .put(`/writes/${write.id}`)
-    .then(() => {
-      console.log('Write updated successfully!');
-    })
-    .catch((error) => {
-      console.error('Error updating write:', error);
-    });
+    .then(() => {})
+    .catch((error) => {});
 };
 
 const editor = ClassicEditor;

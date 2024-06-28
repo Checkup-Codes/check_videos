@@ -24,17 +24,12 @@ import { Link, usePage } from '@inertiajs/vue3';
 
 const { props } = usePage();
 const writes = ref(props.writes);
-console.log(writes.value);
 // watch(
 //   () => props.writes,
 //   (newWrites) => {
 //     writes.value = newWrites;
 //   }
 // );
-
-onMounted(() => {
-  console.log('mounted');
-});
 
 const truncateSummary = (summary) => {
   return summary.length > 40 ? summary.slice(0, 40) + '...' : summary;
