@@ -1,5 +1,19 @@
 <template>
   <div class="lg:grid-cols-subsidebar grid h-full grid-cols-1">
+    <div class="block px-4 pt-3 lg:hidden">
+      <button @click="goBack" class="flex items-center p-2 text-black hover:text-gray-700">
+        <svg
+          class="mr-2 h-6 w-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Geri
+      </button>
+    </div>
     <SidebarLayoutWrite class="hidden lg:block" />
     <div class="mx-auto max-w-[97%] rounded-lg bg-white p-6 shadow-md">
       <h1 class="mb-6 text-3xl font-bold">Edit Write</h1>
@@ -56,5 +70,9 @@ const updateWrite = () => {
 const editor = ClassicEditor;
 const editorConfig = {
   height: '400px',
+};
+
+const goBack = () => {
+  window.history.back();
 };
 </script>

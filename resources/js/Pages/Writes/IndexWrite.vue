@@ -1,7 +1,7 @@
 <template>
   <div class="lg:grid-cols-subsidebar grid h-full grid-cols-1">
-    <SidebarLayoutWrite class="hidden lg:block" />
-    <div class="p-4">Write</div>
+    <SidebarLayoutWrite class="block" />
+    <div class="hidden p-4 lg:block">Write</div>
   </div>
 </template>
 
