@@ -20,7 +20,7 @@
       <Link href="/writes" :class="getLinkClasses('writes')" @click.prevent="handleLinkClick('writes')">
         <font-awesome-icon icon="fa-solid fa-pencil" /> Yazılar
       </Link>
-      <Link href="bookmarks" :class="getLinkClasses('bookmarks')" @click.prevent="handleLinkClick('bookmarks')">
+      <Link href="/bookmarks" :class="getLinkClasses('bookmarks')" @click.prevent="handleLinkClick('bookmarks')">
         <font-awesome-icon :icon="['fas', 'bookmark']" class="mr-2" /> Yer İmleri
       </Link>
       <Link href="/factory" :class="getLinkClasses('factory')" @click.prevent="handleLinkClick('factory')">
