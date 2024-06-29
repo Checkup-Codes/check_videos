@@ -1,11 +1,11 @@
 <template>
-  <div class="lg:grid-cols-sidebar grid h-screen grid-cols-1">
-    <SidebarLayout class="hidden lg:block" @link-clicked="toggleSidebar" />
-    <!-- Sidebar hidden on mobile -->
+  <div class="flex h-screen overflow-hidden">
+    <SidebarLayout class="fixed left-0 top-0 z-40 hidden h-full w-64 lg:block" @link-clicked="toggleSidebar" />
 
-    <div class="flex flex-1 flex-col">
-      <HeaderLayout @toggle-sidebar="toggleSidebar" />
-      <div class="flex-1 overflow-auto">
+    <div class="flex flex-1 flex-col lg:pl-64">
+      <HeaderLayout class="fixed left-0 top-0 z-30 w-full lg:left-64" @toggle-sidebar="toggleSidebar" />
+
+      <div class="flex-1 overflow-auto pt-12 lg:pt-12">
         <slot>Default Content</slot>
       </div>
     </div>

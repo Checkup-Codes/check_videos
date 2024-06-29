@@ -1,5 +1,5 @@
 <template>
-  <div class="lg:grid-cols-subsidebar grid h-full grid-cols-1">
+  <div class="lg:grid-cols-subsidebar grid grid-cols-1">
     <SidebarLayoutWrite class="hidden lg:block" />
     <div class="mx-auto max-w-[97%] rounded-lg bg-white p-2 shadow-md">
       <div class="flex items-center justify-between">

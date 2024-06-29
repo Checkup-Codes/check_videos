@@ -1,5 +1,5 @@
 <template>
-  <div class="shadow-right z-10 h-full shadow-gray-100">
+  <div class="shadow-right z-10 h-screen shadow-gray-100">
     <div class="z-10 flex cursor-pointer justify-between bg-sidebar text-sm text-black">
       <Link href="/writes">
         <div class="m-2 rounded p-1 text-center font-bold text-black underline">All Writes</div>
