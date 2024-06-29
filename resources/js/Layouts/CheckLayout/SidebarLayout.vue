@@ -1,11 +1,7 @@
 <template>
-  <div class="z-20 col-span-1 shadow-lg shadow-blue-600">
+  <div class="z-20 col-span-1 shadow-lg shadow-gray-600">
     <div class="h-full bg-sidebar text-sm">
-      <Link
-        href="/"
-        class="m-2 block cursor-pointer rounded p-2 text-black duration-200 hover:bg-gray-900 hover:text-white hover:shadow-lg"
-        @click.prevent="handleLinkClick('home')"
-      >
+      <Link href="/" :class="getLinkClasses('/')">
         <div class="flex items-center">
           <img :src="imagePath" alt="Yakup Sarı" class="h-10 w-12 rounded-full" />
           <div class="p-2">
@@ -14,42 +10,36 @@
           </div>
         </div>
       </Link>
-      <Link href="/" :class="getLinkClasses('home')" @click.prevent="handleLinkClick('home')">
-        <font-awesome-icon icon="home" class="mr-2" /> Ana Sayfa
-      </Link>
-      <Link href="/writes" :class="getLinkClasses('writes')" @click.prevent="handleLinkClick('writes')">
+      <Link href="/" :class="getLinkClasses('/')"> <font-awesome-icon icon="home" class="mr-2" /> Ana Sayfa </Link>
+      <Link href="/writes" :class="getLinkClasses('/writes')">
         <font-awesome-icon icon="fa-solid fa-pencil" /> Yazılar
       </Link>
-      <Link href="/bookmarks" :class="getLinkClasses('bookmarks')" @click.prevent="handleLinkClick('bookmarks')">
+      <Link href="/bookmarks" :class="getLinkClasses('/bookmarks')">
         <font-awesome-icon :icon="['fas', 'bookmark']" class="mr-2" /> Yer İmleri
       </Link>
-      <Link href="/factory" :class="getLinkClasses('factory')" @click.prevent="handleLinkClick('factory')">
+      <Link href="/factory" :class="getLinkClasses('/factory')">
         <font-awesome-icon icon="industry" class="mr-2" /> Fabrika
       </Link>
-      <Link
-        href="/typescript-tutorial"
-        :class="getLinkClasses('typescript')"
-        @click.prevent="handleLinkClick('typescript')"
-      >
+      <Link href="/typescript-tutorial" :class="getLinkClasses('/typescript-tutorial')">
         <font-awesome-icon icon="book" class="mr-2" /> Typescript Tutorial
       </Link>
       <hr />
-      <Link href="/instagram" :class="getLinkClasses('instagram')" @click.prevent="handleLinkClick('instagram')">
+      <Link href="/instagram" :class="getLinkClasses('/instagram')">
         <font-awesome-icon :icon="['fab', 'instagram']" class="mr-2" /> Instagram
       </Link>
-      <Link href="/youtube" :class="getLinkClasses('youtube')" @click.prevent="handleLinkClick('youtube')">
+      <Link href="/youtube" :class="getLinkClasses('/youtube')">
         <font-awesome-icon :icon="['fab', 'youtube']" class="mr-2" /> Youtube
       </Link>
-      <Link href="/github" :class="getLinkClasses('github')" @click.prevent="handleLinkClick('github')">
+      <Link href="/github" :class="getLinkClasses('/github')">
         <font-awesome-icon :icon="['fab', 'github']" class="mr-2" /> Github
       </Link>
-      <Link href="/linkedin" :class="getLinkClasses('linkedin')" @click.prevent="handleLinkClick('linkedin')">
+      <Link href="/linkedin" :class="getLinkClasses('/linkedin')">
         <font-awesome-icon :icon="['fab', 'linkedin']" class="mr-2" /> Linkedin
       </Link>
-      <Link href="/medium" :class="getLinkClasses('medium')" @click.prevent="handleLinkClick('medium')">
+      <Link href="/medium" :class="getLinkClasses('/medium')">
         <font-awesome-icon :icon="['fab', 'medium']" class="mr-2" /> Medium
       </Link>
-      <Link href="/twitter" :class="getLinkClasses('twitter')" @click.prevent="handleLinkClick('twitter')">
+      <Link href="/twitter" :class="getLinkClasses('/twitter')">
         <font-awesome-icon :icon="['fab', 'twitter']" class="mr-2" /> Twitter
       </Link>
     </div>
@@ -57,31 +47,24 @@
 </template>
 
 <script setup>
-import { ref, computed, defineEmits } from 'vue';
+import { ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { useStore } from 'vuex';
+import { Inertia } from '@inertiajs/inertia';
 
 const imagePath = ref('/images/cekap.png');
-const store = useStore();
-const emit = defineEmits(['link-clicked']);
+const currentUrl = ref(window.location.pathname);
 
-const setActiveMenu = (menu) => {
-  store.dispatch('ActiveMenu/setActiveMenu', menu);
-};
+Inertia.on('navigate', (event) => {
+  currentUrl.value = event.detail.page.url;
+});
 
-const handleLinkClick = (menu) => {
-  setActiveMenu(menu);
-  emit('link-clicked');
-};
+const getLinkClasses = (href) => {
+  const isRoot = href === '/';
+  const isActive = isRoot ? currentUrl.value === href : currentUrl.value.startsWith(href);
 
-const activeMenu = computed(() => store.getters['ActiveMenu/activeMenu']);
-
-const baseClasses = 'm-2 block cursor-pointer rounded-lg p-2 text-black transition-all transition-colors duration-200';
-const hoverClasses = 'hover:bg-gray-900 hover:px-2.5 hover:text-white hover:shadow-lg';
-const activeClasses = 'bg-gray-900 text-white font-bold shadow-lg';
-
-const getLinkClasses = (menu) => {
-  return activeMenu.value === menu ? `${baseClasses} ${activeClasses}` : `${baseClasses} ${hoverClasses}`;
+  return isActive
+    ? 'block cursor-pointer m-2 text-sm rounded px-3 py-2 text-black transition-all transition-colors duration-200 bg-gray-900 text-white shadow-lg'
+    : 'block cursor-pointer m-2 text-sm rounded px-3 py-2 text-black transition-all transition-colors duration-200 hover:bg-gray-200 hover:shadow-lg hover:px-4';
 };
 </script>

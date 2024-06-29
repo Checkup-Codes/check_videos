@@ -22,19 +22,21 @@
           <div class="m-2 rounded p-2 text-center font-bold text-black underline">Edit Write</div>
         </a>
       </div>
-      <h1 class="mb-6 text-3xl font-bold">{{ write.title }}</h1>
-      <div class="prose mb-6" v-html="write.content"></div>
-      <div class="rounded-lg bg-gray-100 p-4">
-        <h2 class="mb-2 text-xl font-semibold">Summary</h2>
-        <p>{{ write.summary }}</p>
-      </div>
-      <div class="flex">
-        <button
-          @click="deleteWrite(write.id)"
-          class="m-2 ml-auto flex rounded p-2 text-right font-bold text-black underline"
-        >
-          Delete Write
-        </button>
+      <div class="p-8">
+        <h1 class="mb-6 text-3xl font-bold">{{ write.title }}</h1>
+        <div class="prose mb-6" v-html="write.content"></div>
+        <div class="rounded-lg bg-gray-100 p-4">
+          <h2 class="mb-2 text-xl font-semibold">Summary</h2>
+          <p>{{ write.summary }}</p>
+        </div>
+        <div class="flex">
+          <button
+            @click="deleteWrite(write.id)"
+            class="m-2 ml-auto flex rounded p-2 text-right font-bold text-black underline"
+          >
+            Delete Write
+          </button>
+        </div>
       </div>
     </div>
   </div>

@@ -23,7 +23,7 @@ export default {
             },
             gridTemplateColumns: {
                 'subsidebar': '1fr 2fr',
-                'sidebar': '1.8fr 10.2fr',
+                'sidebar': '2fr 10fr',
             },
             boxShadow: {
                 'right': '10px 0 10px -3px rgba(0, 0, 0, 0.1)', // Sağa gölge

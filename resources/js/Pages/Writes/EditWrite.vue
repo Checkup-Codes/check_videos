@@ -59,7 +59,7 @@
           <input v-model="form.cover_image" type="text" id="cover_image" class="mt-1 block w-full rounded" />
         </div>
         <div class="mb-4">
-          <button type="submit" class="rounded bg-gray-700 px-4 py-2 text-white hover:bg-gray-800">Update Write</button>
+          <button type="submit" class="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600">Update Write</button>
         </div>
       </form>
     </div>
@@ -69,6 +69,7 @@
 <script setup>
 import { usePage, useForm } from '@inertiajs/vue3';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { watch } from 'vue';
 import SidebarLayoutWrite from './SidebarLayoutWrite.vue';
 
 const { props } = usePage();
@@ -100,4 +101,14 @@ const editorConfig = {
 const goBack = () => {
   window.history.back();
 };
+
+watch(
+  () => form.title,
+  (newTitle) => {
+    form.slug = newTitle
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+);
 </script>
