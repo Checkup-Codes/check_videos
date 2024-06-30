@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('slug');
             $table->string('link');
+            $table->string('img_src')->nullable();
             $table->uuid('bookmark_category_id');
             $table->timestamps();
 

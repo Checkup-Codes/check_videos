@@ -1,34 +1,44 @@
 <template>
-  <div class="flex justify-between">
-    <Link href="/bookmarks">
-      <div class="m-2 rounded p-2 text-center font-bold text-black underline">All Bookmarks</div>
-    </Link>
-    <Link href="/bookmarks/create">
-      <div class="m-2 rounded p-2 text-center font-bold text-black underline">Create Bookmark</div>
-    </Link>
-  </div>
-  <div v-for="bookmark in bookmarks" :key="bookmark.id" class="ml-2 border-l-4">
-    <div>{{ bookmark }}</div>
-    <Link :href="`/bookmarks/${bookmark.slug}`" :class="linkClasses">
-      <div class="font-bold">{{ bookmark.title }}</div>
-    </Link>
+  <div class="shadow-right z-10 h-screen shadow-gray-100">
+    <div class="z-10 flex cursor-pointer justify-between bg-sidebar text-sm text-black">
+      <Link href="/bookmarks">
+        <div class="m-2 rounded p-1 text-center font-bold text-black underline">All Writes</div>
+      </Link>
+      <Link href="/bookmarks/create">
+        <div class="m-2 rounded p-1 text-center font-bold text-black underline">Create Write</div>
+      </Link>
+    </div>
+    <div v-for="bookmarkCategory in bookmarkCategories" :key="bookmarkCategory.id" class="ml-2">
+      <Link
+        :href="`/bookmarks/${bookmarkCategory.slug}`"
+        :class="getLinkClasses(`/bookmarks/${bookmarkCategory.slug}`)"
+      >
+        <div class="font-bold">{{ bookmarkCategory.name }}</div>
+        <div class="text-sm text-gray-400">{{ formatDate(bookmarkCategory.published_at) }}</div>
+      </Link>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue';
-import { Link } from '@inertiajs/vue3';
-import { useStore } from 'vuex';
+import { ref } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
 
-const store = useStore();
-const bookmarks = computed(() => store.getters['Bookmarks/bookmarkCategories']);
+const { props, url } = usePage();
+const bookmarkCategories = ref(props.bookmarkCategories);
 
-onMounted(() => {
-  if (!bookmarks.value.length) {
-    store.dispatch('Bookmarks/fetchBookmarkCategories');
-  }
-});
+const truncateSummary = (summary) => {
+  return summary.length > 40 ? summary.slice(0, 40) + '...' : summary;
+};
 
-const linkClasses =
-  'm-2 block cursor-pointer rounded p-1 text-black transition-all transition-colors duration-200 hover:bg-gray-900 hover:text-white hover:shadow-lg';
+const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+};
+
+const getLinkClasses = (href) => {
+  return url === href
+    ? 'block cursor-pointer m-2 text-sm rounded px-3 py-1 text-black transition-all transition-colors duration-200 bg-gray-900 text-white shadow-lg'
+    : 'block cursor-pointer m-2 text-sm rounded px-3 py-1 text-black transition-all transition-colors duration-200 hover:bg-gray-200 hover:shadow-lg hover:px-4';
+};
 </script>

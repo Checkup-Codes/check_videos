@@ -1,13 +1,10 @@
 <template>
-  <div class="p-5">
-    <div v-for="bookmark in bookmarkCategory" :key="bookmarkCategory.id">
-      {{ bookmark.name }}
-    </div>
+  <div class="lg:grid-cols-subsidebar grid h-full grid-cols-1">
+    <SidebarLayoutBookmarks class="block" />
+    <div class="hidden p-4 lg:block">Bookmarks</div>
   </div>
 </template>
 
 <script setup>
-defineProps({
-  bookmarkCategory: String,
-});
+import SidebarLayoutBookmarks from './SidebarLayoutBookmarks.vue';
 </script>

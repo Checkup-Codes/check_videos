@@ -13,12 +13,12 @@ class BookmarksController extends Controller
      */
     public function index()
     {
-        $bookmarkCategory = BookmarkCategory::all();
+        $bookmarkCategories = BookmarkCategory::all();
 
         return inertia(
             'Bookmarks/IndexBookmarks',
             [
-                'bookmarkCategory' => $bookmarkCategory,
+                'bookmarkCategories' => $bookmarkCategories,
             ]
 
         );
@@ -26,10 +26,10 @@ class BookmarksController extends Controller
 
     public function indexApi()
     {
-        $bookmarksCategory = BookmarkCategory::all();
+        $bookmarkCategories = BookmarkCategory::all();
 
         return response()->json([
-            'bookmarksCategory' => $bookmarksCategory,
+            'bookmarkCategories' => $bookmarkCategories,
         ]);
     }
 
@@ -64,9 +64,13 @@ class BookmarksController extends Controller
      */
     public function show($slug)
     {
-        $write = Bookmark::where('slug', $slug)->firstOrFail();
+        $bookmarkCategories = BookmarkCategory::all();
+        $category = BookmarkCategory::where('slug', $slug)->firstOrFail();
+        $bookmarks = $category->bookmarks;
         return inertia('Bookmarks/ShowBookmarks', [
-            'write' => $write,
+            'bookmarkCategories' => $bookmarkCategories,
+            'category' => $category,
+            'bookmarks' => $bookmarks,
         ]);
     }
 
