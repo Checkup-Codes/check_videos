@@ -1,5 +1,11 @@
 <template>
-  <div class="shadow-right z-10 h-screen shadow-gray-100">
+  <div v-if="flashSuccess" class="fixed right-4 top-4 z-50">
+    <div class="relative rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700" role="alert">
+      <strong class="font-bold">Success! </strong>
+      <span class="block sm:inline">{{ flashSuccess }}</span>
+    </div>
+  </div>
+  <div class="z-10 h-screen shadow-right shadow-gray-100">
     <div class="z-10 flex cursor-pointer justify-between bg-sidebar text-sm text-black">
       <Link href="/writes">
         <div class="m-2 rounded p-1 text-center font-bold text-black underline">All Writes</div>
@@ -19,7 +25,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 
 const { props, url } = usePage();
@@ -34,9 +40,19 @@ const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
+const flashSuccess = ref(props.flash.success);
+
 const getLinkClasses = (href) => {
   return url === href
     ? 'block cursor-pointer m-2 text-sm rounded px-3 py-1 text-black transition-all transition-colors duration-200 bg-gray-900 text-white shadow-lg'
     : 'block cursor-pointer m-2 text-sm rounded px-3 py-1 text-black transition-all transition-colors duration-200 hover:bg-gray-200 hover:shadow-lg hover:px-4';
 };
+
+onMounted(() => {
+  if (flashSuccess.value) {
+    setTimeout(() => {
+      flashSuccess.value = null;
+    }, 3000);
+  }
+});
 </script>
