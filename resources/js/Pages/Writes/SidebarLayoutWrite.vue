@@ -15,7 +15,7 @@
       </Link>
     </div>
     <div v-for="write in writes" :key="write.id" class="ml-2">
-      <Link :href="`/writes/${write.slug}`" :class="getLinkClasses(`/writes/${write.slug}`)">
+      <Link :href="route('writes.show', { write: write.slug })" :class="getLinkClasses(`/writes/${write.slug}`)">
         <div class="font-bold">{{ write.title }}</div>
         <div class="font-light text-gray-500">{{ truncateSummary(write.summary) }}</div>
         <div class="text-sm text-gray-400">{{ formatDate(write.published_at) }}</div>

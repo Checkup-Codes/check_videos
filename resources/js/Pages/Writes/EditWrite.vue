@@ -1,5 +1,5 @@
 <template>
-  <div class="lg:grid-cols-subsidebar grid h-full grid-cols-1">
+  <div class="grid h-full grid-cols-1 lg:grid-cols-subsidebar">
     <div class="block px-4 pt-3 lg:hidden">
       <button @click="goBack" class="flex items-center p-2 text-black hover:text-gray-700">
         <svg
@@ -88,7 +88,7 @@ const form = useForm({
 
 const updateWrite = () => {
   form
-    .put(`/writes/${write.id}`)
+    .put(route('writes.update', { write: props.write.id }))
     .then(() => {})
     .catch((error) => {});
 };

@@ -74,7 +74,7 @@ const form = useForm({
 });
 
 const createWrite = () => {
-  form.post('/writes').then(() => {});
+  form.post(route('writes.store')).then(() => {});
 };
 
 const linkedStyle = 'block font-bold mb-1 text-sm rounded';
