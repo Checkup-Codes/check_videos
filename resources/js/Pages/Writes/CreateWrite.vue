@@ -1,5 +1,5 @@
 <template>
-  <div class="lg:grid-cols-subsidebar grid h-full grid-cols-1">
+  <div class="grid h-full grid-cols-1 lg:grid-cols-subsidebar">
     <div class="block px-4 pt-3 lg:hidden">
       <button @click="goBack" class="flex items-center p-2 text-black hover:text-gray-700">
         <svg
@@ -29,10 +29,6 @@
         <div class="mb-4">
           <label for="content" :class="linkedStyle">Content:</label>
           <ckeditor :editor="editor" v-model="form.content" class="h-96" :config="editorConfig"></ckeditor>
-        </div>
-        <div class="mb-4">
-          <label for="author_id" :class="linkedStyle">Author ID:</label>
-          <input v-model="form.author_id" type="number" id="author_id" :class="linkedStyle2" required />
         </div>
         <div class="mb-4">
           <label for="published_at" :class="linkedStyle">Published At:</label>
@@ -71,7 +67,6 @@ const form = useForm({
   title: '',
   slug: '',
   content: '',
-  author_id: '',
   published_at: '',
   summary: '',
   status: 'draft',
