@@ -8,7 +8,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\WritesController;
 use App\Http\Controllers\BookmarksController;
-
+use App\Http\Controllers\SP\SoftwareProductsController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -35,6 +35,7 @@ Route::get('/typescript-tutorial', [IndexController::class, 'typescriptTutorial'
 
 Route::resource('/writes', WritesController::class);
 Route::resource('/bookmarks', BookmarksController::class);
+Route::resource('/software-products', SoftwareProductsController::class);
 
 
 require __DIR__ . '/auth.php';

@@ -12,7 +12,10 @@
       </Link>
       <Link href="/" :class="getLinkClasses('/')"> <font-awesome-icon icon="home" class="mr-2" /> Ana Sayfa </Link>
       <Link href="/writes" :class="getLinkClasses('/writes')">
-        <font-awesome-icon icon="fa-solid fa-pencil" /> Yazılar
+        <font-awesome-icon icon="fa-solid fa-pencil" class="pr-1" /> Yazılar
+      </Link>
+      <Link href="/software-products" :class="getLinkClasses('/software-products')">
+        <font-awesome-icon icon="fa-solid fa-cube" class="pr-1" /> Yazılım Ürünleri
       </Link>
       <Link href="/bookmarks" :class="getLinkClasses('/bookmarks')">
         <font-awesome-icon :icon="['fas', 'bookmark']" class="mr-2" /> Yer İmleri
