@@ -45,7 +45,7 @@ const flashSuccess = ref(props.flash.success);
 const getLinkClasses = (href) => {
   return url === href
     ? 'block cursor-pointer m-2 text-sm rounded px-3 py-1 text-black transition-all transition-colors duration-200 bg-gray-900 text-white shadow-lg'
-    : 'block cursor-pointer m-2 text-sm rounded px-3 py-1 text-black transition-all transition-colors duration-200 hover:bg-gray-200 hover:shadow-lg hover:px-4';
+    : 'block cursor-pointer m-2 text-sm rounded px-3 py-1 text-black transition-all transition-colors duration-200 hover:bg-gray-200 hover:shadow-lg';
 };
 
 onMounted(() => {
