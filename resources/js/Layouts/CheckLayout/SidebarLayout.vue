@@ -1,12 +1,15 @@
 <template>
   <div class="z-20 col-span-1 shadow-lg shadow-gray-600">
     <div class="h-full bg-sidebar text-sm">
-      <Link href="/" :class="getLinkClasses('/')">
+      <Link href="/login" :class="getLinkClasses('/login')">
         <div class="flex items-center">
-          <img :src="imagePath" alt="Yakup Sarı" class="h-10 w-12 rounded-full" />
+          <img :src="auth.user ? imagePath : '/images/default.png'" alt="Yakup Sarı" class="h-12 w-12 rounded-full" />
           <div class="p-2">
-            <div class="font-bold">Yakup Sarı</div>
-            <div>Software Engineer</div>
+            <div v-if="auth.user">
+              <div class="font-bold">{{ auth.user.name }}</div>
+              <div>Software Engineer</div>
+            </div>
+            <div v-else>Giriş Yapınız</div>
           </div>
         </div>
       </Link>
@@ -50,13 +53,27 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { ref, watch } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { Inertia } from '@inertiajs/inertia';
 
+const { props } = usePage();
 const imagePath = ref('/images/cekap.png');
 const currentUrl = ref(window.location.pathname);
+const auth = ref(props.auth);
+
+watch(
+  () => usePage().props.value,
+  (newProps) => {
+    auth.value = newProps.auth;
+    currentUrl.value = newProps.url;
+    // Update image path if needed
+    if (auth.value.user) {
+      imagePath.value = auth.user.imagePath || '/images/default.png';
+    }
+  }
+);
 
 Inertia.on('navigate', (event) => {
   currentUrl.value = event.detail.page.url;

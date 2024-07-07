@@ -33,9 +33,13 @@ Route::get('/', [IndexController::class, 'index']);
 Route::get('/factory', [IndexController::class, 'factory']);
 Route::get('/typescript-tutorial', [IndexController::class, 'typescriptTutorial']);
 
-Route::resource('/writes', WritesController::class);
 Route::resource('/bookmarks', BookmarksController::class);
 Route::resource('/software-products', SoftwareProductsController::class);
 
+
+Route::resource('/writes', WritesController::class);
+Route::middleware('auth')->group(function () {
+    Route::resource('/writes', WritesController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
+});
 
 require __DIR__ . '/auth.php';

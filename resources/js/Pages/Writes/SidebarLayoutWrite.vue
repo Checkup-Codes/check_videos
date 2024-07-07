@@ -10,9 +10,11 @@
       <Link href="/writes">
         <div class="m-2 rounded p-1 text-center font-bold text-black underline">All Writes</div>
       </Link>
-      <Link href="/writes/create">
-        <div class="m-2 rounded p-1 text-center font-bold text-black underline">Create Write</div>
-      </Link>
+      <div v-if="auth.user">
+        <Link href="/writes/create">
+          <div class="m-2 rounded p-1 text-center font-bold text-black underline">Create Write</div>
+        </Link>
+      </div>
     </div>
     <div v-for="write in writes" :key="write.id" class="ml-2">
       <Link :href="route('writes.show', { write: write.slug })" :class="getLinkClasses(`/writes/${write.slug}`)">
@@ -41,6 +43,7 @@ const formatDate = (dateString) => {
 };
 
 const flashSuccess = ref(props.flash.success);
+const auth = props.auth;
 
 const getLinkClasses = (href) => {
   return url === href
