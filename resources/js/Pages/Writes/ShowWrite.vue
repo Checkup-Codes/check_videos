@@ -19,9 +19,9 @@
           </button>
         </div>
         <div v-if="auth.user">
-          <a :href="`/writes/${write.id}/edit`">
+          <Link :href="`/writes/${write.id}/edit`">
             <div class="m-2 rounded p-2 text-center font-bold text-black underline">Edit Write</div>
-          </a>
+          </Link>
         </div>
       </div>
       <div class="p-8">
@@ -46,7 +46,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { usePage } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
 import SidebarLayoutWrite from './SidebarLayoutWrite.vue';
 
