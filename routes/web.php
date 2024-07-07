@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\WritesController;
 use App\Http\Controllers\BookmarksController;
+use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\SP\SoftwareProductsController;
 
 Route::get('/', function () {
@@ -38,6 +39,7 @@ Route::resource('/software-products', SoftwareProductsController::class);
 
 
 Route::resource('/writes', WritesController::class);
+Route::resource('/categories', CategoriesController::class);
 Route::middleware('auth')->group(function () {
     Route::resource('/writes', WritesController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
 });

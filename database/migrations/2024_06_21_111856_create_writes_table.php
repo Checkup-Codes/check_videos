@@ -14,16 +14,19 @@ class CreateWritesTable extends Migration
     public function up()
     {
         Schema::create('writes', function (Blueprint $table) {
-            $table->uuid('id')->primary(); // UUID olarak ayarlanmış birincil anahtar
+            $table->uuid('id')->primary();
             $table->string('title');
             $table->string('slug');
             $table->text('content');
             $table->unsignedBigInteger('author_id');
+            $table->string('category_id');
             $table->timestamp('published_at')->nullable();
             $table->text('summary')->nullable();
             $table->string('status')->default('draft');
             $table->string('cover_image')->nullable();
             $table->timestamps();
+            $table->foreign('category_id')->references('id')->on('categories')
+                ->onDelete('cascade');
         });
     }
 
