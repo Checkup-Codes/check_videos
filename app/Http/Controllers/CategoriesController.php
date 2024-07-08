@@ -54,9 +54,19 @@ class CategoriesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Categories $categories)
+    public function show($slug)
     {
-        //
+        $category = Categories::where('slug', $slug)->firstOrFail();
+
+        $categories = Categories::all();
+
+        $writes = Write::where('category_id', $category->id)->get();
+
+        return inertia('Categories/ShowCategory', [
+            'category' => $category,
+            'categories' => $categories,
+            'writes' => $writes
+        ]);
     }
 
     /**

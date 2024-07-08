@@ -19,12 +19,26 @@
         </Link>
       </div>
     </div>
-    <div v-for="category in categories" :key="category.id" class="ml-2">
+    <div class="grid grid-cols-4 bg-gray-100 py-2 text-sm">
+      <div v-for="category in categories" :key="categories.id">
+        <Link
+          :href="route('categories.show', { category: category.slug })"
+          :class="getLinkClasses(`/categories/${category.slug}`)"
+        >
+          <div class="rounded p-1 text-center font-bold">{{ category.name }}</div>
+        </Link>
+      </div>
+    </div>
+
+    <div v-for="write in writes" :key="write.id" class="ml-2">
       <Link
-        :href="route('categories.edit', { category: category.slug })"
-        :class="getLinkClasses(`/categories/${category.slug}`)"
+        :href="route('writes.show', { write: write.slug })"
+        :class="getLinkClasses(`/writes/${write.slug}`)"
+        class="p-3"
       >
-        <div class="font-bold">{{ category.name }}</div>
+        <div class="font-bold">{{ write.title }}</div>
+        <div class="font-light text-gray-500">{{ truncateSummary(write.summary) }}</div>
+        <div class="text-sm text-gray-400">{{ formatDate(write.published_at) }}</div>
       </Link>
     </div>
   </div>
@@ -35,6 +49,7 @@ import { ref, computed, onMounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 
 const { props, url } = usePage();
+const writes = ref(props.writes);
 const categories = ref(props.categories);
 
 const truncateSummary = (summary) => {
@@ -51,8 +66,8 @@ const auth = props.auth;
 
 const getLinkClasses = (href) => {
   return url === href
-    ? 'block cursor-pointer m-2 text-sm rounded px-3 py-1 text-black transition-all transition-colors duration-200 bg-gray-900 text-white shadow-lg'
-    : 'block cursor-pointer m-2 text-sm rounded px-3 py-1 text-black transition-all transition-colors duration-200 hover:bg-gray-200 hover:shadow-lg';
+    ? 'block cursor-pointer text-sm rounded text-black transition-all transition-colors duration-200 bg-gray-900 text-white shadow-lg'
+    : 'block cursor-pointer text-sm rounded text-black transition-all transition-colors duration-200 hover:bg-gray-200 hover:shadow-lg';
 };
 
 onMounted(() => {
