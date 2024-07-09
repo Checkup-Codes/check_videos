@@ -10,24 +10,52 @@
       <div class="z-10 flex cursor-pointer justify-between bg-sidebar text-sm text-black">
         <div>
           <div class="m-2 space-y-4 rounded p-1 font-bold text-black">
-            <div
-              :class="category ? 'w-auto' : 'w-32'"
-              class="flex content-center items-center rounded bg-gray-200 p-1 pl-3"
-              @click="toggleCategoryMenu"
-            >
-              Kategori seç
-              <span v-if="category"> : {{ category.name }} </span>
-              <span class="pl-2"
-                ><svg class="h-6 w-6">
-                  <path
+            <div class="flex">
+              <div
+                :class="category ? 'w-auto' : 'w-32'"
+                class="flex content-center items-center rounded-lg border-2 border-sidebar bg-gray-200 p-1 pl-3 hover:border-black"
+                @click="toggleCategoryMenu"
+              >
+                Kategori seç
+                <span v-if="category">
+                  : <span class="px-1"> {{ category.name }}</span>
+                  <span></span>
+                </span>
+                <span class="pr-1"
+                  ><svg class="h-6 w-6">
+                    <path
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 9l-7 7-7-7"
+                    ></path></svg
+                ></span>
+              </div>
+              <div class="duration-50 mx-3 flex content-center items-center rounded-lg transition-all" v-if="category">
+                <Link
+                  :href="route('writes.index')"
+                  class="rounded-lg border-2 bg-gray-200 p-0.5 text-center font-bold text-black underline hover:border-black hover:bg-gray-300"
+                >
+                  <svg
+                    class="h-6 w-6 rounded-lg"
                     fill="none"
                     stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 9l-7 7-7-7"
-                  ></path></svg
-              ></span>
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    ></path>
+                  </svg>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
