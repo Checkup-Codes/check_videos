@@ -29,7 +29,7 @@
         </Link>
       </div>
     </div>
-    <div v-for="write in writes" :key="write.id" class="ml-2">
+    <div v-for="write in writes" :key="write.id" class="">
       <Link
         :href="route('writes.show', { write: write.slug })"
         :class="getLinkClasses(`/writes/${write.slug}`)"

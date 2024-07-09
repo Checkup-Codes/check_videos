@@ -85,6 +85,7 @@ class WritesController extends Controller
         ]);
     }
 
+
     public function edit($id)
     {
         $writes = Write::all();

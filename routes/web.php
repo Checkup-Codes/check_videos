@@ -37,10 +37,12 @@ Route::get('/typescript-tutorial', [IndexController::class, 'typescriptTutorial'
 Route::resource('/bookmarks', BookmarksController::class);
 Route::resource('/software-products', SoftwareProductsController::class);
 
-
+// Writes
 Route::resource('/writes', WritesController::class);
 
 Route::resource('/categories', CategoriesController::class);
+Route::get('/categories/{category}/{slug}', [CategoriesController::class, 'showByCategory'])->name('categories.showByCategory');
+
 Route::middleware('auth')->group(function () {
     Route::resource('/writes', WritesController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
 });

@@ -1,7 +1,7 @@
 <template>
   <div class="grid grid-cols-1 lg:grid-cols-subsidebar">
-    <SidebarLayoutWrite class="hidden lg:block" />
-    <div class="mx-auto w-[97%] rounded-lg bg-white p-2 shadow-md">
+    <SidebarLayoutCategory class="hidden lg:block" />
+    <div class="mx-auto w-full rounded-lg bg-white p-2 shadow-md">
       <div class="flex items-center justify-between">
         <div class="hidden text-sm text-gray-500 lg:block">Kategori: {{ getCategoryName(write.category_id) }}</div>
         <div class="block lg:hidden">
@@ -48,7 +48,7 @@
 import { ref } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
-import SidebarLayoutWrite from './SidebarLayoutWrite.vue';
+import SidebarLayoutCategory from '../SidebarLayoutCategory.vue';
 
 const { props } = usePage();
 const write = ref(props.write);

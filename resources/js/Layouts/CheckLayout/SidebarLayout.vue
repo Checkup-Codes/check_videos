@@ -14,7 +14,7 @@
         </div>
       </Link>
       <Link href="/" :class="getLinkClasses('/')"> <font-awesome-icon icon="home" class="mr-2" /> Ana Sayfa </Link>
-      <Link href="/writes" :class="getLinkClasses('/writes')">
+      <Link href="/writes" :class="getLinkClasses(['/categories', '/writes'])">
         <font-awesome-icon icon="fa-solid fa-pencil" class="pr-1" /> Yazılar
       </Link>
       <Link href="/software-products" :class="getLinkClasses('/software-products')">
@@ -70,7 +70,7 @@ watch(
     currentUrl.value = newProps.url;
     // Update image path if needed
     if (auth.value.user) {
-      imagePath.value = auth.user.imagePath || '/images/default.png';
+      imagePath.value = auth.value.user.imagePath || '/images/default.png';
     }
   }
 );
@@ -79,9 +79,15 @@ Inertia.on('navigate', (event) => {
   currentUrl.value = event.detail.page.url;
 });
 
-const getLinkClasses = (href) => {
-  const isRoot = href === '/';
-  const isActive = isRoot ? currentUrl.value === href : currentUrl.value.startsWith(href);
+const getLinkClasses = (hrefs) => {
+  if (!Array.isArray(hrefs)) {
+    hrefs = [hrefs];
+  }
+
+  const isActive = hrefs.some((href) => {
+    const isRoot = href === '/';
+    return isRoot ? currentUrl.value === href : currentUrl.value.startsWith(href);
+  });
 
   return isActive
     ? 'block cursor-pointer m-2 text-sm rounded px-3 py-2 text-black transition-all transition-colors duration-200 bg-gray-900 text-white shadow-lg'

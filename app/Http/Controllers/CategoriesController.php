@@ -57,7 +57,6 @@ class CategoriesController extends Controller
     public function show($slug)
     {
         $category = Categories::where('slug', $slug)->firstOrFail();
-
         $categories = Categories::all();
 
         $writes = Write::where('category_id', $category->id)->get();
@@ -66,6 +65,21 @@ class CategoriesController extends Controller
             'category' => $category,
             'categories' => $categories,
             'writes' => $writes
+        ]);
+    }
+
+    public function showByCategory($categorySlug, $writeSlug)
+    {
+        $category = Categories::where('slug', $categorySlug)->firstOrFail();
+        $writes = Write::where('category_id', $category->id)->get();
+        $write = Write::where('slug', $writeSlug)->firstOrFail();
+        $categories = Categories::all();
+
+        return inertia('Categories/ShowByCategory/ShowWriteByCategory', [
+            'category' => $category,
+            'writes' => $writes,
+            'write' => $write,
+            'categories' => $categories
         ]);
     }
 
