@@ -3,13 +3,10 @@
     <div class="h-full bg-sidebar text-sm">
       <Link href="/login" :class="getLinkClasses('/login')">
         <div class="flex items-center">
-          <img :src="auth.user ? imagePath : '/images/default.png'" alt="Yakup Sarı" class="h-12 w-12 rounded-full" />
+          <img :src="imagePath" alt="Yakup Sarı" class="h-10 w-12 rounded-full" />
           <div class="p-2">
-            <div v-if="auth.user">
-              <div class="font-bold">{{ auth.user.name }}</div>
-              <div>Software Engineer</div>
-            </div>
-            <div v-else>Giriş Yapınız</div>
+            <div class="font-bold">Yakup Sarı</div>
+            <div>Software Engineer</div>
           </div>
         </div>
       </Link>

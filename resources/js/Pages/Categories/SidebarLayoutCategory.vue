@@ -8,9 +8,29 @@
     </div>
     <div class="z-10 h-screen shadow-right shadow-gray-100">
       <div class="z-10 flex cursor-pointer justify-between bg-sidebar text-sm text-black">
-        <Link href="/writes">
-          <div class="m-2 rounded p-1 text-center font-bold text-black underline">Bütün Yazılar</div>
-        </Link>
+        <div>
+          <div class="m-2 space-y-4 rounded p-1 font-bold text-black">
+            <div
+              :class="category ? 'w-auto' : 'w-32'"
+              class="flex content-center items-center rounded bg-gray-200 p-1 pl-3"
+              @click="toggleCategoryMenu"
+            >
+              Kategori seç
+              <span v-if="category"> : {{ category.name }} </span>
+              <span class="pl-2"
+                ><svg class="h-6 w-6">
+                  <path
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  ></path></svg
+              ></span>
+            </div>
+          </div>
+        </div>
         <div v-if="auth.user">
           <Link href="/writes/create">
             <div class="mx-2 rounded p-1 text-center font-bold text-black underline">Yeni Yazı Ekle</div>
@@ -20,8 +40,8 @@
           </Link>
         </div>
       </div>
-      <div class="grid grid-cols-4 bg-gray-100 py-2 text-sm">
-        <div v-for="category in categories" :key="categories.id">
+      <div v-show="showCategories" class="grid grid-cols-4 bg-sidebar py-2 text-sm">
+        <div v-for="category in categories" :key="category.id" class="transition-all duration-100">
           <Link
             :href="route('categories.show', { category: category.slug })"
             :class="getLinkClasses(`/categories/${category.slug}`)"
@@ -53,6 +73,8 @@ import { Link, usePage } from '@inertiajs/vue3';
 const { props, url } = usePage();
 const writes = ref(props.writes);
 const categories = ref(props.categories);
+const category = ref(props.category);
+const showCategories = ref(false);
 
 const truncateSummary = (summary) => {
   return summary.length > 40 ? summary.slice(0, 40) + '...' : summary;
@@ -70,6 +92,10 @@ const getLinkClasses = (href) => {
   return url.includes(href)
     ? 'block cursor-pointer text-sm rounded text-black transition-all transition-colors duration-200 bg-gray-900 text-white shadow-lg'
     : 'block cursor-pointer text-sm rounded text-black transition-all transition-colors duration-200 hover:bg-gray-200 hover:shadow-lg';
+};
+
+const toggleCategoryMenu = () => {
+  showCategories.value = !showCategories.value;
 };
 
 onMounted(() => {

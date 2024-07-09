@@ -3,9 +3,9 @@
     <SidebarLayout class="fixed left-0 top-0 z-40 hidden h-full w-64 lg:block" @link-clicked="toggleSidebar" />
 
     <div class="flex flex-1 flex-col lg:pl-64">
-      <HeaderLayout class="fixed left-0 top-0 z-30 w-full lg:left-64" @toggle-sidebar="toggleSidebar" />
+      <HeaderLayout class="fixed left-0 top-0 z-30 block w-full lg:left-64 lg:hidden" @toggle-sidebar="toggleSidebar" />
 
-      <div class="flex-1 overflow-auto pt-12 lg:pt-12">
+      <div class="flex-1 overflow-auto">
         <slot>Default Content</slot>
       </div>
     </div>
