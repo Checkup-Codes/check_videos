@@ -1,14 +1,19 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\WritesCategories;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use App\Models\WritesCategories\Category;
 
-class Categories extends Model
+class Write extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'title', 'slug', 'content', 'author_id', 'published_at', 'summary', 'status', 'cover_image'
+    ];
 
     public $incrementing = false;
     protected $keyType = 'string';
@@ -24,10 +29,8 @@ class Categories extends Model
         });
     }
 
-    protected $fillable = ['name', 'slug'];
-
-    public function writes()
+    public function category()
     {
-        return $this->hasMany(Write::class);
+        return $this->belongsTo(Category::class);
     }
 }

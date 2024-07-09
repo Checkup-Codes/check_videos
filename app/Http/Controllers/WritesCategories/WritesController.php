@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\WritesCategories;
 
-use App\Http\Requests\StoreWriteRequest;
-use App\Http\Requests\UpdateWriteRequest;
-use Illuminate\Http\Request;
-use App\Models\Write;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Categories;
+use Illuminate\Http\Request;
+use App\Models\WritesCategories\Write;
+use App\Models\WritesCategories\Category;
+
 
 class WritesController extends Controller
 {
     public function index()
     {
 
-        $categories = Categories::all();
+        $categories = Category::all();
 
         $writes = Write::all();
-        return inertia('Writes/IndexWrite', [
+        return inertia('WritesCategories/Writes/IndexWrite', [
             'writes' => $writes,
             'categories' => $categories
         ]);
@@ -35,7 +35,7 @@ class WritesController extends Controller
     public function create()
     {
         $writes = Write::all();
-        $categories = Categories::all();
+        $categories = Category::all();
 
         return inertia('Writes/CreateWrite', [
             'writes' => $writes,
@@ -76,9 +76,9 @@ class WritesController extends Controller
     {
         $writes = Write::all();
         $write = Write::where('slug', $slug)->firstOrFail();
-        $categories = Categories::all();
+        $categories = Category::all();
 
-        return inertia('Writes/ShowWrite', [
+        return inertia('WritesCategories/Writes/ShowWrite', [
             'writes' => $writes,
             'write' => $write,
             'categories' => $categories
@@ -90,9 +90,9 @@ class WritesController extends Controller
     {
         $writes = Write::all();
         $write = Write::findOrFail($id);
-        $categories = Categories::all();
+        $categories = Category::all();
 
-        return inertia('Writes/EditWrite', ['write' => $write, 'writes' => $writes, 'categories' => $categories]);
+        return inertia('WritesCategories/Writes/EditWrite', ['write' => $write, 'writes' => $writes, 'categories' => $categories]);
     }
 
     public function update(Request $request, Write $write)

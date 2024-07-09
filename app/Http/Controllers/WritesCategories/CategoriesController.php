@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\WritesCategories;
 
-use App\Models\Categories;
-use App\Models\Write;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\WritesCategories\Category;
+use App\Models\WritesCategories\Write;
 
 class CategoriesController extends Controller
 {
@@ -13,10 +14,10 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        $categories = Categories::all();
+        $categories = Category::all();
 
         $writes = Write::all();
-        return inertia('Categories/IndexCategory', [
+        return inertia('WritesCategories/Categories/IndexCategory', [
             'writes' => $writes,
             'categories' => $categories
         ]);
@@ -27,8 +28,8 @@ class CategoriesController extends Controller
      */
     public function create()
     {
-        $categories = Categories::all();
-        return inertia('Categories/CreateCategory', [
+        $categories = Category::all();
+        return inertia('WritesCategories/Categories/CreateCategory', [
             'categories' => $categories
         ]);
     }
@@ -43,7 +44,7 @@ class CategoriesController extends Controller
             'slug' => 'required|string|max:255|unique:categories,slug',
         ]);
 
-        $category = new Categories();
+        $category = new Category();
         $category->name = $request->name;
         $category->slug = $request->slug;
         $category->save();
@@ -56,12 +57,12 @@ class CategoriesController extends Controller
      */
     public function show($slug)
     {
-        $category = Categories::where('slug', $slug)->firstOrFail();
-        $categories = Categories::all();
+        $category = Category::where('slug', $slug)->firstOrFail();
+        $categories = Category::all();
 
         $writes = Write::where('category_id', $category->id)->get();
 
-        return inertia('Categories/ShowCategory', [
+        return inertia('WritesCategories/Categories/ShowCategory', [
             'category' => $category,
             'categories' => $categories,
             'writes' => $writes
@@ -70,12 +71,12 @@ class CategoriesController extends Controller
 
     public function showByCategory($categorySlug, $writeSlug)
     {
-        $category = Categories::where('slug', $categorySlug)->firstOrFail();
+        $category = Category::where('slug', $categorySlug)->firstOrFail();
         $writes = Write::where('category_id', $category->id)->get();
         $write = Write::where('slug', $writeSlug)->firstOrFail();
-        $categories = Categories::all();
+        $categories = Category::all();
 
-        return inertia('Categories/ShowByCategory/ShowWriteByCategory', [
+        return inertia('WritesCategories/Categories/ShowByCategory/ShowWriteByCategory', [
             'category' => $category,
             'writes' => $writes,
             'write' => $write,
@@ -88,10 +89,10 @@ class CategoriesController extends Controller
      */
     public function edit($id)
     {
-        $categories = Categories::all();
+        $categories = Category::all();
         // find for slug
-        $category = Categories::where('slug', $id)->firstOrFail();
-        return inertia('Categories/EditCategory', [
+        $category = Category::where('slug', $id)->firstOrFail();
+        return inertia('WritesCategories/Categories/EditCategory', [
             'categories' => $categories,
             'category' => $category
         ]);
@@ -108,7 +109,7 @@ class CategoriesController extends Controller
             'slug' => 'required|string|max:255|unique:categories,slug,' . $id,
         ]);
 
-        $category = Categories::where('id', $id)->firstOrFail();
+        $category = Category::where('id', $id)->firstOrFail();
         $category->name = $request->name;
         $category->slug = $request->slug;
         $category->save();
@@ -121,7 +122,7 @@ class CategoriesController extends Controller
      */
     public function destroy($id)
     {
-        $category = Categories::findOrFail($id);
+        $category = Category::findOrFail($id);
         $category->delete();
 
         return redirect()->route('categories.index');

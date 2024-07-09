@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 use App\Http\Controllers\IndexController;
-use App\Http\Controllers\WritesController;
+use App\Http\Controllers\WritesCategories\WritesController;
 use App\Http\Controllers\BookmarksController;
-use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\WritesCategories\CategoriesController;
 use App\Http\Controllers\SP\SoftwareProductsController;
 
 Route::get('/', function () {
@@ -37,14 +37,17 @@ Route::get('/typescript-tutorial', [IndexController::class, 'typescriptTutorial'
 Route::resource('/bookmarks', BookmarksController::class);
 Route::resource('/software-products', SoftwareProductsController::class);
 
-// Writes
+// Writes and Categories
 Route::resource('/writes', WritesController::class);
-
 Route::resource('/categories', CategoriesController::class);
 Route::get('/categories/{category}/{slug}', [CategoriesController::class, 'showByCategory'])->name('categories.showByCategory');
-
 Route::middleware('auth')->group(function () {
     Route::resource('/writes', WritesController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
+    Route::resource('/categories', CategoriesController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
 });
+
+
+
+
 
 require __DIR__ . '/auth.php';
