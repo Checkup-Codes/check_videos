@@ -1,7 +1,16 @@
 <template>
   <div class="grid h-full grid-cols-1 lg:grid-cols-subsidebar">
-    <SidebarLayoutWrite class="block" />
-    <div class="hidden p-4 lg:block">Yazılar</div>
+    <SidebarLayoutWrite class="hidden lg:block" />
+    <div class="hidden lg:block">
+      <div class="min-h-screen bg-gray-100">
+        <header class="flex h-screen items-center justify-center bg-gray-100 text-black">
+          <div class="text-center">
+            <h2 class="animate__animated animate__fadeInDown mb-4 text-4xl font-bold">Yazılar</h2>
+            <p class="animate__animated animate__fadeInUp mb-6 text-lg"></p>
+          </div>
+        </header>
+      </div>
+    </div>
   </div>
 </template>
 

@@ -27,22 +27,22 @@
         <font-awesome-icon icon="book" class="mr-2" /> Typescript Tutorial
       </Link> -->
       <hr />
-      <Link href="/instagram" :class="getLinkClasses('/instagram')">
+      <a href="https://www.instagram.com/checkup_codes/" target="_blank" :class="getLinkClasses('/instagram')">
         <font-awesome-icon :icon="['fab', 'instagram']" class="mr-2" /> Instagram
-      </Link>
-      <Link href="/youtube" :class="getLinkClasses('/youtube')">
+      </a>
+      <Link href="https://www.youtube.com/@checkupcodes" target="_blank" :class="getLinkClasses('/youtube')">
         <font-awesome-icon :icon="['fab', 'youtube']" class="mr-2" /> Youtube
       </Link>
-      <Link href="/github" :class="getLinkClasses('/github')">
+      <Link href="https://github.com/cekapykp" target="_blank" :class="getLinkClasses('/github')">
         <font-awesome-icon :icon="['fab', 'github']" class="mr-2" /> Github
       </Link>
-      <Link href="/linkedin" :class="getLinkClasses('/linkedin')">
+      <Link href="https://www.linkedin.com/in/cekap/" target="_blank" :class="getLinkClasses('/linkedin')">
         <font-awesome-icon :icon="['fab', 'linkedin']" class="mr-2" /> Linkedin
       </Link>
-      <Link href="/medium" :class="getLinkClasses('/medium')">
+      <Link href="https://medium.com/@cekapykp" target="_blank" :class="getLinkClasses('/medium')">
         <font-awesome-icon :icon="['fab', 'medium']" class="mr-2" /> Medium
       </Link>
-      <Link href="/twitter" :class="getLinkClasses('/twitter')">
+      <Link href="https://x.com/checkupcodes" target="_blank" :class="getLinkClasses('/twitter')">
         <font-awesome-icon :icon="['fab', 'twitter']" class="mr-2" /> Twitter
       </Link>
     </div>
