@@ -14,10 +14,10 @@
       <Link href="/writes" :class="getLinkClasses(['/categories', '/writes'])">
         <font-awesome-icon icon="fa-solid fa-pencil" class="pr-1" /> Yazılar
       </Link>
-      <Link href="/software-products" :class="getLinkClasses('/software-products')">
+      <!-- <Link href="/software-products" :class="getLinkClasses('/software-products')">
         <font-awesome-icon icon="fa-solid fa-cube" class="pr-1" /> Yazılım Ürünleri
-      </Link>
-      <Link href="/bookmarks" :class="getLinkClasses('/bookmarks')">
+      </Link> -->
+      <!-- <Link href="/bookmarks" :class="getLinkClasses('/bookmarks')">
         <font-awesome-icon :icon="['fas', 'bookmark']" class="mr-2" /> Yer İmleri
       </Link>
       <Link href="/factory" :class="getLinkClasses('/factory')">
@@ -25,7 +25,7 @@
       </Link>
       <Link href="/typescript-tutorial" :class="getLinkClasses('/typescript-tutorial')">
         <font-awesome-icon icon="book" class="mr-2" /> Typescript Tutorial
-      </Link>
+      </Link> -->
       <hr />
       <Link href="/instagram" :class="getLinkClasses('/instagram')">
         <font-awesome-icon :icon="['fab', 'instagram']" class="mr-2" /> Instagram
