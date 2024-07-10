@@ -23,6 +23,10 @@ class CreateWritesTable extends Migration
             $table->timestamp('published_at')->nullable();
             $table->text('summary')->nullable();
             $table->string('status')->default('draft');
+            $table->integer('views_count')->default(0);
+            $table->string('seo_keywords')->nullable();
+            $table->string('tags')->nullable();
+            $table->string('meta_description')->nullable();
             $table->string('cover_image')->nullable();
             $table->timestamps();
             $table->foreign('category_id')->references('id')->on('categories')

@@ -24,13 +24,16 @@
           </Link>
         </div>
       </div>
-      <div class="p-8">
-        <h1 class="mb-6 text-3xl font-bold">{{ write.title }}</h1>
-        <div class="prose mb-6" v-html="write.content"></div>
-        <div class="rounded-lg bg-gray-100 p-4">
-          <h2 class="mb-2 text-xl font-semibold">Özet</h2>
-          <p>{{ write.summary }}</p>
+      <div class="">
+        <div class="px-8 py-16">
+          <h1 class="mb-6 text-3xl font-bold">{{ write.title }}</h1>
+          <div class="prose mb-6" v-html="write.content"></div>
+          <div class="rounded-lg bg-gray-100 p-4">
+            <h2 class="mb-2 text-xl font-semibold">Özet</h2>
+            <p>{{ write.summary }}</p>
+          </div>
         </div>
+
         <div v-if="auth.user" class="flex">
           <button
             @click="deleteWrite(write.id)"

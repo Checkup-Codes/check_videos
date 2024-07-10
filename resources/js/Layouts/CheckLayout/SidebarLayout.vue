@@ -1,5 +1,5 @@
 <template>
-  <div class="z-20 col-span-1 shadow-lg shadow-gray-600">
+  <div class="z-20 col-span-1 shadow-sm shadow-gray-600">
     <div class="h-full bg-sidebar text-sm">
       <Link href="/login" :class="getLinkClasses('/login')">
         <div class="flex items-center">

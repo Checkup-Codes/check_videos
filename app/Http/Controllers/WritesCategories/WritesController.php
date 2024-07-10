@@ -37,7 +37,7 @@ class WritesController extends Controller
         $writes = Write::all();
         $categories = Category::all();
 
-        return inertia('Writes/CreateWrite', [
+        return inertia('WritesCategories/Writes/CreateWrite', [
             'writes' => $writes,
             'categories' => $categories
         ]);
@@ -76,6 +76,9 @@ class WritesController extends Controller
     {
         $writes = Write::all();
         $write = Write::where('slug', $slug)->firstOrFail();
+
+        $write->increment('views_count');
+
         $categories = Category::all();
 
         return inertia('WritesCategories/Writes/ShowWrite', [
@@ -84,6 +87,7 @@ class WritesController extends Controller
             'categories' => $categories
         ]);
     }
+
 
 
     public function edit($id)

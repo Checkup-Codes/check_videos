@@ -68,26 +68,26 @@
           </Link>
         </div>
       </div>
-      <div v-show="showCategories" class="grid grid-cols-4 bg-sidebar py-2 text-sm">
+      <div v-show="showCategories" class="grid grid-cols-3 gap-1 bg-sidebar px-4 pb-3 text-sm">
         <div v-for="category in categories" :key="category.id" class="transition-all duration-100">
           <Link
             :href="route('categories.show', { category: category.slug })"
             :class="getLinkClasses(`/categories/${category.slug}`)"
+            class="border-2 hover:border-black hover:bg-sidebar hover:text-black"
           >
             <div class="rounded p-1 text-center font-bold">{{ category.name }}</div>
           </Link>
         </div>
       </div>
 
-      <div v-for="write in writes" :key="write.id" class="">
+      <div v-for="write in writes" :key="write.id" class="px-3 py-1">
         <Link
           :href="route('categories.showByCategory', { category: getCategoryName(write.category_id), slug: write.slug })"
           :class="getLinkClasses(`/categories/${getCategoryName(write.category_id)}/${write.slug}`)"
-          class="border-b-2 p-3"
+          class="px-3 py-1"
         >
-          <div class="font-bold">{{ write.title }}</div>
-          <div class="font-light text-gray-500">{{ truncateSummary(write.summary) }}</div>
-          <div class="text-sm text-gray-400">{{ formatDate(write.published_at) }}</div>
+          <div class="py-0.5 font-bold">{{ write.title }}</div>
+          <div class="py-1 text-sm text-gray-400">{{ formatDate(write.published_at) }}</div>
         </Link>
       </div>
     </div>
@@ -102,7 +102,7 @@ const { props, url } = usePage();
 const writes = ref(props.writes);
 const categories = ref(props.categories);
 const category = ref(props.category);
-const showCategories = ref(false);
+const showCategories = ref(true);
 
 const truncateSummary = (summary) => {
   return summary.length > 40 ? summary.slice(0, 40) + '...' : summary;
@@ -118,8 +118,8 @@ const auth = props.auth;
 
 const getLinkClasses = (href) => {
   return url.includes(href)
-    ? 'block cursor-pointer text-sm rounded text-black transition-all transition-colors duration-200 bg-gray-900 text-white shadow-lg'
-    : 'block cursor-pointer text-sm rounded text-black transition-all transition-colors duration-200 hover:bg-gray-200 hover:shadow-lg';
+    ? 'block cursor-pointer text-sm rounded-lg text-black transition-all transition-colors duration-200 bg-gray-900 text-white shadow-lg'
+    : 'block cursor-pointer text-sm rounded-lg text-black transition-all transition-colors duration-200 hover:bg-gray-200 hover:shadow-lg';
 };
 
 const toggleCategoryMenu = () => {

@@ -4,6 +4,11 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
+use App\Models\User;
+use App\Models\SP\SoftwareProduct;
+use App\Models\WritesCategories\Category;
+use App\Models\WritesCategories\Write;
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -11,6 +16,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\SP\SoftwareProduct::factory(20)->create();
+        User::factory()->specificUser()->create();
+
+        SoftwareProduct::factory(20)->create();
+
+        Category::factory()->count(10)->create();
+
+        Write::factory()->count(50)->create();
     }
 }

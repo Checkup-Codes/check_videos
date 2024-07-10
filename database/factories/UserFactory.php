@@ -41,4 +41,16 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    /**
+     * State for a specific user.
+     */
+    public function specificUser(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'name' => 'Specific User',
+            'email' => 'cekapykp@gmail.com',
+            'password' => Hash::make('123qwe123'),
+        ]);
+    }
 }
