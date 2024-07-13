@@ -1,7 +1,7 @@
 <template>
   <div class="z-20 col-span-1 shadow-sm shadow-gray-600">
     <div class="h-full bg-sidebar text-sm">
-      <Link href="#" :class="getLinkClasses('/login')">
+      <Link href="/dashboard" :class="getLinkClasses('/login')">
         <div class="flex items-center">
           <img :src="imagePath" alt="Yakup Sarı" class="h-10 w-12 rounded-full" />
           <div class="p-2">

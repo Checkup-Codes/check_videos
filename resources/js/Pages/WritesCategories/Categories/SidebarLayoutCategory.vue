@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <div class="relative">
     <div v-if="flashSuccess" class="fixed right-4 top-4 z-50">
       <div class="relative rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700" role="alert">
         <strong class="font-bold">Başarılı! </strong>
         <span class="block sm:inline">{{ flashSuccess }}</span>
       </div>
     </div>
-    <div class="z-10 h-screen shadow-right shadow-gray-100">
+    <div class="fixed z-10 w-[27%] shadow-right shadow-gray-100">
       <div class="z-10 flex cursor-pointer justify-between bg-sidebar text-sm text-black">
         <div>
           <div class="m-2 space-y-4 rounded p-1 font-bold text-black">
@@ -68,27 +68,36 @@
           </Link>
         </div>
       </div>
-      <div v-show="showCategories" class="grid grid-cols-3 gap-1 bg-sidebar px-4 pb-3 text-sm">
-        <div v-for="category in categories" :key="category.id" class="transition-all duration-100">
-          <Link
-            :href="route('categories.show', { category: category.slug })"
-            :class="getLinkClasses(`/categories/${category.slug}`)"
-            class="border-2 hover:border-black hover:bg-sidebar hover:text-black"
-          >
-            <div class="rounded p-1 text-center font-bold">{{ category.name }}</div>
-          </Link>
-        </div>
-      </div>
 
-      <div v-for="write in writes" :key="write.id" class="px-3 py-1">
-        <Link
-          :href="route('categories.showByCategory', { category: getCategoryName(write.category_id), slug: write.slug })"
-          :class="getLinkClasses(`/categories/${getCategoryName(write.category_id)}/${write.slug}`)"
-          class="px-3 py-1"
-        >
-          <div class="py-0.5 font-bold">{{ write.title }}</div>
-          <div class="py-1 text-sm text-gray-400">{{ formatDate(write.published_at) }}</div>
-        </Link>
+      <div class="h-[92vh] overflow-auto">
+        <div class="sticky top-0 z-20 bg-sidebar">
+          <div v-show="showCategories" class="grid grid-cols-3 gap-1 bg-sidebar px-4 pb-3 text-sm">
+            <div v-for="category in categories" :key="category.id" class="transition-all duration-100">
+              <Link
+                :href="route('categories.show', { category: category.slug })"
+                :class="getLinkClasses(`/categories/${category.slug}`)"
+                class="border-2 hover:border-black hover:bg-sidebar hover:text-black"
+              >
+                <div class="rounded p-1 text-center font-bold">{{ category.name }}</div>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <div class="h-[92vh] overflow-auto">
+          <div v-for="write in writes" :key="write.id" class="px-3 py-1">
+            <Link
+              :href="
+                route('categories.showByCategory', { category: getCategoryName(write.category_id), slug: write.slug })
+              "
+              :class="getLinkClasses(`/categories/${getCategoryName(write.category_id)}/${write.slug}`)"
+              class="px-3 py-1"
+            >
+              <div class="py-0.5 font-bold">{{ write.title }}</div>
+              <div class="py-1 text-sm text-gray-400">{{ formatDate(write.published_at) }}</div>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   </div>

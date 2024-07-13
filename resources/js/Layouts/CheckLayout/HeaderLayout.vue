@@ -1,6 +1,6 @@
 <template>
   <header class="flex h-12 items-center justify-between border-b-2 border-gray-300 bg-sidebar px-5">
-    <div>Şuandaki güncel youtube abone sayınız : 2.969</div>
+    <div></div>
     <button @click="$emit('toggle-sidebar')" class="lg:hidden">
       <svg
         class="h-6 w-6 text-black"
