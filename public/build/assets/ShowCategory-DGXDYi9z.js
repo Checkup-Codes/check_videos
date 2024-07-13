@@ -1,0 +1,1 @@
+import{Q as s,l as o,o as r,g as t,a}from"./app-BFtF0kI3.js";import c from"./SidebarLayoutCategory-ChdgHs_e.js";/* empty css            */const i={class:"grid grid-cols-1 lg:grid-cols-subsidebar"},g={__name:"ShowCategory",setup(l){const{props:e}=s();return o(e.write),o(e.categories),e.auth,(_,n)=>(r(),t("div",i,[a(c,{class:"hidden lg:block"})]))}};export{g as default};

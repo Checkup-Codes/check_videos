@@ -1,0 +1,1 @@
+import e from"./SidebarLayoutCategory-ChdgHs_e.js";import{o as s,g as o,a,b as c}from"./app-BFtF0kI3.js";/* empty css            */const r={class:"grid h-full grid-cols-1 lg:grid-cols-subsidebar"},t=c("div",{class:"hidden p-4 lg:block"},"Yazılar",-1),p={__name:"IndexCategory",setup(l){return(d,i)=>(s(),o("div",r,[a(e,{class:"block"}),t]))}};export{p as default};
