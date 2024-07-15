@@ -1,7 +1,7 @@
 <template>
   <div class="z-20 col-span-1 shadow-sm shadow-gray-600">
     <div class="h-full bg-sidebar text-sm">
-      <Link href="/dashboard" :class="getLinkClasses('/login')">
+      <Link href="/dashboard" :class="getLinkClasses('/login')" @click="$emit('link-clicked')">
         <div class="flex items-center">
           <img :src="imagePath" alt="Yakup Sarı" class="h-10 w-12 rounded-full" />
           <div class="p-2">
@@ -10,39 +10,62 @@
           </div>
         </div>
       </Link>
-      <Link href="/" :class="getLinkClasses('/')"> <font-awesome-icon icon="home" class="mr-2" /> Ana Sayfa </Link>
-      <Link href="/writes" :class="getLinkClasses(['/categories', '/writes'])">
+      <Link href="/" :class="getLinkClasses('/')" @click="$emit('link-clicked')">
+        <font-awesome-icon icon="home" class="mr-2" /> Ana Sayfa
+      </Link>
+      <Link href="/writes" :class="getLinkClasses(['/categories', '/writes'])" @click="$emit('link-clicked')">
         <font-awesome-icon icon="fa-solid fa-pencil" class="pr-1" /> Yazılar
       </Link>
-      <!-- <Link href="/software-products" :class="getLinkClasses('/software-products')">
-        <font-awesome-icon icon="fa-solid fa-cube" class="pr-1" /> Yazılım Ürünleri
-      </Link> -->
-      <!-- <Link href="/bookmarks" :class="getLinkClasses('/bookmarks')">
+      <!-- <Link href="/bookmarks" :class="getLinkClasses('/bookmarks')" @click="$emit('link-clicked')">
         <font-awesome-icon :icon="['fas', 'bookmark']" class="mr-2" /> Yer İmleri
-      </Link>
-      <Link href="/factory" :class="getLinkClasses('/factory')">
-        <font-awesome-icon icon="industry" class="mr-2" /> Fabrika
-      </Link>
-      <Link href="/typescript-tutorial" :class="getLinkClasses('/typescript-tutorial')">
-        <font-awesome-icon icon="book" class="mr-2" /> Typescript Tutorial
       </Link> -->
       <hr />
-      <a href="https://www.instagram.com/checkup_codes/" target="_blank" :class="getLinkClasses('/instagram')">
+      <a
+        href="https://www.instagram.com/checkup_codes/"
+        target="_blank"
+        :class="getLinkClasses('/instagram')"
+        @click="$emit('link-clicked')"
+      >
         <font-awesome-icon :icon="['fab', 'instagram']" class="mr-2" /> Instagram
       </a>
-      <Link href="https://www.youtube.com/@checkupcodes" target="_blank" :class="getLinkClasses('/youtube')">
+      <Link
+        href="https://www.youtube.com/@checkupcodes"
+        target="_blank"
+        :class="getLinkClasses('/youtube')"
+        @click="$emit('link-clicked')"
+      >
         <font-awesome-icon :icon="['fab', 'youtube']" class="mr-2" /> Youtube
       </Link>
-      <Link href="https://github.com/cekapykp" target="_blank" :class="getLinkClasses('/github')">
+      <Link
+        href="https://github.com/cekapykp"
+        target="_blank"
+        :class="getLinkClasses('/github')"
+        @click="$emit('link-clicked')"
+      >
         <font-awesome-icon :icon="['fab', 'github']" class="mr-2" /> Github
       </Link>
-      <Link href="https://www.linkedin.com/in/cekap/" target="_blank" :class="getLinkClasses('/linkedin')">
+      <Link
+        href="https://www.linkedin.com/in/cekap/"
+        target="_blank"
+        :class="getLinkClasses('/linkedin')"
+        @click="$emit('link-clicked')"
+      >
         <font-awesome-icon :icon="['fab', 'linkedin']" class="mr-2" /> Linkedin
       </Link>
-      <Link href="https://medium.com/@cekapykp" target="_blank" :class="getLinkClasses('/medium')">
+      <Link
+        href="https://medium.com/@cekapykp"
+        target="_blank"
+        :class="getLinkClasses('/medium')"
+        @click="$emit('link-clicked')"
+      >
         <font-awesome-icon :icon="['fab', 'medium']" class="mr-2" /> Medium
       </Link>
-      <Link href="https://x.com/checkupcodes" target="_blank" :class="getLinkClasses('/twitter')">
+      <Link
+        href="https://x.com/checkupcodes"
+        target="_blank"
+        :class="getLinkClasses('/twitter')"
+        @click="$emit('link-clicked')"
+      >
         <font-awesome-icon :icon="['fab', 'twitter']" class="mr-2" /> Twitter
       </Link>
     </div>
@@ -65,7 +88,6 @@ watch(
   (newProps) => {
     auth.value = newProps.auth;
     currentUrl.value = newProps.url;
-    // Update image path if needed
     if (auth.value.user) {
       imagePath.value = auth.value.user.imagePath || '/images/default.png';
     }

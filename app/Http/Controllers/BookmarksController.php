@@ -24,15 +24,6 @@ class BookmarksController extends Controller
         );
     }
 
-    public function indexApi()
-    {
-        $bookmarkCategories = BookmarkCategory::all();
-
-        return response()->json([
-            'bookmarkCategories' => $bookmarkCategories,
-        ]);
-    }
-
     /**
      * Show the form for creating a new resource.
      */

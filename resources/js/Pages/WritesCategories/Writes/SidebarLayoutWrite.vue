@@ -6,7 +6,7 @@
         <span class="block sm:inline">{{ flashSuccess }}</span>
       </div>
     </div>
-    <div class="fixed z-10 w-[27%] shadow-right shadow-gray-100">
+    <div class="fixed z-10 mt-14 w-full shadow-right shadow-gray-100 lg:mt-0 lg:w-[27%]">
       <div class="flex cursor-pointer justify-between text-sm text-black">
         <div>
           <div class="m-2 space-y-4 rounded p-1 font-bold text-black">
@@ -21,39 +21,16 @@
                   : <span class="px-1"> {{ category.name }}</span>
                   <span></span>
                 </span>
-                <span class="pr-1"
-                  ><svg class="h-6 w-6">
-                    <path
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M19 9l-7 7-7-7"
-                    ></path></svg
-                ></span>
+                <span class="pr-1">
+                  <DropdownSvg />
+                </span>
               </div>
               <div class="duration-50 mx-3 flex content-center items-center rounded-lg transition-all" v-if="category">
                 <Link
                   :href="route('writes.index')"
                   class="rounded-lg border-2 bg-gray-200 p-0.5 text-center font-bold text-black underline hover:border-black hover:bg-gray-300"
                 >
-                  <svg
-                    class="h-6 w-6 rounded-lg"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    ></path>
-                  </svg>
+                  <CloseXSvg />
                 </Link>
               </div>
             </div>
@@ -63,14 +40,14 @@
           <Link href="/writes/create">
             <div class="mx-2 rounded p-1 text-center font-bold text-black underline">Yeni Yazı Ekle</div>
           </Link>
-          <Link href="/categories/create">
+          <Link href="/categories.create">
             <div class="mx-2 rounded p-1 text-center font-bold text-black underline">Kategori Ekle</div>
           </Link>
         </div>
       </div>
 
-      <div class="h-[92vh] overflow-auto">
-        <div class="top-0 z-20 bg-sidebar">
+      <div class="h-[92vh] overflow-auto" @scroll="handleScroll" ref="scrollContainer">
+        <div class="sticky top-0 z-20 bg-sidebar">
           <div v-show="showCategories" class="grid grid-cols-3 gap-1 px-4 pb-3 text-sm">
             <div v-for="category in categories" :key="category.id" class="transition-all duration-100">
               <Link
@@ -102,14 +79,18 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
+import DropdownSvg from '@/Shared/Svg/Dropdown.vue';
+import CloseXSvg from '@/Shared/Svg/CloseX.vue';
 
 const { props, url } = usePage();
 const writes = ref(props.writes);
 const categories = ref(props.categories);
 const category = ref(props.category);
 const showCategories = ref(false);
+const scrollPosition = ref(0);
+const scrollContainer = ref(null);
 
 const truncateSummary = (summary) => {
   return summary.length > 40 ? summary.slice(0, 40) + '...' : summary;
@@ -133,11 +114,27 @@ const getLinkClasses = (href) => {
     : 'block cursor-pointer text-sm rounded-lg text-black transition-all transition-colors duration-200 hover:bg-gray-200 hover:shadow-lg';
 };
 
+const handleScroll = (event) => {
+  scrollPosition.value = event.target.scrollTop;
+  localStorage.setItem('scrollPosition', scrollPosition.value);
+};
+
 onMounted(() => {
   if (flashSuccess.value) {
     setTimeout(() => {
       flashSuccess.value = null;
     }, 3000);
   }
+
+  const savedScrollPosition = localStorage.getItem('scrollPosition');
+  if (savedScrollPosition) {
+    scrollContainer.value.scrollTop = savedScrollPosition;
+  }
+
+  window.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
 });
 </script>

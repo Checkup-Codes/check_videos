@@ -15,20 +15,10 @@ class WritesController extends Controller
     {
 
         $categories = Category::all();
-
         $writes = Write::all();
         return inertia('WritesCategories/Writes/IndexWrite', [
             'writes' => $writes,
             'categories' => $categories
-        ]);
-    }
-
-    public function indexApi()
-    {
-        $writes = Write::all();
-
-        return response()->json([
-            'writes' => $writes,
         ]);
     }
 
@@ -53,7 +43,7 @@ class WritesController extends Controller
             'summary' => 'nullable|string',
             'status' => 'required|in:draft,published',
             'cover_image' => 'nullable|string|max:255',
-            'category_id' => 'required|exists:categories,id' // Ensure category_id exists in categories table
+            'category_id' => 'required|exists:categories,id'
         ]);
 
         $write = new Write();
@@ -71,7 +61,6 @@ class WritesController extends Controller
         return redirect()->route('writes.index')->with('success', 'Write created successfully.');
     }
 
-
     public function show($slug)
     {
         $writes = Write::all();
@@ -87,8 +76,6 @@ class WritesController extends Controller
             'categories' => $categories
         ]);
     }
-
-
 
     public function edit($id)
     {
@@ -120,7 +107,6 @@ class WritesController extends Controller
         $write->status = $request->status;
         $write->cover_image = $request->cover_image;
         $write->category_id = $request->category_id;
-
         $write->save();
 
         return redirect()->route('writes.index')->with('success', 'Write updated successfully.');
