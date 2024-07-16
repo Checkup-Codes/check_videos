@@ -1,9 +1,12 @@
 <template>
-  <div class="grid h-full grid-cols-1 lg:grid-cols-subsidebar">
-    <SidebarLayoutCategory class="block" />
-  </div>
+  <CheckLayout>
+    <template #screen>
+      <Screen />
+    </template>
+  </CheckLayout>
 </template>
 
 <script setup>
-import SidebarLayoutCategory from './SidebarLayoutCategory.vue';
+import CheckLayout from '@/Pages/WritesCategories/_layouts/CheckLayout.vue';
+import Screen from '@/Pages/WritesCategories/Categories/Show/Screen.vue';
 </script>

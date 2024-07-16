@@ -4,6 +4,7 @@ namespace App\Http\Controllers\WritesCategories;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use App\Models\WritesCategories\Category;
 use App\Models\WritesCategories\Write;
 
@@ -14,12 +15,23 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        $categories = Category::all();
+        $categories = Cache::remember('categories', 60, function () {
+            return Category::all();
+        });
 
-        $writes = Write::all();
+        $writes = Cache::remember('writes', 60, function () {
+            return Write::all();
+        });
+
+        $screen = [
+            'isMobileSidebar' => true,
+            'name' => 'categories'
+        ];
+
         return inertia('WritesCategories/Categories/IndexCategory', [
             'writes' => $writes,
-            'categories' => $categories
+            'categories' => $categories,
+            'screen' => $screen
         ]);
     }
 
@@ -28,9 +40,18 @@ class CategoriesController extends Controller
      */
     public function create()
     {
-        $categories = Category::all();
+        $categories = Cache::remember('categories', 60, function () {
+            return Category::all();
+        });
+
+        $screen = [
+            'isMobileSidebar' => false,
+            'name' => 'categories'
+        ];
+
         return inertia('WritesCategories/Categories/CreateCategory', [
-            'categories' => $categories
+            'categories' => $categories,
+            'screen' => $screen
         ]);
     }
 
@@ -49,6 +70,9 @@ class CategoriesController extends Controller
         $category->slug = $request->slug;
         $category->save();
 
+        Cache::forget('categories');
+        Cache::forget('writes');
+
         return redirect()->route('categories.index');
     }
 
@@ -58,29 +82,48 @@ class CategoriesController extends Controller
     public function show($slug)
     {
         $category = Category::where('slug', $slug)->firstOrFail();
-        $categories = Category::all();
+
+        $categories = Cache::remember('categories', 60, function () {
+            return Category::all();
+        });
 
         $writes = Write::where('category_id', $category->id)->get();
+
+        $screen = [
+            'isMobileSidebar' => false,
+            'name' => 'categories'
+        ];
 
         return inertia('WritesCategories/Categories/ShowCategory', [
             'category' => $category,
             'categories' => $categories,
-            'writes' => $writes
+            'writes' => $writes,
+            'screen' => $screen
         ]);
     }
 
     public function showByCategory($categorySlug, $writeSlug)
     {
         $category = Category::where('slug', $categorySlug)->firstOrFail();
+
+        $categories = Cache::remember('categories', 60, function () {
+            return Category::all();
+        });
+
         $writes = Write::where('category_id', $category->id)->get();
         $write = Write::where('slug', $writeSlug)->firstOrFail();
-        $categories = Category::all();
 
-        return inertia('WritesCategories/Categories/ShowByCategory/ShowWriteByCategory', [
+        $screen = [
+            'isMobileSidebar' => false,
+            'name' => 'categories'
+        ];
+
+        return inertia('WritesCategories/Categories/WriteByCategory/ShowWriteByCategory', [
             'category' => $category,
             'writes' => $writes,
             'write' => $write,
-            'categories' => $categories
+            'categories' => $categories,
+            'screen' => $screen
         ]);
     }
 
@@ -89,12 +132,21 @@ class CategoriesController extends Controller
      */
     public function edit($id)
     {
-        $categories = Category::all();
-        // find for slug
+        $categories = Cache::remember('categories', 60, function () {
+            return Category::all();
+        });
+
         $category = Category::where('slug', $id)->firstOrFail();
+
+        $screen = [
+            'isMobileSidebar' => false,
+            'name' => 'categories'
+        ];
+
         return inertia('WritesCategories/Categories/EditCategory', [
             'categories' => $categories,
-            'category' => $category
+            'category' => $category,
+            'screen' => $screen
         ]);
     }
 
@@ -103,7 +155,6 @@ class CategoriesController extends Controller
      */
     public function update(Request $request, $id)
     {
-
         $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:categories,slug,' . $id,
@@ -113,6 +164,9 @@ class CategoriesController extends Controller
         $category->name = $request->name;
         $category->slug = $request->slug;
         $category->save();
+
+        Cache::forget('categories');
+        Cache::forget('writes');
 
         return redirect()->route('categories.index');
     }
@@ -124,6 +178,9 @@ class CategoriesController extends Controller
     {
         $category = Category::findOrFail($id);
         $category->delete();
+
+        Cache::forget('categories');
+        Cache::forget('writes');
 
         return redirect()->route('categories.index');
     }

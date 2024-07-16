@@ -5,10 +5,7 @@
       <div class="flex items-center justify-between">
         <div class="hidden text-sm text-gray-500 lg:block">Kategori: {{ getCategoryName(write.category_id) }}</div>
         <div class="mt-10 block lg:mt-0 lg:hidden">
-          <button @click="goBack" class="flex items-center p-2 text-black hover:text-gray-700">
-            <GoBackSvg />
-            Geri
-          </button>
+          <GoBackButton />
         </div>
         <div v-if="auth.user">
           <Link :href="`/writes/${write.id}/edit`">
@@ -41,7 +38,7 @@ import { ref } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
 import SidebarLayoutCategory from '../SidebarLayoutCategory.vue';
-import GoBackSvg from '@/Shared/Svg/GoBack.vue';
+import GoBackButton from '@/Pages/WritesCategories/_components/GoBackButton.vue';
 
 const { props } = usePage();
 const write = ref(props.write);
@@ -56,10 +53,6 @@ const deleteWrite = (id) => {
         console.error('Error deleting write:', error);
       });
   }
-};
-
-const goBack = () => {
-  window.history.back();
 };
 
 const getCategoryName = (categoryId) => {

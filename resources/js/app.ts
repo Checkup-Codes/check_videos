@@ -31,8 +31,8 @@ library.add(
 import store from './Store';
 
 import CKEditor from '@ckeditor/ckeditor5-vue';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
+// const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 InertiaProgress.init({
@@ -43,7 +43,7 @@ InertiaProgress.init({
 });
 
 createInertiaApp({
-  title: (title) => `${title} - ${appName}`,
+  title: (title) => `${title}${appName}`,
   resolve: async (name) => {
     const page = (
       await resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob<DefineComponent>('./Pages/**/*.vue'))

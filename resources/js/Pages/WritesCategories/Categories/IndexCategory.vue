@@ -1,10 +1,13 @@
 <template>
-  <div class="grid h-full grid-cols-1 lg:grid-cols-subsidebar">
-    <SidebarLayoutCategory class="block" />
-    <div class="hidden p-4 lg:block">Kategoriler</div>
-  </div>
+  <CheckLayout>
+    <template #screen>
+      <Screen />
+    </template>
+  </CheckLayout>
 </template>
 
 <script setup>
-import SidebarLayoutCategory from './SidebarLayoutCategory.vue';
+import CheckLayout from '@/Pages/WritesCategories/_layouts/CheckLayout.vue';
+import Screen from '@/Pages/WritesCategories/Categories/Index/Screen.vue';
+
 </script>

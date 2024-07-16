@@ -40,7 +40,7 @@
           <Link href="/writes/create">
             <div class="mx-2 rounded p-1 text-center font-bold text-black underline">Yeni Yazı Ekle</div>
           </Link>
-          <Link href="/categories.create">
+          <Link href="/categories/create">
             <div class="mx-2 rounded p-1 text-center font-bold text-black underline">Kategori Ekle</div>
           </Link>
         </div>

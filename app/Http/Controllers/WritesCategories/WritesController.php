@@ -4,32 +4,54 @@ namespace App\Http\Controllers\WritesCategories;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use App\Models\WritesCategories\Write;
 use App\Models\WritesCategories\Category;
-
 
 class WritesController extends Controller
 {
     public function index()
     {
+        $categories = Cache::remember('categories', 60, function () {
+            return Category::all();
+        });
 
-        $categories = Category::all();
-        $writes = Write::all();
+        $writes = Cache::remember('writes', 60, function () {
+            return Write::all();
+        });
+
+        $screen = [
+            'isMobileSidebar' => true,
+            'name' => 'writes'
+        ];
+
         return inertia('WritesCategories/Writes/IndexWrite', [
             'writes' => $writes,
-            'categories' => $categories
+            'categories' => $categories,
+            'screen' => $screen
         ]);
     }
 
     public function create()
     {
-        $writes = Write::all();
-        $categories = Category::all();
+        $categories = Cache::remember('categories', 60, function () {
+            return Category::all();
+        });
+
+        $writes = Cache::remember('writes', 60, function () {
+            return Write::all();
+        });
+
+        $screen = [
+            'isMobileSidebar' => false,
+            'name' => 'writes'
+        ];
 
         return inertia('WritesCategories/Writes/CreateWrite', [
             'writes' => $writes,
-            'categories' => $categories
+            'categories' => $categories,
+            'screen' => $screen
         ]);
     }
 
@@ -58,32 +80,60 @@ class WritesController extends Controller
         $write->author_id = Auth::id();
         $write->save();
 
+        Cache::forget('categories');
+        Cache::forget('writes');
+
         return redirect()->route('writes.index')->with('success', 'Write created successfully.');
     }
 
     public function show($slug)
     {
-        $writes = Write::all();
+        $categories = Cache::remember('categories', 60, function () {
+            return Category::all();
+        });
+
+        $writes = Cache::remember('writes', 60, function () {
+            return Write::all();
+        });
+
         $write = Write::where('slug', $slug)->firstOrFail();
+        $screen = [
+            'isMobileSidebar' => false,
+            'name' => 'writes'
+        ];
 
         $write->increment('views_count');
-
-        $categories = Category::all();
 
         return inertia('WritesCategories/Writes/ShowWrite', [
             'writes' => $writes,
             'write' => $write,
-            'categories' => $categories
+            'categories' => $categories,
+            'screen' => $screen
         ]);
     }
 
     public function edit($id)
     {
-        $writes = Write::all();
-        $write = Write::findOrFail($id);
-        $categories = Category::all();
+        $categories = Cache::remember('categories', 60, function () {
+            return Category::all();
+        });
 
-        return inertia('WritesCategories/Writes/EditWrite', ['write' => $write, 'writes' => $writes, 'categories' => $categories]);
+        $writes = Cache::remember('writes', 60, function () {
+            return Write::all();
+        });
+
+        $write = Write::findOrFail($id);
+        $screen = [
+            'isMobileSidebar' => false,
+            'name' => 'writes'
+        ];
+
+        return inertia('WritesCategories/Writes/EditWrite', [
+            'write' => $write,
+            'writes' => $writes,
+            'categories' => $categories,
+            'screen' => $screen
+        ]);
     }
 
     public function update(Request $request, Write $write)
@@ -109,14 +159,19 @@ class WritesController extends Controller
         $write->category_id = $request->category_id;
         $write->save();
 
+        Cache::forget('categories');
+        Cache::forget('writes');
+
         return redirect()->route('writes.index')->with('success', 'Write updated successfully.');
     }
-
 
     public function destroy($id)
     {
         $write = Write::findOrFail($id);
         $write->delete();
+
+        Cache::forget('categories');
+        Cache::forget('writes');
 
         return redirect()->route('writes.index')->with('success', 'Write deleted successfully.');
     }
