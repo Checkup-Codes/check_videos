@@ -1,0 +1,1 @@
+import{o as r,g as o,t as e}from"./app-6h36zy-C.js";/* empty css            */const s={__name:"SPAddress",props:{product:Object},setup(t){return(a,c)=>(r(),o("span",null,e(t.product.platform)+" "+e(t.product.category)+", "+e(t.product.name),1))}};export{s as default};
