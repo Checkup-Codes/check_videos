@@ -1,1 +1,0 @@
-import r from"./GoBackButton-D3fyQI6X.js";import o from"./WriteCreateForm-8zVnFZxY.js";import{o as t,g as a,a as e,F as m}from"./app-6h36zy-C.js";/* empty css            */import"./ckeditor-DaNW3VYb.js";const u={__name:"Screen",setup(c){return(n,_)=>(t(),a(m,null,[e(r),e(o)],64))}};export{u as default};
