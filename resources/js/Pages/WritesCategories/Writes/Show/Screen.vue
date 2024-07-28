@@ -11,22 +11,20 @@
         </Link>
       </div>
     </div>
-    <div class="">
-      <div class="p-4 lg:p-8">
-        <h1 class="mb-6 text-3xl font-bold">{{ write.title }}</h1>
-        <div class="prose mb-6" v-html="write.content"></div>
-        <div class="rounded-lg bg-gray-100 p-4">
-          <h2 class="mb-2 text-xl font-semibold">Özet</h2>
-          <p>{{ write.summary }}</p>
-        </div>
-        <div v-if="auth.user" class="flex">
-          <button
-            @click="deleteWrite(write.id)"
-            class="m-2 ml-auto flex rounded p-2 text-right font-bold text-black underline"
-          >
-            Yazıyı sil
-          </button>
-        </div>
+    <div class="p-4 lg:p-8">
+      <h1 class="mb-6 text-3xl font-bold">{{ write.title }}</h1>
+      <div class="prose prose-lg ql-container-custom mb-6" v-html="write.content"></div>
+      <div class="rounded-lg bg-gray-100 p-4">
+        <h2 class="mb-2 text-xl font-semibold">Özet</h2>
+        <p>{{ write.summary }}</p>
+      </div>
+      <div v-if="auth.user" class="flex">
+        <button
+          @click="deleteWrite(write.id)"
+          class="m-2 ml-auto flex rounded p-2 text-right font-bold text-black underline"
+        >
+          Yazıyı sil
+        </button>
       </div>
     </div>
   </div>
@@ -58,3 +56,24 @@ const getCategoryName = (categoryId) => {
   return category ? category.name : 'Unknown';
 };
 </script>
+
+<style>
+.prose h1 {
+  @apply my-4 text-2xl font-bold;
+}
+.prose h2 {
+  @apply my-4 text-xl font-semibold;
+}
+.prose h3 {
+  @apply my-4 text-lg font-semibold;
+}
+.prose p {
+  @apply my-2;
+}
+.ql-container-custom .ql-code-block-container {
+  @apply rounded bg-gray-800 p-4 text-white;
+}
+.ql-container-custom .ql-code-block {
+  @apply whitespace-pre;
+}
+</style>

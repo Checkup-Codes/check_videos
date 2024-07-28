@@ -17,7 +17,7 @@ class CreateWritesTable extends Migration
             $table->uuid('id')->primary();
             $table->string('title');
             $table->string('slug');
-            $table->text('content');
+            $table->longText('content');
             $table->unsignedBigInteger('author_id');
             $table->string('category_id');
             $table->timestamp('published_at')->nullable();

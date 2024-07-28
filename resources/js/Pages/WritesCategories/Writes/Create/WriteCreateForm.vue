@@ -12,7 +12,7 @@
       </div>
       <div class="mb-4">
         <label for="content" :class="linkedStyle">İçerik:</label>
-        <ckeditor :editor="editor" v-model="form.content" class="h-96" :config="editorConfig"></ckeditor>
+        <div ref="quillEditor" class="quill-editor h-96"></div>
       </div>
       <div class="mb-4">
         <label for="published_at" :class="linkedStyle">Yayınlama tarihi:</label>
@@ -50,9 +50,10 @@
 </template>
 
 <script setup>
-import { watch, ref } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import Quill from 'quill';
+import 'quill/dist/quill.snow.css';
 
 const { props } = usePage();
 const categories = ref(props.categories);
@@ -75,17 +76,33 @@ const createWrite = () => {
 const linkedStyle = 'block font-bold mb-1 text-sm rounded';
 const linkedStyle2 = 'mt-1 block w-full rounded';
 
-const editor = ClassicEditor;
-const editorConfig = {
-  toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote'],
-  heading: {
-    options: [
-      { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-      { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-      { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-    ],
-  },
-};
+const quillEditor = ref(null);
+
+onMounted(() => {
+  const quill = new Quill(quillEditor.value, {
+    theme: 'snow',
+    modules: {
+      toolbar: [
+        [{ header: [1, 2, 3, 4, 5, 6, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        ['blockquote', 'code-block'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        [{ script: 'sub' }, { script: 'super' }],
+        [{ indent: '-1' }, { indent: '+1' }, { direction: 'rtl' }],
+        [{ size: ['small', false, 'large', 'huge'] }],
+        [{ color: [] }, { background: [] }],
+        [{ font: [] }],
+        [{ align: [] }],
+        ['link', 'image', 'video'],
+        ['clean'],
+      ],
+    },
+  });
+
+  quill.on('text-change', () => {
+    form.content = quill.root.innerHTML;
+  });
+});
 
 watch(
   () => form.title,
@@ -97,3 +114,9 @@ watch(
   }
 );
 </script>
+
+<style>
+.quill-editor {
+  height: 400px;
+}
+</style>

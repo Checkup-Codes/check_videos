@@ -30,8 +30,6 @@ library.add(
 
 import store from './Store';
 
-import CKEditor from '@ckeditor/ckeditor5-vue';
-
 // const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -58,7 +56,6 @@ createInertiaApp({
       .use(plugin)
       .use(ZiggyVue)
       .use(store)
-      .use(CKEditor)
       .component('font-awesome-icon', FontAwesomeIcon)
       .mount(el);
   },

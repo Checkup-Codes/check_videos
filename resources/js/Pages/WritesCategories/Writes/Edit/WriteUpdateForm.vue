@@ -12,24 +12,16 @@
       </div>
       <div class="mb-4">
         <label for="content" class="mb-1 block text-sm font-bold">İçerik:</label>
-        <ckeditor :editor="editor" v-model="form.content" :config="editorConfig" />
-      </div>
-      <div class="mb-4">
-        <label for="author_id" class="mb-1 block text-sm font-bold">Yazar id:</label>
-        <input v-model="form.author_id" type="number" id="author_id" class="mt-1 block w-full rounded" required />
-      </div>
-      <div class="mb-4">
-        <label for="published_at" class="mb-1 block text-sm font-bold">Yayınlanma Tarihi:</label>
-        <input v-model="form.published_at" type="datetime-local" id="published_at" class="mt-1 block w-full rounded" />
+        <div ref="quillEditor" class="h-96"></div>
       </div>
       <div class="mb-4">
         <label for="summary" class="mb-1 block text-sm font-bold">Özet:</label>
         <textarea v-model="form.summary" id="summary" class="mt-1 block w-full rounded" rows="3"></textarea>
       </div>
       <div class="mb-4">
-        <label for="category_id" :class="linkedStyle">Kategori:</label>
+        <label for="category_id" class="mb-1 block text-sm font-bold">Kategori:</label>
         <select v-model="form.category_id" id="category_id" class="mt-1 block w-full">
-          <option value="" disabled>Select a category</option>
+          <option value="" disabled>Kategori seç</option>
           <option v-for="category in categories" :key="category.id" :value="category.id">
             {{ category.name }}
           </option>
@@ -54,20 +46,20 @@
 </template>
 
 <script setup>
-import { watch } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import Quill from 'quill';
+import 'quill/dist/quill.snow.css';
 
 const { props } = usePage();
 const write = props.write;
-const categories = props.categories;
+const categories = ref(props.categories);
+const auth = props.auth;
 
 const form = useForm({
   title: write.title,
   slug: write.slug,
   content: write.content,
-  author_id: write.author_id,
-  published_at: write.published_at,
   summary: write.summary,
   status: write.status,
   category_id: write.category_id,
@@ -81,10 +73,35 @@ const updateWrite = () => {
     .catch((error) => {});
 };
 
-const editor = ClassicEditor;
-const editorConfig = {
-  height: '400px',
-};
+const quillEditor = ref(null);
+
+onMounted(() => {
+  const quill = new Quill(quillEditor.value, {
+    theme: 'snow',
+    modules: {
+      toolbar: [
+        [{ header: [1, 2, 3, 4, 5, 6, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        ['blockquote', 'code-block'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        [{ script: 'sub' }, { script: 'super' }],
+        [{ indent: '-1' }, { indent: '+1' }, { direction: 'rtl' }],
+        [{ size: ['small', false, 'large', 'huge'] }],
+        [{ color: [] }, { background: [] }],
+        [{ font: [] }],
+        [{ align: [] }],
+        ['link', 'image', 'video'],
+        ['clean'],
+      ],
+    },
+  });
+
+  quill.root.innerHTML = form.content;
+
+  quill.on('text-change', () => {
+    form.content = quill.root.innerHTML;
+  });
+});
 
 watch(
   () => form.title,

@@ -43,8 +43,7 @@
 
       <div class="col-span-6">
         <label class="mb-1 block font-medium">Description</label>
-        <ckeditor :editor="editor" v-model="form.description" class="h-96" :config="editorConfig"></ckeditor>
-
+        <div ref="quillEditor" class="h-96"></div>
         <div v-if="form.errors.description" class="input-error">{{ form.errors.description }}</div>
       </div>
 
@@ -138,7 +137,8 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import Quill from 'quill';
+import 'quill/dist/quill.snow.css';
 
 const { props } = usePage();
 
@@ -178,19 +178,35 @@ onMounted(() => {
       flashSuccess.value = null;
     }, 3000);
   }
+
+  const quill = new Quill(quillEditor.value, {
+    theme: 'snow',
+    modules: {
+      toolbar: [
+        [{ header: [1, 2, 3, 4, 5, 6, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        ['blockquote', 'code-block'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        [{ script: 'sub' }, { script: 'super' }],
+        [{ indent: '-1' }, { indent: '+1' }, { direction: 'rtl' }],
+        [{ size: ['small', false, 'large', 'huge'] }],
+        [{ color: [] }, { background: [] }],
+        [{ font: [] }],
+        [{ align: [] }],
+        ['link', 'image', 'video'],
+        ['clean'],
+      ],
+    },
+  });
+
+  quill.root.innerHTML = form.description;
+
+  quill.on('text-change', () => {
+    form.description = quill.root.innerHTML;
+  });
 });
 
-const editor = ClassicEditor;
-const editorConfig = {
-  toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote'],
-  heading: {
-    options: [
-      { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-      { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-      { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-    ],
-  },
-};
+const quillEditor = ref(null);
 </script>
 
 <style scoped>
