@@ -118,7 +118,7 @@ class CategoriesController extends Controller
             'name' => 'categories'
         ];
 
-        return inertia('WritesCategories/Categories/WriteByCategory/ShowWriteByCategory', [
+        return inertia('WritesCategories/Categories/WriteByCategory', [
             'category' => $category,
             'writes' => $writes,
             'write' => $write,

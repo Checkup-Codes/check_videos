@@ -56,24 +56,3 @@ const getCategoryName = (categoryId) => {
   return category ? category.name : 'Unknown';
 };
 </script>
-
-<style>
-.prose h1 {
-  @apply my-4 text-2xl font-bold;
-}
-.prose h2 {
-  @apply my-4 text-xl font-semibold;
-}
-.prose h3 {
-  @apply my-4 text-lg font-semibold;
-}
-.prose p {
-  @apply my-2;
-}
-.ql-container-custom .ql-code-block-container {
-  @apply rounded bg-gray-800 p-4 text-white;
-}
-.ql-container-custom .ql-code-block {
-  @apply whitespace-pre;
-}
-</style>

@@ -3,10 +3,10 @@
     <div class="h-full bg-sidebar text-sm">
       <Link href="/dashboard" :class="getLinkClasses('/login')" @click="$emit('link-clicked')">
         <div class="flex items-center">
-          <img :src="imagePath" alt="Yakup Sarı" class="h-10 w-12 rounded-full" />
+          <img :src="imagePath" alt="Yakup Sarı" class="h-12 w-12 rounded-full" />
           <div class="p-2">
-            <div class="font-bold">Yakup Sarı</div>
-            <div>Software Engineer</div>
+            <div class="text-md font-bold">Check-up Codes</div>
+            <div class="text-xs font-thin">Kodu yenile, bilgini tazele</div>
           </div>
         </div>
       </Link>
@@ -28,46 +28,46 @@
       >
         <font-awesome-icon :icon="['fab', 'instagram']" class="mr-2" /> Instagram
       </a>
-      <Link
-        href="https://www.youtube.com/@checkupcodes"
+      <a
+        href="https://www.youtube.com/@checkupcodes/"
         target="_blank"
         :class="getLinkClasses('/youtube')"
         @click="$emit('link-clicked')"
       >
         <font-awesome-icon :icon="['fab', 'youtube']" class="mr-2" /> Youtube
-      </Link>
-      <Link
+      </a>
+      <a
         href="https://github.com/cekapykp"
         target="_blank"
         :class="getLinkClasses('/github')"
         @click="$emit('link-clicked')"
       >
         <font-awesome-icon :icon="['fab', 'github']" class="mr-2" /> Github
-      </Link>
-      <Link
+      </a>
+      <a
         href="https://www.linkedin.com/in/cekap/"
         target="_blank"
         :class="getLinkClasses('/linkedin')"
         @click="$emit('link-clicked')"
       >
         <font-awesome-icon :icon="['fab', 'linkedin']" class="mr-2" /> Linkedin
-      </Link>
-      <Link
+      </a>
+      <a
         href="https://medium.com/@cekapykp"
         target="_blank"
         :class="getLinkClasses('/medium')"
         @click="$emit('link-clicked')"
       >
         <font-awesome-icon :icon="['fab', 'medium']" class="mr-2" /> Medium
-      </Link>
-      <Link
+      </a>
+      <a
         href="https://x.com/checkupcodes"
         target="_blank"
         :class="getLinkClasses('/twitter')"
         @click="$emit('link-clicked')"
       >
         <font-awesome-icon :icon="['fab', 'twitter']" class="mr-2" /> Twitter
-      </Link>
+      </a>
     </div>
   </div>
 </template>
@@ -79,7 +79,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { Inertia } from '@inertiajs/inertia';
 
 const { props } = usePage();
-const imagePath = ref('/images/cekap.png');
+const imagePath = ref('/images/checkup_codes_logo.png');
 const currentUrl = ref(window.location.pathname);
 const auth = ref(props.auth);
 

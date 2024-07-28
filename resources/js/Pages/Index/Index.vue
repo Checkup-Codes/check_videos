@@ -1,12 +1,13 @@
 <template>
-  <div class="min-h-screen bg-gray-100">
-    <header class="flex h-screen items-center justify-center bg-gray-100 text-black">
-      <div class="text-center">
-        <h2 class="animate__animated animate__fadeInDown mb-4 text-4xl font-bold">Check-up Codes</h2>
-        <p class="animate__animated animate__fadeInUp mb-6 text-lg">
-          Yolculuğumu Takip Edin, En Güncel İçeriklerle Güncel Kalın.
-        </p>
-      </div>
+  <div class="flex min-h-screen items-center justify-center bg-gray-100">
+    <header class="text-center">
+      <img
+        src="../../../../public/images/checkup_codes_logo.png"
+        alt="Yakup Sarı"
+        class="mx-auto h-96 w-96 rounded-full"
+      />
+      <h2 class="animate__animated animate__fadeInDown mb-4 text-4xl font-bold">Check-up Codes</h2>
+      <p class="animate__animated animate__fadeInUp mb-6 text-lg">Kodlarınızı Yenileyin, Bilginizi Tazeleyin.</p>
     </header>
   </div>
 </template>

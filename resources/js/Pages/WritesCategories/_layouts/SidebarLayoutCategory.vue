@@ -143,3 +143,15 @@ const getCategoryName = (categoryId) => {
   return category ? category.slug : 'Unknown';
 };
 </script>
+
+<style scoped>
+.input-error {
+  color: red;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.btn-primary {
+  @apply rounded bg-gray-500 px-4 py-2 font-bold text-white;
+}
+</style>

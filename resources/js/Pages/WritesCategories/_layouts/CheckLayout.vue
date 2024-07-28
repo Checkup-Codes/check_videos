@@ -10,8 +10,8 @@
   </div>
 </template>
 <script setup>
-import SidebarLayoutWrite from '@/Pages/WritesCategories/Writes/SidebarLayoutWrite.vue';
-import SidebarLayoutCategory from '@/Pages/WritesCategories/Categories/SidebarLayoutCategory.vue';
+import SidebarLayoutWrite from '@/Pages/WritesCategories/_layouts/SidebarLayoutWrite.vue';
+import SidebarLayoutCategory from '@/Pages/WritesCategories/_layouts/SidebarLayoutCategory.vue';
 import { usePage } from '@inertiajs/vue3';
 
 const { props } = usePage();

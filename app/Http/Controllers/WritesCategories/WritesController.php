@@ -18,7 +18,7 @@ class WritesController extends Controller
         });
 
         $writes = Cache::remember('writes', 60, function () {
-            return Write::all();
+            return Write::select('views_count', 'title', 'created_at', 'slug')->get();
         });
 
         $screen = [
@@ -93,7 +93,7 @@ class WritesController extends Controller
         });
 
         $writes = Cache::remember('writes', 60, function () {
-            return Write::all();
+            return Write::select('views_count', 'title', 'created_at', 'slug')->get();
         });
 
         $write = Write::where('slug', $slug)->firstOrFail();
@@ -111,6 +111,7 @@ class WritesController extends Controller
             'screen' => $screen
         ]);
     }
+
 
     public function edit($id)
     {
