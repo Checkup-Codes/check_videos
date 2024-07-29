@@ -1,5 +1,5 @@
 <template>
-  <div class="z-20 col-span-1 shadow-sm shadow-gray-600">
+  <div class="z-20 col-span-1 shadow-sm shadow-[#212e7b]">
     <div class="h-full bg-sidebar text-sm">
       <Link href="/dashboard" :class="getLinkClasses('/login')" @click="$emit('link-clicked')">
         <div class="flex items-center">

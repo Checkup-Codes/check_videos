@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto mt-10 w-full max-w-full overflow-auto rounded-lg bg-white p-2 shadow-md lg:mt-0">
+  <div class="mx-auto mt-10 w-full max-w-full overflow-auto p-2 shadow-md lg:mt-0">
     <div class="flex items-center justify-between">
       <div class="hidden text-sm text-gray-500 lg:block">Kategori: {{ getCategoryName(write.category_id) }}</div>
       <div class="block lg:hidden">

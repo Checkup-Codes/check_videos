@@ -20,6 +20,8 @@ export default {
             },
             colors: {
                 'sidebar': '#fafafa',
+                'subsidebar-shadow': 'rgb(0,180,216,0.7)',
+                'screen-bg': '#FBFEFE',
             },
             gridTemplateColumns: {
                 'subsidebar': '1fr 2fr',

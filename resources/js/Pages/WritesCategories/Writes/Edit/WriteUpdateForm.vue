@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto max-w-[97%] rounded-lg bg-white p-6 shadow-md">
+  <div class="bg-screen-bg mx-auto max-w-[97%] rounded-lg p-6 shadow-md">
     <h1 class="mb-6 text-3xl font-bold">Yazıyı Güncelle</h1>
     <form @submit.prevent="updateWrite">
       <div class="mb-4">

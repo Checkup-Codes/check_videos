@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto p-4">
+  <div class="bg-screen-bg container mx-auto p-6">
     <h1 class="mb-4 text-2xl font-bold">Yeni yazı oluştur</h1>
     <form @submit.prevent="createWrite">
       <div class="mb-4">

@@ -11,7 +11,7 @@
       "forceConsistentCasingInFileNames": true,
       "noEmit": true,
       "skipLibCheck": true,
-      "baseUrl": ".", // Bu satırı ekleyin
+      "baseUrl": ".",
       "paths": {
         "@/*": [
           "resources/js/*"

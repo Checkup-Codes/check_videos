@@ -6,7 +6,7 @@
         <span class="block sm:inline">{{ flashSuccess }}</span>
       </div>
     </div>
-    <div class="fixed z-10 mt-14 w-full shadow-right shadow-gray-100 lg:mt-0 lg:w-[27%]">
+    <div class="shadow-subsidebar-shadow fixed z-30 mt-14 w-full shadow-lg lg:mt-0 lg:w-[27%]">
       <div class="flex cursor-pointer justify-between text-sm text-black">
         <div>
           <div class="m-2 space-y-4 rounded p-1 font-bold text-black">

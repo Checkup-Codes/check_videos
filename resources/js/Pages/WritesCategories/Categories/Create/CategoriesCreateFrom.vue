@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto mt-10 w-full max-w-full overflow-auto rounded-lg bg-white p-2 shadow-md lg:mt-0">
+  <div class="mx-auto mt-10 w-full max-w-full overflow-auto bg-screen-bg p-2 shadow-md lg:mt-0">
     <div class="container mx-auto p-4">
       <h1 class="mb-4 text-2xl font-bold">Kategori Oluştur</h1>
       <form @submit.prevent="createWrite">
