@@ -1,5 +1,6 @@
 import './bootstrap';
 import '../css/app.css';
+import '@/Shared/Css/quill-custom-styles.css';
 
 import { createSSRApp, h, DefineComponent } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
