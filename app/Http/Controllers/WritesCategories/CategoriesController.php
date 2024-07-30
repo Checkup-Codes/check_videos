@@ -110,7 +110,15 @@ class CategoriesController extends Controller
             return Category::all();
         });
 
-        $writes = Write::where('category_id', $category->id)->get();
+        $writes = Write::where('category_id', $category->id)
+            ->select('id', 'title', 'slug', 'author_id', 'category_id', 'published_at', 'summary', 'status', 'views_count', 'seo_keywords', 'tags', 'meta_description', 'cover_image', 'created_at', 'updated_at')
+            ->get()
+            ->map(function ($write) {
+                return Cache::remember("write_{$write->id}", 60, function () use ($write) {
+                    return $write;
+                });
+            });
+
         $write = Write::where('slug', $writeSlug)->firstOrFail();
 
         $screen = [
