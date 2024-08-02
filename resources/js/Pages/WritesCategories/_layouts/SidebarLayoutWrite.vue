@@ -2,7 +2,7 @@
   <div class="relative">
     <div v-if="flashSuccess" class="fixed right-4 top-4 z-50">
       <div class="relative rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700" role="alert">
-        <strong class="font-bold">Success! </strong>
+        <strong class="font-bold">Başarılı! </strong>
         <span class="block sm:inline">{{ flashSuccess }}</span>
       </div>
     </div>
@@ -46,7 +46,7 @@
         </div>
       </div>
 
-      <div class="h-[92vh] overflow-auto" @scroll="handleScroll" ref="scrollContainer">
+      <div class="h-[100vh] overflow-auto" @scroll="handleScroll" ref="scrollContainer">
         <div class="sticky top-0 z-20 bg-sidebar">
           <div v-show="showCategories" class="grid grid-cols-3 gap-1 px-4 pb-3 text-sm">
             <div v-for="category in categories" :key="category.id" class="transition-all duration-100">

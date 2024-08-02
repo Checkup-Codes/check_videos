@@ -1,6 +1,6 @@
 <template>
   <div class="relative">
-    <div v-if="flashSuccess" class="fixed right-4 top-4 z-50">
+    <div v-if="flashSuccess" class="fixed right-4 top-10 z-50">
       <div class="relative rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700" role="alert">
         <strong class="font-bold">Başarılı! </strong>
         <span class="block sm:inline">{{ flashSuccess }}</span>
