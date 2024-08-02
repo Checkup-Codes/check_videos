@@ -6,7 +6,7 @@
         <span class="block sm:inline">{{ flashSuccess }}</span>
       </div>
     </div>
-    <div class="shadow-subsidebar-shadow fixed z-30 mt-14 w-full shadow-lg lg:mt-0 lg:w-[27%]">
+    <div class="fixed z-30 mt-14 w-full shadow-lg shadow-subsidebar-shadow lg:mt-0 lg:w-[27%]">
       <div class="flex cursor-pointer justify-between text-sm text-black">
         <div>
           <div class="m-2 space-y-4 rounded p-1 font-bold text-black">
@@ -46,7 +46,7 @@
         </div>
       </div>
 
-      <div class="h-[92vh] overflow-auto" ref="scrollContainer" @scroll="handleScroll">
+      <div class="h-[100vh] overflow-auto" ref="scrollContainer" @scroll="handleScroll">
         <div class="sticky top-0 z-20 bg-sidebar">
           <div v-show="showCategories" class="grid grid-cols-3 gap-1 bg-sidebar px-4 pb-3 text-sm">
             <div v-for="category in categories" :key="category.id" class="transition-all duration-100">
