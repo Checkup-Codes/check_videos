@@ -33,7 +33,8 @@ class EquipmentsController extends Controller
      */
     public function store(Request $request)
     {
-        -$validatedData = $request->validate([
+
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:equipments',
             'specs' => 'required|string',
@@ -44,6 +45,7 @@ class EquipmentsController extends Controller
 
         return redirect()->route('equipments.index')->with('success', 'Ekipman ekleme başarılı.');
     }
+
 
 
     /**
