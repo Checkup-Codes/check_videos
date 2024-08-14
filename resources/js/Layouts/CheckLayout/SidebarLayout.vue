@@ -16,6 +16,9 @@
       <Link href="/writes" :class="getLinkClasses(['/categories', '/writes'])" @click="$emit('link-clicked')">
         <font-awesome-icon icon="fa-solid fa-pencil" class="pr-1" /> Yazılar
       </Link>
+      <Link href="/equipments" :class="getLinkClasses(['/equipments'])" @click="$emit('link-clicked')">
+        <font-awesome-icon icon="fa-solid fa-industry" class="pr-1" /> Ekipmanlarım
+      </Link>
       <!-- <Link href="/bookmarks" :class="getLinkClasses('/bookmarks')" @click="$emit('link-clicked')">
         <font-awesome-icon :icon="['fas', 'bookmark']" class="mr-2" /> Yer İmleri
       </Link> -->

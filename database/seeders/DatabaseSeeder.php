@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\SP\SoftwareProduct;
 use App\Models\WritesCategories\Category;
 use App\Models\WritesCategories\Write;
+use App\Models\Equipment;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,6 +23,8 @@ class DatabaseSeeder extends Seeder
 
         Category::factory()->count(10)->create();
 
-        Write::factory()->count(50)->create();
+        Write::factory()->count(30)->create();
+
+        Equipment::factory()->count(10)->create();
     }
 }

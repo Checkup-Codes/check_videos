@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\WritesCategories\WritesController;
 use App\Http\Controllers\BookmarksController;
+use App\Http\Controllers\EquipmentsController;
 use App\Http\Controllers\WritesCategories\CategoriesController;
 use App\Http\Controllers\SP\SoftwareProductsController;
 
@@ -47,7 +48,9 @@ Route::middleware('auth')->group(function () {
 });
 
 
-
-
+Route::resource('/equipments', EquipmentsController::class);
+Route::middleware('auth')->group(function () {
+    Route::resource('/equipments', EquipmentsController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
+});
 
 require __DIR__ . '/auth.php';
