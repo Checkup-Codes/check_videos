@@ -1,0 +1,1 @@
+import s from"./SidebarLayoutBookmarks-BSbUjXoh.js";import{g as o,a as e,b as a,o as c}from"./app-CUtkyMvc.js";const r={class:"lg:grid-cols-subsidebar grid h-full grid-cols-1"},t=a("div",{class:"hidden p-4 lg:block"},"Bookmarks",-1),m={__name:"IndexBookmarks",setup(l){return(d,_)=>(c(),o("div",r,[e(s,{class:"block"}),t]))}};export{m as default};

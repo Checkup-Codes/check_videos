@@ -6,7 +6,7 @@
         <span class="block sm:inline">{{ flashSuccess }}</span>
       </div>
     </div>
-    <div class="shadow-subsidebar-shadow fixed z-30 mt-14 w-full shadow-lg lg:mt-0 lg:w-[27%]">
+    <div class="fixed z-30 mt-14 w-full shadow-lg shadow-subsidebar-shadow lg:mt-0 lg:w-[27%]">
       <div class="flex cursor-pointer justify-between text-sm text-black">
         <div>
           <div class="m-2 space-y-4 rounded p-1 font-bold text-black">
@@ -68,7 +68,7 @@
           >
             <div class="py-1 font-bold">{{ write.title }}</div>
             <div class="flex">
-              <div class="py-0.5 text-sm text-gray-400">{{ formatDate(write.published_at) }}</div>
+              <div class="py-0.5 text-sm text-gray-400">{{ formatDate(write.updated_at) }}</div>
               <div class="px-5 py-0.5 text-sm text-gray-400">{{ write.views_count }} Görüntülenme</div>
             </div>
           </Link>

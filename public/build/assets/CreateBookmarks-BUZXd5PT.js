@@ -1,0 +1,1 @@
+import{_ as e}from"./app-CUtkyMvc.js";const r={};function t(c,o){return"Create"}const a=e(r,[["render",t]]);export{a as default};

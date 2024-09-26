@@ -12,7 +12,14 @@ class Write extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'slug', 'content', 'author_id', 'published_at', 'summary', 'status', 'cover_image'
+        'title',
+        'slug',
+        'content',
+        'author_id',
+        'updated_at',
+        'summary',
+        'status',
+        'cover_image'
     ];
 
     public $incrementing = false;

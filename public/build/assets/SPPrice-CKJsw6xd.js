@@ -1,0 +1,1 @@
+import{i as c,g as n,t as o,o as a}from"./app-CUtkyMvc.js";const m={__name:"SPPrice",props:{price:[Number,String]},setup(e){const r=e,t=c(()=>Number(r.price).toLocaleString("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0}));return(s,i)=>(a(),n("span",null,o(t.value),1))}};export{m as default};

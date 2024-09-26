@@ -111,7 +111,8 @@ const getLinkClasses = (href) => {
 };
 
 const toggleCategoryMenu = () => {
-  showCategories.value = !showCategories.value;
+  // showCategories.value = !showCategories.value;
+  // @checkupcodes bu kısım için issue tanımlandı : https://github.com/Checkup-Codes/check_videos/issues/4
 };
 
 const handleScroll = () => {

@@ -18,7 +18,7 @@ class WritesController extends Controller
         });
 
         $writes = Cache::remember('writes', 60, function () {
-            return Write::select('views_count', 'title', 'created_at', 'slug')->get();
+            return Write::select('views_count', 'title', 'created_at', 'slug', 'updated_at')->get();
         });
 
         $screen = [
