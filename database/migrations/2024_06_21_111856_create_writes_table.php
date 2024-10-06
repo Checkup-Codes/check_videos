@@ -28,6 +28,7 @@ class CreateWritesTable extends Migration
             $table->string('tags')->nullable();
             $table->string('meta_description')->nullable();
             $table->string('cover_image')->nullable();
+            $table->boolean('hasDraw')->default(0);
             $table->timestamps();
             $table->foreign('category_id')->references('id')->on('categories')
                 ->onDelete('cascade');

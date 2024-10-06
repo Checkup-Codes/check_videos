@@ -11,7 +11,17 @@ import { InertiaProgress } from '@inertiajs/progress';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faHome, faCog, faIndustry, faBook, faPencilAlt, faBookmark, faCube } from '@fortawesome/free-solid-svg-icons';
+import {
+  faHome,
+  faCog,
+  faIndustry,
+  faBook,
+  faPencilAlt,
+  faBookmark,
+  faCube,
+  faSync,
+  faFolder,
+} from '@fortawesome/free-solid-svg-icons';
 import { faInstagram, faGithub, faYoutube, faLinkedin, faMedium, faTwitter } from '@fortawesome/free-brands-svg-icons';
 library.add(
   faHome,
@@ -26,7 +36,9 @@ library.add(
   faTwitter,
   faPencilAlt,
   faBookmark,
-  faCube
+  faCube,
+  faSync,
+  faFolder
 );
 
 import store from './Store';

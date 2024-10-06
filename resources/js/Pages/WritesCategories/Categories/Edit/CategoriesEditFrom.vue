@@ -31,45 +31,46 @@
 </template>
 
 <script setup>
-import { watch, ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 
 const { props } = usePage();
-const category = props.category;
 const auth = props.auth;
-
 const form = useForm({
-  name: category.name,
-  slug: category.slug,
+  name: '',
+  slug: '',
 });
+
+watch(
+  () => props.category,
+  (newCategory) => {
+    form.name = newCategory.name;
+    form.slug = newCategory.slug;
+  },
+  { immediate: true }
+);
 
 const updateWrite = () => {
   form
     .put(route('categories.update', { category: props.category.id }))
-    .then(() => {})
-    .catch((error) => {});
+    .then(() => {
+      // Güncelleme başarılı olursa yapılacaklar
+    })
+    .catch((error) => {
+      // Hata varsa yapılacaklar
+    });
 };
-
-const goBack = () => {
-  window.history.back();
-};
-
-watch(
-  () => form.title,
-  (newTitle) => {
-    form.slug = newTitle
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
-  }
-);
 
 const deleteCategory = (categoryId) => {
-  if (confirm('Are you sure you want to delete this category?')) {
+  if (confirm('Bu kategoriyi çöpe mi atıyoruz ?')) {
     form
-      .delete(route('categories.destroy', { category: category }))
-      .then(() => {})
-      .catch((error) => {});
+      .delete(route('categories.destroy', { category: props.category.id }))
+      .then(() => {
+        // Silme başarılı olursa yapılacaklar
+      })
+      .catch((error) => {
+        // Hata varsa yapılacaklar
+      });
   }
 };
 </script>

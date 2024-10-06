@@ -22,6 +22,9 @@ export default defineConfig({
             },
         }),
     ],
+    define: {
+        'process.env': {},
+    },
     resolve: {
         alias: {
             ziggy: path.resolve('vendor/tightenco/ziggy/dist/vue.es.js'),

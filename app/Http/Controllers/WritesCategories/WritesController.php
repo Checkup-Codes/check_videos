@@ -42,7 +42,6 @@ class WritesController extends Controller
         $writes = Cache::remember('writes', 60, function () {
             return Write::all();
         });
-
         $screen = [
             'isMobileSidebar' => false,
             'name' => 'writes'
@@ -54,38 +53,6 @@ class WritesController extends Controller
             'screen' => $screen
         ]);
     }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:writes,slug',
-            'content' => 'required',
-            'published_at' => 'nullable|date',
-            'summary' => 'nullable|string',
-            'status' => 'required|in:draft,published',
-            'cover_image' => 'nullable|string|max:255',
-            'category_id' => 'required|exists:categories,id'
-        ]);
-
-        $write = new Write();
-        $write->title = $request->title;
-        $write->slug = $request->slug;
-        $write->content = $request->content;
-        $write->published_at = $request->published_at;
-        $write->summary = $request->summary;
-        $write->status = $request->status;
-        $write->cover_image = $request->cover_image;
-        $write->category_id = $request->category_id;
-        $write->author_id = Auth::id();
-        $write->save();
-
-        Cache::forget('categories');
-        Cache::forget('writes');
-
-        return redirect()->route('writes.index')->with('success', 'Write created successfully.');
-    }
-
     public function show($slug)
     {
         $categories = Cache::remember('categories', 60, function () {
@@ -112,7 +79,6 @@ class WritesController extends Controller
         ]);
     }
 
-
     public function edit($id)
     {
         $categories = Cache::remember('categories', 60, function () {
@@ -137,6 +103,54 @@ class WritesController extends Controller
         ]);
     }
 
+    public function destroy($id)
+    {
+        $write = Write::findOrFail($id);
+        $write->delete();
+
+        Cache::forget('categories');
+        Cache::forget('writes');
+
+        return redirect()->route('writes.index')->with('success', 'Çöp, bir yazı daha kazandı !');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:writes,slug',
+            'content' => 'required',
+            'published_at' => 'nullable|date',
+            'summary' => 'nullable|string',
+            'status' => 'required|in:draft,published',
+            'cover_image' => 'nullable|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'seo_keywords' => 'nullable|string|max:255',
+            'tags' => 'nullable|string|max:255',
+            'hasDraw' => 'required|boolean',
+        ]);
+
+        $write = new Write();
+        $write->title = $request->title;
+        $write->slug = $request->slug;
+        $write->content = $request->content;
+        $write->published_at = $request->published_at;
+        $write->summary = $request->summary;
+        $write->status = $request->status;
+        $write->cover_image = $request->cover_image;
+        $write->category_id = $request->category_id;
+        $write->author_id = Auth::id();
+        $write->seo_keywords = $request->seo_keywords;
+        $write->tags = $request->tags;
+        $write->hasDraw = $request->hasDraw;
+        $write->save();
+
+        Cache::forget('categories');
+        Cache::forget('writes');
+
+        return redirect()->route('writes.index')->with('success', 'Nur topu gibi bir yazınız daha oldu.');
+    }
+
     public function update(Request $request, Write $write)
     {
         $request->validate([
@@ -148,6 +162,9 @@ class WritesController extends Controller
             'status' => 'required|in:draft,published',
             'cover_image' => 'nullable|string|max:255',
             'category_id' => 'required|exists:categories,id',
+            'seo_keywords' => 'nullable|string|max:255',
+            'tags' => 'nullable|string|max:255',
+            'hasDraw' => 'required|boolean',
         ]);
 
         $write->title = $request->title;
@@ -158,22 +175,14 @@ class WritesController extends Controller
         $write->status = $request->status;
         $write->cover_image = $request->cover_image;
         $write->category_id = $request->category_id;
+        $write->seo_keywords = $request->seo_keywords;
+        $write->tags = $request->tags;
+        $write->hasDraw = $request->hasDraw;
         $write->save();
 
         Cache::forget('categories');
         Cache::forget('writes');
 
-        return redirect()->route('writes.index')->with('success', 'Write updated successfully.');
-    }
-
-    public function destroy($id)
-    {
-        $write = Write::findOrFail($id);
-        $write->delete();
-
-        Cache::forget('categories');
-        Cache::forget('writes');
-
-        return redirect()->route('writes.index')->with('success', 'Write deleted successfully.');
+        return redirect()->route('writes.index')->with('success', 'Yazıyı modifiye ettik.');
     }
 }

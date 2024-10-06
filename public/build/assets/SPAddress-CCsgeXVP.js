@@ -1,1 +1,0 @@
-import{g as r,t as e,o as a}from"./app-CUtkyMvc.js";const s={__name:"SPAddress",props:{product:Object},setup(t){return(c,o)=>(a(),r("span",null,e(t.product.platform)+" "+e(t.product.category)+", "+e(t.product.name),1))}};export{s as default};

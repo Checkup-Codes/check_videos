@@ -15,12 +15,20 @@ class Write extends Model
         'title',
         'slug',
         'content',
-        'author_id',
-        'updated_at',
+        'auor_id',
+        'category_id',
+        'published_at',
         'summary',
         'status',
-        'cover_image'
+        'views_count',
+        'seo_keywords',
+        'tags',
+        'meta_description',
+        'cover_image',
+        'hasDraw',
     ];
+
+
 
     public $incrementing = false;
     protected $keyType = 'string';

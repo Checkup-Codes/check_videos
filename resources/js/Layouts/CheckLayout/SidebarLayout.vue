@@ -13,11 +13,18 @@
       <Link href="/" :class="getLinkClasses('/')" @click="$emit('link-clicked')">
         <font-awesome-icon icon="home" class="mr-2" /> Ana Sayfa
       </Link>
-      <Link href="/writes" :class="getLinkClasses(['/categories', '/writes'])" @click="$emit('link-clicked')">
+      <Link href="/writes" :class="getLinkClasses(['/writes'])" @click="$emit('link-clicked')">
         <font-awesome-icon icon="fa-solid fa-pencil" class="pr-1" /> Yazılar
       </Link>
+      <!-- 
+      <Link href="/categories" :class="getLinkClasses(['/categories'])" @click="$emit('link-clicked')">
+        <font-awesome-icon icon="fa-solid fa-folder" class="pr-1" /> Kategoriler
+      </Link> -->
       <Link href="/equipments" :class="getLinkClasses(['/equipments'])" @click="$emit('link-clicked')">
         <font-awesome-icon icon="fa-solid fa-industry" class="pr-1" /> Ekipmanlarım
+      </Link>
+      <Link href="/versions" :class="getLinkClasses(['/versions'])" @click="$emit('link-clicked')">
+        <font-awesome-icon icon="fa-solid fa-sync" class="pr-1" /> Güncellemeler
       </Link>
       <!-- <Link href="/bookmarks" :class="getLinkClasses('/bookmarks')" @click="$emit('link-clicked')">
         <font-awesome-icon :icon="['fas', 'bookmark']" class="mr-2" /> Yer İmleri
@@ -71,6 +78,9 @@
       >
         <font-awesome-icon :icon="['fab', 'twitter']" class="mr-2" /> Twitter
       </a>
+      <Link href="/excalidraw" :class="getLinkClasses('/excalidraw')" @click="$emit('link-clicked')">
+        <font-awesome-icon :icon="['fas', 'pencil-alt']" class="mr-2" /> Excalidraw
+      </Link>
     </div>
   </div>
 </template>

@@ -60,7 +60,6 @@
             </div>
           </div>
         </div>
-
         <div v-for="write in writes" :key="write.id" class="px-3 py-1">
           <Link
             :href="

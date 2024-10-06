@@ -9,5 +9,4 @@
 <script setup>
 import CheckLayout from '@/Pages/WritesCategories/_layouts/CheckLayout.vue';
 import Screen from '@/Pages/WritesCategories/Categories/Index/Screen.vue';
-
 </script>

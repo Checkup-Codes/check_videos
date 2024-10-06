@@ -16,13 +16,13 @@ const mutations = {
     state.bookmarks.push(bookmark);
   },
   UPDATE_BOOKMARK(state, updatedBookmark) {
-    const index = state.bookmarks.findIndex(b => b.id === updatedBookmark.id);
+    const index = state.bookmarks.findIndex((b) => b.id === updatedBookmark.id);
     if (index !== -1) {
       state.bookmarks.splice(index, 1, updatedBookmark);
     }
   },
   DELETE_BOOKMARK(state, bookmarkId) {
-    state.bookmarks = state.bookmarks.filter(b => b.id !== bookmarkId);
+    state.bookmarks = state.bookmarks.filter((b) => b.id !== bookmarkId);
   },
 };
 

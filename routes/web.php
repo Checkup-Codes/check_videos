@@ -11,6 +11,7 @@ use App\Http\Controllers\BookmarksController;
 use App\Http\Controllers\EquipmentsController;
 use App\Http\Controllers\WritesCategories\CategoriesController;
 use App\Http\Controllers\SP\SoftwareProductsController;
+use App\Http\Controllers\FBVersions\VersionsController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -53,4 +54,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('/equipments', EquipmentsController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
 });
 
+Route::resource('/versions', VersionsController::class);
 require __DIR__ . '/auth.php';
+
+Route::get('/excalidraw', function () {
+    return Inertia::render('Excalidraw');
+});

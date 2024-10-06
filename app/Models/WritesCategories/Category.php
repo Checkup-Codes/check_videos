@@ -11,6 +11,8 @@ class Category extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['name', 'slug'];
+
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -25,7 +27,6 @@ class Category extends Model
         });
     }
 
-    protected $fillable = ['name', 'slug'];
 
     public function writes()
     {

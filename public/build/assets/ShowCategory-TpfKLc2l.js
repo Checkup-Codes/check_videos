@@ -1,1 +1,0 @@
-import o from"./CheckLayout-DY-3Jp3s.js";import r from"./Screen-ETV_VTpl.js";import{c as t,w as e,o as a,a as c}from"./app-CUtkyMvc.js";import"./SidebarLayoutWrite-mkMHE-87.js";import"./CloseX-2OzA8rL2.js";import"./SidebarLayoutCategory-D_xJhtYO.js";const h={__name:"ShowCategory",setup(m){return(_,s)=>(a(),t(o,null,{screen:e(()=>[c(r)]),_:1}))}};export{h as default};

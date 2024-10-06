@@ -1,5 +1,5 @@
 <template>
-  <div class="lg:grid-cols-subsidebar grid h-full grid-cols-1">
+  <div class="grid h-full grid-cols-1 lg:grid-cols-subsidebar">
     <SidebarLayoutBookmarks class="block" />
     <div class="hidden p-4 lg:block">Bookmarks</div>
   </div>

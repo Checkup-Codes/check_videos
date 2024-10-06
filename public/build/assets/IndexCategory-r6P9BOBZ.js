@@ -1,1 +1,0 @@
-import r from"./CheckLayout-DY-3Jp3s.js";import e from"./Screen-CgdHsGU7.js";import{c as o,w as t,o as a,a as c}from"./app-CUtkyMvc.js";import"./SidebarLayoutWrite-mkMHE-87.js";import"./CloseX-2OzA8rL2.js";import"./SidebarLayoutCategory-D_xJhtYO.js";const x={__name:"IndexCategory",setup(m){return(n,p)=>(a(),o(r,null,{screen:t(()=>[c(e)]),_:1}))}};export{x as default};

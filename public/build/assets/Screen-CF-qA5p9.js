@@ -1,1 +1,0 @@
-import r from"./GoBackButton-BQOtkurj.js";import a from"./CategoriesEditFrom-CHRfG9f8.js";import{g as o,a as e,F as t,o as c}from"./app-CUtkyMvc.js";const i={__name:"Screen",setup(m){return(n,_)=>(c(),o(t,null,[e(r),e(a)],64))}};export{i as default};

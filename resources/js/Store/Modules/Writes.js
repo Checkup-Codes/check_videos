@@ -11,14 +11,14 @@ const mutations = {
 };
 
 const actions = {
-//   async fetchWrites({ commit }) {
-//     try {
-//       const response = await axios.get('/api/v1/writes');
-//       commit('SET_WRITES', response.data.writes);
-//     } catch (error) {
-//       console.error('Error fetching writes:', error);
-//     }
-//   },
+  //   async fetchWrites({ commit }) {
+  //     try {
+  //       const response = await axios.get('/api/v1/writes');
+  //       commit('SET_WRITES', response.data.writes);
+  //     } catch (error) {
+  //       console.error('Error fetching writes:', error);
+  //     }
+  //   },
 };
 
 const getters = {
