@@ -1,0 +1,1 @@
+import o from"./CheckLayout-usmXZDkh.js";import r from"./Screen-BBuSfAXr.js";import{c as e,w as t,o as a,a as c}from"./app-DmpDP_1b.js";import"./SidebarLayoutVersion-DVjzs4qA.js";/* empty css            */const u={__name:"ShowVersion",setup(s){return(_,m)=>(a(),e(o,null,{screen:t(()=>[c(r)]),_:1}))}};export{u as default};

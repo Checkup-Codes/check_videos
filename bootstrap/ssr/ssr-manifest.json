@@ -33,12 +33,7 @@
     "/build/assets/AuthenticatedLayout-D2yPl9ig.js"
   ],
   "resources/js/Components/ExcalidrawComponent.vue": [
-    "/build/assets/Excalidraw-C3tP0FNw.js",
-    "/build/assets/Excalidraw-Bff820Sm.css"
-  ],
-  "resources/js/Components/ExcalidrawComponent.vue?vue&type=style&index=0&scoped=7633edb0&lang.css": [
-    "/build/assets/Excalidraw-C3tP0FNw.js",
-    "/build/assets/Excalidraw-Bff820Sm.css"
+    "/build/assets/ExcalidrawComponent-D2-UY8xq.js"
   ],
   "resources/js/Components/InputError.vue": [
     "/build/assets/TextInput-CHlFa_Ka.js"
@@ -181,8 +176,7 @@
     "/build/assets/IndexEquipment-B5M-6hUX.js"
   ],
   "resources/js/Pages/Excalidraw.vue": [
-    "/build/assets/Excalidraw-C3tP0FNw.js",
-    "/build/assets/Excalidraw-Bff820Sm.css"
+    "/build/assets/Excalidraw-DqLMiq8L.js"
   ],
   "resources/js/Pages/FBVersions/Versions/Create/Screen.vue": [
     "/build/assets/Screen-Bg1bJDdH.js"
@@ -340,6 +334,9 @@
   "resources/js/Pages/WritesCategories/Categories/WriteByCategory/Screen.vue": [
     "/build/assets/Screen-Ch4yamPF.js"
   ],
+  "resources/js/Pages/WritesCategories/Writes/Create/FormField.vue": [
+    "/build/assets/FormField-0mpY1QDr.js"
+  ],
   "resources/js/Pages/WritesCategories/Writes/Create/Screen.vue": [
     "/build/assets/Screen-DVv_d6tk.js",
     "/build/assets/quill-D_ujWoP8.css"
@@ -377,15 +374,15 @@
     "/build/assets/IndexWrite-CFL8SuqK.js"
   ],
   "resources/js/Pages/WritesCategories/Writes/Show/Screen.vue": [
-    "/build/assets/Screen-B4itUiqk.js",
+    "/build/assets/Screen-_YDAH3lo.js",
     "/build/assets/Screen-l7rh0pWG.css"
   ],
   "resources/js/Pages/WritesCategories/Writes/Show/Screen.vue?vue&type=style&index=0&lang.css": [
-    "/build/assets/Screen-B4itUiqk.js",
+    "/build/assets/Screen-_YDAH3lo.js",
     "/build/assets/Screen-l7rh0pWG.css"
   ],
   "resources/js/Pages/WritesCategories/Writes/ShowWrite.vue": [
-    "/build/assets/ShowWrite-BjEsddEZ.js"
+    "/build/assets/ShowWrite-RFNJjqY0.js"
   ],
   "resources/js/Pages/WritesCategories/_components/GoBackButton.vue": [
     "/build/assets/GoBackButton-DuDuOUOx.js"
