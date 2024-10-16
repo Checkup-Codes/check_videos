@@ -69,7 +69,7 @@ class VersionsController extends Controller
     public function show($slug)
     {
         // Slug'a göre versiyonu bul
-        $version = Version::with(['features', 'bugs'])->where('version', $slug)->firstOrFail();
+        $version = Version::with(relations: ['features', 'bugs'])->where('version', $slug)->firstOrFail();
         $versions = Version::with(['features', 'bugs'])->get();
 
         return inertia('FBVersions/Versions/ShowVersion', [

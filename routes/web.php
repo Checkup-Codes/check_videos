@@ -46,8 +46,9 @@ Route::get('/categories/{category}/{slug}', [CategoriesController::class, 'showB
 Route::middleware('auth')->group(function () {
     Route::resource('/writes', WritesController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
     Route::resource('/categories', CategoriesController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
+    Route::post('/writes/{write}/draw', [WritesController::class, 'storeDraw']);
+    Route::delete('/writes/{write}/draw/{version}', [WritesController::class, 'destroyDraw']);
 });
-
 
 Route::resource('/equipments', EquipmentsController::class);
 Route::middleware('auth')->group(function () {

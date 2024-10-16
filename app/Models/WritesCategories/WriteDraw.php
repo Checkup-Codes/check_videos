@@ -5,30 +5,18 @@ namespace App\Models\WritesCategories;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use App\Models\WritesCategories\Category;
+use App\Models\WritesCategories\Write;
 
-class Write extends Model
+
+class WriteDraw extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'title',
-        'slug',
-        'content',
-        'auor_id',
-        'category_id',
-        'published_at',
-        'summary',
-        'status',
-        'views_count',
-        'seo_keywords',
-        'tags',
-        'meta_description',
-        'cover_image',
-        'hasDraw',
+        'write_id',
+        'elements',
+        'version',
     ];
-
-
 
     public $incrementing = false;
     protected $keyType = 'string';
@@ -44,13 +32,8 @@ class Write extends Model
         });
     }
 
-    public function category()
+    public function write()
     {
-        return $this->belongsTo(Category::class);
-    }
-
-    public function writeDraws()
-    {
-        return $this->hasMany(WriteDraw::class, 'write_id');
+        return $this->belongsTo(Write::class, 'write_id');
     }
 }

@@ -63,7 +63,10 @@ class WritesController extends Controller
             return Write::select('views_count', 'title', 'created_at', 'slug')->get();
         });
 
-        $write = Write::where('slug', $slug)->firstOrFail();
+        $write = Write::with(['writeDraws' => function ($query) {
+            $query->orderBy('version', 'desc')->latest();
+        }])->where('slug', $slug)->firstOrFail();
+
         $screen = [
             'isMobileSidebar' => false,
             'name' => 'writes'
@@ -184,5 +187,31 @@ class WritesController extends Controller
         Cache::forget('writes');
 
         return redirect()->route('writes.index')->with('success', 'Yazıyı modifiye ettik.');
+    }
+
+    public function storeDraw(Request $request, $writeId)
+    {
+        $write = Write::findOrFail($writeId);
+
+        $latestVersion = $write->writeDraws()->max('version') ?? 0;
+
+        $writeDraw = $write->writeDraws()->create([
+            'elements' => $request->input('elements'),
+            'version' => $latestVersion + 1,
+        ]);
+
+        return response()->json($writeDraw);
+    }
+
+    public function destroyDraw($writeId, $drawId)
+    {
+        $write = Write::findOrFail($writeId);
+
+        $writeDraw = $write->writeDraws()->findOrFail($drawId);
+        $writeDraw->delete();
+
+        Cache::forget('writes');
+
+        return response()->json(['message' => 'Versiyon başarıyla silindi.']);
     }
 }
