@@ -136,7 +136,7 @@ class WritesController extends Controller
         $write = new Write();
         $write->title = $request->title;
         $write->slug = $request->slug;
-        $write->content = $request->content;
+        $write->content = $request->input('content');
         $write->published_at = $request->published_at;
         $write->summary = $request->summary;
         $write->status = $request->status;
@@ -172,7 +172,7 @@ class WritesController extends Controller
 
         $write->title = $request->title;
         $write->slug = $request->slug;
-        $write->content = $request->content;
+        $write->content = $request->input('content');
         $write->published_at = $request->published_at;
         $write->summary = $request->summary;
         $write->status = $request->status;

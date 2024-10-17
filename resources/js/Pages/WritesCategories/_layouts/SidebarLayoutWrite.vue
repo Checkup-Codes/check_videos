@@ -68,7 +68,7 @@
           >
             <div class="py-1 font-bold">{{ write.title }}</div>
             <div class="flex">
-              <div class="py-0.5 text-sm text-gray-400">{{ formatDate(write.updated_at) }}</div>
+              <div class="py-0.5 text-sm text-gray-400">{{ formatDate(write.created_at) }}</div>
               <div class="px-5 py-0.5 text-sm text-gray-400">{{ write.views_count }} Görüntülenme</div>
             </div>
           </Link>

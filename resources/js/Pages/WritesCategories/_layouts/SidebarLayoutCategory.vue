@@ -69,7 +69,7 @@
             class="px-3 py-1"
           >
             <div class="py-0.5 font-bold">{{ write.title }}</div>
-            <div class="py-1 text-sm text-gray-400">{{ formatDate(write.published_at) }}</div>
+            <div class="py-0.5 text-sm text-gray-400">{{ formatDate(write.created_at) }}</div>
           </Link>
         </div>
       </div>
