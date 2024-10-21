@@ -2,27 +2,25 @@
   <div v-if="flashMessage" class="mt-4 rounded bg-green-200 p-3 text-green-800">
     {{ flashMessage }}
   </div>
-  <div class="mx-10 mb-2 mt-4 flex justify-between space-x-4 rounded bg-gray-100 px-2 py-1 text-gray-400">
+  <div
+    class="mb-2 mt-4 flex justify-between space-x-4 rounded-md px-3 py-2 text-gray-400 shadow-lg shadow-blue-200 sm:mx-3 md:mx-10"
+  >
     <div class="flex">
-      <label for="versionDropdown" class="font-semibold text-gray-700">Versiyon Seç:</label>
+      <label for="versionDropdown" class="my-auto font-semibold text-gray-700">Versiyon Seç:</label>
       <select
         id="versionDropdown"
         v-model="selectedVersion"
         @change="loadSelectedVersion"
-        class="mx-5 h-7 rounded-md border border-gray-300 bg-white py-0 pl-2 text-gray-700 shadow-sm focus:border-gray-500 focus:outline-none focus:ring focus:ring-gray-200"
+        class="mx-5 h-7 rounded-md border border-white bg-white py-0 pl-2 text-gray-700 shadow-sm focus:outline-none focus:ring focus:ring-gray-200"
       >
         <option v-for="draw in writeDraws" :key="draw.id" :value="draw.id">Versiyon {{ draw.version }}</option>
       </select>
     </div>
     <div class="ml-auto flex items-center justify-end space-x-2">
-      <button
-        v-if="props.auth.user"
-        @click="deleteSelectedVersion"
-        class="rounded bg-red-200 px-5 text-black hover:bg-red-300"
-      >
+      <button v-if="props.auth.user" @click="deleteSelectedVersion" class="rounded px-5 text-black hover:underline">
         Sil
       </button>
-      <button id="" @click="saveDrawToServer" class="rounded bg-green-200 px-5 text-black hover:bg-green-300">
+      <button v-if="props.auth.user" @click="saveDrawToServer" class="rounded px-5 text-black hover:underline">
         Kaydet
       </button>
     </div>
@@ -41,8 +39,8 @@ import axios from 'axios';
 const { props } = usePage();
 const elementsRef = ref([]);
 const flashMessage = ref('');
-const writeDraws = ref(props.write.write_draws); // List of available versions
-const selectedVersion = ref(writeDraws.value.length > 0 ? writeDraws.value[0].id : null); // Default to the first version
+const writeDraws = ref(props.write.write_draws);
+const selectedVersion = ref(writeDraws.value.length > 0 ? writeDraws.value[0].id : null);
 
 onMounted(() => {
   loadInitialVersion();
@@ -121,7 +119,7 @@ const saveDrawToServer = () => {
     })
     .then((response) => {
       flashMessage.value = 'Canvas durumu başarıyla kaydedildi!';
-      writeDraws.value.push(response.data); // Add new version to the list
+      writeDraws.value.push(response.data);
     })
     .catch((err) => {
       flashMessage.value = 'Kaydetme sırasında bir hata oluştu. Lütfen tekrar deneyin.';

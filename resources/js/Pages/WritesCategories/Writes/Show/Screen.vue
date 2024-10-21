@@ -3,21 +3,21 @@
     <div class="block lg:hidden">
       <GoBackButton />
     </div>
-    <div class="grid grid-cols-12 lg:px-10 lg:pt-5">
-      <div class="col-span-9 my-auto">
+    <div class="pl-3 sm:px-10 md:grid md:grid-cols-12 lg:px-10 lg:pt-5">
+      <div class="my-auto md:col-span-9">
         <h1 class="text-3xl font-bold">{{ write.title }}</h1>
         <div class="hidden text-sm text-gray-500 lg:block">Kategori: {{ getCategoryName(write.category_id) }}</div>
       </div>
 
-      <div class="col-span-3 items-end justify-end">
+      <div class="flex items-end justify-end space-x-5 text-center md:col-span-3">
         <div v-if="write.hasDraw" class="flex justify-end">
-          <button @click="toggleContent" class="rounded-md border-2 px-3 py-1 text-black shadow-md shadow-blue-200">
-            {{ showMerhaba ? 'Yazıya Dön' : 'Drawina git' }}
+          <button @click="toggleContent" class="rounded-md px-3 py-1 text-black shadow-md shadow-blue-200">
+            {{ showMerhaba ? 'Yazıya Dön' : 'Drawina Git' }}
           </button>
         </div>
         <div v-if="auth.user" class="flex justify-end pt-2">
           <Link :href="`/writes/${write.id}/edit`">
-            <div class="rounded-md border-2 px-3 py-1 text-black shadow-md shadow-blue-200">Yazıyı Düzenle</div>
+            <div class="rounded-md px-3 py-1 text-black shadow-md shadow-blue-200">Yazıyı Düzenle</div>
           </Link>
         </div>
       </div>
