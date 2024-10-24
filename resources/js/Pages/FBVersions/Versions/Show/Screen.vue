@@ -3,7 +3,9 @@
     <div class="rounded-lg bg-white p-6 shadow-lg">
       <div class="flex justify-between">
         <h1 class="mb-4 text-3xl font-bold">{{ version.version }}</h1>
-        <Link :href="`/versions/${version.id}/edit`" class="underline">Bu versiyonu düzenler misin</Link>
+        <Link v-if="props.auth.user" :href="`/versions/${version.id}/edit`" class="underline"
+          >Bu versiyonu düzenler misin</Link
+        >
       </div>
       <p class="text-gray-500">{{ formattedDate(version.created_at) }}</p>
 
