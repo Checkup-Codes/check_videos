@@ -11,25 +11,20 @@ use App\Models\WritesCategories\Category;
 
 class WritesController extends Controller
 {
+    protected const CACHE_TTL = 60;
+
     public function index()
     {
-        $categories = Cache::remember('categories', 60, function () {
-            return Category::all();
-        });
-
-        $writes = Cache::remember('writes', 60, function () {
-            return Write::select('views_count', 'title', 'created_at', 'slug', 'updated_at')->get();
-        });
-
-        $screen = [
-            'isMobileSidebar' => true,
-            'name' => 'writes'
-        ];
+        $categories = $this->getCategories();
+        $writes = $this->getWrites();
 
         return inertia('WritesCategories/Writes/IndexWrite', [
             'writes' => $writes,
             'categories' => $categories,
-            'screen' => $screen
+            'screen' => [
+                'isMobileSidebar' => true,
+                'name' => 'writes'
+            ]
         ]);
     }
 
@@ -213,5 +208,28 @@ class WritesController extends Controller
         Cache::forget('writes');
 
         return response()->json(['message' => 'Versiyon başarıyla silindi.']);
+    }
+
+
+    private function getCategories()
+    {
+        return Cache::remember('categories', self::CACHE_TTL, function () {
+            return Category::all();
+        });
+    }
+
+    private function getWrites()
+    {
+        return Cache::remember('writes', self::CACHE_TTL, function () {
+            return Write::select('views_count', 'title', 'created_at', 'slug', 'updated_at')
+                ->orderByDesc('created_at')
+                ->get();
+        });
+    }
+
+    private function clearCache()
+    {
+        Cache::forget('categories');
+        Cache::forget('writes');
     }
 }

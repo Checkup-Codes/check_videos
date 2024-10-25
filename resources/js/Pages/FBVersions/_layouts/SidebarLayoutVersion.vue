@@ -8,8 +8,8 @@
     </div>
     <div class="fixed z-30 mt-14 w-full shadow-lg shadow-subsidebar-shadow lg:mt-0 lg:w-[27%]">
       <div class="flex cursor-pointer justify-between text-sm text-black lg:grid-cols-2">
-        <div class="rounded p-3 font-semibold underline underline-offset-4">
-          <div class="rounded bg-gray-100 p-2">Versiyonlar</div>
+        <div class="flex cursor-pointer justify-between p-2 text-sm font-bold text-black">
+          <div class="rounded border-b-4 border-blue-100 p-2">Versiyonlar</div>
         </div>
         <div v-if="auth.user" class="">
           <Link href="/versions/create">

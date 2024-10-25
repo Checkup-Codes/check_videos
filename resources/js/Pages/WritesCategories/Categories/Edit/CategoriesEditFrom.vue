@@ -20,7 +20,7 @@
       </form>
       <div v-if="auth.user" class="flex">
         <button
-          @click="deleteCategory(category.id)"
+          @click="deleteCategory(props.category.id)"
           class="m-2 ml-auto flex rounded p-2 text-right font-bold text-black underline"
         >
           Kategoriyi sil

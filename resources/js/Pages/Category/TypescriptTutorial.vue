@@ -59,36 +59,62 @@
       </div>
     </div>
     <div>
-      <h2 class="text-xl">Keywords</h2>
-      <div>
-        <div class="mt-3 w-full rounded bg-gray-100 p-2">
+      <!-- Keywords Girişi -->
+      <div class="mb-6 rounded-lg bg-white p-6 shadow-lg">
+        <h2 class="mb-4 text-2xl font-semibold">Keywords</h2>
+        <div>
           <textarea
             v-model="keywords"
-            class="h-40 w-full rounded border bg-gray-50 p-2"
+            class="h-40 w-full rounded border bg-gray-50 p-4 outline-none focus:ring-2 focus:ring-indigo-500"
             placeholder="Keywordleri virgülle ayrılmış şekilde girin"
             rows="4"
           ></textarea>
           <div class="flex justify-end">
-            <button @click="copyToClipboard" class="mt-3 w-1/3 rounded bg-gray-500 p-1 px-4 text-white">Kopyala</button>
+            <button
+              @click="copyToClipboard"
+              class="mt-3 w-1/3 rounded bg-indigo-600 py-2 text-white transition-all hover:bg-indigo-500"
+            >
+              Kopyala
+            </button>
           </div>
         </div>
       </div>
 
-      <div class="container mx-auto p-4">
-        <h1 class="mb-4 text-xl">YouTube Playlist Videos</h1>
-        <input v-model="playlistId" class="mb-4 w-full border p-2" placeholder="Enter YouTube Playlist ID" />
+      <!-- YouTube Playlist Videos -->
+      <div class="rounded-lg bg-white p-6 shadow-lg">
+        <h1 class="mb-4 text-2xl font-semibold">YouTube Playlist Videos</h1>
+        <input
+          v-model="playlistId"
+          class="mb-4 w-full rounded border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="YouTube Playlist ID girin"
+        />
         <div class="flex justify-end">
-          <button @click="fetchVideos" class="mt-3 w-1/3 rounded bg-gray-500 p-1 px-4 text-white">Fetch Videos</button>
+          <button
+            @click="fetchVideos"
+            class="w-1/3 rounded bg-indigo-600 py-2 text-white transition-all hover:bg-indigo-500"
+          >
+            Fetch Videos
+          </button>
         </div>
-        <div v-if="loading" class="text-blue-500">Loading...</div>
-        <ul class="video-list">
-          <li v-for="video in videos" :key="video.id" class="mb-2 flex items-center">
-            <img :src="video.thumbnail" alt="Video Thumbnail" class="mr-4 h-16 w-28" />
+        <div v-if="loading" class="text-indigo-500">Yükleniyor...</div>
+        <ul class="video-list mt-6 space-y-4">
+          <li v-for="video in videos" :key="video.id" class="flex items-center rounded-lg bg-gray-50 p-4 shadow-sm">
+            <img
+              :src="video.thumbnail"
+              alt="Video Thumbnail"
+              class="mr-4 h-20 w-36 rounded-lg object-cover shadow-sm"
+            />
             <div>
-              <a :href="`https://www.youtube.com/watch?v=${video.id}`" target="_blank" class="text-blue-500">
+              <a
+                :href="`https://www.youtube.com/watch?v=${video.id}`"
+                target="_blank"
+                class="text-lg font-semibold text-indigo-600 hover:underline"
+              >
                 {{ video.title }}
               </a>
-              <p>Duration: {{ video.duration }}</p>
+              <p class="text-sm text-gray-500">Süre: {{ video.duration }}</p>
+              <p class="text-sm text-gray-500">Görüntülenme: {{ video.viewCount }}</p>
+              <p class="text-sm text-gray-500">Beğeniler: {{ video.likeCount }}</p>
             </div>
           </li>
         </ul>
@@ -110,7 +136,7 @@ const loading = ref(false);
 
 const fetchVideos = async () => {
   if (!playlistId.value) {
-    alert('Please enter a playlist ID');
+    alert('Lütfen Playlist ID girin');
     return;
   }
 
@@ -139,10 +165,10 @@ const fetchVideos = async () => {
       nextPageToken = response.data.nextPageToken;
     } while (nextPageToken);
 
-    // Fetch video details
+    // Fetch video details, including statistics for view count and like count
     const videoDetails = await axios.get(`${BASE_URL}/videos`, {
       params: {
-        part: 'snippet,contentDetails',
+        part: 'snippet,contentDetails,statistics',
         id: videoIds.join(','),
         key: API_KEY,
       },
@@ -153,7 +179,8 @@ const fetchVideos = async () => {
       title: item.snippet.title,
       thumbnail: item.snippet.thumbnails.default.url,
       duration: parseDuration(item.contentDetails.duration),
-      timestamps: extractTimestamps(item.snippet.description),
+      viewCount: item.statistics.viewCount,
+      likeCount: item.statistics.likeCount,
     }));
   } catch (error) {
     console.error('Error fetching videos:', error);
@@ -171,12 +198,6 @@ const parseDuration = (isoDuration) => {
   const minutes = matches[2] ? matches[2].slice(0, -1) : '00';
   const seconds = matches[3] ? matches[3].slice(0, -1) : '00';
   return `${hours}:${minutes}:${seconds}`;
-};
-
-// Extract timestamps from video description
-const extractTimestamps = (description) => {
-  const regex = /(\d{1,2}:\d{2})/g;
-  return description.match(regex) || [];
 };
 
 const keywords = ref(

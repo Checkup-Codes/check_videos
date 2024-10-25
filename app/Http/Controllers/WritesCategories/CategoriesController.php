@@ -93,7 +93,7 @@ class CategoriesController extends Controller
         Cache::forget('categories');
         Cache::forget('writes');
 
-        return redirect()->route('categories.index');
+        return redirect()->route('categories.index')->with('success', 'Çöp, bir yazı daha kazandı !');;
     }
 
     public function edit($id)

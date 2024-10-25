@@ -15,13 +15,16 @@ class VersionsController extends Controller
      */
     public function index()
     {
-        $versions = Version::with(['features', 'bugs'])->get();
+        $versions = Version::with(['features', 'bugs'])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return inertia('FBVersions/Versions/IndexVersion', [
             'isMobileSidebar' => true,
             'versions' => $versions
         ]);
     }
+
 
     /**
      * Show the form for creating a new resource.

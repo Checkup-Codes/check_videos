@@ -12,6 +12,7 @@ use App\Http\Controllers\EquipmentsController;
 use App\Http\Controllers\WritesCategories\CategoriesController;
 use App\Http\Controllers\SP\SoftwareProductsController;
 use App\Http\Controllers\FBVersions\VersionsController;
+use App\Http\Controllers\LessonsController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -49,6 +50,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/writes/{write}/draw', [WritesController::class, 'storeDraw']);
     Route::delete('/writes/{write}/draw/{version}', [WritesController::class, 'destroyDraw']);
 });
+
+Route::resource('/lessons', LessonsController::class);
+
 
 Route::resource('/equipments', EquipmentsController::class);
 Route::middleware('auth')->group(function () {
