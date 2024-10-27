@@ -81,9 +81,6 @@
       >
         <font-awesome-icon :icon="['fab', 'twitter']" class="mr-2" /> Twitter
       </a>
-      <Link href="/excalidraw" :class="getLinkClasses('/excalidraw')" @click="$emit('link-clicked')">
-        <font-awesome-icon :icon="['fas', 'pencil-alt']" class="mr-2" /> Excalidraw
-      </Link>
     </div>
   </div>
 </template>
