@@ -10,9 +10,6 @@ use App\Models\FBVersions\Bug;
 
 class VersionsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $versions = Version::with(['features', 'bugs'])
@@ -26,20 +23,13 @@ class VersionsController extends Controller
     }
 
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return inertia('FBVersions/Versions/CreateVersion');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        // Validasyon
         $validated = $request->validate([
             'version' => 'required|string|max:255|unique:versions,version',
             'release_date' => 'required|date',
@@ -52,28 +42,22 @@ class VersionsController extends Controller
             'bugs.*.bug_detail' => 'required|string|max:255',
         ]);
 
-        // Yeni versiyon oluştur
         $version = Version::create([
             'version' => $validated['version'],
             'release_date' => $validated['release_date'],
             'description' => $validated['description'],
         ]);
 
-        // Features ve Bugs ekle
         $version->features()->createMany($validated['features']);
         $version->bugs()->createMany($validated['bugs']);
 
         return redirect()->route('versions.index')->with('success', 'Yeni sürüm hayırlı olsun abi');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show($slug)
     {
-        // Slug'a göre versiyonu bul
         $version = Version::with(relations: ['features', 'bugs'])->where('version', $slug)->firstOrFail();
-        $versions = Version::with(['features', 'bugs'])->get();
+        $versions = Version::with(['features', 'bugs'])->orderBy('created_at', 'desc')->get();
 
         return inertia('FBVersions/Versions/ShowVersion', [
             'isMobileSidebar' => true,
@@ -82,27 +66,19 @@ class VersionsController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-
-
     public function edit($id)
     {
-        // İlgili versiyonu bul
         $version = Version::with(['features', 'bugs'])->findOrFail($id);
 
-        // Inertia ile veriyi Vue.js frontend'e gönder
         return inertia('FBVersions/Versions/EditVersion', [
             'isMobileSidebar' => true,
             'version' => $version
         ]);
     }
 
-    // Versiyon güncelleme işlemi
     public function update(Request $request, $id)
     {
-        // Validasyon
+
         $validated = $request->validate([
             'version' => 'required|string|max:255|unique:versions,version,' . $id,
             'release_date' => 'required|date',
@@ -115,7 +91,6 @@ class VersionsController extends Controller
             'bugs.*.bug_detail' => 'required|string|max:255',
         ]);
 
-        // İlgili versiyonu bul ve güncelle
         $version = Version::findOrFail($id);
         $version->update([
             'version' => $validated['version'],
@@ -123,7 +98,6 @@ class VersionsController extends Controller
             'description' => $validated['description'],
         ]);
 
-        // Eski feature ve bug kayıtlarını silip yenilerini ekle
         $version->features()->delete();
         $version->features()->createMany($validated['features']);
 
@@ -134,9 +108,6 @@ class VersionsController extends Controller
     }
 
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
         $version = Version::findOrFail($id);

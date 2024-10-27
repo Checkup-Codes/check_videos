@@ -6,12 +6,13 @@
         <span class="block sm:inline">{{ flashSuccess }}</span>
       </div>
     </div>
+
     <div class="fixed z-30 mt-14 w-full shadow-lg shadow-subsidebar-shadow lg:mt-0 lg:w-[27%]">
-      <div class="flex cursor-pointer justify-between text-sm text-black lg:grid-cols-2">
-        <div class="flex cursor-pointer justify-between p-2 text-sm font-bold text-black">
+      <div class="flex cursor-pointer justify-between text-sm text-black">
+        <div class="flex justify-between p-2 text-sm font-bold text-black">
           <div class="rounded border-b-4 border-blue-100 p-2">Versiyonlar</div>
         </div>
-        <div v-if="auth.user" class="">
+        <div v-if="auth.user">
           <Link href="/versions/create">
             <div class="mx-2 rounded p-3 text-center font-bold text-black underline">Yeni Versiyon Ekle</div>
           </Link>
@@ -28,7 +29,6 @@
             <div class="py-1 font-bold">{{ version.version }}</div>
             <div class="flex">
               <div class="py-0.5 text-sm text-gray-400">{{ formatDate(version.updated_at) }}</div>
-              <div class="px-5 py-0.5 text-sm text-gray-400">{{ version.views_count }} Görüntülenme</div>
             </div>
           </Link>
         </div>
@@ -38,39 +38,25 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
-import DropdownSvg from '@/Shared/Svg/Dropdown.vue';
-import CloseXSvg from '@/Shared/Svg/CloseX.vue';
 
 const { props, url } = usePage();
 const versions = ref(props.versions);
-const categories = ref(props.categories);
-const category = ref(props.category);
-const showCategories = ref(false);
-const scrollPosition = ref(0);
+const flashSuccess = ref(props.flash.success);
+const auth = props.auth;
 const scrollContainer = ref(null);
-
-const truncateSummary = (summary) => {
-  return summary.length > 40 ? summary.slice(0, 40) + '...' : summary;
-};
-
-const toggleCategoryMenu = () => {
-  showCategories.value = !showCategories.value;
-};
+const scrollPosition = ref(0);
 
 const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
-const flashSuccess = ref(props.flash.success);
-const auth = props.auth;
-
 const getLinkClasses = (href) => {
   return url === href
-    ? 'block cursor-pointer text-sm rounded-lg text-black transition-all transition-colors duration-200 bg-gray-900 text-white shadow-lg'
-    : 'block cursor-pointer text-sm rounded-lg text-black transition-all transition-colors duration-200 hover:bg-gray-200 hover:shadow-lg';
+    ? 'block cursor-pointer text-sm rounded-lg text-black transition-all duration-200 bg-gray-900 text-white shadow-lg'
+    : 'block cursor-pointer text-sm rounded-lg text-black transition-all duration-200 hover:bg-gray-200 hover:shadow-lg';
 };
 
 const handleScroll = (event) => {
@@ -89,11 +75,5 @@ onMounted(() => {
   if (savedScrollPosition) {
     scrollContainer.value.scrollTop = savedScrollPosition;
   }
-
-  window.addEventListener('scroll', handleScroll);
-});
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll);
 });
 </script>
