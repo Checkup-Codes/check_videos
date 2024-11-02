@@ -13,6 +13,10 @@ use App\Http\Controllers\WritesCategories\CategoriesController;
 use App\Http\Controllers\SP\SoftwareProductsController;
 use App\Http\Controllers\FBVersions\VersionsController;
 use App\Http\Controllers\LessonsController;
+use App\Http\Controllers\Projects\ProjectsController;
+use App\Http\Controllers\Projects\ServicesController;
+use App\Http\Controllers\Projects\CustomersController;
+
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -52,6 +56,9 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::resource('/lessons', LessonsController::class);
+Route::resource('/projects', ProjectsController::class);
+Route::resource('/services', ServicesController::class);
+Route::resource('/customers', CustomersController::class);
 
 
 Route::resource('/equipments', EquipmentsController::class);

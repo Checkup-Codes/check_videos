@@ -16,12 +16,16 @@
       <Link href="/writes" :class="getLinkClasses(['/writes'])" @click="$emit('link-clicked')">
         <font-awesome-icon icon="fa-solid fa-pencil" class="pr-1" /> Yazılar
       </Link>
+      <Link href="/projects" :class="getLinkClasses(['/projects'])" @click="$emit('link-clicked')">
+        <font-awesome-icon icon="fa-solid fa-folder" class="pr-1" /> Projeler
+      </Link>
       <Link href="/lessons" :class="getLinkClasses(['/lessons'])" @click="$emit('link-clicked')">
         <font-awesome-icon icon="fa-solid fa-book" class="pr-1" /> Dersler
       </Link>
       <Link href="/versions" :class="getLinkClasses(['/versions'])" @click="$emit('link-clicked')">
         <font-awesome-icon icon="fa-solid fa-sync" class="pr-1" /> Versiyonlar
       </Link>
+
       <!-- 
       <Link href="/categories" :class="getLinkClasses(['/categories'])" @click="$emit('link-clicked')">
         <font-awesome-icon icon="fa-solid fa-folder" class="pr-1" /> Kategoriler

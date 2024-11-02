@@ -21,6 +21,8 @@ import {
   faCube,
   faSync,
   faFolder,
+  faLink,
+  faShareAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { faInstagram, faGithub, faYoutube, faLinkedin, faMedium, faTwitter } from '@fortawesome/free-brands-svg-icons';
 library.add(
@@ -38,7 +40,9 @@ library.add(
   faBookmark,
   faCube,
   faSync,
-  faFolder
+  faFolder,
+  faLink,
+  faShareAlt
 );
 
 import store from './Store';
