@@ -1,0 +1,1 @@
+import e from"./CheckLayout-BokG-I1D.js";import r from"./Screen-CfVv4Q7H.js";import{c as o,w as t,o as a,a as c}from"./app-CxLXp3R4.js";import"./SidebarLayoutVersion-IScaEKKm.js";/* empty css            */const u={__name:"IndexVersion",setup(n){return(s,m)=>(a(),o(e,null,{screen:t(()=>[c(r)]),_:1}))}};export{u as default};
