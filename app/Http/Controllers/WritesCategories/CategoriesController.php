@@ -10,9 +10,6 @@ use App\Models\WritesCategories\Write;
 
 class CategoriesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $categories = Cache::remember('categories', 60, function () {
@@ -30,26 +27,6 @@ class CategoriesController extends Controller
 
         return inertia('WritesCategories/Categories/IndexCategory', [
             'writes' => $writes,
-            'categories' => $categories,
-            'screen' => $screen
-        ]);
-    }
-    /**
-     * Show the form for creating a new resource.
-     */
-
-    public function create()
-    {
-        $categories = Cache::remember('categories', 60, function () {
-            return Category::all();
-        });
-
-        $screen = [
-            'isMobileSidebar' => false,
-            'name' => 'categories'
-        ];
-
-        return inertia('WritesCategories/Categories/CreateCategory', [
             'categories' => $categories,
             'screen' => $screen
         ]);
@@ -73,7 +50,7 @@ class CategoriesController extends Controller
             });
 
         $screen = [
-            'isMobileSidebar' => false,
+            'isMobileSidebar' => true,
             'name' => 'categories'
         ];
 
@@ -85,15 +62,39 @@ class CategoriesController extends Controller
         ]);
     }
 
-    public function destroy($id)
+    public function create()
     {
-        $category = Category::findOrFail($id);
-        $category->delete();
+        $categories = Cache::remember('categories', 60, function () {
+            return Category::all();
+        });
+
+        $screen = [
+            'isMobileSidebar' => false,
+            'name' => 'categories'
+        ];
+
+        return inertia('WritesCategories/Categories/CreateCategory', [
+            'categories' => $categories,
+            'screen' => $screen
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:categories,slug',
+        ]);
+
+        $category = new Category();
+        $category->name = $request->name;
+        $category->slug = $request->slug;
+        $category->save();
 
         Cache::forget('categories');
         Cache::forget('writes');
 
-        return redirect()->route('categories.index')->with('success', 'Çöp, bir yazı daha kazandı !');;
+        return redirect()->route('categories.index')->with('success', 'Yeni bir kategori eklendi!');;;
     }
 
     public function edit($id)
@@ -115,30 +116,7 @@ class CategoriesController extends Controller
             'screen' => $screen
         ]);
     }
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:categories,slug',
-        ]);
 
-        $category = new Category();
-        $category->name = $request->name;
-        $category->slug = $request->slug;
-        $category->save();
-
-        Cache::forget('categories');
-        Cache::forget('writes');
-
-        return redirect()->route('categories.index');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -154,7 +132,18 @@ class CategoriesController extends Controller
         Cache::forget('categories');
         Cache::forget('writes');
 
-        return redirect()->route('categories.index');
+        return redirect()->route('categories.index')->with('success', 'Kategori başarı ile güncellendi!');;;;
+    }
+
+    public function destroy($id)
+    {
+        $category = Category::findOrFail($id);
+        $category->delete();
+
+        Cache::forget('categories');
+        Cache::forget('writes');
+
+        return redirect()->route('categories.index')->with('success', 'Çöp, bir yazı daha kazandı !');;
     }
 
     public function showByCategory($categorySlug, $writeSlug)
@@ -189,7 +178,4 @@ class CategoriesController extends Controller
             'screen' => $screen
         ]);
     }
-    /**
-     * Remove the specified resource from storage.
-     */
 }

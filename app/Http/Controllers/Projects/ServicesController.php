@@ -25,7 +25,7 @@ class ServicesController extends Controller
         $services = Service::all();
 
         return Inertia::render('Projects/Services/IndexService', [
-            'screen' => array_merge($this->screen, ['isMobileSidebar' => true]),
+            'screen' => array_merge($this->screen, ['isMobileSidebar' => false]),
             'services' => $services
         ]);
     }

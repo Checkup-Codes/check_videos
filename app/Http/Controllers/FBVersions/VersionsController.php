@@ -60,7 +60,7 @@ class VersionsController extends Controller
         $versions = Version::with(['features', 'bugs'])->orderBy('created_at', 'desc')->get();
 
         return inertia('FBVersions/Versions/ShowVersion', [
-            'isMobileSidebar' => true,
+            'isMobileSidebar' => false,
             'versions' => $versions,
             'version' => $version
         ]);
@@ -71,7 +71,7 @@ class VersionsController extends Controller
         $version = Version::with(['features', 'bugs'])->findOrFail($id);
 
         return inertia('FBVersions/Versions/EditVersion', [
-            'isMobileSidebar' => true,
+            'isMobileSidebar' => false,
             'version' => $version
         ]);
     }

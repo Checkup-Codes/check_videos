@@ -6,29 +6,23 @@
         <span class="block sm:inline">{{ flashSuccess }}</span>
       </div>
     </div>
-    <div class="fixed z-30 mt-14 w-full shadow-lg shadow-subsidebar-shadow lg:mt-0 lg:w-[27%]">
+    <div class="fixed z-30 mt-14 w-full shadow-lg shadow-color-one lg:mt-0 lg:w-[27%]">
       <div class="flex cursor-pointer justify-between text-sm text-black">
         <div>
-          <div class="m-2 space-y-4 rounded p-1 font-bold text-black">
+          <div class="m-2 space-y-4 rounded p-2 font-bold text-black">
             <div class="flex">
-              <div
-                :class="category ? 'w-auto' : 'w-32'"
-                class="flex content-center items-center rounded-lg border-2 border-sidebar bg-gray-200 p-1 pl-3 hover:border-black"
-                @click="toggleCategoryMenu"
-              >
-                Kategori seç
-                <span v-if="category">
-                  : <span class="px-1"> {{ category.name }}</span>
-                  <span></span>
-                </span>
-                <span class="pr-1">
-                  <DropdownSvg />
-                </span>
+              <div class="flex px-0.5">
+                <Button type="submit" @click="toggleCategoryMenu" size="small"
+                  >Kategori :
+                  <span v-if="category">
+                    <span class="px-1"> {{ category.name }}</span>
+                  </span>
+                </Button>
               </div>
               <div class="duration-50 mx-3 flex content-center items-center rounded-lg transition-all" v-if="category">
                 <Link
                   :href="route('writes.index')"
-                  class="rounded-lg border-2 bg-gray-200 p-0.5 text-center font-bold text-black underline hover:border-black hover:bg-gray-300"
+                  class="rounded-lg border-2 bg-black p-0.5 text-center font-bold text-white underline hover:bg-gray-700"
                 >
                   <CloseXSvg />
                 </Link>
@@ -52,7 +46,7 @@
             <div v-for="category in categories" :key="category.id" class="transition-all duration-100">
               <Link
                 :href="route('categories.show', { category: category.slug })"
-                :class="getLinkClasses(`/categories/${category.slug}`)"
+                :class="getLinkCategoryClasses(`/categories/${category.slug}`)"
                 class="border-2 hover:border-black hover:bg-sidebar hover:text-black"
               >
                 <div class="rounded p-1 text-center font-bold">{{ category.name }}</div>
@@ -82,6 +76,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import DropdownSvg from '@/Shared/Svg/Dropdown.vue';
 import CloseXSvg from '@/Shared/Svg/CloseX.vue';
+import Button from '@/Components/CekapUI/Buttons/CButton.vue';
 
 const { props, url } = usePage();
 const writes = ref(props.writes);
@@ -104,7 +99,13 @@ const flashSuccess = ref(props.flash.success);
 const auth = props.auth;
 
 const getLinkClasses = (href) => {
-  return url.includes(href)
+  return url === href
+    ? 'border-b border-color-one px-4 py-3 hover:bg-hover-one block cursor-pointer p-2 text-sm rounded-md bg-color-one'
+    : 'border-b border-color-one px-4 py-3 hover:bg-hover-one block cursor-pointer p-2 text-sm rounded-md text-gray-700 hover:bg-gray-100 hover:shadow-sm transition-all duration-200';
+};
+
+const getLinkCategoryClasses = (href) => {
+  return url === href
     ? 'block cursor-pointer text-sm rounded-lg text-black transition-all transition-colors duration-200 bg-gray-900 text-white shadow-lg'
     : 'block cursor-pointer text-sm rounded-lg text-black transition-all transition-colors duration-200 hover:bg-gray-200 hover:shadow-lg';
 };

@@ -1,6 +1,6 @@
 <template>
   <header class="flex h-12 items-center justify-between border-b-2 border-gray-300 bg-sidebar px-5">
-    <div></div>
+    <div class="font-extrabold">CHECK-UP CODES</div>
     <button @click="$emit('toggle-sidebar')" class="lg:hidden">
       <svg
         class="h-6 w-6 text-black"

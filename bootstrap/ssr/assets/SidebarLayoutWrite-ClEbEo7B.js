@@ -49,7 +49,7 @@ const _sfc_main = {
       } else {
         _push(`<!---->`);
       }
-      _push(`<div class="fixed z-30 mt-14 w-full shadow-lg shadow-subsidebar-shadow lg:mt-0 lg:w-[27%]"><div class="flex cursor-pointer justify-between text-sm text-black"><div><div class="m-2 space-y-4 rounded p-1 font-bold text-black"><div class="flex"><div class="${ssrRenderClass([category.value ? "w-auto" : "w-32", "flex content-center items-center rounded-lg border-2 border-sidebar bg-gray-200 p-1 pl-3 hover:border-black"])}"> Kategori seç `);
+      _push(`<div class="fixed z-30 mt-14 w-full shadow-lg shadow-color-one lg:mt-0 lg:w-[27%]"><div class="flex cursor-pointer justify-between text-sm text-black"><div><div class="m-2 space-y-4 rounded p-1 font-bold text-black"><div class="flex"><div class="${ssrRenderClass([category.value ? "w-auto" : "w-32", "flex content-center items-center rounded-lg border-2 border-sidebar bg-gray-200 p-1 pl-3 hover:border-black"])}"> Kategori seç `);
       if (category.value) {
         _push(`<span> : <span class="px-1">${ssrInterpolate(category.value.name)}</span><span></span></span>`);
       } else {

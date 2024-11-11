@@ -48,6 +48,7 @@ class WritesController extends Controller
             'screen' => $screen
         ]);
     }
+
     public function show($slug)
     {
         $categories = Cache::remember('categories', 60, function () {
@@ -67,15 +68,21 @@ class WritesController extends Controller
             'name' => 'writes'
         ];
 
+        // Sorgu parametresini al ve boolean değere dönüştür
+        $showMerhaba = filter_var(request()->query('showMerhaba', false), FILTER_VALIDATE_BOOLEAN);
+
         $write->increment('views_count');
 
         return inertia('WritesCategories/Writes/ShowWrite', [
             'writes' => $writes,
             'write' => $write,
             'categories' => $categories,
-            'screen' => $screen
+            'screen' => $screen,
+            'showMerhaba' => $showMerhaba
         ]);
     }
+
+
 
     public function edit($id)
     {

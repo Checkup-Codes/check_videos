@@ -6,26 +6,44 @@
         <span class="block sm:inline">{{ flashSuccess }}</span>
       </div>
     </div>
-    <div class="fixed z-30 mt-14 w-full shadow-lg shadow-subsidebar-shadow lg:mt-0 lg:w-[27%]">
+    <div class="fixed z-30 mt-14 w-full shadow-lg shadow-color-one lg:mt-0 lg:w-[27%]">
       <div class="flex cursor-pointer justify-between p-2 text-sm font-bold text-black">
         <div class="rounded border-b-4 border-blue-100 p-2">Projeler</div>
         <Link href="/lessons/create" class="underline" v-if="props.auth.user">Yeni Ders Ekle</Link>
       </div>
 
       <div class="h-[100vh] overflow-auto" ref="scrollContainer" @scroll="handleScroll">
-        <div class="sticky top-0 z-20">
-          <div class="p-3">
-            <Link href="/services">Servislerimiz</Link>
+        <Link href="/services" :class="getLinkClasses(`/services`)">
+          <div class="font-semibold">Servislerimiz</div>
+          <div class="mt-1 flex justify-between text-xs text-gray-500">
+            <span>13 adet servis</span>
+            <span>100 adet görüntülendi</span>
           </div>
-          <div class="p-3">
-            <Link href="/services/create">Hizmet olustur</Link>
-          </div>
-          <div class="p-3">
-            <Link href="/projects">Projelerim</Link>
-          </div>
-          <div class="p-3">
-            <Link href="/customers">Müşteriler</Link>
-          </div>
+        </Link>
+        <div v-if="auth.user">
+          <Link href="/services/create" :class="getLinkClasses(`/services/create`)">
+            <div class="font-semibold">Hizmet olustur</div>
+            <div class="mt-1 flex justify-between text-xs text-gray-500">
+              <span>13 adet hizmet</span>
+              <span>100 adet görüntülendi</span>
+            </div>
+          </Link>
+
+          <Link href="/projects" :class="getLinkClasses(`/projects`)">
+            <div class="font-semibold">Projects</div>
+            <div class="mt-1 flex justify-between text-xs text-gray-500">
+              <span>13 adet proje</span>
+              <span>100 adet görüntülendi</span>
+            </div>
+          </Link>
+
+          <Link href="/customers" :class="getLinkClasses(`/customers`)">
+            <div class="font-semibold">Customers</div>
+            <div class="mt-1 flex justify-between text-xs text-gray-500">
+              <span>13 adet Müşteri</span>
+              <span>100 adet görüntülendi</span>
+            </div>
+          </Link>
         </div>
       </div>
     </div>
@@ -68,8 +86,8 @@ onUnmounted(() => {
 
 const getLinkClasses = (href) => {
   return url === href
-    ? 'block cursor-pointer text-sm rounded-lg text-black transition-all transition-colors duration-200 bg-gray-900 text-white shadow-lg'
-    : 'block cursor-pointer text-sm rounded-lg text-black transition-all transition-colors duration-200 hover:bg-gray-200 hover:shadow-lg';
+    ? 'border-b border-gray-200 px-4 py-3 hover:bg-hover-one block cursor-pointer p-2 text-sm rounded-sm bg-color-one text-black'
+    : 'border-b border-gray-200 px-4 py-3 hover:bg-hover-one block cursor-pointer p-2 text-sm rounded-md text-gray-700 hover:bg-color-one hover:shadow-sm transition-all duration-200';
 };
 
 const formatDate = (dateString) => {

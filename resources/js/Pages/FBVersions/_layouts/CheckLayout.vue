@@ -1,6 +1,8 @@
 <template>
   <div class="grid h-full grid-cols-1 lg:grid-cols-subsidebar">
-    <SidebarLayoutVersion :class="sidebarStyle" />
+    <div>
+      <SidebarLayoutVersion :class="sidebarStyle" />
+    </div>
     <slot name="screen"></slot>
   </div>
 </template>

@@ -1,45 +1,70 @@
 <template>
-  <div class="mx-auto mt-10 w-full max-w-full overflow-auto p-2 shadow-md lg:mt-0">
-    <div class="flex items-center justify-between">
-      <div class="hidden text-sm text-gray-500 lg:block">Kategori: {{ getCategoryName(write.category_id) }}</div>
-      <div class="block lg:hidden">
-        <GoBackButton />
-      </div>
-      <div v-if="auth.user">
-        <Link :href="`/writes/${write.id}/edit`">
-          <div class="m-2 rounded p-2 text-center font-bold text-black underline">Yazıyı Düzenle</div>
-        </Link>
+  <div class="mx-auto mt-10 w-full max-w-full overflow-auto rounded-lg bg-screen-bg p-2 shadow-sm lg:mt-0">
+    <div class="block lg:hidden">
+      <div class="flex items-center justify-between">
+        <GoBackButton :url="categoryUrl" />
+        <div v-if="write.hasDraw" class="flex items-center px-3 pt-4">
+          <Link :href="`/writes/${write.slug}?showMerhaba=${showMerhaba ? 0 : 1}`">
+            <Button>
+              {{ showMerhaba ? 'Yazıya Dön' : 'Çizimine Git' }}
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
-    <div class="p-4 lg:p-8">
-      <h1 class="mb-6 text-3xl font-bold">{{ write.title }}</h1>
-      <div class="prose prose-lg ql-container-custom mb-6" v-html="write.content"></div>
-      <div class="rounded-lg bg-gray-100 p-4">
-        <h2 class="mb-2 text-xl font-semibold">Özet</h2>
-        <p>{{ write.summary }}</p>
+
+    <div class="rounded-lg bg-white p-4 shadow-sm sm:px-10 md:grid md:grid-cols-12 lg:px-10 lg:pt-5">
+      <div class="my-auto md:col-span-9">
+        <h1 class="text-3xl font-bold text-gray-900">{{ write.title }}</h1>
+        <div class="mt-2 hidden text-sm text-gray-500 lg:block">
+          <span class="font-medium">Kategori:</span> {{ getCategoryName(write.category_id).name }}
+        </div>
       </div>
-      <div v-if="auth.user" class="flex">
-        <button
-          @click="deleteWrite(write.id)"
-          class="m-2 ml-auto flex rounded p-2 text-right font-bold text-black underline"
-        >
-          Yazıyı sil
-        </button>
+
+      <div class="hidden justify-center space-y-2 md:col-span-3 md:mt-0 md:flex">
+        <div v-if="write.hasDraw" class="flex items-center">
+          <Link :href="`/writes/${write.slug}?showMerhaba=${showMerhaba ? 0 : 1}`">
+            <Button>
+              {{ showMerhaba ? 'Yazıya Dön' : 'Çizimine Git' }}
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 rounded-lg bg-white p-4 shadow-sm lg:p-8">
+      <div class="prose prose-lg ql-container-custom mb-8 lg:pl-1" v-html="write.content"></div>
+
+      <div class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm">
+        <h2 class="mb-4 text-2xl font-semibold text-gray-800">Özet</h2>
+        <p class="leading-relaxed text-gray-700">{{ write.summary }}</p>
+      </div>
+
+      <div v-if="auth.user" class="mt-5 flex justify-end">
+        <Link :href="`/writes/${write.id}/edit`">
+          <Button> Yazıyı Düzenle </Button>
+        </Link>
+        <Button @click="deleteWrite(write.id)"> Yazıyı Sil </Button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
-import GoBackButton from '@/Pages/WritesCategories/_components/GoBackButton.vue';
+import GoBackButton from '@/Components/GoBackButton.vue';
+import Button from '@/Components/CekapUI/Buttons/CButton.vue';
 
 const { props } = usePage();
 const write = ref(props.write);
 const categories = ref(props.categories);
 const auth = props.auth;
+
+const navigateToWrite = () => {
+  Inertia.visit(route('writes.show', { write: write.value.slug }));
+};
 
 const deleteWrite = (id) => {
   if (confirm('Are you sure you want to delete this write?')) {
@@ -53,6 +78,13 @@ const deleteWrite = (id) => {
 
 const getCategoryName = (categoryId) => {
   const category = categories.value.find((cat) => cat.id === categoryId);
-  return category ? category.name : 'Unknown';
+  console.log(category);
+
+  return category ? category.name : null;
 };
+
+const categoryUrl = computed(() => {
+  const categoryName = getCategoryName(write.category_id);
+  return categoryName ? `/categories/${categoryName}` : '/writes';
+});
 </script>

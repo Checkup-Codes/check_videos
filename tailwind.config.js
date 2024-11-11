@@ -20,7 +20,9 @@ export default {
             },
             colors: {
                 'sidebar': '#fafafa',
-                'subsidebar-shadow': 'rgb(0,180,216,0.7)',
+                'color-one': 'rgb(0,180,216,0.1)',
+                'active-one': 'rgb(0,180,216,0.2)',
+                'hover-one': 'rgb(0,180,216,0.3)',
                 'screen-bg': '#FBFEFE',
             },
             gridTemplateColumns: {
@@ -28,7 +30,7 @@ export default {
                 'sidebar': '2fr 10fr',
             },
             boxShadow: {
-                'right': '10px 0 10px -3px rgba(0, 0, 0, 0.1)', // Sağa gölge
+                'right': '10px 0 10px -3px rgba(0, 0, 0, 0.1)',
             }
         },
     },

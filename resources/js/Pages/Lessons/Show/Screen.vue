@@ -1,82 +1,77 @@
 <template>
   <div class="grid grid-cols-1 p-5 leading-loose">
-    <div>
-      <div class="rounded-lg bg-white p-3 shadow-lg">
-        <!-- Skeleton Loader -->
-        <div v-if="loading" class="space-y-4">
-          <div v-for="n in 10" :key="n" class="flex animate-pulse items-center space-x-4">
-            <div class="h-28 w-40 flex-shrink-0 rounded-lg bg-gray-200 md:w-52"></div>
-            <div class="flex-1 space-y-4 py-1">
-              <div class="h-4 w-3/4 rounded bg-gray-200"></div>
-              <div class="h-4 w-1/2 rounded bg-gray-200"></div>
-              <div class="h-4 w-1/3 rounded bg-gray-200"></div>
-            </div>
+    <div class="rounded-lg bg-white p-3 shadow-lg">
+      <!-- Skeleton Loader -->
+
+      <div v-if="loading" class="space-y-4">
+        <div v-for="n in 10" :key="n" class="flex animate-pulse items-center space-x-4">
+          <div class="h-28 w-40 flex-shrink-0 rounded-lg bg-gray-200 md:w-52"></div>
+          <div class="flex-1 space-y-4 py-1">
+            <div class="h-4 w-3/4 rounded bg-gray-200"></div>
+            <div class="h-4 w-1/2 rounded bg-gray-200"></div>
+            <div class="h-4 w-1/3 rounded bg-gray-200"></div>
           </div>
         </div>
+      </div>
 
-        <!-- Video List -->
-        <ul v-else class="mt-6 space-y-4">
-          <li
-            v-for="video in videos"
-            :key="video.id"
-            class="flex flex-col items-start rounded-lg bg-gray-100 p-4 shadow-sm md:flex-row md:items-center"
-          >
-            <div class="mb-4 h-28 w-full flex-shrink-0 md:mb-0 md:w-40 lg:w-52">
-              <img
-                :src="video.thumbnail"
-                alt="Video Thumbnail"
-                class="h-full w-full rounded-lg object-cover shadow-sm"
-              />
-            </div>
-            <div class="w-full md:px-12">
-              <a
-                :href="`https://www.youtube.com/watch?v=${video.id}`"
-                target="_blank"
-                class="text-md font-semibold text-gray-800 hover:underline md:text-lg"
-              >
-                {{ video.title }}
-              </a>
-              <p class="text-sm text-gray-500">Süre: {{ video.duration }}</p>
-              <p class="text-sm text-gray-500">Görüntülenme: {{ video.viewCount }}</p>
-              <p class="text-sm text-gray-500">Beğeniler: {{ video.likeCount }}</p>
-            </div>
-          </li>
-        </ul>
+      <!-- Video List -->
+      <ul v-else class="mt-6 space-y-4">
+        <li
+          v-for="video in videos"
+          :key="video.id"
+          class="flex flex-col items-start rounded-lg bg-gray-100 p-4 shadow-sm md:flex-row md:items-center"
+        >
+          <div class="mb-4 h-28 w-full flex-shrink-0 md:mb-0 md:w-40 lg:w-52">
+            <img :src="video.thumbnail" alt="Video Thumbnail" class="h-full w-full rounded-lg object-cover shadow-sm" />
+          </div>
+          <div class="w-full md:px-12">
+            <a
+              :href="`https://www.youtube.com/watch?v=${video.id}`"
+              target="_blank"
+              class="text-md font-semibold text-gray-800 hover:underline md:text-lg"
+            >
+              {{ video.title }}
+            </a>
+            <p class="text-sm text-gray-500">Süre: {{ video.duration }}</p>
+            <p class="text-sm text-gray-500">Görüntülenme: {{ video.viewCount }}</p>
+            <p class="text-sm text-gray-500">Beğeniler: {{ video.likeCount }}</p>
+          </div>
+        </li>
+      </ul>
 
-        <!-- Pagination -->
-        <div class="mt-6 flex items-center justify-center space-x-2">
-          <button
-            :disabled="currentPage === 1"
-            @click="goToPage(1)"
-            class="rounded px-3 py-2 text-sm transition-all hover:bg-gray-300"
-            :class="currentPage === 1 ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-800'"
-          >
-            1
-          </button>
+      <!-- Pagination -->
+      <div class="mt-6 flex items-center justify-center space-x-2">
+        <button
+          :disabled="currentPage === 1"
+          @click="goToPage(1)"
+          class="rounded px-3 py-2 text-sm transition-all hover:bg-gray-300"
+          :class="currentPage === 1 ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-800'"
+        >
+          1
+        </button>
 
-          <span v-if="currentPage > 3">...</span>
+        <span v-if="currentPage > 3">...</span>
 
-          <button
-            v-for="page in visiblePages"
-            :key="page"
-            @click="goToPage(page)"
-            class="rounded px-3 py-2 text-sm transition-all hover:bg-gray-300"
-            :class="currentPage === page ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-800'"
-          >
-            {{ page }}
-          </button>
+        <button
+          v-for="page in visiblePages"
+          :key="page"
+          @click="goToPage(page)"
+          class="rounded px-3 py-2 text-sm transition-all hover:bg-gray-300"
+          :class="currentPage === page ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-800'"
+        >
+          {{ page }}
+        </button>
 
-          <span v-if="currentPage < totalPages - 2">...</span>
+        <span v-if="currentPage < totalPages - 2">...</span>
 
-          <button
-            :disabled="currentPage === totalPages"
-            @click="goToPage(totalPages)"
-            class="rounded px-3 py-2 text-sm transition-all hover:bg-gray-300"
-            :class="currentPage === totalPages ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-800'"
-          >
-            {{ totalPages }}
-          </button>
-        </div>
+        <button
+          :disabled="currentPage === totalPages"
+          @click="goToPage(totalPages)"
+          class="rounded px-3 py-2 text-sm transition-all hover:bg-gray-300"
+          :class="currentPage === totalPages ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-800'"
+        >
+          {{ totalPages }}
+        </button>
       </div>
     </div>
   </div>
@@ -86,6 +81,7 @@
 import { onMounted, ref, computed } from 'vue';
 import axios from 'axios';
 import { usePage } from '@inertiajs/vue3';
+import GoBackButton from '@/Components/GoBackButton.vue';
 
 const { props } = usePage();
 const lesson = ref(props.lesson);

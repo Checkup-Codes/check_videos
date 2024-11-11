@@ -1,59 +1,65 @@
 <template>
-  <div class="mx-auto mt-10 w-full max-w-full overflow-auto rounded-lg bg-screen-bg p-2 shadow-md lg:mt-0">
+  <div class="mx-auto w-full max-w-full overflow-auto rounded-lg bg-screen-bg p-2 shadow-md">
     <div class="block lg:hidden">
-      <GoBackButton />
-    </div>
-    <div class="pl-3 sm:px-10 md:grid md:grid-cols-12 lg:px-10 lg:pt-5">
-      <div class="my-auto md:col-span-9">
-        <h1 class="text-3xl font-bold">{{ write.title }}</h1>
-        <div class="hidden text-sm text-gray-500 lg:block">Kategori: {{ getCategoryName(write.category_id) }}</div>
-      </div>
-
-      <div class="flex items-end justify-end space-x-5 text-center md:col-span-3">
-        <div v-if="write.hasDraw" class="flex justify-end">
-          <button @click="toggleContent" class="rounded-md px-3 py-1 text-black shadow-md shadow-blue-200">
-            {{ showMerhaba ? 'Yazıya Dön' : 'Drawina Git' }}
-          </button>
-        </div>
-        <div v-if="auth.user" class="flex justify-end pt-2">
-          <Link :href="`/writes/${write.id}/edit`">
-            <div class="rounded-md px-3 py-1 text-black shadow-md shadow-blue-200">Yazıyı Düzenle</div>
+      <div class="flex justify-between px-3">
+        <GoBackButton url="/writes" />
+        <div v-if="write.hasDraw" class="">
+          <Link :href="`/writes/${write.slug}?showMerhaba=${showMerhaba ? 0 : 1}`">
+            <Button>
+              {{ showMerhaba ? 'Yazıya Dön' : 'Çizimine Git' }}
+            </Button>
           </Link>
         </div>
       </div>
     </div>
 
-    <div v-if="showMerhaba">
+    <div class="rounded-lg bg-white p-4 shadow-sm sm:px-10 lg:grid lg:grid-cols-12 lg:px-10 lg:pt-5">
+      <div class="my-auto w-auto lg:col-span-9">
+        <h1 class="text-3xl font-bold text-gray-900">{{ write.title }}</h1>
+        <div class="mt-2 hidden text-sm text-gray-500 lg:block">
+          <span class="font-medium">Kategori:</span> {{ getCategoryName(write.category_id) }}
+        </div>
+      </div>
+
+      <div class="hidden justify-center space-y-2 md:col-span-3 md:mt-0 md:flex">
+        <div v-if="write.hasDraw" class="flex items-center">
+          <Link :href="`/writes/${write.slug}?showMerhaba=${showMerhaba ? 0 : 1}`">
+            <Button>
+              {{ showMerhaba ? 'Yazıya Dön' : 'Çizimine Git' }}
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="showMerhaba" class="rounded-lg bg-white shadow-sm">
       <ExcalidrawComponent :write />
     </div>
 
-    <div v-else>
-      <div class="flex items-center justify-between"></div>
-      <div class="p-4 lg:p-8">
-        <div class="prose prose-lg ql-container-custom mb-6" v-html="write.content"></div>
-        <div class="rounded-lg bg-gray-100 p-4">
-          <h2 class="mb-2 text-xl font-semibold">Özet</h2>
-          <p>{{ write.summary }}</p>
-        </div>
-        <div v-if="auth.user" class="flex">
-          <button
-            @click="deleteWrite(write.id)"
-            class="m-2 ml-auto flex rounded p-2 text-right font-bold text-black underline"
-          >
-            Yazıyı sil
-          </button>
-        </div>
+    <div v-else class="mt-6 rounded-lg bg-white p-4 pb-16 shadow-sm lg:pb-0">
+      <div class="prose prose-lg ql-container-custom mb-8 lg:pl-1" v-html="write.content"></div>
+
+      <div class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm">
+        <h2 class="mb-4 text-2xl font-semibold text-gray-800">Özet</h2>
+        <p class="leading-relaxed text-gray-700">{{ write.summary }}</p>
+      </div>
+      <div v-if="auth.user" class="mt-5 flex justify-end">
+        <Link :href="`/writes/${write.id}/edit`">
+          <Button> Yazıyı Düzenle </Button>
+        </Link>
+        <Button @click="deleteWrite(write.id)"> Yazıyı Sil </Button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
-import GoBackButton from '@/Pages/WritesCategories/_components/GoBackButton.vue';
+import GoBackButton from '@/Components/GoBackButton.vue';
 import ExcalidrawComponent from '@/Components/ExcalidrawComponent.vue';
+import Button from '@/Components/CekapUI/Buttons/CButton.vue';
 
 const { props } = usePage();
 const write = ref(props.write);
@@ -61,6 +67,14 @@ const categories = ref(props.categories);
 const auth = props.auth;
 
 const showMerhaba = ref(false);
+
+onMounted(() => {
+  if (window.location.pathname.includes('categories')) {
+    showMerhaba.value = true;
+  } else {
+    showMerhaba.value = props.showMerhaba || false;
+  }
+});
 
 const toggleContent = () => {
   showMerhaba.value = !showMerhaba.value;

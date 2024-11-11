@@ -6,15 +6,15 @@
         <span class="block sm:inline">{{ flashSuccess }}</span>
       </div>
     </div>
-    <div class="fixed z-30 mt-14 w-full shadow-lg shadow-subsidebar-shadow lg:mt-0 lg:w-[27%]">
+    <div class="fixed z-30 mt-14 w-full shadow-lg shadow-color-one lg:mt-0 lg:w-[27%]">
       <div class="flex cursor-pointer justify-between p-2 text-sm font-bold text-black">
         <div class="rounded border-b-4 border-blue-100 p-2">Derslerimiz</div>
         <Link href="/lessons/create" class="underline" v-if="props.auth.user">Yeni Ders Ekle</Link>
       </div>
 
       <div class="h-[100vh] overflow-auto" ref="scrollContainer" @scroll="handleScroll">
-        <div class="sticky top-0 z-20">
-          <div v-for="lesson in lessons" :key="lesson.id" class="px-3 py-1">
+        <div class="sticky top-0 z-20 bg-sidebar">
+          <div v-for="lesson in lessons" :key="lesson.id" class="py-1">
             <Link
               :href="route('lessons.show', { lesson: lesson.slug })"
               :class="getLinkClasses(`/lessons/${lesson.slug}`)"
@@ -80,8 +80,8 @@ onUnmounted(() => {
 
 const getLinkClasses = (href) => {
   return url === href
-    ? 'block cursor-pointer text-sm rounded-lg text-black transition-all transition-colors duration-200 bg-gray-900 text-white shadow-lg'
-    : 'block cursor-pointer text-sm rounded-lg text-black transition-all transition-colors duration-200 hover:bg-gray-200 hover:shadow-lg';
+    ? 'border-b border-gray-200 px-4 py-3 hover:bg-hover-one block cursor-pointer p-2 text-sm rounded-sm bg-color-one text-black'
+    : 'border-b border-gray-200 px-4 py-3 hover:bg-hover-one block cursor-pointer p-2 text-sm rounded-md text-gray-700 hover:bg-color-one hover:shadow-sm transition-all duration-200';
 };
 
 const formatDate = (dateString) => {

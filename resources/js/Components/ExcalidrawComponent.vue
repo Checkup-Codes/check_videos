@@ -1,12 +1,10 @@
 <template>
-  <div v-if="flashMessage" class="mt-4 rounded bg-green-200 p-3 text-green-800">
+  <div v-if="flashMessage" class="rounded bg-green-200 p-3 text-green-800">
     {{ flashMessage }}
   </div>
-  <div
-    class="mb-2 mt-4 flex justify-between space-x-4 rounded-md px-3 py-2 text-gray-400 shadow-lg shadow-blue-200 sm:mx-3 md:mx-10"
-  >
+  <div class="flex justify-between rounded-md px-1 py-2 text-gray-400 shadow-inner sm:mx-3 md:mx-10">
     <div class="flex">
-      <label for="versionDropdown" class="my-auto font-semibold text-gray-700">Versiyon Seç:</label>
+      <label for="versionDropdown" class="my-auto px-3 font-semibold text-gray-700">Versiyon Seç:</label>
       <select
         id="versionDropdown"
         v-model="selectedVersion"
@@ -26,7 +24,7 @@
     </div>
   </div>
 
-  <div id="excalidraw-container" class="relative h-[650px] w-full pt-3">
+  <div id="excalidraw-container" class="relative h-[612px] w-full pb-10 pt-3 lg:pb-3">
     <div id="excali" class="h-full w-full"></div>
   </div>
 </template>

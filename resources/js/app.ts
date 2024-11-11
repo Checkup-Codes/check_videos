@@ -6,7 +6,7 @@ import { createSSRApp, h, DefineComponent } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
-import CheckLayout from './Layouts/CheckLayout.vue';
+import MainLayout from './Layouts/MainLayout.vue';
 import { InertiaProgress } from '@inertiajs/progress';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -64,7 +64,7 @@ createInertiaApp({
       await resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob<DefineComponent>('./Pages/**/*.vue'))
     ).default;
 
-    page.layout = page.layout || CheckLayout;
+    page.layout = page.layout || MainLayout;
 
     return page;
   },

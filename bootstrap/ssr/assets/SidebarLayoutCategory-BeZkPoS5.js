@@ -53,7 +53,7 @@ const _sfc_main = {
       } else {
         _push(`<!---->`);
       }
-      _push(`<div class="fixed z-30 mt-14 w-full shadow-lg shadow-subsidebar-shadow lg:mt-0 lg:w-[27%]" data-v-c61c537e><div class="flex cursor-pointer justify-between text-sm text-black" data-v-c61c537e><div data-v-c61c537e><div class="m-2 space-y-4 rounded p-1 font-bold text-black" data-v-c61c537e><div class="flex" data-v-c61c537e><div class="${ssrRenderClass([category.value ? "w-auto" : "w-32", "flex content-center items-center rounded-lg border-2 border-sidebar bg-gray-200 p-1 pl-3 hover:border-black"])}" data-v-c61c537e> Kategori seç `);
+      _push(`<div class="fixed z-30 mt-14 w-full shadow-lg shadow-color-one lg:mt-0 lg:w-[27%]" data-v-c61c537e><div class="flex cursor-pointer justify-between text-sm text-black" data-v-c61c537e><div data-v-c61c537e><div class="m-2 space-y-4 rounded p-1 font-bold text-black" data-v-c61c537e><div class="flex" data-v-c61c537e><div class="${ssrRenderClass([category.value ? "w-auto" : "w-32", "flex content-center items-center rounded-lg border-2 border-sidebar bg-gray-200 p-1 pl-3 hover:border-black"])}" data-v-c61c537e> Kategori seç `);
       if (category.value) {
         _push(`<span data-v-c61c537e> : <span class="px-1" data-v-c61c537e>${ssrInterpolate(category.value.name)}</span><span data-v-c61c537e></span></span>`);
       } else {

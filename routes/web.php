@@ -60,6 +60,12 @@ Route::resource('/projects', ProjectsController::class);
 Route::resource('/services', ServicesController::class);
 Route::resource('/customers', CustomersController::class);
 
+Route::middleware('auth')->group(function () {
+    Route::resource('/lessons', LessonsController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
+    Route::resource('/projects', ProjectsController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
+    Route::resource('/services', ServicesController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
+    Route::resource('/customers', CustomersController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
+});
 
 Route::resource('/equipments', EquipmentsController::class);
 Route::middleware('auth')->group(function () {
