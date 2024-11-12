@@ -1,5 +1,6 @@
+<
 <template>
-  <div class="container mx-auto p-6">
+  <Screen>
     <div class="rounded-lg bg-white p-6 shadow-lg">
       <div class="flex justify-between">
         <h1 class="mb-4 text-3xl font-bold">{{ version.version }}</h1>
@@ -27,13 +28,14 @@
         </ul>
       </div>
     </div>
-  </div>
+  </Screen>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { usePage, Link } from '@inertiajs/vue3';
 import dayjs from 'dayjs';
+import Screen from '@/Components/CekapUI/Modals/CScreen.vue';
 
 import 'dayjs/locale/tr';
 
@@ -46,3 +48,4 @@ function formattedDate(date) {
   return dayjs(date).format('D MMMM YYYY, HH:mm');
 }
 </script>
+>

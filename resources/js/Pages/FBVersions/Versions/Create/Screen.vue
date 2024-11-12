@@ -1,7 +1,7 @@
 <template>
-  <div class="container mx-auto bg-screen-bg p-6">
+  <Screen>
     <h1 class="mb-4 text-2xl font-bold">Yeni Version oluştur</h1>
-    <form @submit.prevent="submitForm" class="space-y-6">
+    <form @submit.prevent="submitForm" class="space-y-6 ">
       <div class="space-y-2">
         <label for="version" class="block text-sm font-medium text-gray-700">Version</label>
         <input v-model="form.version" type="text" id="version" class="w-full rounded-md border-gray-300 shadow-sm" />
@@ -71,14 +71,14 @@
 
       <button type="submit" class="rounded-md bg-blue-600 px-4 py-2 text-white">Submit</button>
     </form>
-  </div>
+  </Screen>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
+import Screen from '@/Components/CekapUI/Modals/CScreen.vue';
 
-// Form için başlangıç değerleri
 const form = useForm({
   version: '',
   release_date: '',

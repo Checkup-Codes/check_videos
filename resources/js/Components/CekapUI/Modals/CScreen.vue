@@ -10,7 +10,7 @@ import { defineProps } from 'vue';
 const props = defineProps({
   infoClass: {
     type: String,
-    default: 'bg-screen-bg h-screen px-3 pt-3',
+    default: 'mx-auto mt-0 h-screen w-full max-w-full overflow-auto bg-screen-bg lg:pb-10 px-3 lg:mt-3',
   },
 });
 </script>

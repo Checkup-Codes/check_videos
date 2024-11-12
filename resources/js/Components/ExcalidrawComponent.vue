@@ -24,7 +24,7 @@
     </div>
   </div>
 
-  <div id="excalidraw-container" class="relative h-[612px] w-full pb-10 pt-3 lg:pb-3">
+  <div id="excalidraw-container" class="relative h-[560px] w-full pb-10 pt-3 lg:pb-3">
     <div id="excali" class="h-full w-full"></div>
   </div>
 </template>

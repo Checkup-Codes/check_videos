@@ -1,8 +1,6 @@
 <template>
   <Head :title="titleName" />
-
   <ToggleButton :isCollapsed="isCollapsed" :toggle="collapseSidebar" />
-
   <CheckLayout :isCollapsed="isCollapsed">
     <div v-if="screenName === 'writes'">
       <SidebarLayoutWrite v-if="isCollapsed" :class="sidebarStyle" />

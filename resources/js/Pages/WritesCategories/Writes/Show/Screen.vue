@@ -1,6 +1,6 @@
 <template>
-  <div class="mx-auto w-full max-w-full overflow-auto rounded-lg bg-screen-bg p-2 shadow-md">
-    <div class="block lg:hidden">
+  <Screen>
+    <div class="block px-3 lg:hidden">
       <div class="flex justify-between px-3">
         <GoBackButton url="/writes" />
         <div v-if="write.hasDraw" class="">
@@ -36,7 +36,7 @@
       <ExcalidrawComponent :write />
     </div>
 
-    <div v-else class="mt-6 rounded-lg bg-white p-4 pb-16 shadow-sm lg:pb-0">
+    <div v-else class="mt-3 rounded-lg bg-white p-4 shadow-sm lg:pb-10">
       <div class="prose prose-lg ql-container-custom mb-8 lg:pl-1" v-html="write.content"></div>
 
       <div class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm">
@@ -50,7 +50,7 @@
         <Button @click="deleteWrite(write.id)"> Yazıyı Sil </Button>
       </div>
     </div>
-  </div>
+  </Screen>
 </template>
 
 <script setup>
@@ -60,6 +60,7 @@ import { Inertia } from '@inertiajs/inertia';
 import GoBackButton from '@/Components/GoBackButton.vue';
 import ExcalidrawComponent from '@/Components/ExcalidrawComponent.vue';
 import Button from '@/Components/CekapUI/Buttons/CButton.vue';
+import Screen from '@/Components/CekapUI/Modals/CScreen.vue';
 
 const { props } = usePage();
 const write = ref(props.write);
