@@ -1,0 +1,1 @@
+import o from"./CheckLayout-BK3JeKFO.js";import r from"./Screen-DPC0xveK.js";import{c as t,w as e,o as a,a as c}from"./app-Bict2Khe.js";import"./SidebarLayoutVersion-DsPtmebt.js";import"./CScreen-BGiMoPxz.js";/* empty css            */const h={__name:"ShowVersion",setup(m){return(s,_)=>(a(),t(o,null,{screen:e(()=>[c(r)]),_:1}))}};export{h as default};

@@ -1,0 +1,1 @@
+import e from"./CheckLayout-nj4L02eh.js";import r from"./Screen-BrS64TzR.js";import{c as o,w as t,o as c,a}from"./app-Bict2Khe.js";import"./SidebarLayoutProject-BUd87G-y.js";/* empty css            */import"./ServiceItem-BdByq94L.js";const x={__name:"IndexService",setup(m){return(n,p)=>(c(),o(e,null,{screen:t(()=>[a(r)]),_:1}))}};export{x as default};
