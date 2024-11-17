@@ -1,0 +1,1 @@
+import r from"./CheckLayout-DTxOxpER.js";import e from"./Screen-BUD2W-F3.js";import{c as t,w as o,o as a,a as c}from"./app-CtZtcxFI.js";import"./SidebarLayoutProject-EBBk1L3D.js";/* empty css            */import"./_plugin-vue_export-helper-DlAUqK2U.js";const x={__name:"CreateProject",setup(m){return(p,s)=>(a(),t(r,null,{screen:o(()=>[c(e)]),_:1}))}};export{x as default};

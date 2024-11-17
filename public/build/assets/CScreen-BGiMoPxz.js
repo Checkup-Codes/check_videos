@@ -1,1 +1,0 @@
-import{o as a,g as l,r as o,n as r}from"./app-Bict2Khe.js";const c={__name:"CScreen",props:{infoClass:{type:String,default:"mx-auto mt-0 h-screen w-full max-w-full overflow-auto bg-screen-bg lg:pb-10 px-3 lg:mt-3"}},setup(e){return(s,t)=>(a(),l("div",{class:r(e.infoClass)},[o(s.$slots,"default")],2))}};export{c as _};

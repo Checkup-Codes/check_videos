@@ -1,0 +1,1 @@
+import r from"./Screen-9gzoQxqd.js";import{c as o,o as e}from"./app-CtZtcxFI.js";import"./CScreen-J47cWcTk.js";/* empty css            */const n={__name:"CreateVersion",setup(t){return(a,c)=>(e(),o(r))}};export{n as default};

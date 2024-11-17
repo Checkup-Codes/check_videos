@@ -1,0 +1,1 @@
+import r from"./CheckLayout-BbYA-ZE3.js";import e from"./Screen-lDyByYcx.js";import{c as o,w as t,o as a,a as c}from"./app-CtZtcxFI.js";import"./SidebarLayoutVersion-DJU31XVQ.js";import"./_plugin-vue_export-helper-DlAUqK2U.js";/* empty css            */const x={__name:"IndexVersion",setup(m){return(n,s)=>(a(),o(r,null,{screen:t(()=>[c(e)]),_:1}))}};export{x as default};
