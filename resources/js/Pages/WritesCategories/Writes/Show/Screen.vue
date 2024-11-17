@@ -1,42 +1,92 @@
 <template>
   <Screen>
-    <div class="block px-3 lg:hidden">
-      <div class="flex justify-between px-3">
-        <GoBackButton url="/writes" />
-        <div v-if="write.hasDraw" class="">
-          <Link :href="`/writes/${write.slug}?showMerhaba=${showMerhaba ? 0 : 1}`">
-            <Button>
-              {{ showMerhaba ? 'Yazıya Dön' : 'Çizimine Git' }}
-            </Button>
-          </Link>
-        </div>
-      </div>
-    </div>
-
-    <div class="rounded-lg bg-white p-4 shadow-sm sm:px-10 lg:grid lg:grid-cols-12 lg:px-10 lg:pt-5">
+    <div class="rounded-lg bg-white px-2 py-3 pt-5 shadow-sm sm:px-10 lg:grid lg:grid-cols-12 lg:px-10">
       <div class="my-auto w-auto lg:col-span-9">
         <h1 class="text-3xl font-bold text-gray-900">{{ write.title }}</h1>
         <div class="mt-2 hidden text-sm text-gray-500 lg:block">
           <span class="font-medium">Kategori:</span> {{ getCategoryName(write.category_id) }}
         </div>
+        <div class="block lg:hidden">
+          <div class="absolute right-0 top-14 justify-between px-1">
+            <div v-if="write.hasDraw" class="flex w-full justify-end">
+              <Link :href="`/writes/${write.slug}?showDraw=${showDraw ? 0 : 1}`">
+                <Button class="flex w-full items-center justify-between rounded-full">
+                  <span>{{ showDraw ? '' : '' }}</span>
+
+                  <svg
+                    v-if="!showDraw"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="h-6 w-4"
+                  >
+                    <path
+                      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c1.38 0 2.63-.35 3.74-.96 1.02-.55 1.26-1.94.47-2.76-.63-.66-.4-1.84.43-2.02 2.94-.64 5.36-3.21 5.36-6.26C22 6.48 17.52 2 12 2z"
+                    />
+                    <circle cx="6.5" cy="11.5" r="1.5" />
+                    <circle cx="9.5" cy="7.5" r="1.5" />
+                    <circle cx="14.5" cy="7.5" r="1.5" />
+                    <circle cx="17.5" cy="11.5" r="1.5" />
+                  </svg>
+
+                  <svg
+                    v-else
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    class="h-6 w-4"
+                  >
+                    <text y="20" font-size="14" font-weight="bold" fill="currentColor">TXT</text>
+                  </svg>
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="hidden justify-center space-y-2 md:col-span-3 md:mt-0 md:flex">
         <div v-if="write.hasDraw" class="flex items-center">
-          <Link :href="`/writes/${write.slug}?showMerhaba=${showMerhaba ? 0 : 1}`">
-            <Button>
-              {{ showMerhaba ? 'Yazıya Dön' : 'Çizimine Git' }}
+          <Link :href="`/writes/${write.slug}?showDraw=${showDraw ? 0 : 1}`">
+            <Button class="flex w-full items-center justify-between space-x-2">
+              <span>{{ showDraw ? 'Yazıya Dön' : 'Çizimine Git' }}</span>
+              <svg
+                v-if="!showDraw"
+                xmlns="http://www.w3.org/2000/svg"
+                class="ml-auto h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h8m0 0l-4 4m4-4l-4-4" />
+              </svg>
+              <svg
+                v-else
+                xmlns="http://www.w3.org/2000/svg"
+                class="ml-auto h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m4 6H4" />
+              </svg>
             </Button>
           </Link>
         </div>
       </div>
     </div>
 
-    <div v-if="showMerhaba" class="rounded-lg bg-white shadow-sm">
+    <div v-if="showDraw" class="rounded-lg bg-white shadow-sm">
       <ExcalidrawComponent :write />
     </div>
 
-    <div v-else class="mt-3 rounded-lg bg-white p-4 shadow-sm lg:pb-10">
+    <div v-else class="mt-3 rounded-lg bg-white p-4 pb-16 shadow-sm">
       <div class="prose prose-lg ql-container-custom mb-8 lg:pl-1" v-html="write.content"></div>
 
       <div class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm">
@@ -67,18 +117,18 @@ const write = ref(props.write);
 const categories = ref(props.categories);
 const auth = props.auth;
 
-const showMerhaba = ref(false);
+const showDraw = ref(false);
 
 onMounted(() => {
   if (window.location.pathname.includes('categories')) {
-    showMerhaba.value = true;
+    showDraw.value = true;
   } else {
-    showMerhaba.value = props.showMerhaba || false;
+    showDraw.value = props.showDraw || false;
   }
 });
 
 const toggleContent = () => {
-  showMerhaba.value = !showMerhaba.value;
+  showDraw.value = !showDraw.value;
 };
 
 const deleteWrite = (id) => {

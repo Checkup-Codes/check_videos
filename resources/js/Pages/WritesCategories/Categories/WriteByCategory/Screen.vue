@@ -4,9 +4,9 @@
       <div class="flex items-center justify-between">
         <GoBackButton :url="categoryUrl" />
         <div v-if="write.hasDraw" class="flex items-center px-3 pt-4">
-          <Link :href="`/writes/${write.slug}?showMerhaba=${showMerhaba ? 0 : 1}`">
+          <Link :href="`/writes/${write.slug}?showDraw=${showDraw ? 0 : 1}`">
             <Button>
-              {{ showMerhaba ? 'Yazıya Dön' : 'Çizimine Git' }}
+              {{ showDraw ? 'Yazıya Dön' : 'Çizimine Git' }}
             </Button>
           </Link>
         </div>
@@ -23,9 +23,9 @@
 
       <div class="hidden justify-center space-y-2 md:col-span-3 md:mt-0 md:flex">
         <div v-if="write.hasDraw" class="flex items-center">
-          <Link :href="`/writes/${write.slug}?showMerhaba=${showMerhaba ? 0 : 1}`">
+          <Link :href="`/writes/${write.slug}?showDraw=${showDraw ? 0 : 1}`">
             <Button>
-              {{ showMerhaba ? 'Yazıya Dön' : 'Çizimine Git' }}
+              {{ showDraw ? 'Yazıya Dön' : 'Çizimine Git' }}
             </Button>
           </Link>
         </div>

@@ -1,5 +1,6 @@
 <template>
-  <div class="border-r-2 border-color-one">
+  <div class="relative border-r-2 border-color-one">
+    <ToggleButton :isCollapsed="false" :toggle="collapseSidebar" />
     <FlashMessage :message="flashSuccess" />
     <CategoryMenu :categories="categories" :route="route" />
     <WriteList :writes="writes" :route="route" />
@@ -10,12 +11,20 @@
 import FlashMessage from '@/Components/CekapUI/Notifications/FlashMessage.vue';
 import CategoryMenu from '@/Pages/WritesCategories/_components/CategoryMenu.vue';
 import WriteList from '@/Pages/WritesCategories/_components/WriteList.vue';
-import { ref } from 'vue';
+import { ref, defineEmits } from 'vue';
 import { usePage } from '@inertiajs/vue3';
+import ToggleButton from '@/Components/CekapUI/Buttons/CToggleButton.vue';
 
 const { props } = usePage();
 const flashSuccess = ref(props.flash.success);
 const auth = props.auth;
 const writes = ref(props.writes);
 const categories = ref(props.categories);
+const isCollapsed = ref(true);
+const emit = defineEmits(['update:isCollapsed']);
+
+const collapseSidebar = () => {
+  isCollapsed.value = !isCollapsed.value;
+  emit('update:isCollapsed', isCollapsed.value);
+};
 </script>

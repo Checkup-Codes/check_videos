@@ -69,7 +69,7 @@ class WritesController extends Controller
         ];
 
         // Sorgu parametresini al ve boolean değere dönüştür
-        $showMerhaba = filter_var(request()->query('showMerhaba', false), FILTER_VALIDATE_BOOLEAN);
+        $showDraw = filter_var(request()->query('showDraw', false), FILTER_VALIDATE_BOOLEAN);
 
         $write->increment('views_count');
 
@@ -78,7 +78,7 @@ class WritesController extends Controller
             'write' => $write,
             'categories' => $categories,
             'screen' => $screen,
-            'showMerhaba' => $showMerhaba
+            'showDraw' => $showDraw
         ]);
     }
 

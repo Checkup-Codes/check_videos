@@ -31,7 +31,13 @@ export default {
             },
             boxShadow: {
                 'right': '10px 0 10px -3px rgba(0, 0, 0, 0.1)',
-            }
+            },
+            screens: {
+                '2xl': '1536px',
+                '3xl': '1920px',
+                '4xl': '2560px',
+                '5xl': '3200px',
+            },
         },
     },
 
