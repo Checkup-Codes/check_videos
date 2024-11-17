@@ -22,7 +22,7 @@
                     stroke-width="2"
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    class="h-6 w-4"
+                    class="h-5 w-5"
                   >
                     <path
                       d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c1.38 0 2.63-.35 3.74-.96 1.02-.55 1.26-1.94.47-2.76-.63-.66-.4-1.84.43-2.02 2.94-.64 5.36-3.21 5.36-6.26C22 6.48 17.52 2 12 2z"
@@ -36,11 +36,22 @@
                   <svg
                     v-else
                     xmlns="http://www.w3.org/2000/svg"
+                    class="ml-auto h-5 w-5"
+                    fill="none"
                     viewBox="0 0 24 24"
-                    fill="currentColor"
-                    class="h-6 w-4"
+                    stroke="currentColor"
+                    stroke-width="2"
                   >
-                    <text y="20" font-size="14" font-weight="bold" fill="currentColor">TXT</text>
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M11 5.879l-6.364 6.364A2 2 0 004 13.757V17a2 2 0 002 2h3.243a2 2 0 001.414-.586l6.364-6.364a2 2 0 000-2.828l-2.828-2.828a2 2 0 00-2.828 0z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M16 7l1.586-1.586a2 2 0 112.828 2.828L18 10"
+                    />
                   </svg>
                 </Button>
               </Link>
