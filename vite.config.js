@@ -5,8 +5,8 @@ import path from 'path';
 
 export default defineConfig({
   server: {
-    host: true, // IP adresinden erişimi aç
-    port: 5173, // Kullanmak istediğin port (isteğe bağlı)
+    host: true,
+    port: 5173,
   },
   plugins: [
     laravel({
