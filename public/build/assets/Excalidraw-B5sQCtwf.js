@@ -1,0 +1,1 @@
+import{_ as a}from"./ExcalidrawComponent-DWA8gXOG.js";import{g as e,a as r,o}from"./app-WShForID.js";/* empty css            */const p={__name:"Excalidraw",setup(t){return(c,_)=>(o(),e("div",null,[r(a)]))}};export{p as default};
