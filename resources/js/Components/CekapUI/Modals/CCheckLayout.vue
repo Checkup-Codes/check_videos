@@ -10,7 +10,7 @@ import { defineProps } from 'vue';
 const props = defineProps({
   infoClass: {
     type: String,
-    default: 'grid mt-12 lg:mt-0 h-full grid-cols-1 lg:grid-cols-subsidebar',
+    default: 'grid grid-cols-1 h-[100%] lg:grid-cols-subsidebar',
   },
   isCollapsed: {
     type: Boolean,

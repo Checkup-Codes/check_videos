@@ -1,5 +1,5 @@
 <template>
-  <div class="relative border-r-2 border-color-one">
+  <div class="border-color-one relative border-r">
     <ToggleButton :isCollapsed="false" :toggle="collapseSidebar" />
     <FlashMessage :message="flashSuccess" />
     <CategoryMenu :categories="categories" :route="route" />

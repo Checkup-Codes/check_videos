@@ -1,6 +1,6 @@
 <template>
   <aside class="z-20 col-span-1 border-r-2 border-color-one bg-screen-bg shadow-sm">
-    <div class="flex h-full flex-col items-center text-sm text-black">
+    <div class="flex flex-col items-center text-sm text-black">
       <!-- Logo -->
       <Link href="/dashboard" class="w-full border-b border-color-one p-4 text-center" @click="$emit('link-clicked')">
         <div class="flex flex-col items-center">
@@ -19,9 +19,11 @@
         <!-- <Link href="/projects" :class="getLinkClasses(['/projects'])">
           <font-awesome-icon icon="fa-solid fa-folder" class="mr-2" /> Projeler
         </Link> -->
+        <!--
         <Link href="/lessons" :class="getLinkClasses(['/lessons'])">
           <font-awesome-icon icon="fa-solid fa-book" class="mr-2" /> Kurslar
         </Link>
+        -->
         <Link href="/versions" :class="getLinkClasses(['/versions'])">
           <font-awesome-icon icon="fa-solid fa-sync" class="mr-2" /> Versiyonlar
         </Link>
@@ -95,7 +97,7 @@ const getLinkClasses = (hrefs) => {
   });
 
   return isActive
-    ? 'block cursor-pointer px-4 py-2 rounded-md bg-active-one transition hover:bg-hover-one'
-    : 'block cursor-pointer px-4 py-2 rounded-md text-gray-800 hover:bg-hover-one transition';
+    ? 'block cursor-pointer px-4 py-2 rounded-md bg-primary-200 transition hover:bg-primary-300 shadow-inner'
+    : 'block cursor-pointer px-4 py-2 rounded-md text-gray-800 hover:shadow-inner hover:bg-primary-300 transition';
 };
 </script>

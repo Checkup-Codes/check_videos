@@ -18,7 +18,8 @@ class VersionsController extends Controller
 
         return inertia('FBVersions/Versions/IndexVersion', [
             'isMobileSidebar' => true,
-            'versions' => $versions
+            'versions' => $versions,
+            'name' => 'versions'
         ]);
     }
 
@@ -62,7 +63,8 @@ class VersionsController extends Controller
         return inertia('FBVersions/Versions/ShowVersion', [
             'isMobileSidebar' => false,
             'versions' => $versions,
-            'version' => $version
+            'version' => $version,
+            'name' => 'versions'
         ]);
     }
 
@@ -72,7 +74,8 @@ class VersionsController extends Controller
 
         return inertia('FBVersions/Versions/EditVersion', [
             'isMobileSidebar' => false,
-            'version' => $version
+            'version' => $version,
+            'name' => 'versions'
         ]);
     }
 

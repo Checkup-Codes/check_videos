@@ -1,16 +1,21 @@
 <template>
-  <div :class="infoClass">
+  <div :class="computedClass">
     <slot />
   </div>
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
+import { computed, defineProps } from 'vue';
 
 const props = defineProps({
   infoClass: {
     type: String,
-    default: 'mx-auto mt-0 h-screen w-full max-w-full overflow-auto bg-screen-bg lg:pb-10 px-3 lg:mt-3',
+    default: 'mx-auto px-3',
   },
+});
+
+// Responsif h sınıfını hesapla
+const computedClass = computed(() => {
+  return `${props.infoClass} h-[calc(95vh)] lg:h-[calc(95vh)]`;
 });
 </script>

@@ -1,12 +1,12 @@
 <template>
-  <CheckLayout>
+  <LayoutWritesCategories>
     <template #screen>
       <Screen />
     </template>
-  </CheckLayout>
+  </LayoutWritesCategories>
 </template>
 
 <script setup>
-import CheckLayout from '@/Pages/WritesCategories/_layouts/CheckLayout.vue';
+import LayoutWritesCategories from '@/Pages/WritesCategories/_layouts/LayoutWritesCategories.vue';
 import Screen from '@/Pages/WritesCategories/Writes/Show/Screen.vue';
 </script>

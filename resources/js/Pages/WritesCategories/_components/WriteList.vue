@@ -1,11 +1,16 @@
 <template>
-  <div class="-z-10 h-screen overflow-auto pb-8 lg:py-0" ref="scrollContainer" @scroll="handleScroll">
-    <div v-for="write in writes" :key="write.id" class="border-r-2">
-      <Link :href="route('writes.show', { write: write.slug })" :class="getLinkClasses(`/writes/${write.slug}`)">
+  <div ref="scrollContainer" class="h-[calc(100vh-10rem)] overflow-y-auto overscroll-contain lg:h-[calc(100vh-5rem)]">
+    <div class="min-h-full">
+      <Link
+        v-for="write in writes"
+        :key="write.id"
+        :href="route('writes.show', { write: write.slug })"
+        :class="getLinkClasses(`/writes/${write.slug}`)"
+      >
         <div class="font-semibold">{{ write.title }}</div>
-        <div class="mt-1 flex justify-between text-xs text-gray-500">
+        <div class="flex items-center justify-between text-xs text-gray-500">
           <span>{{ formatDate(write.created_at) }}</span>
-          <span>{{ write.views_count }} Görüntülenme</span>
+          <span>{{ write.views_count }} görüntülenme</span>
         </div>
       </Link>
     </div>
@@ -24,7 +29,16 @@ const props = defineProps({
 const scrollContainer = ref(null);
 
 const handleScroll = (event) => {
-  localStorage.setItem('scrollPosition', event.target.scrollTop);
+  const container = event.target;
+  const maxScroll = container.scrollHeight - container.clientHeight;
+
+  if (container.scrollTop < 0) {
+    container.scrollTop = 0;
+  } else if (container.scrollTop > maxScroll) {
+    container.scrollTop = maxScroll;
+  }
+
+  localStorage.setItem('scrollPosition', container.scrollTop);
 };
 
 onMounted(() => {
@@ -48,8 +62,38 @@ const formatDate = (dateString) => {
 const getLinkClasses = (href) => {
   const isActive = window.location.pathname === href;
   return `
-    border-b border-color-one px-4 py-3 block cursor-pointer p-2 text-sm rounded-sm transition-all duration-200
-    ${isActive ? 'bg-active-one hover:bg-hover-one text-gray-700' : 'text-gray-700 hover:bg-color-one '}
+    border-b border-accent-light px-4 py-3 block cursor-pointer p-2 text-sm rounded-sm transition-all duration-200
+    ${isActive ? 'bg-primary-200 shadow-inner hover:bg-primary-300 text-neutral-700' : 'text-neutral-700 hover:bg-primary-200'}
   `;
 };
 </script>
+
+<style scoped>
+@media (min-width: 1024px) {
+  .overflow-y-auto {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(203, 213, 225, 0.5) transparent;
+  }
+
+  .overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .overflow-y-auto::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .overflow-y-auto::-webkit-scrollbar-thumb {
+    background-color: rgba(203, 213, 225, 0.5);
+    border-radius: 3px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .overflow-y-auto {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+  }
+}
+</style>

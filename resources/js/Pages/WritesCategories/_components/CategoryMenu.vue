@@ -1,5 +1,5 @@
 <template>
-  <div class="relative border-b-2 border-color-one px-3">
+  <div class="border-b-2 border-color-one lg:relative">
     <div class="flex items-center justify-between">
       <div class="py-3 text-sm font-semibold">
         <span class="px-3 py-1">YAZILAR</span>

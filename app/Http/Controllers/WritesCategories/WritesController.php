@@ -228,7 +228,7 @@ class WritesController extends Controller
     private function getWrites()
     {
         return Cache::remember('writes', self::CACHE_TTL, function () {
-            return Write::select('views_count', 'title', 'created_at', 'slug', 'updated_at')
+            return Write::select('views_count', 'title', 'created_at', 'slug', 'updated_at', 'published_at')
                 ->orderByDesc('created_at')
                 ->get();
         });

@@ -1,6 +1,5 @@
 <template>
   <Screen>
-    <GoBackButton url="/writes" />
     <WriteCreateFrom />
   </Screen>
 </template>

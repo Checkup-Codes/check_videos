@@ -1,8 +1,8 @@
 <template>
-  <Screen>
-    <div class="rounded-lg bg-white px-2 py-3 pt-5 shadow-sm sm:px-10 lg:grid lg:grid-cols-12 lg:px-10">
+  <Screen class="pt-3">
+    <div class="bg-white sm:px-10 lg:grid lg:grid-cols-12 lg:px-10">
       <div class="my-auto w-auto lg:col-span-9">
-        <h1 class="text-3xl font-bold text-gray-900">{{ write.title }}</h1>
+        <h1 class="flex h-20 items-center text-2xl font-bold text-gray-900">{{ write.title }}</h1>
         <div class="mt-2 hidden text-sm text-gray-500 lg:block">
           <span class="font-medium">Kategori:</span> {{ getCategoryName(write.category_id) }}
         </div>
@@ -97,12 +97,11 @@
       <ExcalidrawComponent :write />
     </div>
 
-    <div v-else class="mt-3 rounded-lg bg-white p-4 pb-16 shadow-sm">
-      <div class="prose prose-lg ql-container-custom mb-8 lg:pl-1" v-html="write.content"></div>
-
-      <div class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm">
-        <h2 class="mb-4 text-2xl font-semibold text-gray-800">Özet</h2>
-        <p class="leading-relaxed text-gray-700">{{ write.summary }}</p>
+    <div v-else class="mt-3 h-[calc(80vh)] overflow-scroll rounded-lg bg-white p-5 shadow-sm lg:h-[calc(75vh)]">
+      <div v-html="write.content"></div>
+      <div>
+        <h2>Özet</h2>
+        <p>{{ write.summary }}</p>
       </div>
       <div v-if="auth.user" class="mt-5 flex justify-end">
         <Link :href="`/writes/${write.id}/edit`">
@@ -118,7 +117,6 @@
 import { ref, onMounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
-import GoBackButton from '@/Components/GoBackButton.vue';
 import ExcalidrawComponent from '@/Components/ExcalidrawComponent.vue';
 import Button from '@/Components/CekapUI/Buttons/CButton.vue';
 import Screen from '@/Components/CekapUI/Modals/CScreen.vue';

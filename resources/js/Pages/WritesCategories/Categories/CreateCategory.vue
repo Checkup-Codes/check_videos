@@ -7,6 +7,6 @@
 </template>
 
 <script setup>
-import CheckLayout from '@/Pages/WritesCategories/_layouts/CheckLayout.vue';
+import CheckLayout from '@/Pages/WritesCategories/_layouts/LayoutWritesCategories.vue';
 import Screen from '@/Pages/WritesCategories/Categories/Create/Screen.vue';
 </script>

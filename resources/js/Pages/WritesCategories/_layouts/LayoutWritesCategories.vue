@@ -7,8 +7,14 @@
       @update:isCollapsed="handleSidebarCollapse"
       :class="sidebarStyle"
     />
-    <SidebarLayoutCategory v-else-if="isSidebarCollapsed && screenName === 'categories'" :class="sidebarStyle" />
-    <slot name="screen"></slot>
+    <SidebarLayoutCategory
+      v-else-if="isSidebarCollapsed && screenName === 'categories'"
+      @update:isCollapsed="handleSidebarCollapse"
+      :class="sidebarStyle"
+    />
+    <div class="lg:block">
+      <slot name="screen"></slot>
+    </div>
   </CheckLayout>
 </template>
 

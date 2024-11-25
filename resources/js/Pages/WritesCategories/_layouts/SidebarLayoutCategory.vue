@@ -1,69 +1,55 @@
 <template>
-  <div class="relative">
+  <div class="relative h-screen overflow-hidden">
     <div v-if="flashSuccess" class="fixed right-4 top-10 z-50">
       <div class="relative rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700" role="alert">
         <strong class="font-bold">Başarılı! </strong>
         <span class="block sm:inline">{{ flashSuccess }}</span>
       </div>
     </div>
-    <div class="fixed z-30 mt-14 w-full shadow-lg shadow-color-one lg:mt-0 lg:w-[27%]">
-      <div class="flex cursor-pointer justify-between text-sm text-black">
-        <div>
-          <div class="m-2 space-y-4 rounded p-2 font-bold text-black">
-            <div class="flex">
-              <div class="flex px-0.5">
-                <Button type="submit" @click="toggleCategoryMenu" size="small"
-                  >Kategori :
-                  <span v-if="category">
-                    <span class="px-1"> {{ category.name }}</span>
-                  </span>
-                </Button>
-              </div>
-              <div class="duration-50 mx-3 flex content-center items-center rounded-lg transition-all" v-if="category">
-                <Link
-                  :href="route('writes.index')"
-                  class="rounded-lg border-2 bg-black p-0.5 text-center font-bold text-white underline hover:bg-gray-700"
-                >
-                  <CloseXSvg />
-                </Link>
-              </div>
-            </div>
+    <div class="fixed z-30 h-screen w-full lg:w-[27%]">
+      <div class="bg-white shadow-sm">
+        <div class="flex justify-between p-4">
+          <div class="flex items-center space-x-2">
+            <Button @click="toggleCategoryMenu"> Kategori: {{ category ? category.name : 'Seçiniz' }} </Button>
+            <Link v-if="category" :href="route('writes.index')" class="rounded-full p-1 hover:bg-gray-100">
+              <CloseXSvg class="h-4 w-4" />
+            </Link>
           </div>
-        </div>
-        <div v-if="auth.user">
-          <Link href="/writes/create">
-            <div class="mx-2 rounded p-1 text-center font-bold text-black underline">Yeni Yazı Ekle</div>
-          </Link>
-          <Link href="/categories/create">
-            <div class="mx-2 rounded p-1 text-center font-bold text-black underline">Kategori Ekle</div>
-          </Link>
+          <div v-if="auth.user" class="space-x-2">
+            <Link href="/writes/create" class="text-sm font-medium hover:underline">Yeni Yazı</Link>
+            <Link href="/categories/create" class="text-sm font-medium hover:underline">Yeni Kategori</Link>
+          </div>
         </div>
       </div>
-
-      <div class="h-[100vh] overflow-auto" ref="scrollContainer" @scroll="handleScroll">
-        <div class="sticky top-0 z-20 bg-sidebar">
-          <div v-show="showCategories" class="grid grid-cols-3 gap-1 bg-sidebar px-4 pb-3 text-sm">
-            <div v-for="category in categories" :key="category.id" class="transition-all duration-100">
-              <Link
-                :href="route('categories.show', { category: category.slug })"
-                :class="getLinkCategoryClasses(`/categories/${category.slug}`)"
-                class="border-2 hover:border-black hover:bg-sidebar hover:text-black"
-              >
-                <div class="rounded p-1 text-center font-bold">{{ category.name }}</div>
-              </Link>
-            </div>
+      <div class="h-[calc(100vh-4rem)] overflow-y-auto" ref="scrollContainer" @scroll="handleScroll">
+        <div v-show="showCategories" class="bg-white p-4">
+          <div class="grid grid-cols-2 gap-2">
+            <Link
+              v-for="category in categories"
+              :key="category.id"
+              :href="route('categories.show', { category: category.slug })"
+              :class="getLinkCategoryClasses(`/categories/${category.slug}`)"
+              class="rounded-lg border p-2 text-center"
+            >
+              {{ category.name }}
+            </Link>
           </div>
         </div>
-        <div v-for="write in writes" :key="write.id" class="px-3 py-1">
+        <div class="space-y-1 p-4">
           <Link
+            v-for="write in writes"
+            :key="write.id"
             :href="
-              route('categories.showByCategory', { category: getCategoryName(write.category_id), slug: write.slug })
+              route('categories.showByCategory', {
+                category: getCategoryName(write.category_id),
+                slug: write.slug,
+              })
             "
             :class="getLinkClasses(`/categories/${getCategoryName(write.category_id)}/${write.slug}`)"
-            class="px-3 py-1"
+            class="block rounded-lg p-3 hover:bg-gray-50"
           >
-            <div class="py-0.5 font-bold">{{ write.title }}</div>
-            <div class="py-0.5 text-sm text-gray-400">{{ formatDate(write.created_at) }}</div>
+            <div class="font-medium">{{ write.title }}</div>
+            <div class="mt-1 text-sm text-gray-500">{{ formatDate(write.created_at) }}</div>
           </Link>
         </div>
       </div>

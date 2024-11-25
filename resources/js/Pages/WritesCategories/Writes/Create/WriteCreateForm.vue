@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto mt-10 h-screen w-full max-w-full overflow-auto bg-screen-bg px-5 lg:mt-0">
+  <div class="mx-auto w-full max-w-full bg-screen-bg px-5 lg:mt-0">
     <div class="container mx-auto p-4">
       <h1 class="mb-4 text-2xl font-bold">Yeni yazı oluştur</h1>
       <CForm @submit="createWrite">

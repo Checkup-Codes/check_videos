@@ -1,5 +1,13 @@
 <template>
-  <div class="relative">
+  <div class="relative border-r border-color-one">
+    <div class="border-b-2 border-color-one px-3 lg:relative">
+      <div class="flex items-center justify-between">
+        <div class="py-3 text-sm font-semibold">
+          <span class="px-3 py-1">VERSİYONLAR</span>
+        </div>
+      </div>
+    </div>
+
     <div v-if="flashSuccess" class="fixed right-4 top-4 z-50">
       <div class="relative rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700" role="alert">
         <strong class="font-bold">Başarılı! </strong>
@@ -7,19 +15,8 @@
       </div>
     </div>
 
-    <div class="fixed z-30 mt-14 w-full shadow-lg shadow-color-one lg:mt-0 lg:w-[27%]">
-      <div class="flex cursor-pointer justify-between text-sm text-black">
-        <div class="flex justify-between p-2 text-sm font-bold text-black">
-          <div class="rounded border-b-4 border-blue-100 p-2">Versiyonlar</div>
-        </div>
-        <div v-if="auth.user">
-          <Link href="/versions/create">
-            <div class="mx-2 rounded p-3 text-center font-bold text-black underline">Yeni Versiyon Ekle</div>
-          </Link>
-        </div>
-      </div>
-
-      <div class="h-[100vh] overflow-auto" @scroll="handleScroll" ref="scrollContainer">
+    <div ref="scrollContainer" class="h-[calc(100vh-4rem)] overflow-y-auto overscroll-contain lg:h-[calc(100vh-4rem)]">
+      <div class="min-h-full">
         <div v-for="version in versions" :key="version.id" class="px-3 py-1">
           <Link
             :href="`/versions/${version.version}`"
@@ -28,7 +25,7 @@
           >
             <div class="py-1 font-bold">{{ version.version }}</div>
             <div class="flex">
-              <div class="py-0.5 text-sm text-gray-400">{{ formatDate(version.updated_at) }}</div>
+              <div class="py-0.5 text-sm">{{ formatDate(version.updated_at) }}</div>
             </div>
           </Link>
         </div>
@@ -55,8 +52,8 @@ const formatDate = (dateString) => {
 
 const getLinkClasses = (href) => {
   return url === href
-    ? 'block cursor-pointer text-sm rounded-lg text-black transition-all duration-200 bg-gray-900 text-white shadow-lg'
-    : 'block cursor-pointer text-sm rounded-lg text-black transition-all duration-200 hover:bg-gray-200 hover:shadow-lg';
+    ? 'block cursor-pointer text-sm rounded-lg text-black transition-all duration-200 hover:bg-primary-300 bg-primary-200 text-black shadow-inner'
+    : 'block cursor-pointer text-sm rounded-lg text-black transition-all duration-200 hover:bg-primary-300 hover:shadow-inner';
 };
 
 const handleScroll = (event) => {
