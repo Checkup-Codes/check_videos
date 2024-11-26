@@ -1,6 +1,6 @@
 <template>
   <Head :title="titleName" />
-  <ToggleButton v-if="!isSidebarCollapsed" :isCollapsed="true" :toggle="collapseSidebar" />
+  <ToggleSubSidebarButtonOpen v-if="!isSidebarCollapsed" :isCollapsed="true" :toggle="collapseSidebar" />
   <CheckLayout :isCollapsed="isSidebarCollapsed">
     <SidebarLayoutWrite
       v-if="isSidebarCollapsed && screenName === 'writes'"
@@ -19,11 +19,11 @@
 </template>
 
 <script setup>
-import CheckLayout from '@/Components/CekapUI/Modals/CCheckLayout.vue';
+import CheckLayout from '@/Components/CekapUI/Modals/CheckLayout.vue';
 import SidebarLayoutWrite from '@/Pages/WritesCategories/_layouts/SidebarLayoutWrite.vue';
 import SidebarLayoutCategory from '@/Pages/WritesCategories/_layouts/SidebarLayoutCategory.vue';
 import { usePage, Head } from '@inertiajs/vue3';
-import ToggleButton from '@/Components/CekapUI/Buttons/CToggleButton.vue';
+import ToggleSubSidebarButtonOpen from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 import { ref } from 'vue';
 
 const { props } = usePage();

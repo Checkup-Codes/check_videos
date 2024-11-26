@@ -15,10 +15,10 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
-import TextInput from '@/Components/CekapUI/Inputs/CTextInput.vue';
+import TextInput from '@/Components/CekapUI/Inputs/TextInput.vue';
 import Button from '@/Components/CekapUI/Buttons/Button.vue';
-import Form from '@/Components/CekapUI/Forms/CForm.vue';
-import FormDesc from '@/Components/CekapUI/Typography/CFromDesc.vue';
+import Form from '@/Components/CekapUI/Forms/Form.vue';
+import FormDesc from '@/Components/CekapUI/Typography/FromDesc.vue';
 
 const form = useForm({
   name: '',

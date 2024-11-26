@@ -69,9 +69,9 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
-import CForm from '@/Components/CekapUI/Forms/CForm.vue';
-import TextInput from '@/Components/CekapUI/Inputs/CTextInput.vue';
-import RichTextEditor from '@/Components/CekapUI/Inputs/CRichTextEditor.vue';
+import CForm from '@/Components/CekapUI/Forms/Form.vue';
+import TextInput from '@/Components/CekapUI/Inputs/TextInput.vue';
+import RichTextEditor from '@/Components/CekapUI/Inputs/RichTextEditor.vue';
 import Button from '@/Components/CekapUI/Buttons/Button.vue';
 
 const { props } = usePage();

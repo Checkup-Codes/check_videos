@@ -35,7 +35,7 @@
 import { ref } from 'vue';
 import { usePage, Link } from '@inertiajs/vue3';
 import dayjs from 'dayjs';
-import Screen from '@/Components/CekapUI/Modals/CScreen.vue';
+import Screen from '@/Components/CekapUI/Modals/Screen.vue';
 
 import 'dayjs/locale/tr';
 

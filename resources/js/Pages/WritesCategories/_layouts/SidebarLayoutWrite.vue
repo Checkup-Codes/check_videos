@@ -1,6 +1,6 @@
 <template>
   <div class="border-color-one relative border-r">
-    <ToggleButton :isCollapsed="false" :toggle="collapseSidebar" />
+    <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="collapseSidebar" />
     <FlashMessage :message="flashSuccess" />
     <CategoryMenu :categories="categories" :route="route" />
     <WriteList :writes="writes" :route="route" />
@@ -13,7 +13,7 @@ import CategoryMenu from '@/Pages/WritesCategories/_components/CategoryMenu.vue'
 import WriteList from '@/Pages/WritesCategories/_components/WriteList.vue';
 import { ref, defineEmits } from 'vue';
 import { usePage } from '@inertiajs/vue3';
-import ToggleButton from '@/Components/CekapUI/Buttons/CToggleButton.vue';
+import ToggleSubSidebarButtonClose from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 
 const { props } = usePage();
 const flashSuccess = ref(props.flash.success);

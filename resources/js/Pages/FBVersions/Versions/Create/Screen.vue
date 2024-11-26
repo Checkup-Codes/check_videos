@@ -1,7 +1,7 @@
 <template>
   <Screen>
     <h1 class="mb-4 text-2xl font-bold">Yeni Version oluştur</h1>
-    <form @submit.prevent="submitForm" class="space-y-6 ">
+    <form @submit.prevent="submitForm" class="space-y-6">
       <div class="space-y-2">
         <label for="version" class="block text-sm font-medium text-gray-700">Version</label>
         <input v-model="form.version" type="text" id="version" class="w-full rounded-md border-gray-300 shadow-sm" />
@@ -77,7 +77,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
-import Screen from '@/Components/CekapUI/Modals/CScreen.vue';
+import Screen from '@/Components/CekapUI/Modals/Screen.vue';
 
 const form = useForm({
   version: '',

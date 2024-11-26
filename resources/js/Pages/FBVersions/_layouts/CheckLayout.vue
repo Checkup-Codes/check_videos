@@ -7,7 +7,7 @@
   </CheckLayout>
 </template>
 <script setup>
-import CheckLayout from '@/Components/CekapUI/Modals/CCheckLayout.vue';
+import CheckLayout from '@/Components/CekapUI/Modals/CheckLayout.vue';
 import SidebarLayoutVersion from '@/Pages/FBVersions/_layouts/SidebarLayoutVersion.vue';
 import { usePage, Head } from '@inertiajs/vue3';
 import { ref } from 'vue';

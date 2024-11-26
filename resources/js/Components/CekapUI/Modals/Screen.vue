@@ -14,7 +14,6 @@ const props = defineProps({
   },
 });
 
-// Responsif h sınıfını hesapla
 const computedClass = computed(() => {
   return `${props.infoClass} h-[calc(95vh)] lg:h-[calc(95vh)] lg:pt-3`;
 });

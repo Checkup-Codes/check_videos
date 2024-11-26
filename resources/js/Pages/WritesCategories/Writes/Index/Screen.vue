@@ -9,5 +9,5 @@
 </template>
 
 <script setup>
-import Screen from '@/Components/CekapUI/Modals/CScreen.vue';
+import Screen from '@/Components/CekapUI/Modals/Screen.vue';
 </script>
