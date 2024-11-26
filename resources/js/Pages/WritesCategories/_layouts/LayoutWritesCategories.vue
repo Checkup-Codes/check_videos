@@ -12,7 +12,7 @@
       @update:isCollapsed="handleSidebarCollapse"
       :class="sidebarStyle"
     />
-    <div class="lg:block">
+    <div :class="isMobile ? 'hidden' : 'block'">
       <slot name="screen"></slot>
     </div>
   </CheckLayout>
@@ -27,7 +27,8 @@ import ToggleButton from '@/Components/CekapUI/Buttons/CToggleButton.vue';
 import { ref } from 'vue';
 
 const { props } = usePage();
-const sidebarStyle = props.screen.isMobileSidebar ? '' : 'hidden lg:block';
+const isMobile = props.screen.isMobileSidebar;
+const sidebarStyle = isMobile ? '' : 'hidden lg:block';
 const screenName = props.screen.name;
 const titleName = screenName.charAt(0).toUpperCase() + screenName.slice(1) + ' - ';
 

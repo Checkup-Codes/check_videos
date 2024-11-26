@@ -1,5 +1,5 @@
 <template>
-  <div ref="scrollContainer" class="h-[calc(100vh-10rem)] overflow-y-auto overscroll-contain lg:h-[calc(100vh-5rem)]">
+  <div ref="scrollContainer" class="h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain lg:h-[calc(100vh-5rem)]">
     <div class="min-h-full">
       <Link
         v-for="write in writes"
