@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto mt-10 w-full max-w-full overflow-auto bg-screen-bg px-5 lg:mt-0">
+  <div class="bg-screen-bg mx-auto mt-10 w-full max-w-full overflow-auto px-5 lg:mt-0">
     <div class="container mx-auto p-4">
       <h1 class="mb-6 text-3xl font-bold">Yazıyı Güncelle</h1>
       <CForm @submit="updateWrite">
@@ -53,7 +53,7 @@ import { useForm, usePage } from '@inertiajs/vue3';
 import CForm from '@/Components/CekapUI/Forms/CForm.vue';
 import TextInput from '@/Components/CekapUI/Inputs/CTextInput.vue';
 import RichTextEditor from '@/Components/CekapUI/Inputs/CRichTextEditor.vue';
-import Button from '@/Components/CekapUI/Buttons/CButton.vue';
+import Button from '@/Components/CekapUI/Buttons/Button.vue';
 
 const { props } = usePage();
 const write = props.write;

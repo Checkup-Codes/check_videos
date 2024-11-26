@@ -32,7 +32,7 @@
 <script setup>
 import { ref } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
-import Button from '@/Components/CekapUI/Buttons/CButton.vue';
+import Button from '@/Components/CekapUI/Buttons/Button.vue';
 
 const props = defineProps({
   categories: Array,

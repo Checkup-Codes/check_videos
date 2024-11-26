@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto w-full max-w-full bg-screen-bg px-5 lg:mt-0">
+  <div class="bg-screen-bg mx-auto w-full max-w-full px-5 lg:mt-0">
     <div class="container mx-auto p-4">
       <h1 class="mb-4 text-2xl font-bold">Yeni yazı oluştur</h1>
       <CForm @submit="createWrite">
@@ -72,7 +72,7 @@ import { useForm, usePage } from '@inertiajs/vue3';
 import CForm from '@/Components/CekapUI/Forms/CForm.vue';
 import TextInput from '@/Components/CekapUI/Inputs/CTextInput.vue';
 import RichTextEditor from '@/Components/CekapUI/Inputs/CRichTextEditor.vue';
-import Button from '@/Components/CekapUI/Buttons/CButton.vue';
+import Button from '@/Components/CekapUI/Buttons/Button.vue';
 
 const { props } = usePage();
 const categories = ref(props.categories);

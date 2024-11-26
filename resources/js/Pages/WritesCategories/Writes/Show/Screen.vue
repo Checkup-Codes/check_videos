@@ -32,7 +32,7 @@ import { ref, onMounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
 import ExcalidrawComponent from '@/Components/ExcalidrawComponent.vue';
-import Button from '@/Components/CekapUI/Buttons/CButton.vue';
+import Button from '@/Components/CekapUI/Buttons/Button.vue';
 import Screen from '@/Components/CekapUI/Modals/CScreen.vue';
 import ShowDraw from '@/Shared/Svg/ShowDraw.vue';
 import ShowWrite from '@/Shared/Svg/ShowWrite.vue';

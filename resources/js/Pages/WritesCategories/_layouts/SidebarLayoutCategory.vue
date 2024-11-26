@@ -62,7 +62,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import DropdownSvg from '@/Shared/Svg/Dropdown.vue';
 import CloseXSvg from '@/Shared/Svg/CloseX.vue';
-import Button from '@/Components/CekapUI/Buttons/CButton.vue';
+import Button from '@/Components/CekapUI/Buttons/Button.vue';
 
 const { props, url } = usePage();
 const writes = ref(props.writes);

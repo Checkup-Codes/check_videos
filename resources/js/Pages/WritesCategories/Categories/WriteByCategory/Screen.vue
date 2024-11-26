@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto mt-10 w-full max-w-full overflow-auto rounded-lg bg-screen-bg p-2 shadow-sm lg:mt-0">
+  <div class="bg-screen-bg mx-auto mt-10 w-full max-w-full overflow-auto rounded-lg p-2 shadow-sm lg:mt-0">
     <div class="block lg:hidden">
       <div class="flex items-center justify-between">
         <GoBackButton :url="categoryUrl" />
@@ -55,7 +55,7 @@ import { ref, computed } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
 import GoBackButton from '@/Components/GoBackButton.vue';
-import Button from '@/Components/CekapUI/Buttons/CButton.vue';
+import Button from '@/Components/CekapUI/Buttons/Button.vue';
 
 const { props } = usePage();
 const write = ref(props.write);

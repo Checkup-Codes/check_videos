@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto mt-10 w-full max-w-full overflow-auto bg-screen-bg px-5 lg:mt-0">
+  <div class="bg-screen-bg mx-auto mt-10 w-full max-w-full overflow-auto px-5 lg:mt-0">
     <div class="container mx-auto p-4">
       <h1 class="mb-4 text-2xl font-bold">Kategoriyi Düzenle</h1>
       <p class="mb-6 border-l-4 border-gray-300 pl-4 text-sm text-gray-700">Kategorileri için düzenle.</p>
@@ -20,7 +20,7 @@ import { ref, watch } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import CForm from '@/Components/CekapUI/Forms/CForm.vue';
 import TextInput from '@/Components/CekapUI/Inputs/CTextInput.vue';
-import Button from '@/Components/CekapUI/Buttons/CButton.vue';
+import Button from '@/Components/CekapUI/Buttons/Button.vue';
 
 const { props } = usePage();
 const auth = props.auth;
