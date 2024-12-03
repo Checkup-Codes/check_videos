@@ -1,1 +1,0 @@
-import{o as a,g as l,r as o,n as r}from"./app-WShForID.js";const i={__name:"CCheckLayout",props:{infoClass:{type:String,default:"grid grid-cols-1 h-[100%] lg:grid-cols-subsidebar"},isCollapsed:{type:Boolean}},setup(s){return(e,t)=>(a(),l("div",{class:r(s.isCollapsed?s.infoClass:"")},[o(e.$slots,"default")],2))}};export{i as _};
