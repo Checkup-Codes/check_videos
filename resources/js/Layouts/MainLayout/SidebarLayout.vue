@@ -1,8 +1,8 @@
 <template>
-  <aside class="z-20 col-span-1 border-r-2 border-color-one bg-screen-bg shadow-sm">
+  <aside class="border-color-one bg-screen-bg z-20 col-span-1 border-r-2 shadow-sm">
     <div class="flex flex-col items-center text-sm text-black">
       <!-- Logo -->
-      <Link href="/dashboard" class="w-full border-b border-color-one p-4 text-center" @click="$emit('link-clicked')">
+      <Link href="/dashboard" class="border-color-one w-full border-b p-4 text-center" @click="$emit('link-clicked')">
         <div class="flex flex-col items-center">
           <img :src="imagePath" alt="Logo" class="mb-2 h-16 w-16 rounded-full shadow-md" />
           <h2 class="text-lg font-semibold">Check-up Codes</h2>
@@ -13,8 +13,11 @@
       <!-- Navigation Links -->
       <nav class="mt-4 w-full space-y-2 px-2">
         <Link href="/" :class="getLinkClasses('/')"> <font-awesome-icon icon="home" class="mr-2" /> Ana Sayfa </Link>
-        <Link href="/writes" :class="getLinkClasses(['/writes', '/categories'])">
+        <Link href="/writes" :class="getLinkClasses(['/writes'])">
           <font-awesome-icon icon="fa-solid fa-pencil" class="mr-2" /> Yazılar
+        </Link>
+        <Link href="/categories" :class="getLinkClasses(['/categories'])">
+          <font-awesome-icon icon="fa-solid fa-book" class="mr-2" /> Kategoriler
         </Link>
         <!-- <Link href="/projects" :class="getLinkClasses(['/projects'])">
           <font-awesome-icon icon="fa-solid fa-folder" class="mr-2" /> Projeler
@@ -33,7 +36,7 @@
       </nav>
 
       <!-- Divider -->
-      <hr class="my-4 w-full border-color-one" />
+      <hr class="border-color-one my-4 w-full" />
 
       <!-- Social Media Links -->
       <nav class="w-full space-y-2 px-2">

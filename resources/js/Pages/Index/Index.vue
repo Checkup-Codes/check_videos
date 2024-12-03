@@ -1,5 +1,5 @@
 <template>
-  <div class="flex min-h-screen items-center justify-center bg-gray-100">
+  <CheckScreen>
     <header class="text-center">
       <img
         src="../../../../public/images/checkup_codes_logo.png"
@@ -9,12 +9,12 @@
       <h2 class="animate__animated animate__fadeInDown mb-4 text-4xl font-bold">Check-up Codes</h2>
       <p class="animate__animated animate__fadeInUp mb-6 text-lg">Kodlarınızı Yenileyin, Bilginizi Tazeleyin.</p>
     </header>
-  </div>
+  </CheckScreen>
 </template>
 
-<script setup></script>
-
-<style scoped></style>
+<script setup>
+import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
+</script>
 
 <!-- <template>
   <div class="container mx-auto py-8">

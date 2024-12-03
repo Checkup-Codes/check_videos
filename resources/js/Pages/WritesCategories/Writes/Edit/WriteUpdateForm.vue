@@ -1,7 +1,6 @@
 <template>
-  <div class="bg-screen-bg mx-auto mt-10 w-full max-w-full overflow-auto px-5 lg:mt-0">
+  <div class="h-[calc(84vh)] w-full max-w-full overflow-y-scroll break-words rounded-lg bg-white lg:p-5">
     <div class="container mx-auto p-4">
-      <h1 class="mb-6 text-3xl font-bold">Yazıyı Güncelle</h1>
       <CForm @submit="updateWrite">
         <TextInput v-model="form.title" id="title" label="Başlık" :error="errors.title" />
         <TextInput v-model="form.slug" id="slug" label="Slug" :error="errors.slug" />

@@ -1,11 +1,12 @@
 <template>
-  <div class="bg-screen-bg px-3 pt-3">
+  <CheckScreen>
     <GoBackButton url="/categories" />
     <CategoriesEditFrom />
-  </div>
+  </CheckScreen>
 </template>
 
 <script setup>
+import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
 import GoBackButton from '@/Components/GoBackButton.vue';
 import CategoriesEditFrom from '@/Pages/WritesCategories/Categories/Edit/CategoriesEditFrom.vue';
 </script>

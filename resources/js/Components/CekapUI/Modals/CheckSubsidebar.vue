@@ -10,11 +10,11 @@ import { computed, defineProps } from 'vue';
 const props = defineProps({
   infoClass: {
     type: String,
-    default: 'mx-auto px-3',
+    default: '',
   },
 });
 
 const computedClass = computed(() => {
-  return `${props.infoClass} h-[calc(95vh)] lg:h-[calc(95vh)] lg:pt-3`;
+  return `${props.infoClass} border-color-one relative border-r`;
 });
 </script>

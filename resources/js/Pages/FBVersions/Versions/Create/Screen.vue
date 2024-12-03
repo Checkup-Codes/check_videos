@@ -77,7 +77,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
-import Screen from '@/Components/CekapUI/Modals/Screen.vue';
+import Screen from '@/Components/CekapUI/Modals/CheckScreen.vue';
 
 const form = useForm({
   version: '',

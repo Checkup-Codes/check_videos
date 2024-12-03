@@ -1,38 +1,15 @@
 <template>
-  <div class="bg-screen-bg mx-auto mt-10 w-full max-w-full overflow-auto rounded-lg p-2 shadow-sm lg:mt-0">
-    <div class="block lg:hidden">
-      <div class="flex items-center justify-between">
-        <GoBackButton :url="categoryUrl" />
-        <div v-if="write.hasDraw" class="flex items-center px-3 pt-4">
-          <Link :href="`/writes/${write.slug}?showDraw=${showDraw ? 0 : 1}`">
-            <Button>
-              {{ showDraw ? 'Yazıya Dön' : 'Çizimine Git' }}
-            </Button>
-          </Link>
-        </div>
-      </div>
-    </div>
-
-    <div class="rounded-lg bg-white p-4 shadow-sm sm:px-10 md:grid md:grid-cols-12 lg:px-10 lg:pt-5">
-      <div class="my-auto md:col-span-9">
-        <h1 class="text-3xl font-bold text-gray-900">{{ write.title }}</h1>
-        <div class="mt-2 hidden text-sm text-gray-500 lg:block">
-          <span class="font-medium">Kategori:</span> {{ getCategoryName(write.category_id).name }}
-        </div>
-      </div>
-
-      <div class="hidden justify-center space-y-2 md:col-span-3 md:mt-0 md:flex">
-        <div v-if="write.hasDraw" class="flex items-center">
-          <Link :href="`/writes/${write.slug}?showDraw=${showDraw ? 0 : 1}`">
-            <Button>
-              {{ showDraw ? 'Yazıya Dön' : 'Çizimine Git' }}
-            </Button>
-          </Link>
-        </div>
-      </div>
-    </div>
-
-    <div class="mt-6 rounded-lg bg-white p-4 shadow-sm lg:p-8">
+  <CheckScreen>
+    <h1
+      @click="navigateToWriteWithDraw"
+      :class="[
+        'group flex h-16 cursor-pointer select-none items-center justify-between border-b border-gray-300 bg-gradient-to-r from-gray-100 to-gray-200 px-4 py-4 font-extrabold text-gray-900 transition-all duration-300 ease-in-out hover:bg-gradient-to-l hover:shadow-md',
+        write.title.length > 30 ? 'text-xl' : 'text-2xl',
+      ]"
+    >
+      <span class="">{{ write.title }}</span>
+    </h1>
+    <div class="h-[calc(84vh)] w-full max-w-full overflow-y-scroll break-words rounded-lg bg-white lg:p-5">
       <div class="prose prose-lg ql-container-custom mb-8 lg:pl-1" v-html="write.content"></div>
 
       <div class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm">
@@ -47,25 +24,28 @@
         <Button @click="deleteWrite(write.id)"> Yazıyı Sil </Button>
       </div>
     </div>
-  </div>
+  </CheckScreen>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
-import GoBackButton from '@/Components/GoBackButton.vue';
 import Button from '@/Components/CekapUI/Buttons/Button.vue';
+import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
 
 const { props } = usePage();
 const write = ref(props.write);
-const categories = ref(props.categories);
 const auth = props.auth;
 
-const navigateToWrite = () => {
-  Inertia.visit(route('writes.show', { write: write.value.slug }));
+// Yazıya draw parametresiyle gitme
+const navigateToWriteWithDraw = () => {
+  const slug = write.value.slug;
+  const url = `/writes/${slug}?draw=1`;
+  Inertia.visit(url); // Inertia ile yeni sayfaya git
 };
 
+// Yazıyı silme fonksiyonu
 const deleteWrite = (id) => {
   if (confirm('Are you sure you want to delete this write?')) {
     Inertia.delete(route('writes.destroy', id))
@@ -75,16 +55,4 @@ const deleteWrite = (id) => {
       });
   }
 };
-
-const getCategoryName = (categoryId) => {
-  const category = categories.value.find((cat) => cat.id === categoryId);
-  console.log(category);
-
-  return category ? category.name : null;
-};
-
-const categoryUrl = computed(() => {
-  const categoryName = getCategoryName(write.category_id);
-  return categoryName ? `/categories/${categoryName}` : '/writes';
-});
 </script>

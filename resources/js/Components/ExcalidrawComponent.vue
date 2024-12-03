@@ -24,7 +24,7 @@
         </button>
       </div>
     </div>
-    <div id="excalidraw-container" class="relative h-[500px] w-full 2xl:h-[620px] 3xl:h-[720px]">
+    <div id="excalidraw-container" class="h-[calc(81vh)] w-full">
       <div id="excali" class="h-full w-full"></div>
     </div>
   </div>
@@ -109,7 +109,7 @@ const loadSelectedVersion = () => {
 };
 
 const saveDrawToServer = () => {
-  const latestElements = elementsRef.value;
+  const latestElements = elementsRef.value.length > 0 ? elementsRef.value : [];
   const jsonString = JSON.stringify(latestElements);
 
   axios
@@ -117,11 +117,11 @@ const saveDrawToServer = () => {
       elements: jsonString,
     })
     .then((response) => {
-      flashMessage.value = 'Canvas durumu başarıyla kaydedildi!';
+      setFlashMessage('Canvas durumu başarıyla kaydedildi!');
       writeDraws.value.push(response.data);
     })
-    .catch((err) => {
-      flashMessage.value = 'Kaydetme sırasında bir hata oluştu. Lütfen tekrar deneyin.';
+    .catch(() => {
+      setFlashMessage('Kaydetme sırasında bir hata oluştu. Lütfen tekrar deneyin.');
     });
 };
 
@@ -145,5 +145,12 @@ const deleteSelectedVersion = () => {
         flashMessage.value = 'Silme işlemi sırasında bir hata oluştu. Lütfen tekrar deneyin.';
       });
   }
+};
+
+const setFlashMessage = (message) => {
+  flashMessage.value = message;
+  setTimeout(() => {
+    flashMessage.value = '';
+  }, 3000);
 };
 </script>

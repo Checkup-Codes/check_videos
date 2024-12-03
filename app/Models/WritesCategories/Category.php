@@ -11,7 +11,7 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug'];
+    protected $fillable = ['name', 'slug', 'parent_id'];
 
     public $incrementing = false;
     protected $keyType = 'string';
@@ -27,9 +27,20 @@ class Category extends Model
         });
     }
 
-
     public function writes()
     {
         return $this->hasMany(Write::class);
+    }
+
+
+    public function children()
+    {
+        return $this->hasMany(Category::class, 'parent_id');
+    }
+
+
+    public function parent()
+    {
+        return $this->belongsTo(Category::class, 'parent_id');
     }
 }

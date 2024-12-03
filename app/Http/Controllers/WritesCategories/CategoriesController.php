@@ -13,7 +13,7 @@ class CategoriesController extends Controller
     public function index()
     {
         $categories = Cache::remember('categories', 60, function () {
-            return Category::all();
+            return Category::with('children')->get();
         });
 
         $writes = Cache::remember('writes', 60, function () {
@@ -34,10 +34,10 @@ class CategoriesController extends Controller
 
     public function show($slug)
     {
-        $category = Category::where('slug', $slug)->firstOrFail();
+        $category = Category::with('children')->where('slug', $slug)->firstOrFail(); // Alt kategorilerle birlikte getir
 
         $categories = Cache::remember('categories', 60, function () {
-            return Category::all();
+            return Category::with('children')->get();
         });
 
         $writes = Write::where('category_id', $category->id)
@@ -50,10 +50,9 @@ class CategoriesController extends Controller
             });
 
         $screen = [
-            'isMobileSidebar' => true,
+            'isMobileSidebar' => false,
             'name' => 'categories'
         ];
-
         return inertia('WritesCategories/Categories/ShowCategory', [
             'category' => $category,
             'categories' => $categories,
@@ -65,7 +64,7 @@ class CategoriesController extends Controller
     public function create()
     {
         $categories = Cache::remember('categories', 60, function () {
-            return Category::all();
+            return Category::with('children')->get();
         });
 
         $screen = [
@@ -84,26 +83,26 @@ class CategoriesController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:categories,slug',
+            'parent_id' => 'nullable|exists:categories,id',
         ]);
 
         $category = new Category();
         $category->name = $request->name;
         $category->slug = $request->slug;
+        $category->parent_id = $request->parent_id;
         $category->save();
 
         Cache::forget('categories');
         Cache::forget('writes');
 
-        return redirect()->route('categories.index')->with('success', 'Yeni bir kategori eklendi!');;;
+        return redirect()->route('categories.index')->with('success', 'Yeni bir kategori eklendi!');
     }
 
     public function edit($id)
     {
-        $categories = Cache::remember('categories', 60, function () {
-            return Category::all();
-        });
+        $categories = Category::with('children')->get();
 
-        $category = Category::where('slug', $id)->firstOrFail();
+        $category = Category::where('id', $id)->with('parent')->firstOrFail(); // Üst kategori bilgisiyle al
 
         $screen = [
             'isMobileSidebar' => false,
@@ -117,23 +116,26 @@ class CategoriesController extends Controller
         ]);
     }
 
+
     public function update(Request $request, $id)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:categories,slug,' . $id,
+            'parent_id' => 'nullable|exists:categories,id',
         ]);
 
-        $category = Category::where('id', $id)->firstOrFail();
+        $category = Category::findOrFail($id);
         $category->name = $request->name;
         $category->slug = $request->slug;
+        $category->parent_id = $request->parent_id;
         $category->save();
 
         Cache::forget('categories');
-        Cache::forget('writes');
 
-        return redirect()->route('categories.index')->with('success', 'Kategori başarı ile güncellendi!');;;;
+        return redirect()->route('categories.index')->with('success', 'Kategori başarı ile güncellendi!');
     }
+
 
     public function destroy($id)
     {
@@ -143,15 +145,15 @@ class CategoriesController extends Controller
         Cache::forget('categories');
         Cache::forget('writes');
 
-        return redirect()->route('categories.index')->with('success', 'Çöp, bir yazı daha kazandı !');;
+        return redirect()->route('categories.index')->with('success', 'Kategori silindi!');
     }
 
     public function showByCategory($categorySlug, $writeSlug)
     {
-        $category = Category::where('slug', $categorySlug)->firstOrFail();
+        $category = Category::with('children')->where('slug', $categorySlug)->firstOrFail();
 
         $categories = Cache::remember('categories', 60, function () {
-            return Category::all();
+            return Category::with('children')->get();
         });
 
         $writes = Write::where('category_id', $category->id)

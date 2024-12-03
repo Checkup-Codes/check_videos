@@ -28,6 +28,7 @@ class WritesController extends Controller
         ]);
     }
 
+
     public function create()
     {
         $categories = Cache::remember('categories', 60, function () {
@@ -55,9 +56,7 @@ class WritesController extends Controller
             return Category::all();
         });
 
-        $writes = Cache::remember('writes', 60, function () {
-            return Write::select('views_count', 'title', 'created_at', 'slug')->get();
-        });
+        $writes = $this->getWrites(); // Yazılar sıralı olarak gelir.
 
         $write = Write::with(['writeDraws' => function ($query) {
             $query->orderBy('version', 'desc')->latest();
@@ -68,7 +67,6 @@ class WritesController extends Controller
             'name' => 'writes'
         ];
 
-        // Sorgu parametresini al ve boolean değere dönüştür
         $showDraw = filter_var(request()->query('showDraw', false), FILTER_VALIDATE_BOOLEAN);
 
         $write->increment('views_count');

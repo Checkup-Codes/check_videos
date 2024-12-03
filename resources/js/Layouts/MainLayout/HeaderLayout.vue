@@ -3,7 +3,9 @@
     class="sticky top-0 z-50 flex h-10 items-center justify-between border-b-2 border-gray-300 bg-sidebar px-5 lg:hidden"
   >
     <Link v-if="basePath" :href="`/${basePath}`" class="hover:underline">Geri</Link>
-    <div class="rounded bg-black px-2 font-extrabold text-white">CHECK-UP CODES</div>
+    <div class="rounded bg-black px-2 font-extrabold text-white">
+      <Link href="/">CHECK-UP CODES</Link>
+    </div>
     <div class="flex items-center space-x-4">
       <button @click="$emit('toggle-sidebar')" class="lg:hidden">
         <svg

@@ -1,30 +1,35 @@
 <template>
-  <Screen>
+  <CheckScreen>
     <h1
       @click="toggleContent"
-      class="flex h-16 select-none items-center px-3 text-xl text-gray-900 lg:h-20 lg:px-0 lg:text-2xl"
+      :class="[
+        'group flex h-16 cursor-pointer select-none items-center justify-between border-b border-gray-300 bg-gradient-to-r from-gray-100 to-gray-200 px-4 py-4 font-extrabold text-gray-900 transition-all duration-300 ease-in-out hover:bg-gradient-to-l hover:shadow-md',
+        write.title.length > 30 ? 'text-xl' : 'text-2xl',
+      ]"
     >
-      {{ write.title }}
+      <span class="">{{ write.title }}</span>
     </h1>
 
     <div v-if="showDraw" class="rounded-lg bg-white shadow-sm">
       <ExcalidrawComponent :write />
     </div>
 
-    <div v-else class="mt-3 h-[calc(80vh)] overflow-scroll rounded-lg bg-white p-5 shadow-sm lg:h-[calc(75vh)]">
-      <div class="px-5" v-html="write.content"></div>
-      <div class="p-7">
-        <h2>Özet</h2>
-        <p>{{ write.summary }}</p>
+    <div v-else class="h-[calc(84vh)] w-full max-w-full overflow-y-scroll break-words rounded-lg bg-white lg:p-5">
+      <div class="break-words p-5" v-html="write.content"></div>
+      <div class="rounded-lg bg-gray-100 p-7 shadow-inner">
+        <h2 class="mb-3 text-xl font-semibold text-gray-800">Özet</h2>
+        <div class="break-words rounded-md p-4 text-gray-700">
+          {{ write.summary }}
+        </div>
       </div>
-      <div v-if="auth.user" class="mt-5 flex justify-end">
+      <div v-if="auth.user" class="mt-5 flex justify-end space-x-3">
         <Link :href="`/writes/${write.id}/edit`">
           <Button> Yazıyı Düzenle </Button>
         </Link>
         <Button @click="deleteWrite(write.id)"> Yazıyı Sil </Button>
       </div>
     </div>
-  </Screen>
+  </CheckScreen>
 </template>
 
 <script setup>
@@ -33,9 +38,7 @@ import { Link, usePage } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
 import ExcalidrawComponent from '@/Components/ExcalidrawComponent.vue';
 import Button from '@/Components/CekapUI/Buttons/Button.vue';
-import Screen from '@/Components/CekapUI/Modals/Screen.vue';
-import ShowDraw from '@/Shared/Svg/ShowDraw.vue';
-import ShowWrite from '@/Shared/Svg/ShowWrite.vue';
+import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
 
 const { props } = usePage();
 const write = ref(props.write);
@@ -50,11 +53,27 @@ onMounted(() => {
   } else {
     showDraw.value = props.showDraw || false;
   }
+  const urlParams = new URLSearchParams(window.location.search);
+  showDraw.value = urlParams.has('draw');
 });
 
 const toggleContent = () => {
   showDraw.value = !showDraw.value;
+  const url = new URL(window.location.href);
+
+  if (showDraw.value) {
+    url.searchParams.set('draw', '1'); // `draw=1` ekler
+  } else {
+    url.searchParams.delete('draw'); // `draw` parametresini kaldırır
+  }
+
+  window.history.pushState({}, '', url); // URL'i günceller
 };
+
+onMounted(() => {
+  const urlParams = new URLSearchParams(window.location.search);
+  showDraw.value = urlParams.has('draw');
+});
 
 const deleteWrite = (id) => {
   if (confirm('Are you sure you want to delete this write?')) {
