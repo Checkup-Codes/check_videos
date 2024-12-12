@@ -2,12 +2,10 @@
   <CheckScreen>
     <header class="text-center">
       <img
-        src="../../../../public/images/checkup_codes_logo.png"
+        src="../../../../public/images/elselif_logo.png"
         alt="Yakup Sarı"
-        class="mx-auto h-96 w-96 rounded-full"
+        class="mx-auto my-auto h-96 w-96 rounded-full"
       />
-      <h2 class="animate__animated animate__fadeInDown mb-4 text-4xl font-bold">Check-up Codes</h2>
-      <p class="animate__animated animate__fadeInUp mb-6 text-lg">Kodlarınızı Yenileyin, Bilginizi Tazeleyin.</p>
     </header>
   </CheckScreen>
 </template>

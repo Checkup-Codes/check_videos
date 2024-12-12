@@ -4,9 +4,7 @@
       <!-- Logo -->
       <Link href="/dashboard" class="border-color-one w-full border-b p-4 text-center" @click="$emit('link-clicked')">
         <div class="flex flex-col items-center">
-          <img :src="imagePath" alt="Logo" class="mb-2 h-16 w-16 rounded-full shadow-md" />
-          <h2 class="text-lg font-semibold">Check-up Codes</h2>
-          <p class="text-xs font-light text-gray-600">Kodu yenile, bilgini tazele</p>
+          <img :src="imagePath" alt="Logo" class="mb-2 h-32 w-32" />
         </div>
       </Link>
 
@@ -40,23 +38,17 @@
 
       <!-- Social Media Links -->
       <nav class="w-full space-y-2 px-2">
-        <a href="https://www.instagram.com/checkup_codes/" target="_blank" :class="getLinkClasses('/instagram')">
+        <a href="https://www.instagram.com/_elselif/" target="_blank" :class="getLinkClasses('/instagram')">
           <font-awesome-icon :icon="['fab', 'instagram']" class="mr-2" /> Instagram
         </a>
-        <a href="https://www.youtube.com/@checkupcodes/" target="_blank" :class="getLinkClasses('/youtube')">
+        <a href="https://www.youtube.com/@Elselif/" target="_blank" :class="getLinkClasses('/youtube')">
           <font-awesome-icon :icon="['fab', 'youtube']" class="mr-2" /> YouTube
         </a>
-        <a href="https://github.com/cekapykp" target="_blank" :class="getLinkClasses('/github')">
+        <a href="https://github.com/elselif" target="_blank" :class="getLinkClasses('/github')">
           <font-awesome-icon :icon="['fab', 'github']" class="mr-2" /> GitHub
         </a>
-        <a href="https://www.linkedin.com/in/cekap/" target="_blank" :class="getLinkClasses('/linkedin')">
-          <font-awesome-icon :icon="['fab', 'linkedin']" class="mr-2" /> LinkedIn
-        </a>
-        <a href="https://medium.com/@cekapykp" target="_blank" :class="getLinkClasses('/medium')">
+        <a href="https://medium.com/@softwareif" target="_blank" :class="getLinkClasses('/medium')">
           <font-awesome-icon :icon="['fab', 'medium']" class="mr-2" /> Medium
-        </a>
-        <a href="https://x.com/checkupcodes" target="_blank" :class="getLinkClasses('/twitter')">
-          <font-awesome-icon :icon="['fab', 'twitter']" class="mr-2" /> Twitter
         </a>
       </nav>
     </div>
@@ -70,7 +62,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { Inertia } from '@inertiajs/inertia';
 
 const { props } = usePage();
-const imagePath = ref('/images/checkup_codes_logo.png');
+const imagePath = ref('/images/elselif_logo.png');
 const currentUrl = ref(window.location.pathname);
 const auth = ref(props.auth);
 

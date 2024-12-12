@@ -1,0 +1,1 @@
+import r from"./CheckLayout-BPGDXWyj.js";import e from"./Screen-CGYvtktP.js";import{c as o,w as t,o as a,a as c}from"./app-RTnT3r-p.js";import"./SidebarLayoutProject-Bk_elvdz.js";/* empty css            */import"./_plugin-vue_export-helper-DlAUqK2U.js";const x={__name:"IndexCustomer",setup(m){return(s,n)=>(a(),o(r,null,{screen:t(()=>[c(e)]),_:1}))}};export{x as default};

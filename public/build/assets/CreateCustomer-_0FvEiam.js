@@ -1,0 +1,1 @@
+import r from"./CheckLayout-BPGDXWyj.js";import e from"./Screen-BkBwG_40.js";import{c as t,w as o,o as a,a as c}from"./app-RTnT3r-p.js";import"./SidebarLayoutProject-Bk_elvdz.js";import"./_plugin-vue_export-helper-DlAUqK2U.js";/* empty css            */const x={__name:"CreateCustomer",setup(m){return(s,p)=>(a(),t(r,null,{screen:o(()=>[c(e)]),_:1}))}};export{x as default};

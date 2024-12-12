@@ -4,7 +4,7 @@
   >
     <Link v-if="basePath" :href="`/${basePath}`" class="hover:underline">Geri</Link>
     <div class="rounded bg-black px-2 font-extrabold text-white">
-      <Link href="/">CHECK-UP CODES</Link>
+      <Link href="/">Elselif</Link>
     </div>
     <div class="flex items-center space-x-4">
       <button @click="$emit('toggle-sidebar')" class="lg:hidden">

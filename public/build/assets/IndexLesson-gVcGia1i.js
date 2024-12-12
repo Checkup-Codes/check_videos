@@ -1,0 +1,1 @@
+import e from"./CheckLayout-BS1dqHLE.js";import r from"./Screen-DOZPix4_.js";import{c as o,w as t,o as a,a as c}from"./app-RTnT3r-p.js";import"./SidebarLayoutLesson-DbK1T_v_.js";/* empty css            */import"./_plugin-vue_export-helper-DlAUqK2U.js";const x={__name:"IndexLesson",setup(s){return(m,n)=>(a(),o(e,null,{screen:t(()=>[c(r)]),_:1}))}};export{x as default};

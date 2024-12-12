@@ -47,8 +47,8 @@ library.add(
 
 import store from './Store';
 
-// const appName = import.meta.env.VITE_APP_NAME || 'Check-up Codes';
-const appName = import.meta.env.VITE_APP_NAME || 'Check-up Codes';
+// const appName = import.meta.env.VITE_APP_NAME || 'Elselif';
+const appName = import.meta.env.VITE_APP_NAME || 'Elselif';
 
 InertiaProgress.init({
   delay: 0,
