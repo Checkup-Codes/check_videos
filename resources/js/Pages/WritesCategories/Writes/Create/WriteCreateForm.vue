@@ -19,6 +19,7 @@
           <select v-model="form.status" id="status" class="mt-1 block w-full rounded border-gray-300">
             <option value="draft">Şablon</option>
             <option value="published">Yayında</option>
+            <option value="private">Gizli</option>
           </select>
           <p v-if="errors.status" class="text-sm text-red-500">{{ errors.status }}</p>
         </div>

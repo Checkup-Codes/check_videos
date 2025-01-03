@@ -28,7 +28,6 @@ class WritesController extends Controller
         ]);
     }
 
-
     public function create()
     {
         $categories = Cache::remember('categories', 60, function () {
@@ -79,8 +78,6 @@ class WritesController extends Controller
             'showDraw' => $showDraw
         ]);
     }
-
-
 
     public function edit($id)
     {
@@ -215,7 +212,6 @@ class WritesController extends Controller
         return response()->json(['message' => 'Versiyon başarıyla silindi.']);
     }
 
-
     private function getCategories()
     {
         return Cache::remember('categories', self::CACHE_TTL, function () {
@@ -225,12 +221,21 @@ class WritesController extends Controller
 
     private function getWrites()
     {
+        if (!Auth::check()) {
+
+            return Write::select('views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
+                ->where('status', 'published')
+                ->orderByDesc('created_at')
+                ->get();
+        }
+
         return Cache::remember('writes', self::CACHE_TTL, function () {
-            return Write::select('views_count', 'title', 'created_at', 'slug', 'updated_at', 'published_at')
+            return Write::select('views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
                 ->orderByDesc('created_at')
                 ->get();
         });
     }
+
 
     private function clearCache()
     {

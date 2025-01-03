@@ -8,7 +8,10 @@
       ]"
     >
       <span> Kategoriler: {{ category.name }} </span>
-      <Button @click="editCategory"> Kategoriyi düzenle </Button>
+      <div v-if="auth.user">
+        <Button @click="editCategory"> Kategoriyi düzenle </Button>
+      </div>
+
       <!-- <button
         @click="toggleView"
         class="rounded px-4 py-2 text-sm font-medium text-gray-800 transition hover:bg-gray-300"
@@ -86,6 +89,7 @@ import Button from '@/Components/CekapUI/Buttons/Button.vue';
 const { props } = usePage();
 const writes = ref(props.writes || []);
 const category = ref(props.category);
+const auth = props.auth;
 
 const isGridView = ref(false);
 const flashSuccess = ref(props.flash.success);

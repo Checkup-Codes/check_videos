@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use App\Models\WritesCategories\Category;
 use App\Models\WritesCategories\Write;
+use Illuminate\Support\Facades\Auth;
 
 class CategoriesController extends Controller
 {
@@ -17,7 +18,11 @@ class CategoriesController extends Controller
         });
 
         $writes = Cache::remember('writes', 60, function () {
-            return Write::all();
+            if (Auth::check()) {
+                return Write::all();
+            }
+
+            return Write::where('status', 'published')->get();
         });
 
         $screen = [
@@ -41,6 +46,9 @@ class CategoriesController extends Controller
         });
 
         $writes = Write::where('category_id', $category->id)
+            ->when(!Auth::check(), function ($query) {
+                $query->where('status', 'published');
+            })
             ->select('id', 'title', 'slug', 'author_id', 'category_id', 'published_at', 'status', 'views_count', 'seo_keywords', 'tags', 'meta_description', 'cover_image', 'created_at', 'updated_at')
             ->get()
             ->map(function ($write) {
@@ -48,6 +56,7 @@ class CategoriesController extends Controller
                     return $write;
                 });
             });
+
 
         $screen = [
             'isMobileSidebar' => false,
@@ -157,6 +166,9 @@ class CategoriesController extends Controller
         });
 
         $writes = Write::where('category_id', $category->id)
+            ->when(!Auth::check(), function ($query) {
+                $query->where('status', 'published');
+            })
             ->select('id', 'title', 'slug', 'author_id', 'category_id', 'published_at', 'summary', 'status', 'views_count', 'seo_keywords', 'tags', 'meta_description', 'cover_image', 'created_at', 'updated_at')
             ->get()
             ->map(function ($write) {
