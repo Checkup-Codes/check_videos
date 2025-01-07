@@ -15,7 +15,7 @@
     </div>
 
     <div v-else class="h-[calc(84vh)] w-full max-w-full overflow-y-scroll break-words rounded-lg bg-white lg:p-5">
-      <div class="break-words p-5" v-html="write.content"></div>
+      <div class="prose prose-lg ql-container-custom mb-8 p-5 lg:pl-1" v-html="write.content"></div>
       <div class="rounded-lg bg-gray-100 p-7 shadow-inner">
         <h2 class="mb-3 text-xl font-semibold text-gray-800">Özet</h2>
         <div class="break-words rounded-md p-4 text-gray-700">
@@ -39,6 +39,7 @@ import { Inertia } from '@inertiajs/inertia';
 import ExcalidrawComponent from '@/Components/ExcalidrawComponent.vue';
 import Button from '@/Components/CekapUI/Buttons/Button.vue';
 import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
+import '@/Shared/Css/quill-custom-styles.css';
 
 const { props } = usePage();
 const write = ref(props.write);
@@ -92,22 +93,5 @@ const getCategoryName = (categoryId) => {
 </script>
 
 <style>
-.prose h1 {
-  @apply my-4 text-2xl font-bold;
-}
-.prose h2 {
-  @apply my-4 text-xl font-semibold;
-}
-.prose h3 {
-  @apply my-4 text-lg font-semibold;
-}
-.prose p {
-  @apply my-2;
-}
-.ql-container-custom .ql-code-block-container {
-  @apply rounded bg-gray-800 p-4 text-white;
-}
-.ql-container-custom .ql-code-block {
-  @apply whitespace-pre;
-}
+/* Styles moved to global quill-custom-styles.css */
 </style>

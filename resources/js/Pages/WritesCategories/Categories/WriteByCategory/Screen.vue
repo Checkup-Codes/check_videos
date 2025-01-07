@@ -10,7 +10,7 @@
       <span class="">{{ write.title }}</span>
     </h1>
     <div class="h-[calc(84vh)] w-full max-w-full overflow-y-scroll break-words rounded-lg bg-white lg:p-5">
-      <div class="prose prose-lg ql-container-custom mb-8 lg:pl-1" v-html="write.content"></div>
+      <div class="prose prose-lg ql-container-custom mb-8 p-5 lg:pl-1" v-html="write.content"></div>
 
       <div class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm">
         <h2 class="mb-4 text-2xl font-semibold text-gray-800">Özet</h2>
@@ -33,6 +33,7 @@ import { Link, usePage } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
 import Button from '@/Components/CekapUI/Buttons/Button.vue';
 import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
+import '@/Shared/Css/quill-custom-styles.css';
 
 const { props } = usePage();
 const write = ref(props.write);

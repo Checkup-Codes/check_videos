@@ -1,140 +1,75 @@
-.ql-container {
-  font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
-  font-size: 16px;
+/* QuillJS Global Styles */
+.prose h1 {
+  @apply my-6 text-4xl font-bold text-gray-900;
+}
+.prose h2 {
+  @apply my-5 text-3xl font-semibold text-gray-800;
+}
+.prose h3 {
+  @apply my-4 text-2xl font-semibold text-gray-800;
+}
+.prose h4 {
+  @apply my-4 text-xl font-semibold text-gray-800;
+}
+.prose h5 {
+  @apply my-3 text-lg font-semibold text-gray-800;
+}
+.prose h6 {
+  @apply my-3 text-base font-semibold text-gray-800;
+}
+.prose p {
+  @apply my-4 text-base leading-relaxed text-gray-700;
+}
+.prose strong {
+  @apply font-bold;
+}
+.prose em {
+  @apply italic;
+}
+.prose u {
+  @apply underline;
+}
+.prose s {
+  @apply line-through;
+}
+.prose blockquote {
+  @apply my-4 border-l-4 border-gray-300 pl-4 italic text-gray-700;
+}
+.ql-container-custom .ql-code-block-container {
+  @apply my-4 rounded-lg bg-gray-800 p-4;
+}
+.ql-container-custom .ql-code-block {
+  @apply whitespace-pre font-mono text-sm text-white;
+}
+.prose ol {
+  @apply my-4 list-decimal pl-6;
+}
+.prose ul {
+  @apply my-4 list-disc pl-6;
+}
+.prose li {
+  @apply my-2;
+}
+.ql-align-right {
+  @apply text-right;
+}
+.ql-align-center {
+  @apply text-center;
+}
+.ql-font-serif {
+  @apply font-serif;
+}
+.ql-font-monospace {
+  @apply font-mono;
 }
 
-.ql-editor h1 {
-  font-size: 2em;
-  font-weight: bold;
+/* Additional spacing and general content styling */
+.prose {
+  @apply max-w-none; /* Override default max-width */
 }
-
-.ql-editor h2 {
-  font-size: 1.5em;
-  font-weight: bold;
+.prose > :first-child {
+  @apply mt-0;
 }
-
-.ql-editor h3 {
-  font-size: 1.17em;
-  font-weight: bold;
-}
-
-.ql-editor a {
-  color: #3490dc;
-  text-decoration: underline;
-}
-
-.ql-editor blockquote {
-  border-left: 4px solid #dfe2e5;
-  color: #6a737d;
-  font-style: italic;
-  margin-top: 0;
-  margin-bottom: 16px;
-  padding: 0 1em;
-}
-
-.ql-editor code {
-  border-radius: 3px;
-  font-size: 85%;
-  margin: 0;
-  padding: 0.2em 0.4em;
-}
-
-.ql-editor pre code {
-  background-color: rgba(27, 31, 35, 0.05);
-  border-radius: 3px;
-  font-size: 100%;
-  padding: 0;
-}
-
-.ql-editor pre {
-  border: 1px solid #d1d5da;
-  border-radius: 3px;
-  overflow: auto;
-  padding: 3px;
-}
-
-.ql-editor ul,
-.ql-editor ol {
-  padding-left: 2em;
-}
-
-.ql-editor ul li,
-.ql-editor ol li {
-  list-style-type: disc;
-  margin-bottom: 0.5em;
-}
-
-.ql-editor ol li {
-  list-style-type: decimal;
-}
-
-.ql-editor .ql-code-block {
-  border-radius: 3px;
-  overflow: auto;
-  padding: 3px;
-}
-
-.ql-editor .ql-indent-1 {
-  padding-left: 3em;
-}
-.ql-editor .ql-indent-2 {
-  padding-left: 6em;
-}
-.ql-editor .ql-indent-3 {
-  padding-left: 9em;
-}
-.ql-editor .ql-indent-4 {
-  padding-left: 12em;
-}
-.ql-editor .ql-indent-5 {
-  padding-left: 15em;
-}
-.ql-editor .ql-indent-6 {
-  padding-left: 18em;
-}
-.ql-editor .ql-indent-7 {
-  padding-left: 21em;
-}
-.ql-editor .ql-indent-8 {
-  padding-left: 24em;
-}
-
-.ql-editor .ql-align-center {
-  text-align: center;
-}
-
-.ql-editor .ql-align-right {
-  text-align: right;
-}
-
-.ql-editor .ql-align-justify {
-  text-align: justify;
-}
-
-.ql-editor .ql-font-serif {
-  font-family: serif;
-}
-
-.ql-editor .ql-font-monospace {
-  font-family: monospace;
-}
-
-.ql-editor .ql-size-small {
-  font-size: 0.75em;
-}
-
-.ql-editor .ql-size-large {
-  font-size: 1.5em;
-}
-
-.ql-editor .ql-size-huge {
-  font-size: 2.5em;
-}
-
-.ql-editor .ql-color {
-  color: inherit;
-}
-
-.ql-editor .ql-background {
-  background-color: inherit;
+.prose > :last-child {
+  @apply mb-0;
 }
