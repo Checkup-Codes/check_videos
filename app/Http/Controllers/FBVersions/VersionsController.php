@@ -7,58 +7,25 @@ use Illuminate\Http\Request;
 use App\Models\FBVersions\Version;
 use App\Models\FBVersions\Feature;
 use App\Models\FBVersions\Bug;
+use Carbon\Carbon;
 
 class VersionsController extends Controller
 {
     public function index()
     {
-        $versions = Version::with(['features', 'bugs'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $versions = $this->getAllVersionsWithDetails();
 
         return inertia('FBVersions/Versions/IndexVersion', [
             'isMobileSidebar' => true,
-            'versions' => $versions,
-            'name' => 'versions'
+            'name' => 'versions',
+            'versions' => $versions
         ]);
-    }
-
-
-    public function create()
-    {
-        return inertia('FBVersions/Versions/CreateVersion');
-    }
-
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'version' => 'required|string|max:255|unique:versions,version',
-            'release_date' => 'required|date',
-            'description' => 'nullable|string',
-            'features' => 'required|array',
-            'features.*.feature_name' => 'required|string|max:255',
-            'features.*.feature_detail' => 'required|string|max:255',
-            'bugs' => 'required|array',
-            'bugs.*.bug_name' => 'required|string|max:255',
-            'bugs.*.bug_detail' => 'required|string|max:255',
-        ]);
-
-        $version = Version::create([
-            'version' => $validated['version'],
-            'release_date' => $validated['release_date'],
-            'description' => $validated['description'],
-        ]);
-
-        $version->features()->createMany($validated['features']);
-        $version->bugs()->createMany($validated['bugs']);
-
-        return redirect()->route('versions.index')->with('success', 'Yeni sürüm hayırlı olsun abi');
     }
 
     public function show($slug)
     {
-        $version = Version::with(relations: ['features', 'bugs'])->where('version', $slug)->firstOrFail();
-        $versions = Version::with(['features', 'bugs'])->orderBy('created_at', 'desc')->get();
+        $version = $this->getVersionBySlug($slug);
+        $versions = $this->getAllVersionsWithDetails();
 
         return inertia('FBVersions/Versions/ShowVersion', [
             'isMobileSidebar' => false,
@@ -70,19 +37,89 @@ class VersionsController extends Controller
 
     public function edit($id)
     {
-        $version = Version::with(['features', 'bugs'])->findOrFail($id);
+        $versions = $this->getAllVersionsWithDetails();
+        $version = $this->getVersionById($id);
 
         return inertia('FBVersions/Versions/EditVersion', [
+            'name' => 'versions',
             'isMobileSidebar' => false,
-            'version' => $version,
-            'name' => 'versions'
+            'versions' => $versions,
+            'version' => $version
         ]);
+    }
+
+    public function create()
+    {
+        $versions = $this->getAllVersionsWithDetails();
+
+        return inertia('FBVersions/Versions/CreateVersion', [
+            'name' => 'versions',
+            'isMobileSidebar' => true,
+            'versions' => $versions,
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $this->validateVersion($request);
+
+        $version = $this->createVersion($validated);
+        $this->attachFeaturesAndBugs($version, $validated);
+
+        return redirect()->route('versions.index')->with('success', 'Yeni sürüm hayırlı olsun abi');
     }
 
     public function update(Request $request, $id)
     {
+        $validated = $this->validateVersion($request, $id);
 
-        $validated = $request->validate([
+        $version = $this->updateVersion($id, $validated);
+        $this->updateFeaturesAndBugs($version, $validated);
+
+        return redirect()->route('versions.index')->with('success', 'Kolay gelsin, güncelleme işi tamam.');
+    }
+
+    public function destroy($id)
+    {
+        $this->deleteVersion($id);
+
+        return redirect()->route('versions.index')->with('success', 'Şirket versiyonda küçültmeye gidiyor anlaşılan');
+    }
+
+    // Helper methods
+
+    private function getAllVersionsWithDetails()
+    {
+        return Version::with(['features', 'bugs'])
+            ->orderBy('release_date', 'desc')
+            ->get()
+            ->map(function ($version) {
+                $version->release_date = Carbon::parse($version->release_date)->translatedFormat('d F Y');
+                return $version;
+            });
+    }
+
+    private function getVersionBySlug($slug)
+    {
+        $version = Version::with(['features', 'bugs'])
+            ->where('version', $slug)
+            ->firstOrFail();
+        $version->release_date = Carbon::parse($version->release_date)->translatedFormat('d F Y');
+
+        return $version;
+    }
+
+    private function getVersionById($id)
+    {
+        $version = Version::with(['features', 'bugs'])->findOrFail($id);
+        $version->release_date = Carbon::parse($version->release_date)->translatedFormat('d F Y');
+
+        return $version;
+    }
+
+    private function validateVersion(Request $request, $id = null)
+    {
+        return $request->validate([
             'version' => 'required|string|max:255|unique:versions,version,' . $id,
             'release_date' => 'required|date',
             'description' => 'nullable|string',
@@ -93,7 +130,19 @@ class VersionsController extends Controller
             'bugs.*.bug_name' => 'required|string|max:255',
             'bugs.*.bug_detail' => 'required|string|max:255',
         ]);
+    }
 
+    private function createVersion(array $validated)
+    {
+        return Version::create([
+            'version' => $validated['version'],
+            'release_date' => $validated['release_date'],
+            'description' => $validated['description'],
+        ]);
+    }
+
+    private function updateVersion($id, array $validated)
+    {
         $version = Version::findOrFail($id);
         $version->update([
             'version' => $validated['version'],
@@ -101,23 +150,27 @@ class VersionsController extends Controller
             'description' => $validated['description'],
         ]);
 
-        $version->features()->delete();
-        $version->features()->createMany($validated['features']);
-
-        $version->bugs()->delete();
-        $version->bugs()->createMany($validated['bugs']);
-
-        return redirect()->route('versions.index')->with('success', 'Kolay gelsin, güncelleme işi tamam.');
+        return $version;
     }
 
+    private function attachFeaturesAndBugs(Version $version, array $validated)
+    {
+        $version->features()->createMany($validated['features']);
+        $version->bugs()->createMany($validated['bugs']);
+    }
 
-    public function destroy($id)
+    private function updateFeaturesAndBugs(Version $version, array $validated)
+    {
+        $version->features()->delete();
+        $version->bugs()->delete();
+        $this->attachFeaturesAndBugs($version, $validated);
+    }
+
+    private function deleteVersion($id)
     {
         $version = Version::findOrFail($id);
         $version->features()->delete();
         $version->bugs()->delete();
         $version->delete();
-
-        return redirect()->route('versions.index')->with('success', 'Şirket versiyonda küçültmeye gidiyor anlaşılan');
     }
 }

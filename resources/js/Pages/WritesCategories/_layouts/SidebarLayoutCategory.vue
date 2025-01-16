@@ -1,7 +1,7 @@
 <template>
   <CheckSubsidebar>
-    <ToggleSubSidebarButtonClose :isCollapsed="false" @click="toggleSidebar" />
-    <TopSubsidebar title="KATEGORİLER" />
+    <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="collapseSidebar" />
+    <TopSubsidebar title="KATEGORİLER" href="/categories/create" />
 
     <div class="h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain lg:h-[calc(100vh-5rem)]" ref="scrollContainer">
       <div v-show="showCategories" class="p-4">
@@ -53,14 +53,20 @@ import { ref, onMounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import CheckSubsidebar from '@/Components/CekapUI/Modals/CheckSubsidebar.vue';
 import ToggleSubSidebarButtonClose from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
-import TopSubsidebar from '@/Pages/WritesCategories/_components/TopSubsidebar.vue';
+import TopSubsidebar from '@/Components/CekapUI/Typography/TopSubsidebar.vue';
 
 const { props, url } = usePage();
 const categories = ref(props.categories || []);
 const writes = ref(props.writes || []);
 const parentCategories = ref([]);
 const showCategories = ref(true);
+const isCollapsed = ref(true);
+const emit = defineEmits(['update:isCollapsed']);
 
+const collapseSidebar = () => {
+  isCollapsed.value = !isCollapsed.value;
+  emit('update:isCollapsed', isCollapsed.value);
+};
 const toggleSidebar = () => {
   showCategories.value = !showCategories.value;
 };

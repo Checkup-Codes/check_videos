@@ -1,24 +1,11 @@
 <template>
   <CheckScreen>
-    <h1
-      @click="toggleContent"
-      :class="[
-        'group flex h-16 cursor-pointer select-none items-center justify-between border-b border-gray-300 bg-gradient-to-r from-gray-100 to-gray-200 px-4 py-4 font-extrabold text-gray-900 transition-all duration-300 ease-in-out hover:bg-gradient-to-l hover:shadow-md',
-        category.name > 30 ? 'text-xl' : 'text-2xl',
-      ]"
-    >
-      <span> Kategoriler: {{ category.name }} </span>
-      <div v-if="auth.user">
-        <Button @click="editCategory"> Kategoriyi düzenle </Button>
-      </div>
+    <TopScreen :title="category.name" />
 
-      <!-- <button
-        @click="toggleView"
-        class="rounded px-4 py-2 text-sm font-medium text-gray-800 transition hover:bg-gray-300"
-      >
-        {{ isGridView ? 'Liste Görünümü' : 'Kart Görünümü' }}
-      </button> -->
-    </h1>
+    <div v-if="auth.user" class="mx-5 text-right">
+      <Button @click="editCategory"> Kategoriyi düzenle </Button>
+    </div>
+
     <div class="h-[calc(84vh)] w-full max-w-full overflow-y-scroll rounded-lg bg-white p-5">
       <div v-if="isGridView" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
         <div
@@ -83,6 +70,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
+import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
 import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
 import Button from '@/Components/CekapUI/Buttons/Button.vue';
 

@@ -1,24 +1,22 @@
 <template>
-  <div class="flex h-[100%] overflow-hidden">
-    <!-- Sidebar -->
+  <div class="flex overflow-hidden">
     <SidebarLayout
-      class="fixed left-0 top-0 z-40 hidden h-full w-56 overflow-y-auto lg:block"
+      class="fixed left-0 top-0 z-40 hidden h-full w-56 overflow-hidden lg:block"
       @link-clicked="toggleSidebar"
     />
 
-    <!-- Main Content -->
-    <div class="flex h-[100%] flex-1 flex-col lg:pl-56">
-      <!-- Header -->
-      <HeaderLayout class="sticky top-0 z-30 block h-10 w-full bg-white lg:left-56" @toggle-sidebar="toggleSidebar" />
+    <div class="flex h-full flex-1 flex-col lg:pl-56">
+      <HeaderLayout class="fixed top-0 z-30 block h-12 w-full bg-white lg:left-56" @toggle-sidebar="toggleSidebar" />
 
-      <!-- Content -->
       <div class="flex-1 overflow-auto lg:mt-0">
         <slot>Default Content</slot>
       </div>
 
-      <div class="hidden overflow-hidden bg-gray-100 py-1 lg:block">
+      <div class="hidden h-6 overflow-hidden bg-gray-100 lg:block">
         <div class="marquee-container">
-          <div ref="marquee" class="marquee">Haber kanallarında olmazsa olmazıydı ben de eklemek istedim.</div>
+          <div ref="marquee" class="marquee text-sm leading-tight">
+            Haber kanallarında olmazsa olmazıydı ben de eklemek istedim.
+          </div>
         </div>
       </div>
     </div>

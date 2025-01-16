@@ -1,15 +1,15 @@
 <template>
   <CheckSubsidebar>
     <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="collapseSidebar" />
-    <TopSubsidebar title="YAZILAR" />
+    <TopSubsidebar title="YAZILAR" href="/writes/create" />
     <WriteList :writes="writes" :route="route" />
   </CheckSubsidebar>
 </template>
 
 <script setup>
-import TopSubsidebar from '@/Pages/WritesCategories/_components/TopSubsidebar.vue';
+import TopSubsidebar from '@/Components/CekapUI/Typography/TopSubsidebar.vue';
 import WriteList from '@/Pages/WritesCategories/_components/WriteList.vue';
-import { ref, defineEmits } from 'vue';
+import { ref } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import ToggleSubSidebarButtonClose from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 import CheckSubsidebar from '@/Components/CekapUI/Modals/CheckSubsidebar.vue';

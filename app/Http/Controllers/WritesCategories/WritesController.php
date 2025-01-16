@@ -221,7 +221,7 @@ class WritesController extends Controller
 
     private function getWrites()
     {
-        if (!Auth::check()) {
+        if (Auth::check()) {
 
             return Write::select('views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
                 ->where('status', 'published')

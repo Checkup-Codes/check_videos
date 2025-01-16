@@ -57,7 +57,7 @@
 </template>
 
 <script setup>
-import { defineProps, ref } from 'vue';
+import { ref } from 'vue';
 import SPPrice from '@/Pages/SoftwareProducts/component/SPPrice.vue';
 import Box from '@/Pages/SoftwareProducts/component/Box.vue';
 import { useMonthlyPayment } from '@/Pages/SoftwareProducts/utils/useMonthlyPayment';

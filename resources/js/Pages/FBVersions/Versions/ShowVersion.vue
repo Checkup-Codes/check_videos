@@ -1,12 +1,12 @@
 <template>
-  <CheckLayout>
+  <LayoutFBVersions>
     <template #screen>
       <Screen />
     </template>
-  </CheckLayout>
+  </LayoutFBVersions>
 </template>
 
 <script setup>
-import CheckLayout from '@/Pages/FBVersions/_layouts/CheckLayout.vue';
+import LayoutFBVersions from '@/Pages/FBVersions/_layouts/LayoutFBVersions.vue';
 import Screen from '@/Pages/FBVersions/Versions/Show/Screen.vue';
 </script>

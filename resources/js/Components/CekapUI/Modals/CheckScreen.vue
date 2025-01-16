@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { computed, defineProps } from 'vue';
+import { computed } from 'vue';
 
 const props = defineProps({
   infoClass: {
@@ -15,6 +15,6 @@ const props = defineProps({
 });
 
 const computedClass = computed(() => {
-  return `${props.infoClass} h-[calc(94vh)] lg:h-[calc(95vh)]`;
+  return `${props.infoClass} h-[calc(94h)] lg:h-[calc(94vh)] overflow-hidden`;
 });
 </script>

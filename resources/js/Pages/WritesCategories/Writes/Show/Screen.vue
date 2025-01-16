@@ -1,32 +1,26 @@
 <template>
   <CheckScreen>
-    <h1
-      @click="toggleContent"
-      :class="[
-        'group flex h-16 cursor-pointer select-none items-center justify-between border-b border-gray-300 bg-gradient-to-r from-gray-100 to-gray-200 px-4 py-4 font-extrabold text-gray-900 transition-all duration-300 ease-in-out hover:bg-gradient-to-l hover:shadow-md',
-        write.title.length > 30 ? 'text-xl' : 'text-2xl',
-      ]"
-    >
-      <span class="">{{ write.title }}</span>
-    </h1>
+    <TopScreen :title="write.title" @click="toggleContent" />
 
     <div v-if="showDraw" class="rounded-lg bg-white shadow-sm">
       <ExcalidrawComponent :write />
     </div>
 
     <div v-else class="h-[calc(84vh)] w-full max-w-full overflow-y-scroll break-words rounded-lg bg-white lg:p-5">
-      <div class="prose prose-lg ql-container-custom mb-8 p-5 lg:pl-1" v-html="write.content"></div>
-      <div class="rounded-lg bg-gray-100 p-7 shadow-inner">
-        <h2 class="mb-3 text-xl font-semibold text-gray-800">Özet</h2>
-        <div class="break-words rounded-md p-4 text-gray-700">
-          {{ write.summary }}
+      <div class="container mx-auto p-4">
+        <div class="prose prose-lg ql-container-custom mb-8 p-5 lg:pl-1" v-html="write.content"></div>
+        <div class="rounded-lg bg-gray-50 p-3 shadow-inner">
+          <h2 class="mb-3 text-xl font-semibold text-gray-800">Özet</h2>
+          <div class="break-words rounded-md p-4 text-gray-700">
+            {{ write.summary }}
+          </div>
         </div>
-      </div>
-      <div v-if="auth.user" class="mt-5 flex justify-end space-x-3">
-        <Link :href="`/writes/${write.id}/edit`">
-          <Button> Yazıyı Düzenle </Button>
-        </Link>
-        <Button @click="deleteWrite(write.id)"> Yazıyı Sil </Button>
+        <div v-if="auth.user" class="mt-5 flex justify-end space-x-3">
+          <Link :href="`/writes/${write.id}/edit`">
+            <Button> Yazıyı Düzenle </Button>
+          </Link>
+          <Button @click="deleteWrite(write.id)"> Yazıyı Sil </Button>
+        </div>
       </div>
     </div>
   </CheckScreen>
@@ -36,6 +30,7 @@
 import { ref, onMounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
+import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
 import ExcalidrawComponent from '@/Components/ExcalidrawComponent.vue';
 import Button from '@/Components/CekapUI/Buttons/Button.vue';
 import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';

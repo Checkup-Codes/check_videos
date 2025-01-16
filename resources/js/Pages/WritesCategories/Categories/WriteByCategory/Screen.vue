@@ -1,14 +1,7 @@
 <template>
   <CheckScreen>
-    <h1
-      @click="navigateToWriteWithDraw"
-      :class="[
-        'group flex h-16 cursor-pointer select-none items-center justify-between border-b border-gray-300 bg-gradient-to-r from-gray-100 to-gray-200 px-4 py-4 font-extrabold text-gray-900 transition-all duration-300 ease-in-out hover:bg-gradient-to-l hover:shadow-md',
-        write.title.length > 30 ? 'text-xl' : 'text-2xl',
-      ]"
-    >
-      <span class="">{{ write.title }}</span>
-    </h1>
+    <TopScreen :title="write.title" @click="navigateToWriteWithDraw" />
+
     <div class="h-[calc(84vh)] w-full max-w-full overflow-y-scroll break-words rounded-lg bg-white lg:p-5">
       <div class="prose prose-lg ql-container-custom mb-8 p-5 lg:pl-1" v-html="write.content"></div>
 
@@ -17,7 +10,7 @@
         <p class="leading-relaxed text-gray-700">{{ write.summary }}</p>
       </div>
 
-      <div v-if="auth.user" class="mt-5 flex justify-end">
+      <div v-if="auth.user" class="mt-5 flex justify-end gap-2">
         <Link :href="`/writes/${write.id}/edit`">
           <Button> Yazıyı Düzenle </Button>
         </Link>
@@ -33,6 +26,7 @@ import { Link, usePage } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
 import Button from '@/Components/CekapUI/Buttons/Button.vue';
 import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
+import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
 import '@/Shared/Css/quill-custom-styles.css';
 
 const { props } = usePage();

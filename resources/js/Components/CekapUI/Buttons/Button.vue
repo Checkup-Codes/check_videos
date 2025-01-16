@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, computed } from 'vue';
+import { computed } from 'vue';
 
 const props = defineProps({
   type: {
@@ -22,7 +22,7 @@ const props = defineProps({
   size: {
     type: String,
     default: 'medium',
-    validator: (value) => ['small', 'medium', 'large'].includes(value),
+    validator: (value) => ['xsmall', 'small', 'medium', 'large'].includes(value),
   },
 });
 
@@ -45,6 +45,7 @@ const buttonClasses = computed(() => {
   };
 
   const sizeClasses = {
+    xsmall: 'px-2 py-1 text-xs',
     small: 'px-3 py-1 text-sm',
     medium: 'px-4 py-2 text-sm',
     large: 'px-6 py-3 text-base',

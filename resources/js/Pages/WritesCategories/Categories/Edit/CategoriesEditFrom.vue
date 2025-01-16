@@ -1,7 +1,6 @@
 <template>
   <div class="bg-screen-bg mx-auto mt-10 w-full max-w-full overflow-auto px-5 lg:mt-0">
     <div class="container mx-auto p-4">
-      <h1 class="mb-4 text-2xl font-bold">Kategoriyi Düzenle</h1>
       <p class="mb-6 border-l-4 border-gray-300 pl-4 text-sm text-gray-700">
         Kategorileriniz için düzenlemeler yapabilirsiniz. İsterseniz bir üst kategori seçebilirsiniz.
       </p>
@@ -59,7 +58,6 @@ const form = useForm({
 
 const parentSearch = ref(props.category.parent?.name || '');
 
-
 const filteredCategories = computed(() => {
   if (!parentSearch.value) {
     return categories.value;
@@ -67,12 +65,10 @@ const filteredCategories = computed(() => {
   return categories.value.filter((category) => category.name.toLowerCase().includes(parentSearch.value.toLowerCase()));
 });
 
-
 const selectParentCategory = (category) => {
   form.parent_id = category.id;
   parentSearch.value = category.name;
 };
-
 
 const fetchCategories = async () => {
   const response = await fetch(route('categories.index'), { headers: { Accept: 'application/json' } });
@@ -80,13 +76,11 @@ const fetchCategories = async () => {
   categories.value = data.categories || [];
 };
 
-
 const updateCategory = () => {
   form.put(route('categories.update', { category: props.category.id })).then(() => {
     fetchCategories();
   });
 };
-
 
 const deleteCategory = (categoryId) => {
   if (confirm('Bu kategoriyi silmek istediğinize emin misiniz?')) {

@@ -1,41 +1,52 @@
-<
 <template>
-  <Screen>
-    <div class="rounded-lg bg-white p-6 shadow-lg">
-      <div class="flex justify-between">
-        <h1 class="mb-4 text-3xl font-bold">{{ version.version }}</h1>
-        <Link v-if="props.auth.user" :href="`/versions/${version.id}/edit`" class="underline"
-          >Bu versiyonu düzenler misin</Link
+  <CheckScreen>
+    <div class="rounded-lg bg-white p-6">
+      <div class="mb-4 flex items-center justify-between border-b pb-4">
+        <h1 class="text-2xl font-medium text-gray-800">{{ version.version }}</h1>
+        <Link
+          v-if="props.auth.user"
+          :href="`/versions/${version.id}/edit`"
+          class="text-sm font-medium text-black hover:text-gray-500"
         >
+          Bu versiyonu düzenle
+        </Link>
       </div>
-      <p class="text-gray-500">{{ formattedDate(version.created_at) }}</p>
+      <p class="text-sm text-gray-500">{{ version.release_date }}</p>
 
       <div v-if="version.features.length > 0" class="mt-6">
-        <h2 class="mb-2 text-xl font-semibold">Özellikler:</h2>
-        <ul class="list-inside list-disc">
-          <li v-for="feature in version.features" :key="feature.id">
-            <strong>{{ feature.feature_name }}:</strong> {{ feature.feature_detail }}
+        <h2 class="mb-2 text-lg font-semibold text-gray-800">Özellikler</h2>
+        <ul class="space-y-2">
+          <li v-for="feature in version.features" :key="feature.id" class="flex items-start">
+            <span class="mr-2 text-blue-500">&#8226;</span>
+            <div>
+              <strong class="text-gray-800">{{ feature.feature_name }}:</strong>
+              <span class="whitespace-pre-line text-gray-600">{{ feature.feature_detail }}</span>
+            </div>
           </li>
         </ul>
       </div>
 
       <div v-if="version.bugs.length > 0" class="mt-6">
-        <h2 class="mb-2 text-xl font-semibold">Düzeltilen Hatalar:</h2>
-        <ul class="list-inside list-disc">
-          <li v-for="bug in version.bugs" :key="bug.id">
-            <strong>{{ bug.bug_name }}:</strong> {{ bug.bug_detail }}
+        <h2 class="mb-2 text-lg font-semibold text-gray-800">Düzeltilen Hatalar</h2>
+        <ul class="space-y-2">
+          <li v-for="bug in version.bugs" :key="bug.id" class="flex items-start">
+            <span class="mr-2 text-red-500">&#8226;</span>
+            <div>
+              <strong class="text-gray-800">{{ bug.bug_name }}:</strong>
+              <span class="text-gray-600">{{ bug.bug_detail }}</span>
+            </div>
           </li>
         </ul>
       </div>
     </div>
-  </Screen>
+  </CheckScreen>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { usePage, Link } from '@inertiajs/vue3';
 import dayjs from 'dayjs';
-import Screen from '@/Components/CekapUI/Modals/CheckScreen.vue';
+import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
 
 import 'dayjs/locale/tr';
 
@@ -43,9 +54,4 @@ dayjs.locale('tr');
 
 const { props } = usePage();
 const version = ref(props.version);
-
-function formattedDate(date) {
-  return dayjs(date).format('D MMMM YYYY, HH:mm');
-}
 </script>
->

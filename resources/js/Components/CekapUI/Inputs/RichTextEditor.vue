@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, defineProps, defineEmits } from 'vue';
+import { onMounted, ref } from 'vue';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 

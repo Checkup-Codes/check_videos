@@ -1,13 +1,15 @@
 <template>
   <CheckScreen>
-    <header class="text-center">
-      <img
-        src="../../../../public/images/checkup_codes_logo.png"
-        alt="Yakup Sarı"
-        class="mx-auto h-96 w-96 rounded-full"
-      />
-      <h2 class="animate__animated animate__fadeInDown mb-4 text-4xl font-bold">Check-up Codes</h2>
-      <p class="animate__animated animate__fadeInUp mb-6 text-lg">Kodlarınızı Yenileyin, Bilginizi Tazeleyin.</p>
+    <header class="flex h-[100%] items-center justify-center text-black">
+      <div class="text-center">
+        <img
+          src="../../../../public/images/checkup_codes_logo.png"
+          alt="Yakup Sarı"
+          class="mx-auto h-96 w-96 rounded-full"
+        />
+        <h2 class="animate__animated animate__fadeInDown text-4xl font-bold">Check-up Codes</h2>
+        <p class="animate__animated animate__fadeInUp text-lg">Kodlarınızı Yenileyin, Bilginizi Tazeleyin.</p>
+      </div>
     </header>
   </CheckScreen>
 </template>

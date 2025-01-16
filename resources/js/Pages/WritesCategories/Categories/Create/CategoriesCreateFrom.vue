@@ -1,7 +1,6 @@
 <template>
   <div class="bg-screen-bg mx-auto mt-10 w-full max-w-full overflow-auto px-5 lg:mt-0">
     <div class="container mx-auto p-4">
-      <h1 class="mb-4 text-2xl font-bold">Kategori Oluştur</h1>
       <FormDesc>Kategorileriniz için kategoriler oluşturun. İsterseniz bir üst kategori seçebilirsiniz.</FormDesc>
       <Form @submit="createCategory">
         <TextInput v-model="form.name" id="name" label="İsim" />
