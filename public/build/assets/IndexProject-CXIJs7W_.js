@@ -1,1 +1,0 @@
-import r from"./CheckLayout-BegBOXVo.js";import e from"./Screen-CV7EXu0H.js";import{c as o,w as t,o as c,a}from"./app-CcIPdWom.js";import"./SidebarLayoutProject-Bxb6bPpP.js";/* empty css            */import"./_plugin-vue_export-helper-DlAUqK2U.js";const x={__name:"IndexProject",setup(m){return(n,p)=>(c(),o(r,null,{screen:t(()=>[a(e)]),_:1}))}};export{x as default};

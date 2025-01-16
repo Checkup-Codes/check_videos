@@ -17,10 +17,10 @@ function t() {
   return t = Object.assign ? Object.assign.bind() : function(t4) {
     for (var e2 = 1; e2 < arguments.length; e2++) {
       var r2 = arguments[e2];
-      for (var n2 in r2) Object.prototype.hasOwnProperty.call(r2, n2) && (t4[n2] = r2[n2]);
+      for (var n2 in r2) ({}).hasOwnProperty.call(r2, n2) && (t4[n2] = r2[n2]);
     }
     return t4;
-  }, t.apply(this, arguments);
+  }, t.apply(null, arguments);
 }
 var e = String.prototype.replace, r = /%20/g, n = "RFC3986", o = { default: n, formatters: { RFC1738: function(t4) {
   return e.call(t4, r, "+");
@@ -110,40 +110,40 @@ var e = String.prototype.replace, r = /%20/g, n = "RFC3986", o = { default: n, f
   return t4;
 } }, p = Array.isArray, h = String.prototype.split, y = Array.prototype.push, d = function(t4, e2) {
   y.apply(t4, p(e2) ? e2 : [e2]);
-}, b = Date.prototype.toISOString, g = o.default, v = { addQueryPrefix: false, allowDots: false, charset: "utf-8", charsetSentinel: false, delimiter: "&", encode: true, encoder: f.encode, encodeValuesOnly: false, format: g, formatter: o.formatters[g], indices: false, serializeDate: function(t4) {
-  return b.call(t4);
-}, skipNulls: false, strictNullHandling: false }, m = function t3(e2, r2, n2, o2, i2, u2, a2, s2, c2, l2, y2, b2, g2, m2) {
+}, g = Date.prototype.toISOString, b = o.default, v = { addQueryPrefix: false, allowDots: false, charset: "utf-8", charsetSentinel: false, delimiter: "&", encode: true, encoder: f.encode, encodeValuesOnly: false, format: b, formatter: o.formatters[b], indices: false, serializeDate: function(t4) {
+  return g.call(t4);
+}, skipNulls: false, strictNullHandling: false }, m = function t3(e2, r2, n2, o2, i2, u2, a2, s2, c2, l2, y2, g2, b2, m2) {
   var j2, w2 = e2;
   if ("function" == typeof a2 ? w2 = a2(r2, w2) : w2 instanceof Date ? w2 = l2(w2) : "comma" === n2 && p(w2) && (w2 = f.maybeMap(w2, function(t4) {
     return t4 instanceof Date ? l2(t4) : t4;
   })), null === w2) {
-    if (o2) return u2 && !g2 ? u2(r2, v.encoder, m2, "key", y2) : r2;
+    if (o2) return u2 && !b2 ? u2(r2, v.encoder, m2, "key", y2) : r2;
     w2 = "";
   }
   if ("string" == typeof (j2 = w2) || "number" == typeof j2 || "boolean" == typeof j2 || "symbol" == typeof j2 || "bigint" == typeof j2 || f.isBuffer(w2)) {
     if (u2) {
-      var $2 = g2 ? r2 : u2(r2, v.encoder, m2, "key", y2);
-      if ("comma" === n2 && g2) {
-        for (var O2 = h.call(String(w2), ","), E2 = "", S2 = 0; S2 < O2.length; ++S2) E2 += (0 === S2 ? "" : ",") + b2(u2(O2[S2], v.encoder, m2, "value", y2));
-        return [b2($2) + "=" + E2];
+      var $2 = b2 ? r2 : u2(r2, v.encoder, m2, "key", y2);
+      if ("comma" === n2 && b2) {
+        for (var O2 = h.call(String(w2), ","), E2 = "", R2 = 0; R2 < O2.length; ++R2) E2 += (0 === R2 ? "" : ",") + g2(u2(O2[R2], v.encoder, m2, "value", y2));
+        return [g2($2) + "=" + E2];
       }
-      return [b2($2) + "=" + b2(u2(w2, v.encoder, m2, "value", y2))];
+      return [g2($2) + "=" + g2(u2(w2, v.encoder, m2, "value", y2))];
     }
-    return [b2(r2) + "=" + b2(String(w2))];
+    return [g2(r2) + "=" + g2(String(w2))];
   }
-  var R2, x2 = [];
+  var S2, x2 = [];
   if (void 0 === w2) return x2;
-  if ("comma" === n2 && p(w2)) R2 = [{ value: w2.length > 0 ? w2.join(",") || null : void 0 }];
-  else if (p(a2)) R2 = a2;
+  if ("comma" === n2 && p(w2)) S2 = [{ value: w2.length > 0 ? w2.join(",") || null : void 0 }];
+  else if (p(a2)) S2 = a2;
   else {
     var N2 = Object.keys(w2);
-    R2 = s2 ? N2.sort(s2) : N2;
+    S2 = s2 ? N2.sort(s2) : N2;
   }
-  for (var T2 = 0; T2 < R2.length; ++T2) {
-    var k2 = R2[T2], C = "object" == typeof k2 && void 0 !== k2.value ? k2.value : w2[k2];
+  for (var T2 = 0; T2 < S2.length; ++T2) {
+    var k2 = S2[T2], C = "object" == typeof k2 && void 0 !== k2.value ? k2.value : w2[k2];
     if (!i2 || null !== C) {
       var _ = p(w2) ? "function" == typeof n2 ? n2(r2, k2) : r2 : r2 + (c2 ? "." + k2 : "[" + k2 + "]");
-      d(x2, t3(C, _, n2, o2, i2, u2, a2, s2, c2, l2, y2, b2, g2, m2));
+      d(x2, t3(C, _, n2, o2, i2, u2, a2, s2, c2, l2, y2, g2, b2, m2));
     }
   }
   return x2;
@@ -153,7 +153,7 @@ var e = String.prototype.replace, r = /%20/g, n = "RFC3986", o = { default: n, f
   });
 }, E = function(t4, e2) {
   return t4 && "string" == typeof t4 && e2.comma && t4.indexOf(",") > -1 ? t4.split(",") : t4;
-}, S = function(t4, e2, r2, n2) {
+}, R = function(t4, e2, r2, n2) {
   if (t4) {
     var o2 = r2.allowDots ? t4.replace(/\.([^.[]+)/g, "[$1]") : t4, i2 = /(\[[^[\]]*])/g, u2 = r2.depth > 0 && /(\[[^[\]]*])/.exec(o2), a2 = u2 ? o2.slice(0, u2.index) : o2, s2 = [];
     if (a2) {
@@ -178,7 +178,7 @@ var e = String.prototype.replace, r = /%20/g, n = "RFC3986", o = { default: n, f
       return o3;
     }(s2, e2, r2, n2);
   }
-}, R = function(t4, e2) {
+}, S = function(t4, e2) {
   var r2 = /* @__PURE__ */ function(t5) {
     return $;
   }();
@@ -194,7 +194,7 @@ var e = String.prototype.replace, r = /%20/g, n = "RFC3986", o = { default: n, f
     }
     return n3;
   }(t4, r2) : t4, o2 = r2.plainObjects ? /* @__PURE__ */ Object.create(null) : {}, i2 = Object.keys(n2), u2 = 0; u2 < i2.length; ++u2) {
-    var a2 = i2[u2], s2 = S(a2, n2[a2], r2, "string" == typeof t4);
+    var a2 = i2[u2], s2 = R(a2, n2[a2], r2, "string" == typeof t4);
     o2 = f.merge(o2, s2, r2);
   }
   return f.compact(o2);
@@ -216,15 +216,16 @@ class x {
     return null != (t4 = null == (e2 = this.template.match(/{[^}?]+\??}/g)) ? void 0 : e2.map((t5) => ({ name: t5.replace(/{|\??}/g, ""), required: !/\?}$/.test(t5) }))) ? t4 : [];
   }
   matchesUrl(t4) {
+    var e2;
     if (!this.definition.methods.includes("GET")) return false;
-    const e2 = this.template.replace(/(\/?){([^}?]*)(\??)}/g, (t5, e3, r3, n3) => {
+    const r2 = this.template.replace(/[.*+$()[\]]/g, "\\$&").replace(/(\/?){([^}?]*)(\??)}/g, (t5, e3, r3, n3) => {
       var o3;
-      const i2 = `(?<${r3}>${(null == (o3 = this.wheres[r3]) ? void 0 : o3.replace(/(^\^)|(\$$)/g, "")) || "[^/?]+"})`;
-      return n3 ? `(${e3}${i2})?` : `${e3}${i2}`;
-    }).replace(/^\w+:\/\//, ""), [r2, n2] = t4.replace(/^\w+:\/\//, "").split("?"), o2 = new RegExp(`^${e2}/?$`).exec(decodeURI(r2));
-    if (o2) {
-      for (const t5 in o2.groups) o2.groups[t5] = "string" == typeof o2.groups[t5] ? decodeURIComponent(o2.groups[t5]) : o2.groups[t5];
-      return { params: o2.groups, query: R(n2) };
+      const i3 = `(?<${r3}>${(null == (o3 = this.wheres[r3]) ? void 0 : o3.replace(/(^\^)|(\$$)/g, "")) || "[^/?]+"})`;
+      return n3 ? `(${e3}${i3})?` : `${e3}${i3}`;
+    }).replace(/^\w+:\/\//, ""), [n2, o2] = t4.replace(/^\w+:\/\//, "").split("?"), i2 = null != (e2 = new RegExp(`^${r2}/?$`).exec(n2)) ? e2 : new RegExp(`^${r2}/?$`).exec(decodeURI(n2));
+    if (i2) {
+      for (const t5 in i2.groups) i2.groups[t5] = "string" == typeof i2.groups[t5] ? decodeURIComponent(i2.groups[t5]) : i2.groups[t5];
+      return { params: i2.groups, query: S(o2) };
     }
     return false;
   }
@@ -304,8 +305,14 @@ class N extends String {
     const { params: e2, query: r2 } = this.p();
     return t({}, e2, r2);
   }
+  get routeParams() {
+    return this.p().params;
+  }
+  get queryParams() {
+    return this.p().query;
+  }
   has(t4) {
-    return Object.keys(this.t.routes).includes(t4);
+    return this.t.routes.hasOwnProperty(t4);
   }
   l(e2 = {}, r2 = this.i) {
     null != e2 || (e2 = {}), e2 = ["string", "number"].includes(typeof e2) ? [e2] : e2;
@@ -337,10 +344,10 @@ const k = { install(t4, e2) {
   const r2 = (t5, r3, n2, o2 = e2) => T(t5, r3, n2, o2);
   parseInt(t4.version) > 2 ? (t4.config.globalProperties.route = r2, t4.provide("route", r2)) : t4.mixin({ methods: { route: r2 } });
 } };
-const appName = "Check-up Codes";
+const appName = "CheckupCodes";
 createInertiaApp({
   title: (title) => `${title} - ${appName}`,
-  resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, /* @__PURE__ */ Object.assign({ "./Pages/Auth/ConfirmPassword.vue": () => import("./assets/ConfirmPassword-DuMymXkt.js"), "./Pages/Auth/ForgotPassword.vue": () => import("./assets/ForgotPassword-DQ92fImu.js"), "./Pages/Auth/Login.vue": () => import("./assets/Login-BPSpnpN0.js"), "./Pages/Auth/Register.vue": () => import("./assets/Register-Cs0zDhfU.js"), "./Pages/Auth/ResetPassword.vue": () => import("./assets/ResetPassword-DWXVIwXt.js"), "./Pages/Auth/VerifyEmail.vue": () => import("./assets/VerifyEmail-BalJvGmt.js"), "./Pages/Bookmarks/CreateBookmarks.vue": () => import("./assets/CreateBookmarks-sMveKOE9.js"), "./Pages/Bookmarks/EditBookmarks.vue": () => import("./assets/EditBookmarks-Ds0XdYrZ.js"), "./Pages/Bookmarks/IndexBookmarks.vue": () => import("./assets/IndexBookmarks-BjVnnqNg.js"), "./Pages/Bookmarks/ShowBookmarks.vue": () => import("./assets/ShowBookmarks-BrUZ2S_A.js"), "./Pages/Bookmarks/SidebarLayoutBookmarks.vue": () => import("./assets/SidebarLayoutBookmarks-CG2Vspjs.js"), "./Pages/Category/TypescriptTutorial.vue": () => import("./assets/TypescriptTutorial-DtooY9X4.js"), "./Pages/Dashboard.vue": () => import("./assets/Dashboard-Dxrnw4jq.js"), "./Pages/Equipments/Create/Screen.vue": () => import("./assets/Screen-D1PJcqvP.js"), "./Pages/Equipments/CreateEquipment.vue": () => import("./assets/CreateEquipment-CxmoL0yv.js"), "./Pages/Equipments/Edit/Screen.vue": () => import("./assets/Screen-Ca5kb9UJ.js"), "./Pages/Equipments/EditEquipment.vue": () => import("./assets/EditEquipment-D2FCZljd.js"), "./Pages/Equipments/Index/Screen.vue": () => import("./assets/Screen-0oDP1m6D.js"), "./Pages/Equipments/IndexEquipment.vue": () => import("./assets/IndexEquipment-B5M-6hUX.js"), "./Pages/Excalidraw.vue": () => import("./assets/Excalidraw-ChoK3yHO.js"), "./Pages/FBVersions/Versions/Create/Screen.vue": () => import("./assets/Screen-C0NFw9wV.js"), "./Pages/FBVersions/Versions/CreateVersion.vue": () => import("./assets/CreateVersion-D9auB6cm.js"), "./Pages/FBVersions/Versions/Edit/Screen.vue": () => import("./assets/Screen-DM2WsSbQ.js"), "./Pages/FBVersions/Versions/EditVersion.vue": () => import("./assets/EditVersion-CDzqOHfH.js"), "./Pages/FBVersions/Versions/Index/Screen.vue": () => import("./assets/Screen-Db_-WoHA.js"), "./Pages/FBVersions/Versions/IndexVersion.vue": () => import("./assets/IndexVersion-TUphyYeY.js"), "./Pages/FBVersions/Versions/Show/Screen.vue": () => import("./assets/Screen-0Dv4D-Ds.js"), "./Pages/FBVersions/Versions/ShowVersion.vue": () => import("./assets/ShowVersion-C0v4N8Ua.js"), "./Pages/FBVersions/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-D0T_E6W_.js"), "./Pages/FBVersions/_layouts/SidebarLayoutVersion.vue": () => import("./assets/SidebarLayoutVersion-0fzPds7V.js"), "./Pages/Index/Factory.vue": () => import("./assets/Factory-CYFs4m5z.js"), "./Pages/Index/Index.vue": () => import("./assets/Index-BpkYX_UB.js"), "./Pages/Lessons/Create/Screen.vue": () => import("./assets/Screen-qsOlR-yp.js"), "./Pages/Lessons/CreateLesson.vue": () => import("./assets/CreateLesson-C3gfYBRr.js"), "./Pages/Lessons/Edit/Screen.vue": () => import("./assets/Screen-DwOaLefV.js"), "./Pages/Lessons/EditLesson.vue": () => import("./assets/EditLesson-5oZx6Z9l.js"), "./Pages/Lessons/Index/Screen.vue": () => import("./assets/Screen-BoO_t0LJ.js"), "./Pages/Lessons/IndexLesson.vue": () => import("./assets/IndexLesson-gB2tBCOK.js"), "./Pages/Lessons/Show/Screen.vue": () => import("./assets/Screen-C563WMOs.js"), "./Pages/Lessons/ShowLesson.vue": () => import("./assets/ShowLesson-Cd6VVgzU.js"), "./Pages/Lessons/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-To6FoWNW.js"), "./Pages/Lessons/_layouts/SidebarLayoutLesson.vue": () => import("./assets/SidebarLayoutLesson-BkivWaIF.js"), "./Pages/Profile/Edit.vue": () => import("./assets/Edit-UnzbTNe-.js"), "./Pages/Profile/Partials/DeleteUserForm.vue": () => import("./assets/DeleteUserForm-BILBf5CT.js"), "./Pages/Profile/Partials/UpdatePasswordForm.vue": () => import("./assets/UpdatePasswordForm-nctmEtuc.js"), "./Pages/Profile/Partials/UpdateProfileInformationForm.vue": () => import("./assets/UpdateProfileInformationForm-D4xsOxzk.js"), "./Pages/Projects/Customers/Create/Screen.vue": () => import("./assets/Screen-DqgU5Sa5.js"), "./Pages/Projects/Customers/CreateCustomer.vue": () => import("./assets/CreateCustomer-BYJh4xFN.js"), "./Pages/Projects/Customers/Edit/Screen.vue": () => import("./assets/Screen-0i3VXYsT.js"), "./Pages/Projects/Customers/EditCustomer.vue": () => import("./assets/EditCustomer-OFFgzgkL.js"), "./Pages/Projects/Customers/Index/Screen.vue": () => import("./assets/Screen-QHH2EsHz.js"), "./Pages/Projects/Customers/IndexCustomer.vue": () => import("./assets/IndexCustomer-CzpkjYfi.js"), "./Pages/Projects/Customers/Show/Screen.vue": () => import("./assets/Screen-CKUyiJ5u.js"), "./Pages/Projects/Customers/ShowCustomer.vue": () => import("./assets/ShowCustomer-bsTXwqOH.js"), "./Pages/Projects/Project/Create/Screen.vue": () => import("./assets/Screen-gPHY9qbj.js"), "./Pages/Projects/Project/CreateProject.vue": () => import("./assets/CreateProject-cSSVKUHr.js"), "./Pages/Projects/Project/Edit/Screen.vue": () => import("./assets/Screen-ByZYkoTo.js"), "./Pages/Projects/Project/EditProject.vue": () => import("./assets/EditProject-CX7nlc_N.js"), "./Pages/Projects/Project/Index/Screen.vue": () => import("./assets/Screen-BdjWpAUk.js"), "./Pages/Projects/Project/IndexProject.vue": () => import("./assets/IndexProject-B_sNh4mG.js"), "./Pages/Projects/Project/Show/Screen.vue": () => import("./assets/Screen-CtR7htOK.js"), "./Pages/Projects/Project/ShowProject.vue": () => import("./assets/ShowProject-FlTyjGv4.js"), "./Pages/Projects/Services/Create/Screen.vue": () => import("./assets/Screen-CWkaTYNl.js"), "./Pages/Projects/Services/CreateService.vue": () => import("./assets/CreateService-BqjPm4IF.js"), "./Pages/Projects/Services/Edit/Screen.vue": () => import("./assets/Screen-CEh9bjDy.js"), "./Pages/Projects/Services/EditService.vue": () => import("./assets/EditService-BD9GyLjo.js"), "./Pages/Projects/Services/Index/Screen.vue": () => import("./assets/Screen-CsBYAE1j.js"), "./Pages/Projects/Services/Index/ServiceItem.vue": () => import("./assets/ServiceItem-Bnf_wR0n.js"), "./Pages/Projects/Services/IndexService.vue": () => import("./assets/IndexService-BrEAihWf.js"), "./Pages/Projects/Services/Show/Screen.vue": () => import("./assets/Screen-CkiAq9Qd.js"), "./Pages/Projects/Services/ShowService.vue": () => import("./assets/ShowService-Dr_1InFt.js"), "./Pages/Projects/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-DlamwyeB.js"), "./Pages/Projects/_layouts/SidebarLayoutProject.vue": () => import("./assets/SidebarLayoutProject-BN_gEfdf.js"), "./Pages/SoftwareProducts/Create.vue": () => import("./assets/Create-CZUIeMAZ.js"), "./Pages/SoftwareProducts/Edit.vue": () => import("./assets/Edit-DXW4bAvD.js"), "./Pages/SoftwareProducts/Index.vue": () => import("./assets/Index-CAQNVbcA.js"), "./Pages/SoftwareProducts/Show.vue": () => import("./assets/Show-CIYWA58k.js"), "./Pages/SoftwareProducts/component/Box.vue": () => import("./assets/Box-qQQahaK4.js"), "./Pages/SoftwareProducts/component/ConfirmModal.vue": () => import("./assets/ConfirmModal-8bTg5PxV.js"), "./Pages/SoftwareProducts/component/SPAddress.vue": () => import("./assets/SPAddress-C4B-URBw.js"), "./Pages/SoftwareProducts/component/SPPrice.vue": () => import("./assets/SPPrice-DDe_ZJN3.js"), "./Pages/SoftwareProducts/component/SPSpaces.vue": () => import("./assets/SPSpaces-C-9fwGUn.js"), "./Pages/Welcome.vue": () => import("./assets/Welcome-DBavpM4Q.js"), "./Pages/WritesCategories/Categories/Create/CategoriesCreateFrom.vue": () => import("./assets/CategoriesCreateFrom-Ci3aqZ3J.js"), "./Pages/WritesCategories/Categories/Create/Screen.vue": () => import("./assets/Screen-fqd56Q2N.js"), "./Pages/WritesCategories/Categories/CreateCategory.vue": () => import("./assets/CreateCategory-BhvVv9jw.js"), "./Pages/WritesCategories/Categories/Edit/CategoriesEditFrom.vue": () => import("./assets/CategoriesEditFrom-Jfla85g0.js"), "./Pages/WritesCategories/Categories/Edit/Screen.vue": () => import("./assets/Screen-sN55zdHR.js"), "./Pages/WritesCategories/Categories/EditCategory.vue": () => import("./assets/EditCategory-D5n8Z2EH.js"), "./Pages/WritesCategories/Categories/Index/Screen.vue": () => import("./assets/Screen-DEg_YIk3.js"), "./Pages/WritesCategories/Categories/IndexCategory.vue": () => import("./assets/IndexCategory-DBRlmzCi.js"), "./Pages/WritesCategories/Categories/Show/Screen.vue": () => import("./assets/Screen-CJj6Cb_b.js"), "./Pages/WritesCategories/Categories/ShowCategory.vue": () => import("./assets/ShowCategory-D4UxR5gD.js"), "./Pages/WritesCategories/Categories/WriteByCategory.vue": () => import("./assets/WriteByCategory-uwHtOkBP.js"), "./Pages/WritesCategories/Categories/WriteByCategory/Screen.vue": () => import("./assets/Screen-Dv2rRcr_.js"), "./Pages/WritesCategories/Writes/Create/FormField.vue": () => import("./assets/FormField-0mpY1QDr.js"), "./Pages/WritesCategories/Writes/Create/Screen.vue": () => import("./assets/Screen-CCiCPm-C.js"), "./Pages/WritesCategories/Writes/Create/WriteCreateForm.vue": () => import("./assets/WriteCreateForm-D7qkaISP.js"), "./Pages/WritesCategories/Writes/CreateWrite.vue": () => import("./assets/CreateWrite-CLD-gHm4.js"), "./Pages/WritesCategories/Writes/Edit/Screen.vue": () => import("./assets/Screen-Bh2RI1Dv.js"), "./Pages/WritesCategories/Writes/Edit/WriteUpdateForm.vue": () => import("./assets/WriteUpdateForm-DLVq_hiC.js"), "./Pages/WritesCategories/Writes/EditWrite.vue": () => import("./assets/EditWrite-VrgBDlEX.js"), "./Pages/WritesCategories/Writes/Index/Screen.vue": () => import("./assets/Screen-DA4NBxUc.js"), "./Pages/WritesCategories/Writes/IndexWrite.vue": () => import("./assets/IndexWrite-BDjtPBMm.js"), "./Pages/WritesCategories/Writes/Show/Screen.vue": () => import("./assets/Screen-DlG3H2T5.js"), "./Pages/WritesCategories/Writes/ShowWrite.vue": () => import("./assets/ShowWrite-IB2XxlSn.js"), "./Pages/WritesCategories/_components/TopSubsidebar.vue": () => import("./assets/TopSubsidebar-CTQhPuSn.js"), "./Pages/WritesCategories/_components/WriteList.vue": () => import("./assets/WriteList-Dvr0sWzx.js"), "./Pages/WritesCategories/_layouts/LayoutWritesCategories.vue": () => import("./assets/LayoutWritesCategories-DAc9Uiuv.js"), "./Pages/WritesCategories/_layouts/SidebarLayoutCategory.vue": () => import("./assets/SidebarLayoutCategory-BDDjI4DB.js"), "./Pages/WritesCategories/_layouts/SidebarLayoutWrite.vue": () => import("./assets/SidebarLayoutWrite-DRIGwEfS.js") })),
+  resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, /* @__PURE__ */ Object.assign({ "./Pages/Auth/ConfirmPassword.vue": () => import("./assets/ConfirmPassword-DuMymXkt.js"), "./Pages/Auth/ForgotPassword.vue": () => import("./assets/ForgotPassword-DQ92fImu.js"), "./Pages/Auth/Login.vue": () => import("./assets/Login-BPSpnpN0.js"), "./Pages/Auth/Register.vue": () => import("./assets/Register-Cs0zDhfU.js"), "./Pages/Auth/ResetPassword.vue": () => import("./assets/ResetPassword-DWXVIwXt.js"), "./Pages/Auth/VerifyEmail.vue": () => import("./assets/VerifyEmail-BalJvGmt.js"), "./Pages/Bookmarks/CreateBookmarks.vue": () => import("./assets/CreateBookmarks-sMveKOE9.js"), "./Pages/Bookmarks/EditBookmarks.vue": () => import("./assets/EditBookmarks-Ds0XdYrZ.js"), "./Pages/Bookmarks/IndexBookmarks.vue": () => import("./assets/IndexBookmarks-BjVnnqNg.js"), "./Pages/Bookmarks/ShowBookmarks.vue": () => import("./assets/ShowBookmarks-BrUZ2S_A.js"), "./Pages/Bookmarks/SidebarLayoutBookmarks.vue": () => import("./assets/SidebarLayoutBookmarks-CG2Vspjs.js"), "./Pages/Category/TypescriptTutorial.vue": () => import("./assets/TypescriptTutorial-DtooY9X4.js"), "./Pages/Dashboard.vue": () => import("./assets/Dashboard-Dxrnw4jq.js"), "./Pages/Equipments/Create/Screen.vue": () => import("./assets/Screen-D1PJcqvP.js"), "./Pages/Equipments/CreateEquipment.vue": () => import("./assets/CreateEquipment-CxmoL0yv.js"), "./Pages/Equipments/Edit/Screen.vue": () => import("./assets/Screen-Ca5kb9UJ.js"), "./Pages/Equipments/EditEquipment.vue": () => import("./assets/EditEquipment-D2FCZljd.js"), "./Pages/Equipments/Index/Screen.vue": () => import("./assets/Screen-0oDP1m6D.js"), "./Pages/Equipments/IndexEquipment.vue": () => import("./assets/IndexEquipment-B5M-6hUX.js"), "./Pages/Excalidraw.vue": () => import("./assets/Excalidraw-ChoK3yHO.js"), "./Pages/FBVersions/Versions/Create/Screen.vue": () => import("./assets/Screen-DZOaGNd-.js"), "./Pages/FBVersions/Versions/CreateVersion.vue": () => import("./assets/CreateVersion-D4_YN67j.js"), "./Pages/FBVersions/Versions/Edit/Screen.vue": () => import("./assets/Screen-8kPrzuDl.js"), "./Pages/FBVersions/Versions/EditVersion.vue": () => import("./assets/EditVersion-Cg-J-IYn.js"), "./Pages/FBVersions/Versions/Index/Screen.vue": () => import("./assets/Screen-DhJm-wu-.js"), "./Pages/FBVersions/Versions/IndexVersion.vue": () => import("./assets/IndexVersion-DDRgyc-A.js"), "./Pages/FBVersions/Versions/Show/Screen.vue": () => import("./assets/Screen-Dwm6SPr6.js"), "./Pages/FBVersions/Versions/ShowVersion.vue": () => import("./assets/ShowVersion-BKqt7FPn.js"), "./Pages/FBVersions/_components/VersionList.vue": () => import("./assets/VersionList-BFcNgt_6.js"), "./Pages/FBVersions/_layouts/LayoutFBVersions.vue": () => import("./assets/LayoutFBVersions-Bgqxz-UM.js"), "./Pages/FBVersions/_layouts/SidebarLayoutVersion.vue": () => import("./assets/SidebarLayoutVersion-zyMMmVLK.js"), "./Pages/Index/Factory.vue": () => import("./assets/Factory-CYFs4m5z.js"), "./Pages/Index/Index.vue": () => import("./assets/Index-Bc_0TzUP.js"), "./Pages/Lessons/Create/Screen.vue": () => import("./assets/Screen-qsOlR-yp.js"), "./Pages/Lessons/CreateLesson.vue": () => import("./assets/CreateLesson-C3gfYBRr.js"), "./Pages/Lessons/Edit/Screen.vue": () => import("./assets/Screen-DwOaLefV.js"), "./Pages/Lessons/EditLesson.vue": () => import("./assets/EditLesson-5oZx6Z9l.js"), "./Pages/Lessons/Index/Screen.vue": () => import("./assets/Screen-BoO_t0LJ.js"), "./Pages/Lessons/IndexLesson.vue": () => import("./assets/IndexLesson-gB2tBCOK.js"), "./Pages/Lessons/Show/Screen.vue": () => import("./assets/Screen-C563WMOs.js"), "./Pages/Lessons/ShowLesson.vue": () => import("./assets/ShowLesson-Cd6VVgzU.js"), "./Pages/Lessons/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-To6FoWNW.js"), "./Pages/Lessons/_layouts/SidebarLayoutLesson.vue": () => import("./assets/SidebarLayoutLesson-BkivWaIF.js"), "./Pages/Profile/Edit.vue": () => import("./assets/Edit-UnzbTNe-.js"), "./Pages/Profile/Partials/DeleteUserForm.vue": () => import("./assets/DeleteUserForm-BILBf5CT.js"), "./Pages/Profile/Partials/UpdatePasswordForm.vue": () => import("./assets/UpdatePasswordForm-nctmEtuc.js"), "./Pages/Profile/Partials/UpdateProfileInformationForm.vue": () => import("./assets/UpdateProfileInformationForm-D4xsOxzk.js"), "./Pages/Projects/Customers/Create/Screen.vue": () => import("./assets/Screen-DqgU5Sa5.js"), "./Pages/Projects/Customers/CreateCustomer.vue": () => import("./assets/CreateCustomer-BYJh4xFN.js"), "./Pages/Projects/Customers/Edit/Screen.vue": () => import("./assets/Screen-0i3VXYsT.js"), "./Pages/Projects/Customers/EditCustomer.vue": () => import("./assets/EditCustomer-OFFgzgkL.js"), "./Pages/Projects/Customers/Index/Screen.vue": () => import("./assets/Screen-QHH2EsHz.js"), "./Pages/Projects/Customers/IndexCustomer.vue": () => import("./assets/IndexCustomer-CzpkjYfi.js"), "./Pages/Projects/Customers/Show/Screen.vue": () => import("./assets/Screen-CKUyiJ5u.js"), "./Pages/Projects/Customers/ShowCustomer.vue": () => import("./assets/ShowCustomer-bsTXwqOH.js"), "./Pages/Projects/Project/Create/Screen.vue": () => import("./assets/Screen-gPHY9qbj.js"), "./Pages/Projects/Project/CreateProject.vue": () => import("./assets/CreateProject-cSSVKUHr.js"), "./Pages/Projects/Project/Edit/Screen.vue": () => import("./assets/Screen-ByZYkoTo.js"), "./Pages/Projects/Project/EditProject.vue": () => import("./assets/EditProject-CX7nlc_N.js"), "./Pages/Projects/Project/Index/Screen.vue": () => import("./assets/Screen-BdjWpAUk.js"), "./Pages/Projects/Project/IndexProject.vue": () => import("./assets/IndexProject-B_sNh4mG.js"), "./Pages/Projects/Project/Show/Screen.vue": () => import("./assets/Screen-CtR7htOK.js"), "./Pages/Projects/Project/ShowProject.vue": () => import("./assets/ShowProject-FlTyjGv4.js"), "./Pages/Projects/Services/Create/Screen.vue": () => import("./assets/Screen-CWkaTYNl.js"), "./Pages/Projects/Services/CreateService.vue": () => import("./assets/CreateService-BqjPm4IF.js"), "./Pages/Projects/Services/Edit/Screen.vue": () => import("./assets/Screen-CEh9bjDy.js"), "./Pages/Projects/Services/EditService.vue": () => import("./assets/EditService-BD9GyLjo.js"), "./Pages/Projects/Services/Index/Screen.vue": () => import("./assets/Screen-CsBYAE1j.js"), "./Pages/Projects/Services/Index/ServiceItem.vue": () => import("./assets/ServiceItem-Bnf_wR0n.js"), "./Pages/Projects/Services/IndexService.vue": () => import("./assets/IndexService-BrEAihWf.js"), "./Pages/Projects/Services/Show/Screen.vue": () => import("./assets/Screen-CkiAq9Qd.js"), "./Pages/Projects/Services/ShowService.vue": () => import("./assets/ShowService-Dr_1InFt.js"), "./Pages/Projects/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-DlamwyeB.js"), "./Pages/Projects/_layouts/SidebarLayoutProject.vue": () => import("./assets/SidebarLayoutProject-BN_gEfdf.js"), "./Pages/SoftwareProducts/Create.vue": () => import("./assets/Create-CZUIeMAZ.js"), "./Pages/SoftwareProducts/Edit.vue": () => import("./assets/Edit-DXW4bAvD.js"), "./Pages/SoftwareProducts/Index.vue": () => import("./assets/Index-CAQNVbcA.js"), "./Pages/SoftwareProducts/Show.vue": () => import("./assets/Show-CIYWA58k.js"), "./Pages/SoftwareProducts/component/Box.vue": () => import("./assets/Box-qQQahaK4.js"), "./Pages/SoftwareProducts/component/ConfirmModal.vue": () => import("./assets/ConfirmModal-8bTg5PxV.js"), "./Pages/SoftwareProducts/component/SPAddress.vue": () => import("./assets/SPAddress-C4B-URBw.js"), "./Pages/SoftwareProducts/component/SPPrice.vue": () => import("./assets/SPPrice-DDe_ZJN3.js"), "./Pages/SoftwareProducts/component/SPSpaces.vue": () => import("./assets/SPSpaces-C-9fwGUn.js"), "./Pages/Welcome.vue": () => import("./assets/Welcome-DBavpM4Q.js"), "./Pages/WritesCategories/Categories/Create/CategoriesCreateFrom.vue": () => import("./assets/CategoriesCreateFrom-C1OF7WPn.js"), "./Pages/WritesCategories/Categories/Create/Screen.vue": () => import("./assets/Screen-ca6aSYEn.js"), "./Pages/WritesCategories/Categories/CreateCategory.vue": () => import("./assets/CreateCategory-DftZgNcR.js"), "./Pages/WritesCategories/Categories/Edit/CategoriesEditFrom.vue": () => import("./assets/CategoriesEditFrom-Zm8xWsRA.js"), "./Pages/WritesCategories/Categories/Edit/Screen.vue": () => import("./assets/Screen-BLfGIiJT.js"), "./Pages/WritesCategories/Categories/EditCategory.vue": () => import("./assets/EditCategory-wTGjKFxE.js"), "./Pages/WritesCategories/Categories/Index/Screen.vue": () => import("./assets/Screen-DEg_YIk3.js"), "./Pages/WritesCategories/Categories/IndexCategory.vue": () => import("./assets/IndexCategory-Cu6CsRWr.js"), "./Pages/WritesCategories/Categories/Show/Screen.vue": () => import("./assets/Screen-C0ztUmnv.js"), "./Pages/WritesCategories/Categories/ShowCategory.vue": () => import("./assets/ShowCategory-zFnT0DhN.js"), "./Pages/WritesCategories/Categories/WriteByCategory.vue": () => import("./assets/WriteByCategory-BYH9_6sN.js"), "./Pages/WritesCategories/Categories/WriteByCategory/Screen.vue": () => import("./assets/Screen-BNnCNwn3.js"), "./Pages/WritesCategories/Writes/Create/FormField.vue": () => import("./assets/FormField-0mpY1QDr.js"), "./Pages/WritesCategories/Writes/Create/Screen.vue": () => import("./assets/Screen-BLWRuehM.js"), "./Pages/WritesCategories/Writes/Create/WriteCreateForm.vue": () => import("./assets/WriteCreateForm-CreCOTId.js"), "./Pages/WritesCategories/Writes/CreateWrite.vue": () => import("./assets/CreateWrite-xWvXeUpw.js"), "./Pages/WritesCategories/Writes/Edit/Screen.vue": () => import("./assets/Screen-BTot-8iI.js"), "./Pages/WritesCategories/Writes/Edit/WriteUpdateForm.vue": () => import("./assets/WriteUpdateForm-DG95Nyb9.js"), "./Pages/WritesCategories/Writes/EditWrite.vue": () => import("./assets/EditWrite-Dm-xk81B.js"), "./Pages/WritesCategories/Writes/Index/Screen.vue": () => import("./assets/Screen-B2y1dLjw.js"), "./Pages/WritesCategories/Writes/IndexWrite.vue": () => import("./assets/IndexWrite-CVsHrJfh.js"), "./Pages/WritesCategories/Writes/Show/Screen.vue": () => import("./assets/Screen-63hAnPnL.js"), "./Pages/WritesCategories/Writes/ShowWrite.vue": () => import("./assets/ShowWrite-D1WhyQ4c.js"), "./Pages/WritesCategories/_components/WriteList.vue": () => import("./assets/WriteList-Dvr0sWzx.js"), "./Pages/WritesCategories/_layouts/LayoutWritesCategories.vue": () => import("./assets/LayoutWritesCategories-CDl0P-ch.js"), "./Pages/WritesCategories/_layouts/SidebarLayoutCategory.vue": () => import("./assets/SidebarLayoutCategory-rEc2mYst.js"), "./Pages/WritesCategories/_layouts/SidebarLayoutWrite.vue": () => import("./assets/SidebarLayoutWrite-xKcyulsQ.js") })),
   setup({ el, App, props, plugin }) {
     createApp({ render: () => h$1(App, props) }).use(plugin).use(k).mount(el);
   },

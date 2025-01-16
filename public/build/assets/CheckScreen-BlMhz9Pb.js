@@ -1,1 +1,0 @@
-import{i as t,o as c,g as r,r as l,n}from"./app-CcIPdWom.js";const i={__name:"CheckScreen",props:{infoClass:{type:String,default:""}},setup(s){const e=s,a=t(()=>`${e.infoClass} h-[calc(94vh)] lg:h-[calc(95vh)]`);return(o,p)=>(c(),r("div",{class:n(a.value)},[l(o.$slots,"default")],2))}};export{i as _};
