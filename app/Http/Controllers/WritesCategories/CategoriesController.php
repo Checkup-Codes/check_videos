@@ -39,13 +39,17 @@ class CategoriesController extends Controller
 
     public function show($slug)
     {
-        $category = Category::with('children')->where('slug', $slug)->firstOrFail(); // Alt kategorilerle birlikte getir
+        $category = Category::with('children')->where('slug', $slug)->firstOrFail();
 
         $categories = Cache::remember('categories', 60, function () {
             return Category::with('children')->get();
         });
 
-        $writes = Write::where('category_id', $category->id)
+        // Mevcut kategori ve tüm alt kategorilerin ID'lerini toplama
+        $categoryIds = collect([$category->id]);
+        $this->getChildCategoryIds($category, $categoryIds);
+
+        $writes = Write::whereIn('category_id', $categoryIds)
             ->when(!Auth::check(), function ($query) {
                 $query->where('status', 'published');
             })
@@ -57,7 +61,6 @@ class CategoriesController extends Controller
                 });
             });
 
-
         $screen = [
             'isMobileSidebar' => false,
             'name' => 'categories'
@@ -68,6 +71,17 @@ class CategoriesController extends Controller
             'writes' => $writes,
             'screen' => $screen
         ]);
+    }
+
+    // Alt kategorilerin ID'lerini toplayan yardımcı metod
+    private function getChildCategoryIds($category, &$categoryIds)
+    {
+        foreach ($category->children as $child) {
+            $categoryIds->push($child->id);
+            if ($child->children->count() > 0) {
+                $this->getChildCategoryIds($child, $categoryIds);
+            }
+        }
     }
 
     public function create()
