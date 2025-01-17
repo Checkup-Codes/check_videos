@@ -34,8 +34,7 @@ const _sfc_main = {
               title: write.value.title,
               onClick: navigateToWriteWithDraw
             }, null, _parent2, _scopeId));
-            _push2(`<div class="h-[calc(84vh)] w-full max-w-full overflow-y-auto overflow-x-hidden break-words rounded-lg bg-white lg:p-5"
-${_scopeId}><div class="prose prose-lg ql-container-custom mb-8 p-5 lg:pl-1"${_scopeId}>${write.value.content ?? ""}</div><div class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm"${_scopeId}><h2 class="mb-4 text-2xl font-semibold text-gray-800"${_scopeId}>Özet</h2><p class="leading-relaxed text-gray-700"${_scopeId}>${ssrInterpolate(write.value.summary)}</p></div>`);
+            _push2(`<div class="h-[calc(84vh)] w-full max-w-full overflow-y-scroll break-words rounded-lg bg-white lg:p-5"${_scopeId}><div class="prose prose-lg ql-container-custom mb-8 p-5 lg:pl-1"${_scopeId}>${write.value.content ?? ""}</div><div class="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm"${_scopeId}><h2 class="mb-4 text-2xl font-semibold text-gray-800"${_scopeId}>Özet</h2><p class="leading-relaxed text-gray-700"${_scopeId}>${ssrInterpolate(write.value.summary)}</p></div>`);
             if (unref(auth).user) {
               _push2(`<div class="mt-5 flex justify-end gap-2"${_scopeId}>`);
               _push2(ssrRenderComponent(unref(Link), {

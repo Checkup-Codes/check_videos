@@ -60,8 +60,7 @@ const _sfc_main = {
               _push2(ssrRenderComponent(_sfc_main$3, { write: write.value }, null, _parent2, _scopeId));
               _push2(`</div>`);
             } else {
-              _push2(`<div class="h-[calc(84vh)] w-full max-w-full overflow-y-auto overflow-x-hidden break-words rounded-lg bg-white lg:p-5"
-${_scopeId}><div class="container mx-auto p-4"${_scopeId}><div class="prose prose-lg ql-container-custom mb-8 p-5 lg:pl-1"${_scopeId}>${write.value.content ?? ""}</div><div class="rounded-lg bg-gray-50 p-3 shadow-inner"${_scopeId}><h2 class="mb-3 text-xl font-semibold text-gray-800"${_scopeId}>Özet</h2><div class="break-words rounded-md p-4 text-gray-700"${_scopeId}>${ssrInterpolate(write.value.summary)}</div></div>`);
+              _push2(`<div class="h-[calc(84vh)] w-full max-w-full overflow-y-scroll break-words rounded-lg bg-white lg:p-5"${_scopeId}><div class="container mx-auto p-4"${_scopeId}><div class="prose prose-lg ql-container-custom mb-8 p-5 lg:pl-1"${_scopeId}>${write.value.content ?? ""}</div><div class="rounded-lg bg-gray-50 p-3 shadow-inner"${_scopeId}><h2 class="mb-3 text-xl font-semibold text-gray-800"${_scopeId}>Özet</h2><div class="break-words rounded-md p-4 text-gray-700"${_scopeId}>${ssrInterpolate(write.value.summary)}</div></div>`);
               if (unref(auth).user) {
                 _push2(`<div class="mt-5 flex justify-end space-x-3"${_scopeId}>`);
                 _push2(ssrRenderComponent(unref(Link), {
