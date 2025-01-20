@@ -20,7 +20,7 @@ class CategoryFactory extends Factory
      */
     public function definition()
     {
-        $name = $this->faker->word;
+        $name = $this->faker->unique()->words(2, true);
         return [
             'id' => Str::uuid(),
             'name' => $name,
