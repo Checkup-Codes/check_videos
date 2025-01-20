@@ -27,6 +27,10 @@
           <font-awesome-icon icon="fa-solid fa-book" class="mr-2" /> Kurslar
         </Link>
         -->
+        <!---<Link href="/rendition/words" :class="getLinkClasses(['/rendition/words'])">
+          <font-awesome-icon icon="fa-solid fa-globe" class="mr-2" /> Kelimeler
+        </Link>
+        -->
         <Link href="/versions" :class="getLinkClasses(['/versions'])">
           <font-awesome-icon icon="fa-solid fa-sync" class="mr-2" /> Versiyonlar
         </Link>

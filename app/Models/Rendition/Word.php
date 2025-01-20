@@ -9,6 +9,8 @@ use Illuminate\Support\Str;
 
 class Word extends Model
 {
+    use HasFactory, HasUuids;
+
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -39,7 +41,12 @@ class Word extends Model
 
     protected $casts = [
         'flag' => 'boolean',
-        'last_review_date' => 'date',
+        'last_review_date' => 'datetime',
+        'learning_status' => 'integer',
+        'difficulty_level' => 'integer',
+        'correct_count' => 'integer',
+        'incorrect_count' => 'integer',
+        'review_count' => 'integer',
     ];
 
     public function exampleSentences()
@@ -47,8 +54,13 @@ class Word extends Model
         return $this->hasMany(ExampleSentence::class);
     }
 
+    public function synonyms()
+    {
+        return $this->hasMany(Synonym::class);
+    }
+
     public function languagePacks()
     {
-        return $this->belongsToMany(LanguagePack::class, 'word_pack_relations');
+        return $this->belongsToMany(LanguagePack::class, 'word_pack_relations', 'word_id', 'pack_id');
     }
 }

@@ -33,6 +33,6 @@ class LanguagePack extends Model
 
     public function words()
     {
-        return $this->belongsToMany(Word::class, 'word_pack_relations');
+        return $this->belongsToMany(Word::class, 'word_pack_relations', 'pack_id', 'word_id');
     }
 }
