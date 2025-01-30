@@ -1,0 +1,1 @@
+import{o as s,g as c,b as e,t as o}from"./app-vvKkNZTf.js";const n={class:"flex h-screen items-center justify-center text-theme-text"},r={class:"text-center"},a={class:"text-4xl font-bold"},h={__name:"IntroScreen",props:{title:String},setup(t){return(i,_)=>(s(),c("header",n,[e("div",r,[e("h2",a,o(t.title),1)])]))}};export{h as _};

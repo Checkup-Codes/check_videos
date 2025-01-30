@@ -1,1 +1,0 @@
-import r from"./CheckLayout-7M-EF3Jn.js";import t from"./Screen-DVBBw1QD.js";import{c as e,w as o,o as a,a as c}from"./app-k3_XiEXZ.js";import"./SidebarLayoutProject-qbCT6AID.js";/* empty css            */import"./_plugin-vue_export-helper-DlAUqK2U.js";const d={__name:"EditCustomer",setup(m){return(s,p)=>(a(),e(r,null,{screen:o(()=>[c(t)]),_:1}))}};export{d as default};

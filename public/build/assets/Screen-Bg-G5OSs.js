@@ -1,0 +1,1 @@
+import{Q as a,c as t,w as e,o as r,a as s}from"./app-vvKkNZTf.js";import{_ as c}from"./CheckScreen-DsZR__6R.js";import{_}from"./IntroScreen-CAX9d2vL.js";/* empty css            */const d={__name:"Screen",setup(n){const{props:o}=a();return console.log(o),(m,p)=>(r(),t(c,null,{default:e(()=>[s(_,{title:"Yazılar"})]),_:1}))}};export{d as default};
