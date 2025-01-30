@@ -1,11 +1,17 @@
 <template>
-  <h1
-    :class="[
-      'group flex h-12 cursor-pointer select-none items-center justify-between border-b border-gray-300 bg-gradient-to-r from-gray-100 to-gray-200 px-4 text-xl font-extrabold text-gray-900 transition-all duration-300 ease-in-out hover:bg-gradient-to-l hover:shadow-md',
-    ]"
-  >
-    <span :class="[title.length > 30 ? 'text-xl' : 'text-2xl']">{{ title }}</span>
-  </h1>
+  <div>
+    <h1
+      :class="[
+        'group mb-4 flex h-[50px] cursor-pointer select-none items-center justify-between border-b pl-3 font-extrabold text-theme-text lg:text-2xl',
+      ]"
+    >
+      <span
+        :class="[title.length > 30 ? 'sm:text-md text-sm md:text-lg lg:text-xl' : 'text-2xl sm:text-3xl md:text-4xl']"
+      >
+        {{ title }}
+      </span>
+    </h1>
+  </div>
 </template>
 
 <script setup>

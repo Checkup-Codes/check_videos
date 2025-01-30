@@ -3,15 +3,22 @@
 namespace App\Http\Controllers\WritesCategories;
 
 use App\Http\Controllers\Controller;
+use App\Models\WritesCategories\Category;
+use App\Models\WritesCategories\Write;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Http\Request;
-use App\Models\WritesCategories\Write;
-use App\Models\WritesCategories\Category;
 
 class WritesController extends Controller
 {
-    protected const CACHE_TTL = 60;
+    private const CACHE_TTL = 60;
+
+
+    private array $screenDefault = [
+        'isMobileSidebar' => false,
+        'name' => 'writes'
+    ];
+
 
     public function index()
     {
@@ -19,173 +26,152 @@ class WritesController extends Controller
         $writes = $this->getWrites();
 
         return inertia('WritesCategories/Writes/IndexWrite', [
-            'writes' => $writes,
-            'categories' => $categories,
-            'screen' => [
+            'screen'     => [
                 'isMobileSidebar' => true,
-                'name' => 'writes'
-            ]
+                'name'            => 'writes'
+            ],
+            'writes'     => $writes,
+            'categories' => $categories,
         ]);
     }
 
     public function create()
     {
-        $categories = Cache::remember('categories', 60, function () {
-            return Category::all();
-        });
-
-        $writes = Cache::remember('writes', 60, function () {
-            return Write::all();
-        });
-        $screen = [
-            'isMobileSidebar' => false,
-            'name' => 'writes'
-        ];
-
         return inertia('WritesCategories/Writes/CreateWrite', [
-            'writes' => $writes,
-            'categories' => $categories,
-            'screen' => $screen
+            'writes'     => $this->getAllWrites(),
+            'categories' => $this->getCategories(),
+            'screen'     => $this->screenDefault
         ]);
     }
 
     public function show($slug)
     {
-        $categories = Cache::remember('categories', 60, function () {
-            return Category::all();
-        });
-
-        $writes = $this->getWrites(); // Yazılar sıralı olarak gelir.
+        $categories = $this->getCategories();
+        $writes     = $this->getWrites();
 
         $write = Write::with(['writeDraws' => function ($query) {
             $query->orderBy('version', 'desc')->latest();
         }])->where('slug', $slug)->firstOrFail();
 
-        $screen = [
-            'isMobileSidebar' => false,
-            'name' => 'writes'
-        ];
-
-        $showDraw = filter_var(request()->query('showDraw', false), FILTER_VALIDATE_BOOLEAN);
-
         $write->increment('views_count');
 
         return inertia('WritesCategories/Writes/ShowWrite', [
-            'writes' => $writes,
-            'write' => $write,
+            'writes'     => $writes,
+            'write'      => $write,
             'categories' => $categories,
-            'screen' => $screen,
-            'showDraw' => $showDraw
+            'screen'     => $this->screenDefault,
+            'showDraw'   => filter_var(request()->query('showDraw', false), FILTER_VALIDATE_BOOLEAN)
         ]);
     }
 
-    public function edit($id)
+
+    public function edit(Write $write)
     {
-        $categories = Cache::remember('categories', 60, function () {
-            return Category::all();
-        });
-
-        $writes = Cache::remember('writes', 60, function () {
-            return Write::all();
-        });
-
-        $write = Write::findOrFail($id);
-        $screen = [
-            'isMobileSidebar' => false,
-            'name' => 'writes'
-        ];
-
         return inertia('WritesCategories/Writes/EditWrite', [
-            'write' => $write,
-            'writes' => $writes,
-            'categories' => $categories,
-            'screen' => $screen
+            'write'      => $write,
+            'writes'     => $this->getAllWrites(),
+            'categories' => $this->getCategories(),
+            'screen'     => $this->screenDefault
         ]);
     }
 
-    public function destroy($id)
+    /**
+     * Yazıyı silme
+     */
+    public function destroy(Write $write)
     {
-        $write = Write::findOrFail($id);
+
         $write->delete();
+        $this->clearCache();
 
-        Cache::forget('categories');
-        Cache::forget('writes');
-
-        return redirect()->route('writes.index')->with('success', 'Çöp, bir yazı daha kazandı !');
+        return redirect()
+            ->route('writes.index')
+            ->with('success', 'Çöp, bir yazı daha kazandı!');
     }
 
+    /**
+     * Yeni yazı kaydetme
+     */
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:writes,slug',
-            'content' => 'required',
+            'title'        => 'required|string|max:255',
+            'slug'         => 'required|string|max:255|unique:writes,slug',
+            'content'      => 'required',
             'published_at' => 'nullable|date',
-            'summary' => 'nullable|string',
-            'status' => 'required|in:draft,published,private',
-            'cover_image' => 'nullable|string|max:255',
-            'category_id' => 'required|exists:categories,id',
+            'summary'      => 'nullable|string',
+            'status'       => 'required|in:draft,published,private',
+            'cover_image'  => 'nullable|string|max:255',
+            'category_id'  => 'required|exists:categories,id',
             'seo_keywords' => 'nullable|string|max:255',
-            'tags' => 'nullable|string|max:255',
-            'hasDraw' => 'required|boolean',
+            'tags'         => 'nullable|string|max:255',
+            'hasDraw'      => 'required|boolean',
         ]);
 
         $write = new Write();
-        $write->title = $request->title;
-        $write->slug = $request->slug;
-        $write->content = $request->input('content');
+        $write->title        = $request->title;
+        $write->slug         = $request->slug;
+        $write->content      = $request->input('content');
         $write->published_at = $request->published_at;
-        $write->summary = $request->summary;
-        $write->status = $request->status;
-        $write->cover_image = $request->cover_image;
-        $write->category_id = $request->category_id;
-        $write->author_id = Auth::id();
+        $write->summary      = $request->summary;
+        $write->status       = $request->status;
+        $write->cover_image  = $request->cover_image;
+        $write->category_id  = $request->category_id;
+        $write->author_id    = Auth::id();
         $write->seo_keywords = $request->seo_keywords;
-        $write->tags = $request->tags;
-        $write->hasDraw = $request->hasDraw;
+        $write->tags         = $request->tags;
+        $write->hasDraw      = $request->hasDraw;
         $write->save();
 
-        Cache::forget('categories');
-        Cache::forget('writes');
+        $this->clearCache();
 
-        return redirect()->route('writes.index')->with('success', 'Nur topu gibi bir yazınız daha oldu.');
+        return redirect()
+            ->route('writes.index')
+            ->with('success', 'Nur topu gibi bir yazınız daha oldu.');
     }
 
+    /**
+     * Var olan yazıyı güncelleme
+     */
     public function update(Request $request, Write $write)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:writes,slug,' . $write->id,
-            'content' => 'required',
+            'title'        => 'required|string|max:255',
+            'slug'         => 'required|string|max:255|unique:writes,slug,' . $write->id,
+            'content'      => 'required',
             'published_at' => 'nullable|date',
-            'summary' => 'nullable|string',
-            'status' => 'required|in:draft,published,private',
-            'cover_image' => 'nullable|string|max:255',
-            'category_id' => 'required|exists:categories,id',
+            'summary'      => 'nullable|string',
+            'status'       => 'required|in:draft,published,private',
+            'cover_image'  => 'nullable|string|max:255',
+            'category_id'  => 'required|exists:categories,id',
             'seo_keywords' => 'nullable|string|max:255',
-            'tags' => 'nullable|string|max:255',
-            'hasDraw' => 'required|boolean',
+            'tags'         => 'nullable|string|max:255',
+            'hasDraw'      => 'required|boolean',
         ]);
 
-        $write->title = $request->title;
-        $write->slug = $request->slug;
-        $write->content = $request->input('content');
+        $write->title        = $request->title;
+        $write->slug         = $request->slug;
+        $write->content      = $request->input('content');
         $write->published_at = $request->published_at;
-        $write->summary = $request->summary;
-        $write->status = $request->status;
-        $write->cover_image = $request->cover_image;
-        $write->category_id = $request->category_id;
+        $write->summary      = $request->summary;
+        $write->status       = $request->status;
+        $write->cover_image  = $request->cover_image;
+        $write->category_id  = $request->category_id;
         $write->seo_keywords = $request->seo_keywords;
-        $write->tags = $request->tags;
-        $write->hasDraw = $request->hasDraw;
+        $write->tags         = $request->tags;
+        $write->hasDraw      = $request->hasDraw;
         $write->save();
 
-        Cache::forget('categories');
-        Cache::forget('writes');
+        $this->clearCache();
 
-        return redirect()->route('writes.index')->with('success', 'Yazıyı modifiye ettik.');
+        return redirect()
+            ->route('writes.index')
+            ->with('success', 'Yazıyı modifiye ettik.');
     }
 
+    /**
+     * Yazıya ait Draw (çizim) kaydetme
+     */
     public function storeDraw(Request $request, $writeId)
     {
         $write = Write::findOrFail($writeId);
@@ -194,12 +180,15 @@ class WritesController extends Controller
 
         $writeDraw = $write->writeDraws()->create([
             'elements' => $request->input('elements'),
-            'version' => $latestVersion + 1,
+            'version'  => $latestVersion + 1,
         ]);
 
         return response()->json($writeDraw);
     }
 
+    /**
+     * Bir Draw versiyonunu silme
+     */
     public function destroyDraw($writeId, $drawId)
     {
         $write = Write::findOrFail($writeId);
@@ -207,11 +196,14 @@ class WritesController extends Controller
         $writeDraw = $write->writeDraws()->findOrFail($drawId);
         $writeDraw->delete();
 
-        Cache::forget('writes');
+        $this->clearCache();
 
         return response()->json(['message' => 'Versiyon başarıyla silindi.']);
     }
 
+    /**
+     * Tüm kategorileri cache üzerinden veya veritabanından çeker.
+     */
     private function getCategories()
     {
         return Cache::remember('categories', self::CACHE_TTL, function () {
@@ -219,27 +211,50 @@ class WritesController extends Controller
         });
     }
 
+    /**
+     * Ziyaretçiye (veya auth durumuna) göre yazıları çeker.
+     * - Auth varsa sadece published'ları çekiyorsa, ihtiyacınıza göre düzenleyebilirsiniz.
+     */
     private function getWrites()
     {
+        /*
         if (Auth::check()) {
-
+            // Eğer üye girişi varsa, sadece published göstermek yerine hepsini göstermek isterseniz burayı değiştirin.
             return Write::select('views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
                 ->where('status', 'published')
                 ->orderByDesc('created_at')
                 ->get();
         }
+        */
 
+        // Ziyaretçi için cache'le
         return Cache::remember('writes', self::CACHE_TTL, function () {
             return Write::select('views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
+                ->where('status', 'published')
                 ->orderByDesc('created_at')
                 ->get();
         });
     }
 
+    /**
+     * Tüm yazıları çeker (örneğin create vb. yerlerde lazım olabilir).
+     */
+    private function getAllWrites()
+    {
+        // Tekrarlamamak adına cache kullanabilirsiniz ama bu kez "tüm yazılar" demek
+        // istenmeyen sonuçlara sebep olabilir. Duruma göre dilediğiniz gibi uyarlayın.
+        return Cache::remember('writes_all', self::CACHE_TTL, function () {
+            return Write::all();
+        });
+    }
 
+    /**
+     * Cache temizleme metodu (tekrarları önlemek için).
+     */
     private function clearCache()
     {
         Cache::forget('categories');
         Cache::forget('writes');
+        Cache::forget('writes_all');
     }
 }

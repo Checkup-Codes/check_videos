@@ -1,7 +1,7 @@
 <template>
   <LayoutRendition>
     <template #screen>
-      <Screen :words="words" :screen="screen" />
+      <Screen v-bind="props" />
     </template>
   </LayoutRendition>
 </template>

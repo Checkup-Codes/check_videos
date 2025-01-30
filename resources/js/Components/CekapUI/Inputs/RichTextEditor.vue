@@ -17,7 +17,7 @@ const props = defineProps({
   label: String,
   labelClass: {
     type: String,
-    default: 'block font-semibold mb-2 text-sm text-gray-700',
+    default: 'block font-semibold mb-2 text-sm text-theme-text',
   },
   modelValue: String,
 });

@@ -6,7 +6,7 @@
         <span class="block sm:inline">{{ flashSuccess }}</span>
       </div>
     </div>
-    <div class="fixed z-30 mt-14 w-full shadow-lg shadow-color-one lg:mt-0 lg:w-[27%]">
+    <div class="shadow-color-one fixed z-30 mt-14 w-full shadow-lg lg:mt-0 lg:w-[27%]">
       <div class="flex cursor-pointer justify-between p-2 text-sm font-bold text-black">
         <div class="rounded border-b-4 border-blue-100 p-2">Projeler</div>
         <Link href="/lessons/create" class="underline" v-if="props.auth.user">Yeni Ders Ekle</Link>

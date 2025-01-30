@@ -1,13 +1,14 @@
 <template>
   <CheckScreen>
-    <header class="flex h-[100%] items-center justify-center text-black">
-      <div class="text-center">
-        <h2 class="mb-4 text-4xl font-bold">Yazılar</h2>
-      </div>
-    </header>
+    <IntroScreen title="Yazılar" />
   </CheckScreen>
 </template>
 
 <script setup>
+import { usePage } from '@inertiajs/vue3';
 import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
+import IntroScreen from '@/Components/CekapUI/Typography/IntroScreen.vue';
+
+const { props } = usePage();
+console.log(props);
 </script>

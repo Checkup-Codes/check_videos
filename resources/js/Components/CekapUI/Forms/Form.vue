@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="handleSubmit" class="w-full max-w-full">
+  <form @submit.prevent="handleSubmit" class="mx-auto w-[90%]">
     <slot />
   </form>
 </template>

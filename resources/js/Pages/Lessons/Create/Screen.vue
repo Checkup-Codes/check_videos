@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto bg-screen-bg p-6">
+  <div class="bg-screen-bg container mx-auto p-6">
     <h1 class="mb-4 text-2xl font-bold">Yeni Ders oluştur</h1>
     <form @submit.prevent="submit">
       <div class="mb-4">
