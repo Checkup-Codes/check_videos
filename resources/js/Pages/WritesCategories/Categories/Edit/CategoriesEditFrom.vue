@@ -1,7 +1,7 @@
 <template>
   <div class="bg-screen-bg mx-auto mt-10 w-full max-w-full overflow-auto px-5 lg:mt-0">
     <div class="container mx-auto p-4">
-      <p class="mb-6 border-l-4 border-gray-300 pl-4 text-sm text-gray-700">
+      <p class="mb-6 border-l-4 border-gray-300 pl-4 text-sm text-theme-text">
         Kategorileriniz için düzenlemeler yapabilirsiniz. İsterseniz bir üst kategori seçebilirsiniz.
       </p>
       <CForm @submit="updateCategory">
@@ -33,7 +33,7 @@
         </div>
         <Button type="submit" class="mt-4">Kategoriyi Güncelle</Button>
       </CForm>
-      <Button @click="deleteCategory(props.category.id)" variant="outline" class="m-2 ml-auto text-black">
+      <Button @click="deleteCategory(props.category.id)" class="m-2 ml-auto text-right text-black">
         Kategoriyi Sil
       </Button>
     </div>

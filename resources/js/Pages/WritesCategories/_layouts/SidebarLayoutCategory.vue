@@ -2,9 +2,8 @@
   <CheckSubsidebar>
     <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="collapseSidebar" />
     <TopSubsidebar title="KATEGORİLER" href="/categories/create" />
-
-    <div class="h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain lg:h-[calc(100vh-5rem)]" ref="scrollContainer">
-      <div v-show="showCategories" class="p-4">
+    <div ref="scrollContainer" class="h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain lg:h-[calc(100vh-5rem)]">
+      <div class="min-h-full" v-show="showCategories">
         <ul>
           <li v-for="category in parentCategories" :key="category.id" class="mb-2">
             <!-- Ana Kategori -->
@@ -17,7 +16,7 @@
             </Link>
 
             <!-- Alt Kategoriler -->
-            <ul v-if="category.children.length" class="border-l border-gray-300 pl-4">
+            <ul v-if="category.children.length" class="pl-4">
               <li v-for="child in category.children" :key="child.id" class="mt-1">
                 <Link
                   :href="route('categories.show', { category: child.slug })"
@@ -28,7 +27,7 @@
                 </Link>
 
                 <!-- Alt Alt Kategoriler -->
-                <ul v-if="child.children.length" class="border-l border-gray-300 pl-4">
+                <ul v-if="child.children.length" class="border-gray-300 pl-4">
                   <li v-for="subChild in child.children" :key="subChild.id" class="mt-1">
                     <Link
                       :href="route('categories.show', { category: subChild.slug })"
@@ -72,7 +71,9 @@ const toggleSidebar = () => {
 };
 
 const getLinkClasses = (href) => {
-  return url === href ? 'text-gray-900 font-semibold' : 'text-gray-700';
+  return url === href
+    ? 'px-4 border-l-4 text-theme-text border-primary-500 bg-primary-100 shadow-inner hover:bg-primary-100'
+    : 'px-4 bg-theme-background text-theme-text';
 };
 
 const calculateCategoryCounts = () => {

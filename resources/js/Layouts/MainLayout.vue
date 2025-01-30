@@ -1,31 +1,23 @@
 <template>
-  <div class="flex overflow-hidden">
+  <div class="bg-theme-background">
     <SidebarLayout
-      class="fixed left-0 top-0 z-40 hidden h-full w-56 overflow-hidden lg:block"
+      class="fixed inset-y-0 left-0 z-40 hidden w-56 overflow-hidden rounded-theme border-theme bg-theme-background text-theme-text shadow lg:block"
       @link-clicked="toggleSidebar"
     />
 
-    <div class="flex h-full flex-1 flex-col lg:pl-56">
-      <HeaderLayout class="fixed top-0 z-30 block h-12 w-full bg-white lg:left-56" @toggle-sidebar="toggleSidebar" />
-
-      <div class="flex-1 overflow-auto lg:mt-0">
+    <div class="h-full overflow-hidden lg:pl-56">
+      <HeaderLayout @toggle-sidebar="toggleSidebar" />
+      <div>
         <slot>Default Content</slot>
-      </div>
-
-      <div class="hidden h-6 overflow-hidden bg-gray-100 lg:block">
-        <div class="marquee-container">
-          <div ref="marquee" class="marquee text-sm leading-tight">
-            Haber kanallarında olmazsa olmazıydı ben de eklemek istedim.
-          </div>
-        </div>
       </div>
     </div>
 
     <transition name="fade">
       <div v-if="showSidebar" class="fixed inset-0 z-50 flex lg:hidden">
-        <div class="absolute inset-0 bg-black bg-opacity-50" @click="toggleSidebar"></div>
+        <div class="absolute inset-0 bg-opacity-50" @click="toggleSidebar"></div>
+
         <transition name="slide-up">
-          <div class="relative h-full w-56 overflow-y-auto bg-white">
+          <div class="relative h-full w-56 overflow-y-auto shadow">
             <SidebarLayout @link-clicked="toggleSidebar" />
           </div>
         </transition>
@@ -38,34 +30,42 @@
 import { ref, onMounted } from 'vue';
 import HeaderLayout from './MainLayout/HeaderLayout.vue';
 import SidebarLayout from './MainLayout/SidebarLayout.vue';
+import { useThemeStore } from '@/Stores/themeStore';
 
+const themeStore = useThemeStore();
 const showSidebar = ref(false);
+const selectedTheme = ref('light');
+const currentPalette = ref('modern');
 
 const toggleSidebar = () => {
   showSidebar.value = !showSidebar.value;
 };
 
-const marquee = ref(null);
 onMounted(() => {
-  const marqueeElement = marquee.value;
-  const containerWidth = marqueeElement.parentElement.offsetWidth;
-  const textWidth = marqueeElement.offsetWidth;
+  const storedTheme = localStorage.getItem('selectedTheme');
+  const storedPalette = localStorage.getItem('selectedPalette');
 
-  const keyframes = `
-    @keyframes scroll-left {
-      0% { transform: translateX(${containerWidth}px); }
-      100% { transform: translateX(-${textWidth}px); }
-    }
-  `;
+  if (!storedTheme) {
+    selectedTheme.value = 'light';
+    themeStore.setTheme('light');
+    localStorage.setItem('selectedTheme', 'light');
+  } else {
+    selectedTheme.value = storedTheme;
+    themeStore.setTheme(storedTheme);
+  }
 
-  const styleSheet = document.createElement('style');
-  styleSheet.type = 'text/css';
-  styleSheet.innerHTML = keyframes;
-  document.head.appendChild(styleSheet);
+  if (!storedPalette) {
+    currentPalette.value = 'modern';
+    themeStore.applyPalette('modern');
+    localStorage.setItem('selectedPalette', 'modern');
+  } else {
+    currentPalette.value = storedPalette;
+    themeStore.applyPalette(storedPalette);
+  }
 });
 </script>
 
-<style>
+<style scoped>
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease-out;
@@ -82,17 +82,5 @@ onMounted(() => {
 .slide-up-enter,
 .slide-up-leave-to {
   transform: translateY(100%);
-}
-
-.marquee-container {
-  overflow: hidden;
-  white-space: nowrap;
-  position: relative;
-}
-
-.marquee {
-  display: inline-block;
-  white-space: nowrap;
-  animation: scroll-left 15s linear infinite;
 }
 </style>

@@ -78,3 +78,22 @@ require __DIR__ . '/auth.php';
 Route::get('/excalidraw', function () {
     return Inertia::render('Excalidraw');
 });
+
+// Rendition Routes
+Route::group(['prefix' => 'rendition', 'as' => 'rendition.'], function () {
+    // Words
+    Route::resource('words', \App\Http\Controllers\Rendition\WordController::class);
+    Route::post('words/{id}/learning-status', [\App\Http\Controllers\Rendition\WordController::class, 'updateLearningStatus'])
+        ->name('words.learning-status');
+    Route::post('words/{id}/review-status', [\App\Http\Controllers\Rendition\WordController::class, 'updateReviewStatus'])
+        ->name('words.review-status');
+
+    // Language Packs
+    Route::resource('language-packs', \App\Http\Controllers\Rendition\LanguagePackController::class);
+    Route::get('language-packs/{id}/words', [\App\Http\Controllers\Rendition\LanguagePackController::class, 'words'])
+        ->name('language-packs.words');
+    Route::post('language-packs/{id}/words', [\App\Http\Controllers\Rendition\LanguagePackController::class, 'addWords'])
+        ->name('language-packs.add-words');
+    Route::delete('language-packs/{id}/words/{wordId}', [\App\Http\Controllers\Rendition\LanguagePackController::class, 'removeWord'])
+        ->name('language-packs.remove-word');
+});

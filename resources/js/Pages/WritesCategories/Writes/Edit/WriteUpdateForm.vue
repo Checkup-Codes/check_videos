@@ -1,50 +1,46 @@
 <template>
-  <div class="h-[calc(84vh)] w-full max-w-full overflow-y-scroll break-words rounded-lg bg-white lg:p-5">
-    <div class="container mx-auto p-4">
-      <CForm @submit="updateWrite">
-        <TextInput v-model="form.title" id="title" label="Başlık" :error="errors.title" />
-        <TextInput v-model="form.slug" id="slug" label="Slug" :error="errors.slug" />
-        <RichTextEditor v-model="form.content" label="İçerik" :error="errors.content" />
-        <TextInput v-model="form.summary" id="summary" label="Özet" textarea rows="3" :error="errors.summary" />
+  <CForm @submit="updateWrite">
+    <TextInput v-model="form.title" id="title" label="Başlık" :error="errors.title" />
+    <TextInput v-model="form.slug" id="slug" label="Slug" :error="errors.slug" />
+    <RichTextEditor v-model="form.content" label="İçerik" :error="errors.content" />
+    <TextInput v-model="form.summary" id="summary" label="Özet" textarea rows="3" :error="errors.summary" />
 
-        <div class="mb-4">
-          <label for="category_id" class="mb-1 block text-sm font-bold">Kategori:</label>
-          <select v-model="form.category_id" id="category_id" class="mt-1 block w-full">
-            <option value="" disabled>Kategori seç</option>
-            <option v-for="category in categories" :key="category.id" :value="category.id">
-              {{ category.name }}
-            </option>
-          </select>
-          <p v-if="errors.category_id" class="text-sm text-red-500">{{ errors.category_id }}</p>
-        </div>
-
-        <div class="mb-4">
-          <label for="status" class="mb-1 block text-sm font-bold">Durum:</label>
-          <select v-model="form.status" id="status" class="mt-1 block w-full">
-            <option value="draft">Şablon</option>
-            <option value="published">Yayında</option>
-            <option value="private">Gizli</option>
-          </select>
-          <p v-if="errors.status" class="text-sm text-red-500">{{ errors.status }}</p>
-        </div>
-
-        <TextInput v-model="form.cover_image" id="cover_image" label="Kapak resmi" :error="errors.cover_image" />
-        <TextInput
-          v-model="form.seo_keywords"
-          id="seo_keywords"
-          label="SEO Anahtar Kelimeleri"
-          :error="errors.seo_keywords"
-        />
-        <TextInput v-model="form.tags" id="tags" label="Etiketler" :error="errors.tags" />
-        <TextInput v-model="form.views_count" id="views_count" label="Görüntülenme Sayısı" type="number" readonly />
-        <div class="mb-4 flex items-center">
-          <label for="hasDraw" class="mb-1 mr-2 text-sm font-bold text-gray-700">Çizim Var Mı?</label>
-          <input v-model="form.hasDraw" type="checkbox" id="hasDraw" />
-        </div>
-        <Button type="submit">Yazıyı Güncelle</Button>
-      </CForm>
+    <div class="mb-4">
+      <label for="category_id" class="mb-1 block text-sm font-bold text-theme-text">Kategori:</label>
+      <select v-model="form.category_id" id="category_id" class="mt-1 block w-full">
+        <option value="" disabled>Kategori seç</option>
+        <option v-for="category in categories" :key="category.id" :value="category.id">
+          {{ category.name }}
+        </option>
+      </select>
+      <p v-if="errors.category_id" class="text-sm text-red-500">{{ errors.category_id }}</p>
     </div>
-  </div>
+
+    <div class="mb-4">
+      <label for="status" class="mb-1 block text-sm font-bold text-theme-text">Durum:</label>
+      <select v-model="form.status" id="status" class="mt-1 block w-full">
+        <option value="draft">Şablon</option>
+        <option value="published">Yayında</option>
+        <option value="private">Gizli</option>
+      </select>
+      <p v-if="errors.status" class="text-sm text-red-500">{{ errors.status }}</p>
+    </div>
+
+    <TextInput v-model="form.cover_image" id="cover_image" label="Kapak resmi" :error="errors.cover_image" />
+    <TextInput
+      v-model="form.seo_keywords"
+      id="seo_keywords"
+      label="SEO Anahtar Kelimeleri"
+      :error="errors.seo_keywords"
+    />
+    <TextInput v-model="form.tags" id="tags" label="Etiketler" :error="errors.tags" />
+    <TextInput v-model="form.views_count" id="views_count" label="Görüntülenme Sayısı" type="number" readonly />
+    <div class="mb-4 flex items-center">
+      <label for="hasDraw" class="mb-1 mr-2 text-sm font-bold text-theme-text">Çizim Var Mı?</label>
+      <input v-model="form.hasDraw" type="checkbox" id="hasDraw" />
+    </div>
+    <Button type="submit">Yazıyı Güncelle</Button>
+  </CForm>
 </template>
 
 <script setup>

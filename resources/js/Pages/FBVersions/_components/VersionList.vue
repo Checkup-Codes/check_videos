@@ -1,30 +1,30 @@
 <template>
-  <div ref="scrollContainer" class="h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain lg:h-[calc(100vh-5rem)]">
-    <div class="min-h-full">
-      <div v-for="version in versions" :key="version.id">
-        <Link
-          :href="`/versions/${version.version}`"
-          :class="getLinkClasses(`/versions/${version.version}`)"
-          class="block rounded-sm border-b-[1px] bg-white duration-200 ease-in-out hover:border-gray-300"
-        >
-          <div class="px-4 py-3">
-            <div class="text-md font-semibold text-gray-800">
-              {{ version.version }}
-            </div>
-            <div class="flex items-center">
-              <div class="text-sm text-gray-600">
-                {{ version.release_date }}
-              </div>
+  <CheckSubsidebar>
+    <div v-for="version in versions" class="border-theme" :key="version.id">
+      <Link
+        :href="`/versions/${version.version}`"
+        :class="getLinkClasses(`/versions/${version.version}`)"
+        class="block rounded-sm duration-200 ease-in-out"
+      >
+        <div class="px-3 py-2">
+          <div class="text-sm font-semibold">
+            {{ version.version }}
+          </div>
+          <div class="flex items-center">
+            <div class="text-sm">
+              {{ version.release_date }}
             </div>
           </div>
-        </Link>
-      </div>
+        </div>
+      </Link>
     </div>
-  </div>
+    <ThemeCustomizer />
+  </CheckSubsidebar>
 </template>
 
 <script setup>
 import { Link } from '@inertiajs/vue3';
+import CheckSubsidebar from '@/Components/CekapUI/Modals/CheckSubsidebar.vue';
 
 // Props tanımı
 const props = defineProps({
@@ -40,7 +40,7 @@ const props = defineProps({
 
 const getLinkClasses = (href) => {
   return props.currentUrl === `${href}`
-    ? 'block cursor-pointer text-sm rounded-lg text-black transition-all duration-200 hover:bg-primary-300 bg-primary-200 text-black shadow-inner'
-    : 'block cursor-pointer text-sm rounded-lg text-black transition-all duration-200 hover:bg-primary-300 hover:shadow-inner';
+    ? 'px-4 border-l-4 text-theme-text border-primary-500 bg-primary-100 shadow-inner hover:bg-primary-100'
+    : 'px-4 bg-theme-background text-theme-text';
 };
 </script>

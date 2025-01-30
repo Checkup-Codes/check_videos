@@ -8,6 +8,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import MainLayout from './Layouts/MainLayout.vue';
 import { InertiaProgress } from '@inertiajs/progress';
+import { createPinia } from 'pinia';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -23,6 +24,7 @@ import {
   faFolder,
   faLink,
   faShareAlt,
+  faGlobe,
 } from '@fortawesome/free-solid-svg-icons';
 import { faInstagram, faGithub, faYoutube, faLinkedin, faMedium, faTwitter } from '@fortawesome/free-brands-svg-icons';
 library.add(
@@ -42,7 +44,8 @@ library.add(
   faSync,
   faFolder,
   faLink,
-  faShareAlt
+  faShareAlt,
+  faGlobe
 );
 
 import store from './Store';
@@ -58,7 +61,7 @@ InertiaProgress.init({
 });
 
 createInertiaApp({
-  title: (title) => `${title}${appName}`,
+  title: (title) => `${title} ${appName}`,
   resolve: async (name) => {
     const page = (
       await resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob<DefineComponent>('./Pages/**/*.vue'))
@@ -69,12 +72,12 @@ createInertiaApp({
     return page;
   },
   setup({ el, App, props, plugin }) {
-    createSSRApp({ render: () => h(App, props) })
-      .use(plugin)
-      .use(ZiggyVue)
-      .use(store)
-      .component('font-awesome-icon', FontAwesomeIcon)
-      .mount(el);
+    const app = createSSRApp({ render: () => h(App, props) });
+    const pinia = createPinia();
+
+    app.use(plugin).use(ZiggyVue).use(store).use(pinia).component('font-awesome-icon', FontAwesomeIcon);
+
+    app.mount(el);
   },
   progress: {
     color: '#4B5563',

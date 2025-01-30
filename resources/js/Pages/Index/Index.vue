@@ -1,6 +1,6 @@
 <template>
   <CheckScreen>
-    <header class="flex h-[100%] items-center justify-center text-black">
+    <header class="flex h-[100%] items-center justify-center text-theme-text">
       <div class="text-center">
         <img
           src="../../../../public/images/checkup_codes_logo.png"

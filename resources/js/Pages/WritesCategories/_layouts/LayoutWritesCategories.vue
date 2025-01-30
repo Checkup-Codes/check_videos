@@ -13,7 +13,7 @@
       @update:isCollapsed="handleSidebarCollapse"
       :class="sidebarStyle"
     />
-    <div :class="isMobile ? 'hidden' : 'block'">
+    <div :class="isMobile ? 'hidden lg:block' : 'block'">
       <slot name="screen"></slot>
     </div>
   </CheckLayout>

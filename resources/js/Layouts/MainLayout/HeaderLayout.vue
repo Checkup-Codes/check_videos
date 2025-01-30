@@ -1,15 +1,17 @@
 <template>
   <header
-    class="sticky top-0 z-50 flex h-10 items-center justify-between border-b-2 border-gray-300 bg-sidebar px-5 lg:hidden"
+    class="sticky top-0 z-50 flex min-h-10 items-center justify-between border-b-2 border-gray-300 bg-sidebar px-5 lg:hidden"
   >
-    <Link v-if="basePath" :href="`/${basePath}`" class="hover:underline">Geri</Link>
+    <Link v-if="basePath" :href="`/${basePath}`" class="hover:underline">
+      <GoBackSvg class="text-theme-text" />
+    </Link>
     <div class="rounded bg-black px-2 font-extrabold text-white">
       <Link href="/">CHECK-UP CODES</Link>
     </div>
     <div class="flex items-center space-x-4">
       <button @click="$emit('toggle-sidebar')" class="lg:hidden">
         <svg
-          class="h-6 w-6 text-black"
+          class="h-6 w-6 text-theme-text"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -25,6 +27,7 @@
 <script setup>
 import { computed } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
+import GoBackSvg from '@/Shared/Svg/GoBack.vue';
 
 const props = defineProps({
   title: {

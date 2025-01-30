@@ -1,6 +1,12 @@
 <template>
   <div :class="computedClass">
-    <slot />
+    <div
+      class="h-screen-minus-10 w-full max-w-full overflow-y-scroll break-words rounded-lg bg-theme-background lg:h-screen"
+    >
+      <div class="container mx-auto">
+        <slot />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -15,6 +21,6 @@ const props = defineProps({
 });
 
 const computedClass = computed(() => {
-  return `${props.infoClass} h-[calc(94h)] lg:h-[calc(94vh)] overflow-hidden`;
+  return `${props.infoClass} h-[calc(100h)]  overflow-hidden`;
 });
 </script>

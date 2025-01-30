@@ -8,7 +8,7 @@
         :class="getLinkClasses(`/writes/${write.slug}`)"
       >
         <div class="font-semibold">{{ write.title }}</div>
-        <div class="flex items-center justify-between text-xs text-gray-500">
+        <div class="flex items-center justify-between text-xs">
           <span>{{ formatDate(write.created_at) }}</span>
           <span>{{ write.views_count }} görüntülenme</span>
         </div>
@@ -62,8 +62,9 @@ const formatDate = (dateString) => {
 const getLinkClasses = (href) => {
   const isActive = window.location.pathname === href;
   return `
-    border-b border-accent-light px-4 py-3 block cursor-pointer p-2 text-sm rounded-sm transition-all duration-200
-    ${isActive ? 'bg-primary-200 shadow-inner hover:bg-primary-300 text-neutral-700' : 'text-neutral-700 hover:bg-primary-200'}
+    bg-theme-background text-theme-text px-4 py-3 block cursor-pointer p-2 text-sm
+    ${isActive ? 'border-l-4 border-primary-500 bg-primary-100 shadow-inner hover:bg-primary-100' : 'hover:bg-primary-100'}
+    
   `;
 };
 </script>
