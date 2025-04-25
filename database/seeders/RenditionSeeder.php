@@ -15,11 +15,11 @@ class RenditionSeeder extends Seeder
     {
         // Create Language Packs
         $languagePacks = [
-            ['name' => 'Essential English Words', 'description' => 'Basic English vocabulary pack', 'language' => 'en'],
-            ['name' => 'Business English', 'description' => 'Professional English vocabulary', 'language' => 'en'],
-            ['name' => 'Academic Turkish', 'description' => 'Academic Turkish vocabulary', 'language' => 'tr'],
-            ['name' => 'Daily Conversations', 'description' => 'Everyday English phrases', 'language' => 'en'],
-            ['name' => 'Technical Terms', 'description' => 'Technical and scientific vocabulary', 'language' => 'en'],
+            ['name' => 'Essential English Words', 'slug' => 'essential', 'description' => 'Basic English vocabulary pack', 'language' => 'en'],
+            ['name' => 'Business English', 'slug' => 'business', 'description' => 'Professional English vocabulary', 'language' => 'en'],
+            ['name' => 'Academic Turkish', 'slug' => 'academic', 'description' => 'Academic Turkish vocabulary', 'language' => 'tr'],
+            ['name' => 'Daily Conversations', 'slug' => 'daily', 'description' => 'Everyday English phrases', 'language' => 'en'],
+            ['name' => 'Technical Terms', 'slug' => 'technical', 'description' => 'Technical and scientific vocabulary', 'language' => 'en'],
         ];
 
         foreach ($languagePacks as $pack) {
@@ -248,7 +248,6 @@ class RenditionSeeder extends Seeder
         foreach ($words as $wordData) {
             $baseWordData = [
                 'flag' => false,
-                'correct_count' => 0,
                 'incorrect_count' => 0,
                 'review_count' => 0,
             ];

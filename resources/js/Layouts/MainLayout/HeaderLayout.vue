@@ -39,6 +39,14 @@ const props = defineProps({
 const basePath = computed(() => {
   const url = usePage().url;
   const parts = url.split('/').filter((part) => part);
-  return parts.length > 1 ? parts[0] : null;
+
+  if (!parts.length) return null;
+
+  const pathMap = {
+    rendition: 'rendition/words',
+    //  academy: 'academy/courses',
+  };
+
+  return pathMap[parts[0]] || parts[0];
 });
 </script>

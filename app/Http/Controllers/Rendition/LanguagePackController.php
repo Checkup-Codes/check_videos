@@ -5,18 +5,52 @@ namespace App\Http\Controllers\Rendition;
 use App\Http\Controllers\Controller;
 use App\Models\Rendition\LanguagePack;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Response;
+use Inertia\Inertia;
 
 class LanguagePackController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $languagePacks = LanguagePack::withCount('words')->get();
-        return view('pages.rendition.language-packs.index', compact('languagePacks'));
+        $languagePacks = LanguagePack::with('words')->get();
+
+        // her paketin relation'dan toplam kelime sayısını al ve dd et
+        foreach ($languagePacks as $languagePack) {
+            $languagePack->word_count = $languagePack->words()->count();
+        }
+        return Inertia::render('Rendition/LanguagePacks/IndexLanguagePacks', [
+            'languagePacks' => $languagePacks,
+            'screen' => [
+                'isMobileSidebar' => false,
+                'name' => 'packs'
+            ]
+        ]);
     }
 
+    // public function show(Request $request)
+    // {
+
+    //     $languagePacks = LanguagePack::with('words')->get();
+    //     dd($request);
+
+    //     return Inertia::render('Rendition/LanguagePacks/ShowLanguagePacks', [
+    //         'languagePacks' => $languagePacks,
+    //         'languagePack' => $words,
+    //         'screen' => [
+    //             'isMobileSidebar' => false,
+    //             'name' => 'packs'
+    //         ]
+    //     ]);
+    // }
     public function create()
     {
-        return view('pages.rendition.language-packs.create');
+        return Inertia::render('Rendition/LanguagePacks/CreateLanguagePacks', [
+            'screen' => [
+                'isMobileSidebar' => false,
+                'name' => 'packs'
+            ]
+        ]);
     }
 
     public function store(Request $request)
@@ -29,14 +63,21 @@ class LanguagePackController extends Controller
 
         LanguagePack::create($request->all());
 
-        return redirect()->route('rendition.language-packs.index')
+        return Redirect::route('rendition.language-packs.index')
             ->with('success', 'Dil paketi başarıyla oluşturuldu.');
     }
 
     public function edit($id)
     {
         $languagePack = LanguagePack::findOrFail($id);
-        return view('pages.rendition.language-packs.edit', compact('languagePack'));
+
+        return Inertia::render('Rendition/LanguagePacks/EditLanguagePacks', [
+            'languagePack' => $languagePack,
+            'screen' => [
+                'isMobileSidebar' => false,
+                'name' => 'packs'
+            ]
+        ]);
     }
 
     public function update(Request $request, $id)
@@ -50,7 +91,7 @@ class LanguagePackController extends Controller
         $languagePack = LanguagePack::findOrFail($id);
         $languagePack->update($request->all());
 
-        return redirect()->route('rendition.language-packs.index')
+        return Redirect::route('rendition.language-packs.index')
             ->with('success', 'Dil paketi başarıyla güncellendi.');
     }
 
@@ -59,14 +100,21 @@ class LanguagePackController extends Controller
         $languagePack = LanguagePack::findOrFail($id);
         $languagePack->delete();
 
-        return redirect()->route('rendition.language-packs.index')
+        return Redirect::route('rendition.language-packs.index')
             ->with('success', 'Dil paketi başarıyla silindi.');
     }
 
     public function words($id)
     {
         $languagePack = LanguagePack::with('words')->findOrFail($id);
-        return view('pages.rendition.language-packs.words', compact('languagePack'));
+
+        return Inertia::render('Rendition/LanguagePacks/Words', [
+            'languagePack' => $languagePack,
+            'screen' => [
+                'isMobileSidebar' => false,
+                'name' => 'packs'
+            ]
+        ]);
     }
 
     public function addWords(Request $request, $id)
@@ -79,7 +127,7 @@ class LanguagePackController extends Controller
         $languagePack = LanguagePack::findOrFail($id);
         $languagePack->words()->attach($request->word_ids);
 
-        return redirect()->route('rendition.language-packs.words', $id)
+        return Redirect::route('rendition.language-packs.words', $id)
             ->with('success', 'Kelimeler pakete başarıyla eklendi.');
     }
 
@@ -88,6 +136,6 @@ class LanguagePackController extends Controller
         $languagePack = LanguagePack::findOrFail($id);
         $languagePack->words()->detach($wordId);
 
-        return response()->json(['success' => true]);
+        return Response::json(['success' => true]);
     }
 }

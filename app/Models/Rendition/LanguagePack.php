@@ -27,6 +27,7 @@ class LanguagePack extends Model
 
     protected $fillable = [
         'name',
+        'slug',
         'description',
         'language'
     ];

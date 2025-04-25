@@ -33,7 +33,6 @@ class Word extends Model
         'learning_status',
         'flag',
         'difficulty_level',
-        'correct_count',
         'incorrect_count',
         'review_count',
         'last_review_date'
@@ -44,7 +43,6 @@ class Word extends Model
         'last_review_date' => 'datetime',
         'learning_status' => 'integer',
         'difficulty_level' => 'integer',
-        'correct_count' => 'integer',
         'incorrect_count' => 'integer',
         'review_count' => 'integer',
     ];

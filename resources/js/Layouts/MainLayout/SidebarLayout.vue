@@ -66,6 +66,9 @@
               <Button size="xsmall" @click="resetThemeSettings">Sıfırla</Button>
 
               <Button size="xsmall" @click="flipCard">Geri Dön</Button>
+              <Link href="/login">
+                <Button size="xsmall"> L </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -82,11 +85,9 @@
         <Link href="/categories" :class="getLinkClasses(['/categories'])">
           <font-awesome-icon icon="fa-solid fa-book" class="mr-2" /> Kategoriler
         </Link>
-        <!-- 
         <Link href="/rendition/words" :class="getLinkClasses(['/rendition/words'])">
           <font-awesome-icon icon="fa-solid fa-globe" class="mr-2" /> Kelimeler
         </Link>
-         -->
         <Link href="/versions" :class="getLinkClasses(['/versions'])">
           <font-awesome-icon icon="fa-solid fa-sync" class="mr-2" /> Versiyonlar
         </Link>

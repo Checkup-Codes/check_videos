@@ -8,10 +8,9 @@
 
 <script setup>
 import LayoutRendition from '@/Pages/Rendition/_layouts/LayoutRendition.vue';
-import Screen from '@/Pages/Rendition/Words/Index/Screen.vue';
+import Screen from '@/Pages/Rendition/Words/Create/Screen.vue';
 
 const props = defineProps({
-  words: Array,
   languagePacks: Array,
   screen: Object,
 });

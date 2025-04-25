@@ -87,6 +87,8 @@ Route::group(['prefix' => 'rendition', 'as' => 'rendition.'], function () {
         ->name('words.learning-status');
     Route::post('words/{id}/review-status', [\App\Http\Controllers\Rendition\WordController::class, 'updateReviewStatus'])
         ->name('words.review-status');
+    Route::get('words/available-for-pack/{packId}', [\App\Http\Controllers\Rendition\WordController::class, 'availableForPack'])
+        ->name('words.available-for-pack');
 
     // Language Packs
     Route::resource('language-packs', \App\Http\Controllers\Rendition\LanguagePackController::class);
@@ -97,3 +99,4 @@ Route::group(['prefix' => 'rendition', 'as' => 'rendition.'], function () {
     Route::delete('language-packs/{id}/words/{wordId}', [\App\Http\Controllers\Rendition\LanguagePackController::class, 'removeWord'])
         ->name('language-packs.remove-word');
 });
+Route::post('/update-words', [\App\Http\Controllers\Rendition\WordController::class, 'updateWords']);

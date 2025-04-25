@@ -1,30 +1,25 @@
 <template>
   <CheckScreen>
-    <TopScreen title="Kelimeler" />
-
     <div class="p-6">
       <div class="mb-6 flex items-center justify-between">
         <div>
           <h2 class="text-xl font-bold text-gray-800">Kelime Listesi</h2>
-          <p class="text-sm text-gray-600">Toplam Kelime Sayısı: {{ words.length }}</p>
+          <p class="text-sm text-gray-600">Toplam Kelime Sayısı: {{ filteredWords.length }}</p>
         </div>
-        <div class="flex gap-2">
-          <a
-            v-if="isLoggedIn"
-            :href="route('rendition.words.create')"
-            class="hover:bg-black-700 focus:ring-black-500 rounded-md bg-black px-3 py-2 text-sm text-white focus:outline-none focus:ring-2"
-          >
-            Yeni Kelime Ekle
-          </a>
-        </div>
+        <a
+          v-if="isLoggedIn"
+          :href="route('rendition.words.create')"
+          class="hover:bg-black-700 focus:ring-black-500 rounded-md bg-black px-3 py-2 text-sm text-white focus:outline-none focus:ring-2"
+        >
+          Yeni Kelime Ekle
+        </a>
       </div>
 
-      <!-- Arama ve Filtreleme -->
-      <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+      <!-- Arama ve Filtre -->
+      <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
-          <label for="search" class="mb-1 block text-sm font-medium text-gray-700">Kelime Ara</label>
+          <label class="block text-sm font-medium text-gray-700">Kelime Ara</label>
           <input
-            id="search"
             v-model="searchQuery"
             type="text"
             placeholder="Kelime veya anlam ara..."
@@ -32,21 +27,15 @@
           />
         </div>
         <div>
-          <label for="language-filter" class="mb-1 block text-sm font-medium text-gray-700">Dil Filtresi</label>
+          <label class="block text-sm font-medium text-gray-700">Öğrenme Durumu</label>
           <select
-            id="language-filter"
-            v-model="languageFilter"
+            v-model="statusFilter"
             class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">Tüm Diller</option>
-            <option value="tr">Türkçe (TR)</option>
-            <option value="en">İngilizce (EN)</option>
-            <option value="de">Almanca (DE)</option>
-            <option value="fr">Fransızca (FR)</option>
-            <option value="es">İspanyolca (ES)</option>
-            <option value="it">İtalyanca (IT)</option>
-            <option value="ru">Rusça (RU)</option>
-            <option value="ar">Arapça (AR)</option>
+            <option value="">Tümü</option>
+            <option value="0">Öğrenilmedi</option>
+            <option value="1">Öğreniliyor</option>
+            <option value="2">Öğrenildi</option>
           </select>
         </div>
       </div>
@@ -66,15 +55,15 @@
           </thead>
           <tbody>
             <tr v-if="filteredWords.length === 0">
-              <td colspan="8" class="border-b px-4 py-6 text-center text-gray-500">
+              <td colspan="6" class="border-b px-4 py-6 text-center text-gray-500">
                 {{
-                  searchQuery || languageFilter || packFilter
+                  searchQuery || statusFilter
                     ? 'Arama kriterlerine uygun kelime bulunamadı.'
                     : 'Henüz kelime bulunmamaktadır.'
                 }}
               </td>
             </tr>
-            <tr v-for="word in filteredWords" :key="word.id" class="text-xs transition hover:bg-gray-100">
+            <tr v-for="word in filteredWords" :key="word.id" class="text-sm transition hover:bg-gray-100">
               <td class="border-b px-4 py-3 font-medium">{{ word.word }}</td>
               <td class="border-b px-4 py-3">{{ word.meaning }}</td>
               <td class="border-b px-4 py-3 capitalize">{{ word.type }}</td>
@@ -137,19 +126,6 @@
           </tbody>
         </table>
       </div>
-
-      <!-- Arama sonucu bulunamazsa yeni kelime ekleme önerisi -->
-      <div v-if="searchQuery && filteredWords.length === 0 && isLoggedIn" class="mt-4 rounded-md bg-blue-50 p-4">
-        <p class="text-blue-700">
-          Aradığınız kelime bulunamadı.
-          <a :href="route('rendition.words.create')" class="font-medium underline"
-            >Yeni bir kelime eklemek ister misiniz?</a
-          >
-        </p>
-      </div>
-      <div v-else-if="searchQuery && filteredWords.length === 0 && !isLoggedIn" class="mt-4 rounded-md bg-blue-50 p-4">
-        <p class="text-blue-700">Aradığınız kelime bulunamadı.</p>
-      </div>
     </div>
   </CheckScreen>
 </template>
@@ -160,71 +136,42 @@ import { router, usePage } from '@inertiajs/vue3';
 import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
 import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
 
+// Props tanımı
 const props = defineProps({
-  words: Array,
   languagePacks: Array,
-  screen: Object,
 });
 
-// Kullanıcının giriş yapıp yapmadığını kontrol et
+console.log('Props:', props.languagePacks[0].words);
+
 const auth = computed(() => usePage().props.auth);
 const isLoggedIn = computed(() => auth.value && auth.value.user);
 
-// Arama ve filtreleme değişkenleri
+// Arama ve filtreler
 const searchQuery = ref('');
-const languageFilter = ref('');
-const packFilter = ref('');
+const statusFilter = ref('');
 
-// Filtrelenmiş kelimeleri hesaplayan computed property
+// Güvenli filtreleme
 const filteredWords = computed(() => {
-  return props.words.filter((word) => {
-    // Arama sorgusu filtresi
+  if (!props.languagePacks[0] || !props.languagePacks[0].words) return [];
+
+  return props.languagePacks[0].words.filter((word) => {
     const matchesSearch =
       !searchQuery.value.trim() ||
       word.word.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       word.meaning.toLowerCase().includes(searchQuery.value.toLowerCase());
 
-    // Dil filtresi
-    const matchesLanguage = !languageFilter.value || word.language === languageFilter.value;
+    const matchesStatus = statusFilter.value === '' || word.learning_status === parseInt(statusFilter.value);
 
-    // Paket filtresi
-    const matchesPack = !packFilter.value || word.language_packs.some((pack) => pack.id === packFilter.value);
-
-    return matchesSearch && matchesLanguage && matchesPack;
+    return matchesSearch && matchesStatus;
   });
 });
 
-// Zorluk seviyesini metne dönüştürme fonksiyonu
-const difficultyText = (level) => {
-  switch (level) {
-    case 1:
-      return 'Kolay';
-    case 2:
-      return 'Orta';
-    case 3:
-      return 'Zor';
-    case 4:
-      return 'Çok Zor';
-    default:
-      return 'Bilinmiyor';
-  }
-};
+// Yardımcı fonksiyonlar
+const difficultyText = (level) => ['Bilinmiyor', 'Kolay', 'Orta', 'Zor', 'Çok Zor'][level] || 'Bilinmiyor';
 
-// Öğrenme durumunu metne dönüştürme fonksiyonu
-const learningStatusText = (status) => {
-  switch (status) {
-    case 0:
-      return 'Öğrenilmedi';
-    case 1:
-      return 'Öğreniliyor';
-    case 2:
-      return 'Öğrenildi';
-    default:
-      return 'Bilinmiyor';
-  }
-};
+const learningStatusText = (status) => ['Öğrenilmedi', 'Öğreniliyor', 'Öğrenildi'][status] || 'Bilinmiyor';
 
-// Silme işlemi için onay
+// Silme işlemi
 const confirmDelete = (word) => {
   if (confirm(`"${word.word}" kelimesini silmek istediğinize emin misiniz?`)) {
     router.delete(route('rendition.words.destroy', word.id));
