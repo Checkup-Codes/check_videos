@@ -1,1 +1,0 @@
-import{o as a,g as r,a as e,w as s,a2 as c,e as o,u as n,k as l}from"./app-vvKkNZTf.js";const i={class:"flex lg:hidden"},f={__name:"GoBackButton",props:{url:{type:String,required:!0}},setup(t){return(u,_)=>(a(),r("div",i,[e(n(l),{href:t.url,class:"flex items-center p-2 text-black hover:text-gray-700"},{default:s(()=>[e(c),o(" Geri ")]),_:1},8,["href"])]))}};export{f as _};

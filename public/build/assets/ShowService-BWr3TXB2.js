@@ -1,1 +1,0 @@
-import r from"./CheckLayout-mC1AlgSV.js";import e from"./Screen-Bl8oT82P.js";import{c as o,w as t,o as a,a as c}from"./app-vvKkNZTf.js";import"./SidebarLayoutProject-B27_ggJy.js";/* empty css            */const u={__name:"ShowService",setup(_){return(m,s)=>(a(),o(r,null,{screen:t(()=>[c(e)]),_:1}))}};export{u as default};

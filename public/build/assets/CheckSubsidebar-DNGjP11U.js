@@ -1,0 +1,1 @@
+import{i as a,o,g as n,r as l,n as c}from"./app-DyaYed08.js";const m={__name:"CheckSubsidebar",props:{infoClass:{type:String,default:""}},setup(e){const t=e,s=a(()=>`${t.infoClass} bg-theme-background rounded-theme text-theme-text relative border-r`);return(r,u)=>(o(),n("div",{class:c(s.value)},[l(r.$slots,"default")],2))}};export{m as _};
