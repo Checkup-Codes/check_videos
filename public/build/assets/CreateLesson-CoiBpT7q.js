@@ -1,1 +1,0 @@
-import e from"./CheckLayout-EfvE3ugR.js";import r from"./Screen-C3z9NE9a.js";import{c as o,w as t,o as a,a as s}from"./app-DyaYed08.js";import"./SidebarLayoutLesson-BbcYxwqg.js";/* empty css            */const u={__name:"CreateLesson",setup(c){return(_,m)=>(a(),o(e,null,{screen:t(()=>[s(r)]),_:1}))}};export{u as default};

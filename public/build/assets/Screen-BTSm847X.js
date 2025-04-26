@@ -1,0 +1,1 @@
+import{_ as e}from"./IntroScreen-Qnr_S4hH.js";import{g as t,a as o,o as r}from"./app-Odm2mtG0.js";/* empty css            */const a={class:"hidden lg:block"},m={__name:"Screen",setup(c){return(s,_)=>(r(),t("div",a,[o(e,{title:"Kategoriler"})]))}};export{m as default};

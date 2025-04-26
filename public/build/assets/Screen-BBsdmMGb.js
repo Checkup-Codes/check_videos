@@ -1,1 +1,0 @@
-import{_ as e}from"./IntroScreen-B5SX90-j.js";import{g as t,a as o,o as r}from"./app-DyaYed08.js";/* empty css            */const a={class:"hidden lg:block"},m={__name:"Screen",setup(c){return(s,_)=>(r(),t("div",a,[o(e,{title:"Kategoriler"})]))}};export{m as default};
