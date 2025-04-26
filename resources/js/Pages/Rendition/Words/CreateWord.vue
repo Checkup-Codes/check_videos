@@ -13,5 +13,9 @@ import Screen from '@/Pages/Rendition/Words/Create/Screen.vue';
 const props = defineProps({
   languagePacks: Array,
   screen: Object,
+  error: {
+    type: String,
+    default: null,
+  },
 });
 </script>

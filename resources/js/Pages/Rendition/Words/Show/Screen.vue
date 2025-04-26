@@ -26,11 +26,13 @@
       v-if="!props.error && queryParams.game === 'multiple-choice'"
       :gameType="queryParams.game"
       :packSlug="props.pack?.slug || getPackSlugFromUrl()"
+      :words="props.words"
     />
     <TranslateWord
       v-else-if="!props.error && queryParams.game === 'fill-in-the-blank'"
       :gameType="queryParams.game"
       :packSlug="props.pack?.slug || getPackSlugFromUrl()"
+      :words="props.words"
     />
 
     <!-- Liste görünümü -->
@@ -39,12 +41,14 @@
         <div class="mb-6 flex items-center justify-between">
           <div>
             <h2 class="text-xl font-bold text-gray-800">Kelime Listesi</h2>
-            <p class="text-sm text-gray-600">Toplam Kelime Sayısı: {{ props.words ? props.words.length : 0 }}</p>
+            <p class="text-sm text-gray-600">
+              Toplam Kelime Sayısı: {{ isLoading ? '...' : props.words ? props.words.length : 0 }}
+            </p>
           </div>
           <div class="flex gap-2">
             <a
-              v-if="isLoggedIn && props.languagePacks && props.languagePacks.length > 0"
-              :href="route('rendition.language-packs.edit', props.languagePacks[0].id)"
+              v-if="isLoggedIn && props.pack"
+              :href="route('rendition.language-packs.edit', props.pack.id)"
               class="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500"
             >
               Paketi Düzenle
@@ -58,48 +62,18 @@
             </a>
           </div>
         </div>
-        <!-- Arama ve Filtreleme -->
-        <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div>
-            <label for="search" class="mb-1 block text-sm font-medium text-gray-700">Kelime Ara</label>
-            <input
-              id="search"
-              v-model="searchQuery"
-              type="text"
-              placeholder="Kelime veya anlam ara..."
-              class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label for="language-filter" class="mb-1 block text-sm font-medium text-gray-700">Dil Filtresi</label>
-            <select
-              id="language-filter"
-              v-model="languageFilter"
-              class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Tüm Diller</option>
-              <option value="tr">Türkçe (TR)</option>
-              <option value="en">İngilizce (EN)</option>
-              <option value="de">Almanca (DE)</option>
-              <option value="fr">Fransızca (FR)</option>
-              <option value="es">İspanyolca (ES)</option>
-              <option value="it">İtalyanca (IT)</option>
-              <option value="ru">Rusça (RU)</option>
-              <option value="ar">Arapça (AR)</option>
-            </select>
-          </div>
-        </div>
 
+        <!-- Oyun Seçenekleri -->
         <div
           v-if="!queryParams.game && !hasEnoughWords"
-          class="mb-6 rounded-md bg-yellow-100 p-4 text-sm text-yellow-800"
+          class="mt-6 rounded-md bg-yellow-100 p-4 text-sm text-yellow-800"
         >
           Oyunları başlatabilmek için en az 5 kelime eklemelisiniz.
         </div>
 
         <div
           v-if="!queryParams.game && hasEnoughWords"
-          class="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6"
+          class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6"
         >
           <Link
             v-for="(game, index) in games"
@@ -111,78 +85,7 @@
           </Link>
         </div>
 
-        <!-- Kelime Tablosu -->
-        <div class="overflow-x-auto">
-          <table class="min-w-full rounded-lg border border-gray-300 bg-white shadow-md">
-            <thead class="bg-gray-200 text-gray-700">
-              <tr>
-                <th class="border-b px-4 py-3 text-left text-sm font-semibold">Kelime</th>
-                <th class="border-b px-4 py-3 text-left text-sm font-semibold">Anlam</th>
-                <th class="border-b px-4 py-3 text-left text-sm font-semibold">Tür</th>
-                <th class="border-b px-4 py-3 text-left text-sm font-semibold">Zorluk</th>
-                <th class="border-b px-4 py-3 text-left text-sm font-semibold">Öğrenme Durumu</th>
-                <th v-if="isLoggedIn" class="border-b px-4 py-3 text-left text-sm font-semibold">İşlemler</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-if="filteredWords.length === 0">
-                <td colspan="8" class="border-b px-4 py-6 text-center text-gray-500">
-                  {{
-                    searchQuery || languageFilter || packFilter
-                      ? 'Arama kriterlerine uygun kelime bulunamadı.'
-                      : 'Henüz kelime bulunmamaktadır.'
-                  }}
-                </td>
-              </tr>
-              <tr v-for="word in filteredWords" :key="word.id" class="text-xs transition hover:bg-gray-100">
-                <td class="border-b px-4 py-3 font-medium">{{ word?.word || '-' }}</td>
-                <td class="border-b px-4 py-3">{{ word?.meaning || '-' }}</td>
-                <td class="border-b px-4 py-3 capitalize">{{ word?.type || '-' }}</td>
-                <td class="border-b px-4 py-3">
-                  {{ word?.difficulty_level ? difficultyText(word.difficulty_level) : '-' }}
-                </td>
-                <td class="border-b px-4 py-3">
-                  <span
-                    class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
-                    :class="{
-                      'bg-red-100 text-red-800': word?.learning_status === 0,
-                      'bg-yellow-100 text-yellow-800': word?.learning_status === 1,
-                      'bg-green-100 text-green-800': word?.learning_status === 2,
-                      'bg-gray-100 text-gray-800':
-                        word?.learning_status === undefined || word?.learning_status === null,
-                    }"
-                  >
-                    {{
-                      word?.learning_status !== undefined && word?.learning_status !== null
-                        ? learningStatusText(word.learning_status)
-                        : 'Bilinmiyor'
-                    }}
-                  </span>
-                </td>
-                <td class="border-b px-4 py-3" v-if="isLoggedIn">
-                  <div class="flex space-x-2">
-                    <a
-                      v-if="word?.id"
-                      :href="route('rendition.words.edit', word.id)"
-                      class="rounded bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-700 hover:bg-yellow-200"
-                    >
-                      <!-- edit icon -->
-                      ✎
-                    </a>
-                    <button
-                      v-if="word?.id && word?.word"
-                      @click="confirmDelete(word)"
-                      class="rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-200"
-                    >
-                      <!-- delete icon -->
-                      🗑️
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <WordsTable :words="props.words" :isLoading="isLoading" :showActions="isLoggedIn" />
 
         <div v-if="searchQuery && filteredWords.length === 0 && isLoggedIn" class="mt-4 rounded-md bg-blue-50 p-4">
           <p class="text-blue-700">
@@ -198,13 +101,14 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
 import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
 import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
 import MultipleChoice from '@/Pages/Rendition/_components/MultipleChoice.vue';
 import TranslateWord from '@/Pages/Rendition/_components/TranslateWord.vue';
+import WordsTable from '@/Pages/Rendition/_components/WordsTable.vue';
 
 // Props
 const props = defineProps({
@@ -214,6 +118,9 @@ const props = defineProps({
   pack: Object,
   error: String,
 });
+
+// Yükleme durumunu takip et
+const isLoading = ref(true);
 
 // Kullanıcı durumu
 const auth = computed(() => usePage().props.auth);
@@ -226,14 +133,43 @@ const packFilter = ref(props.pack?.id || '');
 
 const hasEnoughWords = computed(() => props.words && props.words.length >= 5);
 
+// Verilerin yüklenmesini simüle edelim
+onMounted(() => {
+  // Sayfa yüklendiğinde 500ms sonra yükleme durumunu kaldır
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 500);
+
+  // Eğer kelime yoksa veya veriler yüklenemediyse hata konsola yazdırılabilir
+  if (!props.words || props.words.length === 0) {
+    console.warn('Kelime verileri yüklenmedi veya boş');
+  } else {
+    console.log(`${props.words.length} kelime yüklendi`);
+    // İlk kelimeyi log'layarak inceleyebiliriz
+    if (props.words[0]) {
+      console.log('İlk kelime örneği:', props.words[0]);
+    }
+  }
+});
+
 // Arama ve filtreleme
 const filteredWords = computed(() => {
   // Add a safety check for props.words
-  if (!props.words) return [];
+  if (!props.words) {
+    console.log('props.words is null or undefined');
+    return [];
+  }
+
+  console.log('All words:', props.words);
+  console.log('Search query:', searchQuery.value);
+  console.log('Language filter:', languageFilter.value);
 
   return props.words.filter((word) => {
     // Skip if word is not a valid object
-    if (!word || typeof word !== 'object') return false;
+    if (!word || typeof word !== 'object') {
+      console.log('Invalid word object:', word);
+      return false;
+    }
 
     const matchesSearch =
       !searchQuery.value.trim() ||
@@ -242,12 +178,13 @@ const filteredWords = computed(() => {
 
     const matchesLanguage = !languageFilter.value || (word.language && word.language === languageFilter.value);
 
-    // Add a safety check for language_packs
-    const matchesPack =
-      !packFilter.value ||
-      (word.language_packs && word.language_packs.some((pack) => pack && pack.id === packFilter.value));
+    console.log('Word filtering results:', {
+      word: word.word,
+      matchesSearch,
+      matchesLanguage,
+    });
 
-    return matchesSearch && matchesLanguage && matchesPack;
+    return matchesSearch && matchesLanguage;
   });
 });
 
@@ -336,4 +273,10 @@ const queryParams = computed(() => {
     game: params.get('game') || null,
   };
 });
+
+// Filtreleri temizleme fonksiyonunu ekle
+const clearFilters = () => {
+  searchQuery.value = '';
+  languageFilter.value = '';
+};
 </script>

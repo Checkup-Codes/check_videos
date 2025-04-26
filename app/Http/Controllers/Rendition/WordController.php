@@ -23,14 +23,6 @@ class WordController extends Controller
             // Use with eager loading but add error handling
             $words = Word::with(['exampleSentences', 'synonyms', 'languagePacks'])->get();
 
-            // Log for debugging
-            Log::info('Words data loaded: ' . count($words) . ' records found');
-            if (count($words) > 0) {
-                $sample = $words->first();
-                Log::info('Sample word data: ' . json_encode($sample));
-                Log::info('Sample word language_packs: ' . json_encode($sample->languagePacks));
-            }
-
             // SQL sorgusunun Eloquent versiyonu - Alternative approach to avoid GROUP BY issues
             $languagePacks = LanguagePack::select([
                 'language_packs.id',
@@ -42,13 +34,6 @@ class WordController extends Controller
                 ->orderBy('language_packs.language')
                 ->orderBy('language_packs.name')
                 ->get();
-
-            // Ensure each word has a language_packs property even if it's empty
-            foreach ($words as $word) {
-                if (!isset($word->language_packs)) {
-                    $word->language_packs = collect([]);
-                }
-            }
 
             return Inertia::render('Rendition/Words/IndexWord', [
                 'words' => $words,
@@ -71,7 +56,7 @@ class WordController extends Controller
                     'isMobileSidebar' => true,
                     'name' => 'words'
                 ],
-                'error' => 'Verileri yüklerken bir hata oluştu: ' . $e->getMessage()
+                'error' => 'Verileri yüklerken bir hata oluştu.'
             ]);
         }
     }
@@ -79,6 +64,7 @@ class WordController extends Controller
     public function show($slug)
     {
         try {
+            // Tüm dil paketlerini getir
             $languagePacks = LanguagePack::select([
                 'language_packs.id',
                 'language_packs.name',
@@ -90,36 +76,21 @@ class WordController extends Controller
                 ->orderBy('language_packs.name')
                 ->get();
 
-            // For each language pack, load its words and relationships to make them available to game components
-            foreach ($languagePacks as $pack) {
-                $pack->words = LanguagePack::where('id', $pack->id)->with(['words.exampleSentences', 'words.synonyms', 'words.languagePacks'])->first()->words;
-
-                // Ensure each word has language_packs
-                foreach ($pack->words as $word) {
-                    if (!isset($word->language_packs)) {
-                        $word->language_packs = collect([]);
-                    }
+            // Slug'a göre istenen paket ve kelimeleri getir
+            $languagePack = LanguagePack::with([
+                'words' => function ($query) {
+                    $query->with(['exampleSentences', 'synonyms'])
+                        ->orderBy('word');
                 }
-            }
-
-            // Slug'a göre istenen paket ve kelimeleri
-            $languagePack = LanguagePack::with(['words.exampleSentences', 'words.synonyms', 'words.languagePacks'])
+            ])
                 ->where('slug', $slug)
                 ->firstOrFail();
 
-            // Log for debugging
-            Log::info('Language pack words loaded for slug ' . $slug . ': ' . count($languagePack->words) . ' records found');
-            if (count($languagePack->words) > 0) {
-                $sample = $languagePack->words->first();
-                Log::info('Sample word data: ' . json_encode($sample));
-                Log::info('Sample word language_packs: ' . json_encode($sample->languagePacks));
-            }
-
-            // Ensure each word has language_packs
-            foreach ($languagePack->words as $word) {
-                if (!isset($word->language_packs)) {
-                    $word->language_packs = collect([]);
-                }
+            // Kelimelerin yüklendiğini kontrol et
+            if (!$languagePack->words || $languagePack->words->isEmpty()) {
+                Log::warning("No words found for language pack: {$slug}");
+            } else {
+                Log::info("Found {$languagePack->words->count()} words for language pack: {$slug}");
             }
 
             return Inertia::render('Rendition/Words/ShowWord', [
@@ -281,73 +252,90 @@ class WordController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'word' => 'required|string|max:255',
-            'meaning' => 'required|string',
-            'type' => 'required|string',
-            'language' => 'required|string|size:2',
-            'difficulty_level' => 'required|integer|min:1|max:4',
-            'language_pack_ids' => 'required|array',
-            'language_pack_ids.*' => 'exists:language_packs,id',
-            'learning_status' => 'integer|min:0|max:2',
-            'flag' => 'boolean',
-            'example_sentences' => 'nullable|array',
-            'example_translations' => 'nullable|array',
-            'synonyms' => 'nullable|array',
-        ]);
+        try {
+            $request->validate([
+                'word' => 'required|string|max:255',
+                'meaning' => 'required|string',
+                'type' => 'required|string',
+                'language' => 'required|string|size:2',
+                'difficulty_level' => 'required|integer|min:1|max:4',
+                'language_pack_ids' => 'required|array',
+                'language_pack_ids.*' => 'exists:language_packs,id',
+                'learning_status' => 'integer|min:0|max:2',
+                'flag' => 'boolean',
+                'example_sentences' => 'nullable|array',
+                'example_translations' => 'nullable|array',
+                'synonyms' => 'nullable|array',
+            ]);
 
-        $word = Word::findOrFail($id);
-        $word->update([
-            'word' => $request->word,
-            'meaning' => $request->meaning,
-            'type' => $request->type,
-            'language' => $request->language,
-            'learning_status' => $request->learning_status,
-            'flag' => $request->flag,
-            'difficulty_level' => $request->difficulty_level,
-        ]);
+            $word = Word::findOrFail($id);
+            $word->update([
+                'word' => $request->word,
+                'meaning' => $request->meaning,
+                'type' => $request->type,
+                'language' => $request->language,
+                'learning_status' => $request->learning_status,
+                'flag' => $request->flag,
+                'difficulty_level' => $request->difficulty_level,
+            ]);
 
-        // İlişkili dil paketlerini güncelle
-        $word->languagePacks()->sync($request->language_pack_ids);
+            // İlişkili dil paketlerini güncelle
+            $word->languagePacks()->sync($request->language_pack_ids);
 
-        // Örnek cümleleri güncelle
-        $word->exampleSentences()->delete();
-        if ($request->has('example_sentences') && is_array($request->example_sentences)) {
-            foreach ($request->example_sentences as $index => $sentence) {
-                if (!empty($sentence)) {
-                    $word->exampleSentences()->create([
-                        'sentence' => $sentence,
-                        'translation' => $request->example_translations[$index] ?? null,
-                        'language' => $word->language,
-                    ]);
+            // Örnek cümleleri güncelle
+            $word->exampleSentences()->delete();
+            if ($request->has('example_sentences') && is_array($request->example_sentences)) {
+                foreach ($request->example_sentences as $index => $sentence) {
+                    if (!empty($sentence)) {
+                        $word->exampleSentences()->create([
+                            'sentence' => $sentence,
+                            'translation' => $request->example_translations[$index] ?? null,
+                            'language' => $word->language,
+                        ]);
+                    }
                 }
             }
-        }
 
-        // Eş anlamlıları güncelle
-        $word->synonyms()->delete();
-        if ($request->has('synonyms') && is_array($request->synonyms)) {
-            foreach ($request->synonyms as $synonym) {
-                if (!empty($synonym)) {
-                    $word->synonyms()->create([
-                        'synonym' => $synonym,
-                        'language' => $word->language,
-                    ]);
+            // Eş anlamlıları güncelle
+            $word->synonyms()->delete();
+            if ($request->has('synonyms') && is_array($request->synonyms)) {
+                foreach ($request->synonyms as $synonym) {
+                    if (!empty($synonym)) {
+                        $word->synonyms()->create([
+                            'synonym' => $synonym,
+                            'language' => $word->language,
+                        ]);
+                    }
                 }
             }
-        }
 
-        return Redirect::route('rendition.words.index')
-            ->with('success', 'Kelime başarıyla güncellendi.');
+            return Redirect::route('rendition.words.index')
+                ->with('success', 'Kelime başarıyla güncellendi.');
+        } catch (\Exception $e) {
+            Log::error('Error in WordController@update: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
+
+            return Redirect::back()
+                ->withInput()
+                ->with('error', 'Kelime güncellenirken bir hata oluştu: ' . $e->getMessage());
+        }
     }
 
     public function destroy($id)
     {
-        $word = Word::findOrFail($id);
-        $word->delete();
+        try {
+            $word = Word::findOrFail($id);
+            $word->delete();
 
-        return Redirect::route('rendition.words.index')
-            ->with('success', 'Kelime başarıyla silindi.');
+            return Redirect::route('rendition.words.index')
+                ->with('success', 'Kelime başarıyla silindi.');
+        } catch (\Exception $e) {
+            Log::error('Error in WordController@destroy: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
+
+            return Redirect::route('rendition.words.index')
+                ->with('error', 'Kelime silinirken bir hata oluştu: ' . $e->getMessage());
+        }
     }
 
     public function updateLearningStatus(Request $request, $id)

@@ -14,5 +14,9 @@ const props = defineProps({
   word: Object,
   languagePacks: Array,
   screen: Object,
+  error: {
+    type: String,
+    default: null,
+  },
 });
 </script>

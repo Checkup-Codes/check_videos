@@ -2,7 +2,47 @@
   <CheckScreen>
     <TopScreen title="Kelime Düzenle" />
 
-    <div class="mx-auto max-w-4xl rounded-lg bg-white p-6 shadow-md">
+    <!-- Error Alert -->
+    <div v-if="props.error" class="mx-6 mt-6 rounded-md bg-red-50 p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">{{ props.error }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="!props.word && !props.error" class="mx-6 mt-6 rounded-md bg-yellow-50 p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-yellow-800">Kelime bulunamadı veya yüklenemedi.</h3>
+          <div class="mt-2">
+            <a href="/rendition/words" class="text-sm font-medium text-yellow-800 underline">Kelime listesine dön</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="props.word" class="mx-auto max-w-4xl rounded-lg bg-white p-6 shadow-md">
       <form @submit.prevent="submitForm">
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
           <!-- Temel Bilgiler -->
@@ -306,6 +346,7 @@ const props = defineProps({
   word: Object,
   languagePacks: Array,
   screen: Object,
+  error: String,
 });
 
 // Mevcut dil paketlerinin ID'lerini al
