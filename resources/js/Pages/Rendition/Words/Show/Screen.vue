@@ -2,29 +2,48 @@
   <CheckScreen>
     <TopScreen title="Kelimeler" />
 
+    <!-- Error Alert -->
+    <div v-if="props.error" class="mx-6 mt-6 rounded-md bg-red-50 p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">{{ props.error }}</h3>
+        </div>
+      </div>
+    </div>
+
     <!-- Oyun component'leri -->
     <MultipleChoice
-      v-if="queryParams.game === 'multiple-choice'"
+      v-if="!props.error && queryParams.game === 'multiple-choice'"
       :gameType="queryParams.game"
       :packSlug="props.pack?.slug || getPackSlugFromUrl()"
     />
     <TranslateWord
-      v-else-if="queryParams.game === 'fill-in-the-blank'"
+      v-else-if="!props.error && queryParams.game === 'fill-in-the-blank'"
       :gameType="queryParams.game"
       :packSlug="props.pack?.slug || getPackSlugFromUrl()"
     />
 
     <!-- Liste görünümü -->
-    <div v-else>
+    <div v-else-if="!props.error">
       <div class="p-6">
         <div class="mb-6 flex items-center justify-between">
           <div>
             <h2 class="text-xl font-bold text-gray-800">Kelime Listesi</h2>
-            <p class="text-sm text-gray-600">Toplam Kelime Sayısı: {{ words.length }}</p>
+            <p class="text-sm text-gray-600">Toplam Kelime Sayısı: {{ props.words ? props.words.length : 0 }}</p>
           </div>
           <div class="flex gap-2">
             <a
-              v-if="isLoggedIn"
+              v-if="isLoggedIn && props.languagePacks && props.languagePacks.length > 0"
               :href="route('rendition.language-packs.edit', props.languagePacks[0].id)"
               class="rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500"
             >
@@ -116,25 +135,34 @@
                 </td>
               </tr>
               <tr v-for="word in filteredWords" :key="word.id" class="text-xs transition hover:bg-gray-100">
-                <td class="border-b px-4 py-3 font-medium">{{ word.word }}</td>
-                <td class="border-b px-4 py-3">{{ word.meaning }}</td>
-                <td class="border-b px-4 py-3 capitalize">{{ word.type }}</td>
-                <td class="border-b px-4 py-3">{{ difficultyText(word.difficulty_level) }}</td>
+                <td class="border-b px-4 py-3 font-medium">{{ word?.word || '-' }}</td>
+                <td class="border-b px-4 py-3">{{ word?.meaning || '-' }}</td>
+                <td class="border-b px-4 py-3 capitalize">{{ word?.type || '-' }}</td>
+                <td class="border-b px-4 py-3">
+                  {{ word?.difficulty_level ? difficultyText(word.difficulty_level) : '-' }}
+                </td>
                 <td class="border-b px-4 py-3">
                   <span
                     class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
                     :class="{
-                      'bg-red-100 text-red-800': word.learning_status === 0,
-                      'bg-yellow-100 text-yellow-800': word.learning_status === 1,
-                      'bg-green-100 text-green-800': word.learning_status === 2,
+                      'bg-red-100 text-red-800': word?.learning_status === 0,
+                      'bg-yellow-100 text-yellow-800': word?.learning_status === 1,
+                      'bg-green-100 text-green-800': word?.learning_status === 2,
+                      'bg-gray-100 text-gray-800':
+                        word?.learning_status === undefined || word?.learning_status === null,
                     }"
                   >
-                    {{ learningStatusText(word.learning_status) }}
+                    {{
+                      word?.learning_status !== undefined && word?.learning_status !== null
+                        ? learningStatusText(word.learning_status)
+                        : 'Bilinmiyor'
+                    }}
                   </span>
                 </td>
                 <td class="border-b px-4 py-3" v-if="isLoggedIn">
                   <div class="flex space-x-2">
                     <a
+                      v-if="word?.id"
                       :href="route('rendition.words.edit', word.id)"
                       class="rounded bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-700 hover:bg-yellow-200"
                     >
@@ -142,6 +170,7 @@
                       ✎
                     </a>
                     <button
+                      v-if="word?.id && word?.word"
                       @click="confirmDelete(word)"
                       class="rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-200"
                     >
@@ -182,6 +211,8 @@ const props = defineProps({
   words: Array,
   languagePacks: Array,
   screen: Object,
+  pack: Object,
+  error: String,
 });
 
 // Kullanıcı durumu
@@ -193,18 +224,28 @@ const searchQuery = ref('');
 const languageFilter = ref('');
 const packFilter = ref(props.pack?.id || '');
 
-const hasEnoughWords = computed(() => props.words.length >= 5);
+const hasEnoughWords = computed(() => props.words && props.words.length >= 5);
 
 // Arama ve filtreleme
 const filteredWords = computed(() => {
+  // Add a safety check for props.words
+  if (!props.words) return [];
+
   return props.words.filter((word) => {
+    // Skip if word is not a valid object
+    if (!word || typeof word !== 'object') return false;
+
     const matchesSearch =
       !searchQuery.value.trim() ||
-      word.word.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      word.meaning.toLowerCase().includes(searchQuery.value.toLowerCase());
+      (word.word && word.word.toLowerCase().includes(searchQuery.value.toLowerCase())) ||
+      (word.meaning && word.meaning.toLowerCase().includes(searchQuery.value.toLowerCase()));
 
-    const matchesLanguage = !languageFilter.value || word.language === languageFilter.value;
-    const matchesPack = !packFilter.value || word.language_packs.some((pack) => pack.id === packFilter.value);
+    const matchesLanguage = !languageFilter.value || (word.language && word.language === languageFilter.value);
+
+    // Add a safety check for language_packs
+    const matchesPack =
+      !packFilter.value ||
+      (word.language_packs && word.language_packs.some((pack) => pack && pack.id === packFilter.value));
 
     return matchesSearch && matchesLanguage && matchesPack;
   });

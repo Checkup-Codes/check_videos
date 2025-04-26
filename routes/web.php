@@ -16,6 +16,8 @@ use App\Http\Controllers\LessonsController;
 use App\Http\Controllers\Projects\ProjectsController;
 use App\Http\Controllers\Projects\ServicesController;
 use App\Http\Controllers\Projects\CustomersController;
+use App\Http\Controllers\Rendition\WordController;
+use App\Http\Controllers\Rendition\LanguagePackController;
 
 
 Route::get('/', function () {
@@ -81,22 +83,34 @@ Route::get('/excalidraw', function () {
 
 // Rendition Routes
 Route::group(['prefix' => 'rendition', 'as' => 'rendition.'], function () {
-    // Words
-    Route::resource('words', \App\Http\Controllers\Rendition\WordController::class);
-    Route::post('words/{id}/learning-status', [\App\Http\Controllers\Rendition\WordController::class, 'updateLearningStatus'])
+
+    // WORDS özel işlemler
+    Route::post('words/{id}/learning-status', [WordController::class, 'updateLearningStatus'])
         ->name('words.learning-status');
-    Route::post('words/{id}/review-status', [\App\Http\Controllers\Rendition\WordController::class, 'updateReviewStatus'])
+
+    Route::post('words/{id}/review-status', [WordController::class, 'updateReviewStatus'])
         ->name('words.review-status');
-    Route::get('words/available-for-pack/{packId}', [\App\Http\Controllers\Rendition\WordController::class, 'availableForPack'])
+
+    Route::get('words/available-for-pack/{packId}', [WordController::class, 'availableForPack'])
         ->name('words.available-for-pack');
 
-    // Language Packs
-    Route::resource('language-packs', \App\Http\Controllers\Rendition\LanguagePackController::class);
-    Route::get('language-packs/{id}/words', [\App\Http\Controllers\Rendition\LanguagePackController::class, 'words'])
+    // LANGUAGE PACKS özel işlemler
+    Route::get('language-packs/{id}/words', [LanguagePackController::class, 'words'])
         ->name('language-packs.words');
-    Route::post('language-packs/{id}/words', [\App\Http\Controllers\Rendition\LanguagePackController::class, 'addWords'])
+
+    Route::post('language-packs/{id}/words', [LanguagePackController::class, 'addWords'])
         ->name('language-packs.add-words');
-    Route::delete('language-packs/{id}/words/{wordId}', [\App\Http\Controllers\Rendition\LanguagePackController::class, 'removeWord'])
+
+    Route::delete('language-packs/{id}/words/{wordId}', [LanguagePackController::class, 'removeWord'])
         ->name('language-packs.remove-word');
+
+    // RESOURCE ROUTELAR en sona!
+
+    // Words resource
+    Route::resource('words', WordController::class);
+
+    // Language Packs resource
+    Route::resource('language-packs', LanguagePackController::class);
 });
+
 Route::post('/update-words', [\App\Http\Controllers\Rendition\WordController::class, 'updateWords']);

@@ -19,73 +19,138 @@ class WordController extends Controller
 
     public function index()
     {
-        $words = Word::with(['exampleSentences', 'synonyms', 'languagePacks'])->get();
+        try {
+            // Use with eager loading but add error handling
+            $words = Word::with(['exampleSentences', 'synonyms', 'languagePacks'])->get();
 
-        // SQL sorgusunun Eloquent versiyonu
-        $languagePacks = LanguagePack::select([
-            'language_packs.id',
-            'language_packs.name',
-            'language_packs.slug',
-            'language_packs.language',
-            DB::raw('COUNT(words.id) as word_count') // Kelime sayısını hesapla
-        ])
-            ->leftJoin('word_pack_relations', 'language_packs.id', '=', 'word_pack_relations.pack_id')
-            ->leftJoin('words', 'word_pack_relations.word_id', '=', 'words.id')
-            ->groupBy('language_packs.id', 'language_packs.name', 'language_packs.language')
-            ->orderBy('language_packs.language')
-            ->orderBy('language_packs.name')
-            ->get();
+            // Log for debugging
+            Log::info('Words data loaded: ' . count($words) . ' records found');
+            if (count($words) > 0) {
+                $sample = $words->first();
+                Log::info('Sample word data: ' . json_encode($sample));
+                Log::info('Sample word language_packs: ' . json_encode($sample->languagePacks));
+            }
 
-        return Inertia::render('Rendition/Words/IndexWord', [
-            'words' => $words,
-            'languagePacks' => $languagePacks,
-            'screen' => [
-                'isMobileSidebar' => true,
-                'name' => 'words'
-            ]
-        ]);
+            // SQL sorgusunun Eloquent versiyonu - Alternative approach to avoid GROUP BY issues
+            $languagePacks = LanguagePack::select([
+                'language_packs.id',
+                'language_packs.name',
+                'language_packs.slug',
+                'language_packs.language'
+            ])
+                ->selectRaw('(SELECT COUNT(*) FROM word_pack_relations WHERE word_pack_relations.pack_id = language_packs.id) as word_count')
+                ->orderBy('language_packs.language')
+                ->orderBy('language_packs.name')
+                ->get();
+
+            // Ensure each word has a language_packs property even if it's empty
+            foreach ($words as $word) {
+                if (!isset($word->language_packs)) {
+                    $word->language_packs = collect([]);
+                }
+            }
+
+            return Inertia::render('Rendition/Words/IndexWord', [
+                'words' => $words,
+                'languagePacks' => $languagePacks,
+                'screen' => [
+                    'isMobileSidebar' => true,
+                    'name' => 'words'
+                ]
+            ]);
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            Log::error('Error in WordController@index: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
+
+            // Fall back to returning an empty dataset
+            return Inertia::render('Rendition/Words/IndexWord', [
+                'words' => [],
+                'languagePacks' => [],
+                'screen' => [
+                    'isMobileSidebar' => true,
+                    'name' => 'words'
+                ],
+                'error' => 'Verileri yüklerken bir hata oluştu: ' . $e->getMessage()
+            ]);
+        }
     }
 
     public function show($slug)
     {
-        $languagePacks = LanguagePack::select([
-            'language_packs.id',
-            'language_packs.name',
-            'language_packs.slug',
-            'language_packs.language',
-            DB::raw('COUNT(words.id) as word_count')
-        ])
-            ->leftJoin('word_pack_relations', 'language_packs.id', '=', 'word_pack_relations.pack_id')
-            ->leftJoin('words', 'word_pack_relations.word_id', '=', 'words.id')
-            ->groupBy('language_packs.id', 'language_packs.name', 'language_packs.language')
-            ->orderBy('language_packs.language')
-            ->orderBy('language_packs.name')
-            ->get();
+        try {
+            $languagePacks = LanguagePack::select([
+                'language_packs.id',
+                'language_packs.name',
+                'language_packs.slug',
+                'language_packs.language'
+            ])
+                ->selectRaw('(SELECT COUNT(*) FROM word_pack_relations WHERE word_pack_relations.pack_id = language_packs.id) as word_count')
+                ->orderBy('language_packs.language')
+                ->orderBy('language_packs.name')
+                ->get();
 
-        // For each language pack, load its words and relationships to make them available to game components
-        foreach ($languagePacks as $pack) {
-            $pack->words = LanguagePack::where('id', $pack->id)->with(['words.exampleSentences', 'words.synonyms'])->first()->words;
+            // For each language pack, load its words and relationships to make them available to game components
+            foreach ($languagePacks as $pack) {
+                $pack->words = LanguagePack::where('id', $pack->id)->with(['words.exampleSentences', 'words.synonyms', 'words.languagePacks'])->first()->words;
+
+                // Ensure each word has language_packs
+                foreach ($pack->words as $word) {
+                    if (!isset($word->language_packs)) {
+                        $word->language_packs = collect([]);
+                    }
+                }
+            }
+
+            // Slug'a göre istenen paket ve kelimeleri
+            $languagePack = LanguagePack::with(['words.exampleSentences', 'words.synonyms', 'words.languagePacks'])
+                ->where('slug', $slug)
+                ->firstOrFail();
+
+            // Log for debugging
+            Log::info('Language pack words loaded for slug ' . $slug . ': ' . count($languagePack->words) . ' records found');
+            if (count($languagePack->words) > 0) {
+                $sample = $languagePack->words->first();
+                Log::info('Sample word data: ' . json_encode($sample));
+                Log::info('Sample word language_packs: ' . json_encode($sample->languagePacks));
+            }
+
+            // Ensure each word has language_packs
+            foreach ($languagePack->words as $word) {
+                if (!isset($word->language_packs)) {
+                    $word->language_packs = collect([]);
+                }
+            }
+
+            return Inertia::render('Rendition/Words/ShowWord', [
+                'words' => $languagePack->words,
+                'languagePacks' => $languagePacks,
+                'pack' => [
+                    'id' => $languagePack->id,
+                    'name' => $languagePack->name,
+                    'slug' => $languagePack->slug,
+                    'language' => $languagePack->language,
+                ],
+                'screen' => [
+                    'isMobileSidebar' => false,
+                    'name' => 'words'
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in WordController@show: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
+
+            return Inertia::render('Rendition/Words/ShowWord', [
+                'words' => [],
+                'languagePacks' => [],
+                'pack' => null,
+                'screen' => [
+                    'isMobileSidebar' => false,
+                    'name' => 'words'
+                ],
+                'error' => 'Verileri yüklerken bir hata oluştu: ' . $e->getMessage()
+            ]);
         }
-
-        // Slug'a göre istenen paket ve kelimeleri
-        $languagePack = LanguagePack::with(['words.exampleSentences', 'words.synonyms'])
-            ->where('slug', $slug)
-            ->firstOrFail();
-
-        return Inertia::render('Rendition/Words/ShowWord', [
-            'words' => $languagePack->words,
-            'languagePacks' => $languagePacks,
-            'pack' => [
-                'id' => $languagePack->id,
-                'name' => $languagePack->name,
-                'slug' => $languagePack->slug,
-                'language' => $languagePack->language,
-            ],
-            'screen' => [
-                'isMobileSidebar' => false,
-                'name' => 'words'
-            ]
-        ]);
     }
 
 
