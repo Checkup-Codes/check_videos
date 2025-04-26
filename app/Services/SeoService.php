@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Seo;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class SeoService
 {
@@ -18,7 +19,7 @@ class SeoService
             $seo = Seo::where('route', $route)->first();
 
             if (!$seo) {
-                return $this->getDefaultSeoData();
+                return $this->getDefaultSeoData($route, $parameters);
             }
 
             return [
@@ -35,14 +36,77 @@ class SeoService
         });
     }
 
-    private function getDefaultSeoData(): array
+    public function createOrUpdateSeo(string $route, array $data): Seo
     {
+        $seo = Seo::updateOrCreate(
+            ['route' => $route],
+            [
+                'title' => $data['title'],
+                'description' => $data['description'],
+                'keywords' => $data['keywords'] ?? null,
+                'og_title' => $data['og_title'] ?? null,
+                'og_description' => $data['og_description'] ?? null,
+                'og_image' => $data['og_image'] ?? null,
+                'canonical_url' => $data['canonical_url'] ?? null,
+                'robots' => $data['robots'] ?? 'index, follow',
+                'schema_org' => $data['schema_org'] ?? null,
+            ]
+        );
+
+        $this->clearCache();
+        return $seo;
+    }
+
+    public function deleteSeo(string $route): bool
+    {
+        $deleted = Seo::where('route', $route)->delete();
+        if ($deleted) {
+            $this->clearCache();
+        }
+        return $deleted;
+    }
+
+    public function getAllSeoData(): array
+    {
+        return Cache::remember(self::CACHE_PREFIX . 'all', self::CACHE_TTL, function () {
+            return Seo::all()->map(function ($seo) {
+                return [
+                    'id' => $seo->id,
+                    'route' => $seo->route,
+                    'title' => $seo->title,
+                    'description' => $seo->description,
+                    'keywords' => $seo->keywords,
+                    'og_title' => $seo->og_title,
+                    'og_description' => $seo->og_description,
+                    'og_image' => $seo->og_image,
+                    'canonical_url' => $seo->canonical_url,
+                    'robots' => $seo->robots,
+                    'schema_org' => $seo->schema_org,
+                    'created_at' => $seo->created_at,
+                    'updated_at' => $seo->updated_at,
+                ];
+            })->toArray();
+        });
+    }
+
+    private function getDefaultSeoData(string $route, array $parameters = []): array
+    {
+        $defaultTitle = 'Checkup Codes';
+        $defaultDescription = 'Yazılım dünyasında size yardımcı olacak içerikler';
+
+        // Generate a more specific title based on the route if possible
+        if (isset($parameters['title'])) {
+            $defaultTitle = $parameters['title'] . ' - Checkup Codes';
+        } elseif (isset($parameters['name'])) {
+            $defaultTitle = $parameters['name'] . ' - Checkup Codes';
+        }
+
         return [
-            'title' => 'Checkup Codes',
-            'description' => 'Yazılım dünyasında size yardımcı olacak içerikler',
+            'title' => $defaultTitle,
+            'description' => $defaultDescription,
             'keywords' => 'yazılım, programlama, web geliştirme',
-            'og_title' => 'Checkup Codes',
-            'og_description' => 'Yazılım dünyasında size yardımcı olacak içerikler',
+            'og_title' => $defaultTitle,
+            'og_description' => $defaultDescription,
             'og_image' => asset('images/og-default.jpg'),
             'canonical_url' => url()->current(),
             'robots' => 'index, follow',
@@ -60,6 +124,8 @@ class SeoService
 
     public function clearCache(): void
     {
+        Cache::forget(self::CACHE_PREFIX . 'all');
+        // Clear all SEO-related cache entries
         Cache::tags([self::CACHE_PREFIX])->flush();
     }
 }

@@ -50,8 +50,7 @@ library.add(
 
 import store from './Store';
 
-// const appName = import.meta.env.VITE_APP_NAME || 'Check-up Codes';
-const appName = import.meta.env.VITE_APP_NAME || 'Check-up Codes';
+const appName = import.meta.env.VITE_APP_NAME;
 
 InertiaProgress.init({
   delay: 0,

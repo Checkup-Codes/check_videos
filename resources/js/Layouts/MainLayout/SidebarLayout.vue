@@ -11,7 +11,7 @@
             <div class="w-full text-center" @click="flipCard">
               <div class="flex flex-col items-center">
                 <img :src="imagePath" alt="Logo" class="mb-2 h-14 w-14 rounded-full" />
-                <h2 class="text-lg font-medium">Check-up Codes</h2>
+                <h2 class="text-lg font-medium">{{ seoTitle }}</h2>
               </div>
             </div>
           </div>
@@ -127,6 +127,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { Inertia } from '@inertiajs/inertia';
 import { useThemeStore } from '@/Stores/themeStore';
 import Button from '@/Components/CekapUI/Buttons/Button.vue';
+import axios from 'axios';
 
 const { props } = usePage();
 const imagePath = ref('/images/checkup_codes_logo.png');
@@ -138,6 +139,8 @@ const currentPalette = ref('modern');
 const selectedTheme = ref(themeStore.currentTheme);
 
 const isFlipped = ref(false);
+const seoTitle = ref('');
+
 const flipCard = () => {
   isFlipped.value = !isFlipped.value;
 };
@@ -154,7 +157,7 @@ const toggleThemeMode = () => {
   localStorage.setItem('selectedTheme', selectedTheme.value);
 };
 
-onMounted(() => {
+onMounted(async () => {
   const savedTheme = localStorage.getItem('selectedTheme');
   const savedPalette = localStorage.getItem('selectedPalette');
 
@@ -166,6 +169,15 @@ onMounted(() => {
   if (savedPalette) {
     currentPalette.value = savedPalette;
     themeStore.applyPalette(savedPalette);
+  }
+
+  try {
+    const response = await axios.get('/api/seo/home');
+    if (response.data && response.data.title) {
+      seoTitle.value = response.data.title;
+    }
+  } catch (error) {
+    console.error('Error fetching SEO title:', error);
   }
 });
 

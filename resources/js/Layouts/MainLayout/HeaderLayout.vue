@@ -5,8 +5,8 @@
     <Link v-if="basePath" :href="`/${basePath}`" class="hover:underline">
       <GoBackSvg class="text-theme-text" />
     </Link>
-    <div class="rounded bg-black px-2 font-extrabold text-white">
-      <Link href="/">CHECK-UP CODES</Link>
+    <div class="rounded bg-black px-2 font-extrabold uppercase text-white">
+      <Link href="/">{{ seoTitle }}</Link>
     </div>
     <div class="flex items-center space-x-4">
       <button @click="$emit('toggle-sidebar')" class="lg:hidden">
@@ -25,9 +25,12 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import GoBackSvg from '@/Shared/Svg/GoBack.vue';
+import axios from 'axios';
+
+const seoTitle = ref('');
 
 const props = defineProps({
   title: {
@@ -48,5 +51,16 @@ const basePath = computed(() => {
   };
 
   return pathMap[parts[0]] || parts[0];
+});
+
+onMounted(async () => {
+  try {
+    const response = await axios.get('/api/seo/home');
+    if (response.data && response.data.title) {
+      seoTitle.value = response.data.title;
+    }
+  } catch (error) {
+    console.error('Error fetching SEO title:', error);
+  }
 });
 </script>

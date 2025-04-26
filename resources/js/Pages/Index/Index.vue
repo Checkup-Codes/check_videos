@@ -7,15 +7,36 @@
           alt="Yakup Sarı"
           class="mx-auto h-96 w-96 rounded-full"
         />
-        <h2 class="animate__animated animate__fadeInDown text-4xl font-bold">Check-up Codes</h2>
-        <p class="animate__animated animate__fadeInUp text-lg">Kodlarınızı Yenileyin, Bilginizi Tazeleyin.</p>
+        <h2 class="animate__animated animate__fadeInDown text-4xl font-bold">{{ seoTitle }}</h2>
+        <p class="animate__animated animate__fadeInUp text-lg">{{ seoDescription }}</p>
       </div>
     </header>
   </CheckScreen>
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
 import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
+import axios from 'axios';
+
+const seoTitle = ref('');
+const seoDescription = ref('');
+
+onMounted(async () => {
+  try {
+    const response = await axios.get('/api/seo/home');
+    if (response.data) {
+      if (response.data.title) {
+        seoTitle.value = response.data.title;
+      }
+      if (response.data.description) {
+        seoDescription.value = response.data.description;
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching SEO data:', error);
+  }
+});
 </script>
 
 <!-- <template>
