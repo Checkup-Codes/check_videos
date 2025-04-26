@@ -132,11 +132,11 @@ class WordController extends Controller
             'language_packs.name',
             'language_packs.slug',
             'language_packs.language',
-            DB::raw('COUNT(words.id) as word_count') // Kelime sayısını hesapla
+            DB::raw('COUNT(words.id) as word_count')
         ])
             ->leftJoin('word_pack_relations', 'language_packs.id', '=', 'word_pack_relations.pack_id')
             ->leftJoin('words', 'word_pack_relations.word_id', '=', 'words.id')
-            ->groupBy('language_packs.id', 'language_packs.name', 'language_packs.language')
+            ->groupBy('language_packs.id', 'language_packs.name', 'language_packs.slug', 'language_packs.language')
             ->orderBy('language_packs.language')
             ->orderBy('language_packs.name')
             ->get();
@@ -231,11 +231,11 @@ class WordController extends Controller
             'language_packs.name',
             'language_packs.slug',
             'language_packs.language',
-            DB::raw('COUNT(words.id) as word_count') // Kelime sayısını hesapla
+            DB::raw('COUNT(words.id) as word_count')
         ])
             ->leftJoin('word_pack_relations', 'language_packs.id', '=', 'word_pack_relations.pack_id')
             ->leftJoin('words', 'word_pack_relations.word_id', '=', 'words.id')
-            ->groupBy('language_packs.id', 'language_packs.name', 'language_packs.language')
+            ->groupBy('language_packs.id', 'language_packs.name', 'language_packs.slug', 'language_packs.language')
             ->orderBy('language_packs.language')
             ->orderBy('language_packs.name')
             ->get();
