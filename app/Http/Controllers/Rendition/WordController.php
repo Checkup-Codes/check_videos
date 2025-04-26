@@ -156,7 +156,20 @@ class WordController extends Controller
 
         try {
             $request->validate([
-                'word' => 'required|string|max:255',
+                'word' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    function ($attribute, $value, $fail) use ($request) {
+                        $exists = Word::where('word', $value)
+                            ->where('language', $request->language)
+                            ->where('type', $request->type)
+                            ->exists();
+                        if ($exists) {
+                            $fail('Bu kelime (' . $value . ') ve tür (' . $request->type . ') kombinasyonu zaten veritabanında mevcut.');
+                        }
+                    }
+                ],
                 'meaning' => 'required|string',
                 'type' => 'required|string',
                 'language' => 'required|string|size:2',
@@ -254,7 +267,21 @@ class WordController extends Controller
     {
         try {
             $request->validate([
-                'word' => 'required|string|max:255',
+                'word' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    function ($attribute, $value, $fail) use ($request, $id) {
+                        $exists = Word::where('word', $value)
+                            ->where('language', $request->language)
+                            ->where('type', $request->type)
+                            ->where('id', '!=', $id)
+                            ->exists();
+                        if ($exists) {
+                            $fail('Bu kelime (' . $value . ') ve tür (' . $request->type . ') kombinasyonu zaten veritabanında mevcut.');
+                        }
+                    }
+                ],
                 'meaning' => 'required|string',
                 'type' => 'required|string',
                 'language' => 'required|string|size:2',
