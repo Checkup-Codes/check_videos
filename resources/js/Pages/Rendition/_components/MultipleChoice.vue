@@ -1,16 +1,26 @@
 <template>
   <div class="flex min-h-screen flex-col items-center justify-center">
-    <!-- Oyun Ayarları -->
-    <GameConfig v-if="!gameState.isPlaying" @start-game="startGameWithConfig" />
-
     <!-- Quiz Tamamlandıysa -->
     <div
-      v-else-if="!gameState.isPlaying"
+      v-if="!gameState.isPlaying && gameState.userResponses.length > 0"
       class="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
     >
-      <h2 class="mb-2 text-2xl font-semibold text-gray-900">Quiz Completed</h2>
-      <p class="mb-4 text-gray-600">Here's how you did:</p>
-      <ul class="space-y-2 text-left text-sm text-gray-800">
+      <h2 class="mb-2 text-2xl font-semibold text-gray-900">Test Özeti</h2>
+      <div class="mb-4 text-center">
+        <p class="text-4xl font-bold text-gray-900">{{ calculateScore }} / 100</p>
+        <p class="text-sm text-gray-600">Puan</p>
+      </div>
+      <div class="mb-4 grid grid-cols-2 gap-4 rounded-lg bg-gray-50 p-4">
+        <div class="text-center">
+          <p class="text-2xl font-bold text-green-600">{{ correctCount }}</p>
+          <p class="text-sm text-gray-600">Doğru</p>
+        </div>
+        <div class="text-center">
+          <p class="text-2xl font-bold text-red-600">{{ incorrectCount }}</p>
+          <p class="text-sm text-gray-600">Yanlış</p>
+        </div>
+      </div>
+      <ul class="mb-4 space-y-2 text-left text-sm text-gray-800">
         <li
           v-for="response in gameState.userResponses"
           :key="response.word_id"
@@ -21,55 +31,111 @@
           </span>
           <span>
             {{ response.correct ? '✓' : '✗' }}
-            <span v-if="!response.correct" class="ml-2 text-xs text-gray-500">
-              (Correct: {{ wordsMap[response.word_id]?.meaning || 'Unknown' }})
-            </span>
           </span>
         </li>
       </ul>
-      <button
-        @click="restartGame"
-        class="mt-6 w-full rounded-lg bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-700"
-      >
-        Restart Quiz
-      </button>
+      <div class="flex gap-2">
+        <Link
+          :href="`/rendition/words/${props.packSlug}`"
+          class="flex-1 rounded-lg bg-black px-4 py-2 text-center text-sm font-medium text-white transition hover:bg-gray-700"
+        >
+          Pakete Dön
+        </Link>
+        <button
+          @click="restartGame"
+          class="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
+        >
+          Tekrar Başla
+        </button>
+      </div>
     </div>
 
     <!-- Quiz Devam Ediyorsa -->
-    <div v-else class="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-      <span v-if="words.length" class="absolute right-4 top-3 text-xs text-gray-400">
-        {{ questionCounter }}
-      </span>
-      <h2 v-if="gameState.currentQuestion" class="mb-4 text-xl font-semibold text-gray-900">
-        What is the meaning of "{{ gameState.currentQuestion.word }}"?
-      </h2>
-      <div class="flex flex-col gap-3">
-        <button
-          v-for="option in shuffledOptions"
-          :key="option.id"
-          @click="selectAnswer(option)"
-          :class="[
-            'w-full rounded-lg px-4 py-3 text-sm font-medium transition focus:outline-none',
-            gameState.selectedAnswer && option.id === gameState.currentQuestion.id
-              ? 'bg-green-500 text-white'
-              : gameState.selectedAnswer && option.id === gameState.selectedAnswer
-                ? 'bg-red-500 text-white'
-                : 'bg-gray-100 text-gray-800 hover:bg-gray-200',
-          ]"
-        >
-          {{ option.meaning }}
-        </button>
+    <div
+      v-else
+      class="relative w-full max-w-md rounded-2xl border border-gray-200 p-6 shadow-sm transition-colors duration-500"
+      :class="{
+        'bg-white': !gameState.showAnswer,
+        'bg-green-50': gameState.showAnswer && gameState.isCorrect,
+        'bg-red-50': gameState.showAnswer && !gameState.isCorrect,
+      }"
+    >
+      <!-- Progress Bar -->
+      <div class="mb-4 h-1 w-full overflow-hidden rounded-full bg-gray-200">
+        <div class="duration-2000 h-full bg-black transition-all" :style="{ width: `${gameState.progress}%` }"></div>
       </div>
-      <p v-if="gameState.showFeedback" class="mt-4 text-sm text-gray-700">
-        {{ feedbackMessage }}
-      </p>
+
+      <!-- Soru Sayacı -->
+      <div class="mb-4 text-right text-sm text-gray-500">
+        Soru {{ gameState.currentIndex + 1 }} / {{ gameState.totalQuestions }}
+      </div>
+
+      <!-- Soru -->
+      <div v-if="gameState.currentQuestion" class="space-y-4">
+        <div>
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold text-gray-900">
+              "{{ gameState.currentQuestion.word }}" kelimesinin anlamı nedir?
+            </h2>
+            <button
+              v-if="!gameState.showAnswer"
+              @click="showHint"
+              class="rounded-lg border border-gray-200 px-3 py-1 text-sm text-gray-600 hover:bg-gray-50"
+              :disabled="
+                gameState.hintShown &&
+                (!gameState.currentQuestion.example_sentences ||
+                  gameState.currentQuestion.example_sentences.length <= 1)
+              "
+            >
+              {{
+                gameState.hintShown
+                  ? `İpucu (${gameState.currentHintIndex + 1}/${gameState.currentQuestion.example_sentences?.length || 0})`
+                  : 'İpucu Göster'
+              }}
+            </button>
+          </div>
+          <p class="mt-1 text-sm text-gray-500">Kelime Türü: {{ getWordType(gameState.currentQuestion.word_type) }}</p>
+        </div>
+
+        <!-- İpucu Gösterimi -->
+        <div v-if="gameState.hintShown" class="rounded-lg bg-blue-50 p-3">
+          <p class="text-sm text-blue-600">Örnek Cümle:</p>
+          <p
+            v-if="gameState.currentQuestion.example_sentences && gameState.currentQuestion.example_sentences.length > 0"
+            class="mt-1 text-sm text-gray-700"
+          >
+            {{ gameState.currentQuestion.example_sentences[gameState.currentHintIndex].sentence }}
+          </p>
+          <p v-else class="mt-1 text-sm text-gray-700">Bu kelime için örnek cümle bulunmuyor.</p>
+        </div>
+
+        <div class="space-y-2">
+          <button
+            v-for="(option, index) in shuffledOptions"
+            :key="index"
+            @click="selectAnswer(option)"
+            :disabled="gameState.showAnswer"
+            class="w-full rounded-lg border border-gray-200 p-3 text-left text-base text-gray-900 transition hover:bg-gray-50 disabled:cursor-not-allowed"
+            :class="{
+              'border-green-500 bg-green-50':
+                gameState.showAnswer && option.meaning === gameState.currentQuestion.meaning,
+              'border-red-500 bg-red-50':
+                gameState.showAnswer &&
+                option.meaning !== gameState.currentQuestion.meaning &&
+                gameState.selectedAnswer?.meaning === option.meaning,
+            }"
+          >
+            {{ option.meaning }}
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { usePage, router } from '@inertiajs/vue3';
+import { usePage, router, Link } from '@inertiajs/vue3';
 import GameConfig from './GameConfig.vue';
 
 const props = defineProps({
@@ -93,12 +159,16 @@ const gameState = ref({
   isLoading: true,
   isPlaying: false,
   currentQuestion: null,
+  currentOptions: [],
   selectedAnswer: null,
-  showFeedback: false,
-  isCorrect: null,
+  showAnswer: false,
+  isCorrect: false,
+  progress: 0,
   currentIndex: 0,
   totalQuestions: 0,
   userResponses: [],
+  hintShown: false,
+  currentHintIndex: 0,
 });
 
 // Kelimeleri kullan
@@ -137,7 +207,7 @@ const startGameWithConfig = async () => {
   }
 
   // Soru sayısını ayarla
-  const questionCount = Math.min(props.gameConfig.questionCount, filteredWords.length);
+  const questionCount = Math.min(parseInt(props.gameConfig.questionCount), filteredWords.length);
   filteredWords = filteredWords.slice(0, questionCount);
 
   // Kelimeleri yükle
@@ -163,30 +233,81 @@ const loadNextQuestion = () => {
 
   gameState.value.currentQuestion = words.value[gameState.value.currentIndex];
   gameState.value.selectedAnswer = null;
-  gameState.value.showFeedback = false;
-  gameState.value.isCorrect = null;
+  gameState.value.hintShown = false;
+  gameState.value.currentHintIndex = 0;
 };
 
-// Cevap seç
-const selectAnswer = (option) => {
-  if (gameState.value.selectedAnswer) return;
+// Puan hesapla
+const calculateScore = computed(() => {
+  if (!gameState.value.userResponses.length) return 0;
+  const correctAnswers = gameState.value.userResponses.filter((response) => response.correct).length;
+  return Math.round((correctAnswers / gameState.value.userResponses.length) * 100);
+});
 
-  gameState.value.selectedAnswer = option.id;
-  gameState.value.isCorrect = option.id === gameState.value.currentQuestion.id;
-  gameState.value.showFeedback = true;
+// Kelime türü metni
+const getWordType = (type) => {
+  switch (type) {
+    case 'noun':
+      return 'İsim';
+    case 'verb':
+      return 'Fiil';
+    case 'adjective':
+      return 'Sıfat';
+    case 'adverb':
+      return 'Zarf';
+    default:
+      return 'Bilinmiyor';
+  }
+};
+
+// Doğru ve yanlış sayıları
+const correctCount = computed(() => {
+  return gameState.value.userResponses.filter((response) => response.correct).length;
+});
+
+const incorrectCount = computed(() => {
+  return gameState.value.userResponses.filter((response) => !response.correct).length;
+});
+
+// Rastgele seçenekleri karıştır
+const shuffledOptions = computed(() => {
+  if (!gameState.value.currentQuestion) return [];
+  let options = words.value.filter((word) => word.id !== gameState.value.currentQuestion.id);
+  options = options.sort(() => Math.random() - 0.5).slice(0, 4); // 4 yanlış seçenek
+  options.push(gameState.value.currentQuestion); // Doğru cevabı ekle
+  return options.sort(() => Math.random() - 0.5); // Tüm seçenekleri karıştır
+});
+
+// Cevap seç
+const selectAnswer = (answer) => {
+  if (gameState.value.showAnswer) return;
+
+  gameState.value.selectedAnswer = answer;
+  gameState.value.isCorrect = answer.meaning === gameState.value.currentQuestion.meaning;
 
   // Kullanıcı yanıtını kaydet
   gameState.value.userResponses.push({
     word_id: gameState.value.currentQuestion.id,
-    selected_id: option.id,
     correct: gameState.value.isCorrect,
   });
 
-  // 2 saniye sonra sonraki soruya geç
-  setTimeout(() => {
-    gameState.value.currentIndex++;
-    loadNextQuestion();
-  }, 2000);
+  // Cevabı göster
+  gameState.value.showAnswer = true;
+
+  // Progress bar'ı başlat
+  gameState.value.progress = 0;
+  const interval = setInterval(() => {
+    gameState.value.progress += 1;
+    if (gameState.value.progress >= 100) {
+      clearInterval(interval);
+      // Sonraki soruya geç
+      gameState.value.currentIndex++;
+      gameState.value.selectedAnswer = null;
+      gameState.value.showAnswer = false;
+      gameState.value.progress = 0;
+      loadNextQuestion();
+    }
+  }, 20); // 2 saniyede 100'e ulaşmak için 20ms aralıklarla artır
 };
 
 // Oyunu bitir
@@ -197,7 +318,22 @@ const endGame = () => {
 
 // Oyunu yeniden başlat
 const restartGame = () => {
-  gameState.value.isPlaying = false;
+  gameState.value = {
+    isLoading: true,
+    isPlaying: false,
+    currentQuestion: null,
+    currentOptions: [],
+    selectedAnswer: null,
+    showAnswer: false,
+    isCorrect: false,
+    progress: 0,
+    currentIndex: 0,
+    totalQuestions: 0,
+    userResponses: [],
+    hintShown: false,
+    currentHintIndex: 0,
+  };
+  startGameWithConfig();
 };
 
 // API'ye verileri gönder
@@ -221,28 +357,30 @@ const updateWordStats = () => {
   );
 };
 
-// Rastgele seçenekleri karıştır
-const shuffledOptions = computed(() => {
-  if (!gameState.value.currentQuestion) return [];
-  let options = words.value.filter((word) => word.id !== gameState.value.currentQuestion.id);
-  options = options.sort(() => Math.random() - 0.5).slice(0, 3);
-  options.push(gameState.value.currentQuestion);
-  return options.sort(() => Math.random() - 0.5);
-});
+// Ayarları göster
+const showConfig = () => {
+  gameState.value.isPlaying = false;
+  gameState.value.userResponses = [];
+};
 
-// Doğru/yanlış mesajı
-const feedbackMessage = computed(() => {
-  if (!gameState.value.currentQuestion) return '';
-  return gameState.value.selectedAnswer === gameState.value.currentQuestion.id
-    ? 'Correct!'
-    : `Wrong! The correct answer is: ${gameState.value.currentQuestion.meaning}`;
-});
+// İpucu göster
+const showHint = () => {
+  if (
+    !gameState.value.currentQuestion.example_sentences ||
+    gameState.value.currentQuestion.example_sentences.length === 0
+  ) {
+    gameState.value.hintShown = true;
+    return;
+  }
 
-// Soru sayacı
-const questionCounter = computed(() => {
-  if (!gameState.value.totalQuestions) return '0/0';
-  return `${gameState.value.currentIndex + 1}/${gameState.value.totalQuestions}`;
-});
+  if (!gameState.value.hintShown) {
+    gameState.value.hintShown = true;
+    gameState.value.currentHintIndex = 0;
+  } else {
+    gameState.value.currentHintIndex =
+      (gameState.value.currentHintIndex + 1) % gameState.value.currentQuestion.example_sentences.length;
+  }
+};
 
 // Oyunu başlat
 onMounted(() => {

@@ -27,14 +27,14 @@
       :gameType="queryParams.game"
       :packSlug="props.pack?.slug || getPackSlugFromUrl()"
       :words="props.words"
-      :gameConfig="gameConfig"
+      :gameConfig="queryParams"
     />
     <TranslateWord
       v-else-if="!props.error && queryParams.game === 'fill-in-the-blank'"
       :gameType="queryParams.game"
       :packSlug="props.pack?.slug || getPackSlugFromUrl()"
       :words="props.words"
-      :gameConfig="gameConfig"
+      :gameConfig="queryParams"
     />
 
     <!-- Liste görünümü -->
@@ -247,6 +247,12 @@ const hasEnoughWords = computed(() => props.words && props.words.length >= 5);
 
 // Verilerin yüklenmesini simüle edelim
 onMounted(() => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('questionCount')) gameConfig.value.questionCount = parseInt(params.get('questionCount'));
+  if (params.get('wordSelection')) gameConfig.value.wordSelection = params.get('wordSelection');
+  if (params.get('difficulty')) gameConfig.value.difficulty = params.get('difficulty');
+  if (params.get('learningStatus')) gameConfig.value.learningStatus = params.get('learningStatus');
+
   setTimeout(() => {
     isLoading.value = false;
   }, 500);
@@ -338,6 +344,10 @@ const updateQuery = (gameRoute) => {
 
   const currentQuery = new URLSearchParams(window.location.search);
   currentQuery.set('game', gameRoute);
+  currentQuery.set('questionCount', gameConfig.value.questionCount);
+  currentQuery.set('wordSelection', gameConfig.value.wordSelection);
+  currentQuery.set('difficulty', gameConfig.value.difficulty);
+  currentQuery.set('learningStatus', gameConfig.value.learningStatus);
 
   Inertia.visit(`${window.location.pathname}?${currentQuery.toString()}`, {
     method: 'get',
@@ -362,6 +372,10 @@ const queryParams = computed(() => {
   const params = new URLSearchParams(window.location.search);
   return {
     game: params.get('game') || null,
+    questionCount: params.get('questionCount') || gameConfig.value.questionCount,
+    wordSelection: params.get('wordSelection') || gameConfig.value.wordSelection,
+    difficulty: params.get('difficulty') || gameConfig.value.difficulty,
+    learningStatus: params.get('learningStatus') || gameConfig.value.learningStatus,
   };
 });
 
