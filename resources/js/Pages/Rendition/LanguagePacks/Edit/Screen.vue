@@ -51,6 +51,14 @@
         <div class="flex justify-end space-x-3">
           <button
             type="button"
+            @click="deleteLanguagePack"
+            class="rounded-md bg-black px-4 py-2 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+            :disabled="processing"
+          >
+            {{ processing ? 'Siliniyor...' : 'Sil' }}
+          </button>
+          <button
+            type="button"
             @click="goBack"
             class="rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
           >
@@ -88,6 +96,20 @@ const form = useForm({
 });
 
 const processing = ref(false);
+
+const deleteLanguagePack = () => {
+  if (confirm('Bu dil paketini silmek istediğinizden emin misiniz?')) {
+    processing.value = true;
+    router.delete(route('rendition.language-packs.destroy', props.languagePack.id), {
+      onSuccess: () => {
+        processing.value = false;
+      },
+      onError: () => {
+        processing.value = false;
+      },
+    });
+  }
+};
 
 const submitForm = () => {
   processing.value = true;
