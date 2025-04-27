@@ -8,242 +8,192 @@ use App\Models\Rendition\ExampleSentence;
 use App\Models\Rendition\LanguagePack;
 use App\Models\Rendition\Synonym;
 use App\Models\Rendition\WordPackRelation;
+use Database\Factories\Rendition\WordFactory;
+use Database\Factories\Rendition\LanguagePackFactory;
+use Database\Factories\Rendition\ExampleSentenceFactory;
+use Database\Factories\Rendition\SynonymFactory;
+use Database\Factories\Rendition\WordPackRelationFactory;
+use Faker\Factory as FakerFactory;
 
 class RenditionSeeder extends Seeder
 {
+    protected $faker;
+
+    public function __construct()
+    {
+        $this->faker = FakerFactory::create();
+    }
+
     public function run(): void
     {
         // Create Language Packs
         $languagePacks = [
-            ['name' => 'Essential English Words', 'slug' => 'essential', 'description' => 'Basic English vocabulary pack', 'language' => 'en'],
-            ['name' => 'Business English', 'slug' => 'business', 'description' => 'Professional English vocabulary', 'language' => 'en'],
-            ['name' => 'Academic Turkish', 'slug' => 'academic', 'description' => 'Academic Turkish vocabulary', 'language' => 'tr'],
-            ['name' => 'Daily Conversations', 'slug' => 'daily', 'description' => 'Everyday English phrases', 'language' => 'en'],
-            ['name' => 'Technical Terms', 'slug' => 'technical', 'description' => 'Technical and scientific vocabulary', 'language' => 'en'],
+            ['name' => '150 Word Demo Pack', 'slug' => 'demo-150', 'description' => 'Demo vocabulary pack with 150 words', 'language' => 'en'],
+            ['name' => '20 Word Quick Start', 'slug' => 'quick-20', 'description' => 'Quick start vocabulary pack with 20 words', 'language' => 'en'],
         ];
 
         foreach ($languagePacks as $pack) {
             LanguagePack::create($pack);
         }
 
-        // Create Words
-        $words = [
-            // English Words
-            [
-                'word' => 'book',
-                'meaning' => 'kitap',
-                'type' => 'noun',
-                'language' => 'en',
-                'learning_status' => 0,
-                'difficulty_level' => 1,
-            ],
-            [
-                'word' => 'write',
-                'meaning' => 'yazmak',
-                'type' => 'verb',
-                'language' => 'en',
-                'learning_status' => 1,
-                'difficulty_level' => 2,
-            ],
-            [
-                'word' => 'computer',
-                'meaning' => 'bilgisayar',
-                'type' => 'noun',
-                'language' => 'en',
-                'learning_status' => 2,
-                'difficulty_level' => 1,
-            ],
-            [
-                'word' => 'develop',
-                'meaning' => 'geliştirmek',
-                'type' => 'verb',
-                'language' => 'en',
-                'learning_status' => 1,
-                'difficulty_level' => 3,
-            ],
-            [
-                'word' => 'algorithm',
-                'meaning' => 'algoritma',
-                'type' => 'noun',
-                'language' => 'en',
-                'learning_status' => 0,
-                'difficulty_level' => 4,
-            ],
-            [
-                'word' => 'implement',
-                'meaning' => 'uygulamak',
-                'type' => 'verb',
-                'language' => 'en',
-                'learning_status' => 1,
-                'difficulty_level' => 3,
-            ],
-            [
-                'word' => 'database',
-                'meaning' => 'veritabanı',
-                'type' => 'noun',
-                'language' => 'en',
-                'learning_status' => 2,
-                'difficulty_level' => 2,
-            ],
-            [
-                'word' => 'optimize',
-                'meaning' => 'optimize etmek',
-                'type' => 'verb',
-                'language' => 'en',
-                'learning_status' => 0,
-                'difficulty_level' => 4,
-            ],
-            [
-                'word' => 'interface',
-                'meaning' => 'arayüz',
-                'type' => 'noun',
-                'language' => 'en',
-                'learning_status' => 1,
-                'difficulty_level' => 3,
-            ],
-            [
-                'word' => 'debug',
-                'meaning' => 'hata ayıklamak',
-                'type' => 'verb',
-                'language' => 'en',
-                'learning_status' => 2,
-                'difficulty_level' => 3,
-            ],
+        // Create 150 demo words
+        $demoPack = LanguagePack::where('slug', 'demo-150')->first();
+        $words = [];
 
-            // Turkish Words
-            [
-                'word' => 'kalem',
-                'meaning' => 'pencil',
-                'type' => 'noun',
-                'language' => 'tr',
-                'learning_status' => 0,
-                'difficulty_level' => 1,
-            ],
-            [
-                'word' => 'programlama',
-                'meaning' => 'programming',
-                'type' => 'noun',
-                'language' => 'tr',
-                'learning_status' => 1,
-                'difficulty_level' => 2,
-            ],
-            [
-                'word' => 'geliştirici',
-                'meaning' => 'developer',
-                'type' => 'noun',
-                'language' => 'tr',
-                'learning_status' => 2,
-                'difficulty_level' => 2,
-            ],
-            [
-                'word' => 'yazılım',
-                'meaning' => 'software',
-                'type' => 'noun',
-                'language' => 'tr',
-                'learning_status' => 1,
-                'difficulty_level' => 2,
-            ],
-            [
-                'word' => 'değişken',
-                'meaning' => 'variable',
-                'type' => 'noun',
-                'language' => 'tr',
-                'learning_status' => 0,
-                'difficulty_level' => 3,
-            ],
-            [
-                'word' => 'fonksiyon',
-                'meaning' => 'function',
-                'type' => 'noun',
-                'language' => 'tr',
-                'learning_status' => 2,
-                'difficulty_level' => 2,
-            ],
-            [
-                'word' => 'sınıf',
-                'meaning' => 'class',
-                'type' => 'noun',
-                'language' => 'tr',
-                'learning_status' => 1,
-                'difficulty_level' => 3,
-            ],
-            [
-                'word' => 'nesne',
-                'meaning' => 'object',
-                'type' => 'noun',
-                'language' => 'tr',
-                'learning_status' => 0,
-                'difficulty_level' => 3,
-            ],
-            [
-                'word' => 'metot',
-                'meaning' => 'method',
-                'type' => 'noun',
-                'language' => 'tr',
-                'learning_status' => 2,
-                'difficulty_level' => 2,
-            ],
-            [
-                'word' => 'döngü',
-                'meaning' => 'loop',
-                'type' => 'noun',
-                'language' => 'tr',
-                'learning_status' => 1,
-                'difficulty_level' => 3,
-            ],
+        // Common English words
+        $commonWords = [
+            'ability',
+            'able',
+            'about',
+            'above',
+            'accept',
+            'according',
+            'account',
+            'across',
+            'act',
+            'action',
+            'activity',
+            'actually',
+            'add',
+            'address',
+            'administration',
+            'admit',
+            'adult',
+            'affect',
+            'after',
+            'again',
+            'against',
+            'age',
+            'agency',
+            'agent',
+            'ago',
+            'agree',
+            'agreement',
+            'ahead',
+            'air',
+            'all',
+            'allow',
+            'almost',
+            'alone',
+            'along',
+            'already',
+            'also',
+            'although',
+            'always',
+            'American',
+            'among',
+            'amount',
+            'analysis',
+            'and',
+            'animal',
+            'another',
+            'answer',
+            'any',
+            'anyone',
+            'anything',
+            'appear',
+            'apply',
+            'approach',
+            'area',
+            'argue',
+            'arm',
+            'around',
+            'arrive',
+            'art',
+            'article',
+            'artist',
+            'as',
+            'ask',
+            'assume',
+            'at',
+            'attack',
+            'attention',
+            'attorney',
+            'audience',
+            'author',
+            'authority',
+            'available',
+            'avoid',
+            'away',
+            'baby',
+            'back',
+            'bad',
+            'bag',
+            'ball',
+            'bank',
+            'bar',
+            'base',
+            'be',
+            'beat',
+            'beautiful',
+            'because',
+            'become',
+            'bed',
+            'before',
+            'begin',
+            'behavior',
+            'behind',
+            'believe',
+            'benefit',
+            'best',
+            'better',
+            'between',
+            'beyond',
+            'big',
+            'bill',
+            'billion',
+            'bit',
+            'black',
+            'blood',
+            'blue',
+            'board',
+            'body',
+            'book',
+            'born',
+            'both',
+            'box',
+            'boy',
+            'break',
+            'bring',
+            'brother',
+            'budget',
+            'build',
+            'building',
+            'business',
+            'but',
+            'buy',
+            'by',
+            'call',
+            'camera',
+            'campaign',
+            'can',
+            'cancer',
+            'candidate',
+            'capital',
+            'car',
+            'card',
+            'care',
+            'career',
+            'carry',
+            'case',
+            'catch',
+            'cause',
+            'cell',
+            'center',
+            'central',
+            'century'
         ];
 
-        $examples = [
-            'en' => [
-                'book' => [
-                    'I read a book every week.' => 'Her hafta bir kitap okurum.',
-                    'This is my favorite book.' => 'Bu benim favori kitabım.',
-                ],
-                'write' => [
-                    'I write code every day.' => 'Her gün kod yazarım.',
-                    'She writes beautiful stories.' => 'O güzel hikayeler yazar.',
-                ],
-                'computer' => [
-                    'I work on my computer.' => 'Bilgisayarımda çalışıyorum.',
-                    'The computer is running slow.' => 'Bilgisayar yavaş çalışıyor.',
-                ],
-                'develop' => [
-                    'We develop web applications.' => 'Web uygulamaları geliştiriyoruz.',
-                    'They are developing new features.' => 'Yeni özellikler geliştiriyorlar.',
-                ],
-                'algorithm' => [
-                    'This algorithm is very efficient.' => 'Bu algoritma çok verimli.',
-                    'We need a better algorithm.' => 'Daha iyi bir algoritmaya ihtiyacımız var.',
-                ],
-            ],
-            'tr' => [
-                'kalem' => [
-                    'Kalem masanın üstünde.' => 'The pencil is on the table.',
-                    'Bu benim en sevdiğim kalem.' => 'This is my favorite pencil.',
-                ],
-                'programlama' => [
-                    'Programlama öğrenmek zevkli.' => 'Learning programming is fun.',
-                    'İleri seviye programlama.' => 'Advanced programming.',
-                ],
-                'yazılım' => [
-                    'Yazılım geliştirme süreci.' => 'Software development process.',
-                    'Yazılım mühendisliği.' => 'Software engineering.',
-                ],
-            ],
-        ];
-
-        $synonyms = [
-            'book' => ['novel', 'text', 'publication'],
-            'write' => ['compose', 'author', 'record'],
-            'computer' => ['pc', 'laptop', 'machine'],
-            'develop' => ['create', 'build', 'construct'],
-            'algorithm' => ['procedure', 'process', 'method'],
-            'implement' => ['execute', 'perform', 'accomplish'],
-            'database' => ['datastore', 'repository', 'warehouse'],
-            'optimize' => ['improve', 'enhance', 'streamline'],
-            'interface' => ['connection', 'interaction', 'gateway'],
-            'debug' => ['troubleshoot', 'fix', 'repair'],
-        ];
+        foreach ($commonWords as $word) {
+            $words[] = [
+                'word' => $word,
+                'meaning' => $this->generateMeaning($word),
+                'type' => $this->getRandomType(),
+                'language' => 'en',
+                'learning_status' => 0,
+                'difficulty_level' => $this->faker->numberBetween(1, 4),
+            ];
+        }
 
         foreach ($words as $wordData) {
             $baseWordData = [
@@ -254,47 +204,266 @@ class RenditionSeeder extends Seeder
 
             $word = Word::create(array_merge($wordData, $baseWordData));
 
-            // Create Example Sentences
-            if (isset($examples[$word->language][$word->word])) {
-                foreach ($examples[$word->language][$word->word] as $sentence => $translation) {
-                    ExampleSentence::create([
-                        'word_id' => $word->id,
-                        'sentence' => $sentence,
-                        'translation' => $translation,
-                        'language' => $word->language,
-                    ]);
-                }
-            } else {
-                // Default example if not specified
-                ExampleSentence::create([
+            // Create example sentences
+            ExampleSentence::factory()->count(2)->create([
+                'word_id' => $word->id,
+                'language' => $word->language,
+            ]);
+
+            // Create synonyms for English words
+            if ($word->language === 'en') {
+                Synonym::factory()->count(2)->create([
                     'word_id' => $word->id,
-                    'sentence' => "Example using the word '{$word->word}'.",
-                    'translation' => "'{$word->word}' kelimesini kullanan örnek.",
                     'language' => $word->language,
                 ]);
             }
 
-            // Create Synonyms for English words
-            if ($word->language === 'en' && isset($synonyms[$word->word])) {
-                foreach ($synonyms[$word->word] as $synonym) {
-                    Synonym::create([
-                        'word_id' => $word->id,
-                        'synonym' => $synonym,
-                        'language' => $word->language,
-                    ]);
-                }
-            }
-
-            // Create Word Pack Relations
-            $packId = LanguagePack::where('language', $word->language)
-                ->inRandomOrder()
-                ->first()
-                ->id;
-
+            // Add word to demo pack
             WordPackRelation::create([
                 'word_id' => $word->id,
-                'pack_id' => $packId,
+                'pack_id' => $demoPack->id,
             ]);
         }
+
+        // Create 20 quick start words
+        $quickStartPack = LanguagePack::where('slug', 'quick-20')->first();
+        $quickStartWords = [
+            'hello',
+            'goodbye',
+            'please',
+            'thank you',
+            'sorry',
+            'yes',
+            'no',
+            'maybe',
+            'help',
+            'understand',
+            'speak',
+            'learn',
+            'teach',
+            'work',
+            'play',
+            'eat',
+            'drink',
+            'sleep',
+            'love',
+            'hate'
+        ];
+
+        foreach ($quickStartWords as $word) {
+            $wordData = [
+                'word' => $word,
+                'meaning' => $this->generateQuickStartMeaning($word),
+                'type' => $this->getRandomType(),
+                'language' => 'en',
+                'learning_status' => 0,
+                'difficulty_level' => 1,
+            ];
+
+            $word = Word::create(array_merge($wordData, $baseWordData));
+
+            // Create example sentences
+            ExampleSentence::factory()->count(2)->create([
+                'word_id' => $word->id,
+                'language' => $word->language,
+            ]);
+
+            // Create synonyms for English words
+            if ($word->language === 'en') {
+                Synonym::factory()->count(2)->create([
+                    'word_id' => $word->id,
+                    'language' => $word->language,
+                ]);
+            }
+
+            // Add word to quick start pack
+            WordPackRelation::create([
+                'word_id' => $word->id,
+                'pack_id' => $quickStartPack->id,
+            ]);
+        }
+    }
+
+    private function generateQuickStartMeaning($word)
+    {
+        $meanings = [
+            'hello' => 'merhaba',
+            'goodbye' => 'hoşça kal',
+            'please' => 'lütfen',
+            'thank you' => 'teşekkür ederim',
+            'sorry' => 'özür dilerim',
+            'yes' => 'evet',
+            'no' => 'hayır',
+            'maybe' => 'belki',
+            'help' => 'yardım',
+            'understand' => 'anlamak',
+            'speak' => 'konuşmak',
+            'learn' => 'öğrenmek',
+            'teach' => 'öğretmek',
+            'work' => 'çalışmak',
+            'play' => 'oynamak',
+            'eat' => 'yemek',
+            'drink' => 'içmek',
+            'sleep' => 'uyumak',
+            'love' => 'sevmek',
+            'hate' => 'nefret etmek'
+        ];
+
+        return $meanings[$word] ?? $this->faker->word();
+    }
+
+    private function generateMeaning($word)
+    {
+        // Simple meaning generator - in a real app, you'd want to use a dictionary API
+        $meanings = [
+            'ability' => 'yetenek',
+            'able' => 'yapabilmek',
+            'about' => 'hakkında',
+            'above' => 'üstünde',
+            'accept' => 'kabul etmek',
+            'according' => 'göre',
+            'account' => 'hesap',
+            'across' => 'karşısında',
+            'act' => 'hareket etmek',
+            'action' => 'eylem',
+            'activity' => 'aktivite',
+            'actually' => 'aslında',
+            'add' => 'eklemek',
+            'address' => 'adres',
+            'administration' => 'yönetim',
+            'admit' => 'kabul etmek',
+            'adult' => 'yetişkin',
+            'affect' => 'etkilemek',
+            'after' => 'sonra',
+            'again' => 'tekrar',
+            'against' => 'karşı',
+            'age' => 'yaş',
+            'agency' => 'ajans',
+            'agent' => 'ajan',
+            'ago' => 'önce',
+            'agree' => 'katılmak',
+            'agreement' => 'anlaşma',
+            'ahead' => 'ileri',
+            'air' => 'hava',
+            'all' => 'tüm',
+            'allow' => 'izin vermek',
+            'almost' => 'neredeyse',
+            'alone' => 'yalnız',
+            'along' => 'boyunca',
+            'already' => 'zaten',
+            'also' => 'ayrıca',
+            'although' => 'rağmen',
+            'always' => 'her zaman',
+            'American' => 'Amerikalı',
+            'among' => 'arasında',
+            'amount' => 'miktar',
+            'analysis' => 'analiz',
+            'and' => 've',
+            'animal' => 'hayvan',
+            'another' => 'başka',
+            'answer' => 'cevap',
+            'any' => 'herhangi',
+            'anyone' => 'herhangi biri',
+            'anything' => 'herhangi bir şey',
+            'appear' => 'görünmek',
+            'apply' => 'uygulamak',
+            'approach' => 'yaklaşmak',
+            'area' => 'alan',
+            'argue' => 'tartışmak',
+            'arm' => 'kol',
+            'around' => 'etrafında',
+            'arrive' => 'varmak',
+            'art' => 'sanat',
+            'article' => 'makale',
+            'artist' => 'sanatçı',
+            'as' => 'olarak',
+            'ask' => 'sormak',
+            'assume' => 'varsaymak',
+            'at' => 'de/da',
+            'attack' => 'saldırmak',
+            'attention' => 'dikkat',
+            'attorney' => 'avukat',
+            'audience' => 'izleyici',
+            'author' => 'yazar',
+            'authority' => 'otorite',
+            'available' => 'mevcut',
+            'avoid' => 'kaçınmak',
+            'away' => 'uzakta',
+            'baby' => 'bebek',
+            'back' => 'geri',
+            'bad' => 'kötü',
+            'bag' => 'çanta',
+            'ball' => 'top',
+            'bank' => 'banka',
+            'bar' => 'bar',
+            'base' => 'temel',
+            'be' => 'olmak',
+            'beat' => 'dövmek',
+            'beautiful' => 'güzel',
+            'because' => 'çünkü',
+            'become' => 'olmak',
+            'bed' => 'yatak',
+            'before' => 'önce',
+            'begin' => 'başlamak',
+            'behavior' => 'davranış',
+            'behind' => 'arkasında',
+            'believe' => 'inanmak',
+            'benefit' => 'fayda',
+            'best' => 'en iyi',
+            'better' => 'daha iyi',
+            'between' => 'arasında',
+            'beyond' => 'ötesinde',
+            'big' => 'büyük',
+            'bill' => 'fatura',
+            'billion' => 'milyar',
+            'bit' => 'biraz',
+            'black' => 'siyah',
+            'blood' => 'kan',
+            'blue' => 'mavi',
+            'board' => 'tahta',
+            'body' => 'vücut',
+            'book' => 'kitap',
+            'born' => 'doğmak',
+            'both' => 'her ikisi',
+            'box' => 'kutu',
+            'boy' => 'erkek çocuk',
+            'break' => 'kırmak',
+            'bring' => 'getirmek',
+            'brother' => 'erkek kardeş',
+            'budget' => 'bütçe',
+            'build' => 'inşa etmek',
+            'building' => 'bina',
+            'business' => 'iş',
+            'but' => 'ama',
+            'buy' => 'satın almak',
+            'by' => 'tarafından',
+            'call' => 'aramak',
+            'camera' => 'kamera',
+            'campaign' => 'kampanya',
+            'can' => 'yapabilmek',
+            'cancer' => 'kanser',
+            'candidate' => 'aday',
+            'capital' => 'başkent',
+            'car' => 'araba',
+            'card' => 'kart',
+            'care' => 'bakım',
+            'career' => 'kariyer',
+            'carry' => 'taşımak',
+            'case' => 'durum',
+            'catch' => 'yakalamak',
+            'cause' => 'neden',
+            'cell' => 'hücre',
+            'center' => 'merkez',
+            'central' => 'merkezi',
+            'century' => 'yüzyıl'
+        ];
+
+        return $meanings[$word] ?? $this->faker->word();
+    }
+
+    private function getRandomType()
+    {
+        $types = ['noun', 'verb', 'adjective', 'adverb'];
+        return $types[array_rand($types)];
     }
 }

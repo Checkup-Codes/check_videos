@@ -37,7 +37,7 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }
@@ -47,7 +47,7 @@ class UserFactory extends Factory
      */
     public function specificUser(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'name' => 'Specific User',
             'email' => 'cekapykp@gmail.com',
             'password' => Hash::make('123qwe123'),
