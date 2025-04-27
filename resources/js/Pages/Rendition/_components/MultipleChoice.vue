@@ -1,7 +1,13 @@
 <template>
   <div class="flex min-h-screen flex-col items-center justify-center">
+    <!-- Oyun Ayarları -->
+    <GameConfig v-if="!gameState.isPlaying" @start-game="startGameWithConfig" />
+
     <!-- Quiz Tamamlandıysa -->
-    <div v-if="!gameState.isPlaying" class="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+    <div
+      v-else-if="!gameState.isPlaying"
+      class="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+    >
       <h2 class="mb-2 text-2xl font-semibold text-gray-900">Quiz Completed</h2>
       <p class="mb-4 text-gray-600">Here's how you did:</p>
       <ul class="space-y-2 text-left text-sm text-gray-800">
@@ -64,11 +70,13 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { usePage, router } from '@inertiajs/vue3';
+import GameConfig from './GameConfig.vue';
 
 const props = defineProps({
   gameType: String,
   packSlug: String,
   words: Array,
+  gameConfig: Object,
 });
 
 const page = usePage();
@@ -98,7 +106,7 @@ const words = ref([]);
 const wordsMap = computed(() => Object.fromEntries(words.value.map((word) => [word.id, word])));
 
 // Oyunu başlat
-const startGame = async () => {
+const startGameWithConfig = async () => {
   if (!props.words || props.words.length < 5) {
     alert('Oyunu başlatmak için en az 5 kelime gereklidir.');
     return;
@@ -106,9 +114,35 @@ const startGame = async () => {
 
   gameState.value.isLoading = true;
 
-  // Kelimeleri yükle ve karıştır
+  // Kelimeleri filtrele
+  let filteredWords = [...props.words];
+
+  // Zorluk seviyesine göre filtrele
+  if (props.gameConfig.difficulty !== 'all') {
+    filteredWords = filteredWords.filter((word) => word.difficulty_level === parseInt(props.gameConfig.difficulty));
+  }
+
+  // Öğrenme durumuna göre filtrele
+  if (props.gameConfig.learningStatus !== 'all') {
+    filteredWords = filteredWords.filter((word) => word.learning_status === parseInt(props.gameConfig.learningStatus));
+  }
+
+  // Kelime seçimine göre sırala
+  if (props.gameConfig.wordSelection === 'difficult') {
+    filteredWords.sort((a, b) => b.incorrect_count - a.incorrect_count);
+  } else if (props.gameConfig.wordSelection === 'easy') {
+    filteredWords.sort((a, b) => a.incorrect_count - b.incorrect_count);
+  } else {
+    filteredWords.sort(() => Math.random() - 0.5);
+  }
+
+  // Soru sayısını ayarla
+  const questionCount = Math.min(props.gameConfig.questionCount, filteredWords.length);
+  filteredWords = filteredWords.slice(0, questionCount);
+
+  // Kelimeleri yükle
   await new Promise((resolve) => {
-    words.value = [...props.words].sort(() => Math.random() - 0.5);
+    words.value = filteredWords;
     gameState.value.totalQuestions = words.value.length;
     gameState.value.currentIndex = 0;
     gameState.value.userResponses = [];
@@ -163,7 +197,7 @@ const endGame = () => {
 
 // Oyunu yeniden başlat
 const restartGame = () => {
-  startGame();
+  gameState.value.isPlaying = false;
 };
 
 // API'ye verileri gönder
@@ -186,11 +220,6 @@ const updateWordStats = () => {
     }
   );
 };
-
-// Oyunu başlat
-onMounted(() => {
-  startGame();
-});
 
 // Rastgele seçenekleri karıştır
 const shuffledOptions = computed(() => {
@@ -215,20 +244,8 @@ const questionCounter = computed(() => {
   return `${gameState.value.currentIndex + 1}/${gameState.value.totalQuestions}`;
 });
 
-// Son soru mu?
-const isLastQuestion = computed(() => words.value.length && gameState.value.currentIndex === words.value.length - 1);
-
-// Quiz sıfırla
-const restartQuiz = () => {
-  if (currentPack.value && currentPack.value.words) {
-    words.value = [...currentPack.value.words].sort(() => Math.random() - 0.5);
-  } else if (allPacks.length > 0 && allPacks[0].words) {
-    words.value = [...allPacks[0].words].sort(() => Math.random() - 0.5);
-  } else {
-    words.value = [];
-  }
-  gameState.value.currentIndex = 0;
-  gameState.value.selectedAnswer = null;
-  gameState.value.userResponses = [];
-};
+// Oyunu başlat
+onMounted(() => {
+  startGameWithConfig();
+});
 </script>

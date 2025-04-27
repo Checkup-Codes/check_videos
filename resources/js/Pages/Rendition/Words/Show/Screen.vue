@@ -27,12 +27,14 @@
       :gameType="queryParams.game"
       :packSlug="props.pack?.slug || getPackSlugFromUrl()"
       :words="props.words"
+      :gameConfig="gameConfig"
     />
     <TranslateWord
       v-else-if="!props.error && queryParams.game === 'fill-in-the-blank'"
       :gameType="queryParams.game"
       :packSlug="props.pack?.slug || getPackSlugFromUrl()"
       :words="props.words"
+      :gameConfig="gameConfig"
     />
 
     <!-- Liste görünümü -->
@@ -63,26 +65,123 @@
           </div>
         </div>
 
-        <!-- Oyun Seçenekleri -->
-        <div
-          v-if="!queryParams.game && !hasEnoughWords"
-          class="mt-6 rounded-md bg-yellow-100 p-4 text-sm text-yellow-800"
-        >
-          Oyunları başlatabilmek için en az 5 kelime eklemelisiniz.
+        <!-- Oyun Ayarları ve Seçenekleri -->
+        <div v-if="hasEnoughWords" class="mt-6 space-y-6">
+          <!-- Oyun Ayarları -->
+          <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+            <h3 class="mb-4 text-lg font-semibold text-gray-900">Oyun Ayarları</h3>
+            <div class="grid gap-6 md:grid-cols-2">
+              <!-- Sol Kolon -->
+              <div class="space-y-4">
+                <!-- Soru Sayısı -->
+                <div>
+                  <label for="questionCount" class="mb-1 block text-sm font-medium text-gray-700">Soru Sayısı</label>
+                  <div class="flex items-center gap-2">
+                    <input
+                      type="range"
+                      id="questionCount"
+                      v-model="gameConfig.questionCount"
+                      min="5"
+                      max="20"
+                      class="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200"
+                    />
+                    <span class="text-sm font-medium text-gray-700">{{ gameConfig.questionCount }}</span>
+                  </div>
+                </div>
+
+                <!-- Kelime Seçimi -->
+                <div>
+                  <label class="mb-1 block text-sm font-medium text-gray-700">Kelime Başarı Durumuna Göre</label>
+                  <div class="space-y-2">
+                    <div class="flex items-center">
+                      <input
+                        type="radio"
+                        id="random"
+                        v-model="gameConfig.wordSelection"
+                        value="random"
+                        class="h-4 w-4 border-gray-300 text-black focus:ring-gray-500"
+                      />
+                      <label for="random" class="ml-2 block text-sm text-gray-700">Rastgele</label>
+                    </div>
+                    <div class="flex items-center">
+                      <input
+                        type="radio"
+                        id="difficult"
+                        v-model="gameConfig.wordSelection"
+                        value="difficult"
+                        class="h-4 w-4 border-gray-300 text-black focus:ring-gray-500"
+                      />
+                      <label for="difficult" class="ml-2 block text-sm text-gray-700">Zor Kelimeler</label>
+                    </div>
+                    <div class="flex items-center">
+                      <input
+                        type="radio"
+                        id="easy"
+                        v-model="gameConfig.wordSelection"
+                        value="easy"
+                        class="h-4 w-4 border-gray-300 text-black focus:ring-gray-500"
+                      />
+                      <label for="easy" class="ml-2 block text-sm text-gray-700">Kolay Kelimeler</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sağ Kolon -->
+              <div class="space-y-4">
+                <!-- Zorluk Seviyesi -->
+                <div>
+                  <label for="difficulty" class="mb-1 block text-sm font-medium text-gray-700">Zorluk Seviyesi</label>
+                  <select
+                    id="difficulty"
+                    v-model="gameConfig.difficulty"
+                    class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                  >
+                    <option value="all">Tüm Seviyeler</option>
+                    <option value="1">Kolay</option>
+                    <option value="2">Orta</option>
+                    <option value="3">Zor</option>
+                    <option value="4">Çok Zor</option>
+                  </select>
+                </div>
+
+                <!-- Öğrenme Durumu -->
+                <div>
+                  <label for="learningStatus" class="mb-1 block text-sm font-medium text-gray-700"
+                    >Öğrenme Durumu</label
+                  >
+                  <select
+                    id="learningStatus"
+                    v-model="gameConfig.learningStatus"
+                    class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                  >
+                    <option value="all">Tüm Durumlar</option>
+                    <option value="0">Öğrenilmedi</option>
+                    <option value="1">Öğreniliyor</option>
+                    <option value="2">Öğrenildi</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Oyun Seçenekleri -->
+          <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
+            <Link
+              v-for="(game, index) in games"
+              :key="index"
+              @click="updateQuery(game.route)"
+              class="flex cursor-pointer flex-col items-center justify-center rounded-lg border border-gray-200 bg-white p-3 text-center text-xs font-medium text-gray-700 shadow-sm transition-all hover:bg-gray-100 hover:shadow-md"
+              :class="{ 'cursor-not-allowed opacity-50': !isConfigValid }"
+            >
+              <span>{{ game.name }}</span>
+            </Link>
+          </div>
         </div>
 
-        <div
-          v-if="!queryParams.game && hasEnoughWords"
-          class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6"
-        >
-          <Link
-            v-for="(game, index) in games"
-            :key="index"
-            @click="updateQuery(game.route)"
-            class="flex cursor-pointer flex-col items-center justify-center rounded-lg border border-gray-200 bg-white p-3 text-center text-xs font-medium text-gray-700 shadow-sm transition-all hover:bg-gray-100 hover:shadow-md"
-          >
-            <span>{{ game.name }}</span>
-          </Link>
+        <!-- Yetersiz Kelime Uyarısı -->
+        <div v-else class="mt-6 rounded-md bg-yellow-100 p-4 text-sm text-yellow-800">
+          Oyunları başlatabilmek için en az 5 kelime eklemelisiniz.
         </div>
 
         <WordsTable :words="props.words" :isLoading="isLoading" :showActions="isLoggedIn" />
@@ -119,6 +218,19 @@ const props = defineProps({
   error: String,
 });
 
+// Oyun ayarları
+const gameConfig = ref({
+  questionCount: 10,
+  wordSelection: 'random',
+  difficulty: 'all',
+  learningStatus: 'all',
+});
+
+// Ayarların geçerli olup olmadığını kontrol et
+const isConfigValid = computed(() => {
+  return gameConfig.value.questionCount >= 5 && gameConfig.value.questionCount <= 20;
+});
+
 // Yükleme durumunu takip et
 const isLoading = ref(true);
 
@@ -135,37 +247,25 @@ const hasEnoughWords = computed(() => props.words && props.words.length >= 5);
 
 // Verilerin yüklenmesini simüle edelim
 onMounted(() => {
-  // Sayfa yüklendiğinde 500ms sonra yükleme durumunu kaldır
   setTimeout(() => {
     isLoading.value = false;
   }, 500);
 
-  // Eğer kelime yoksa veya veriler yüklenemediyse hata konsola yazdırılabilir
   if (!props.words || props.words.length === 0) {
     console.warn('Kelime verileri yüklenmedi veya boş');
   } else {
     console.log(`${props.words.length} kelime yüklendi`);
-    // İlk kelimeyi log'layarak inceleyebiliriz
-    if (props.words[0]) {
-      console.log('İlk kelime örneği:', props.words[0]);
-    }
   }
 });
 
 // Arama ve filtreleme
 const filteredWords = computed(() => {
-  // Add a safety check for props.words
   if (!props.words) {
     console.log('props.words is null or undefined');
     return [];
   }
 
-  console.log('All words:', props.words);
-  console.log('Search query:', searchQuery.value);
-  console.log('Language filter:', languageFilter.value);
-
   return props.words.filter((word) => {
-    // Skip if word is not a valid object
     if (!word || typeof word !== 'object') {
       console.log('Invalid word object:', word);
       return false;
@@ -177,12 +277,6 @@ const filteredWords = computed(() => {
       (word.meaning && word.meaning.toLowerCase().includes(searchQuery.value.toLowerCase()));
 
     const matchesLanguage = !languageFilter.value || (word.language && word.language === languageFilter.value);
-
-    console.log('Word filtering results:', {
-      word: word.word,
-      matchesSearch,
-      matchesLanguage,
-    });
 
     return matchesSearch && matchesLanguage;
   });
@@ -237,6 +331,11 @@ const games = ref([
 
 // Query parametre yönetimi
 const updateQuery = (gameRoute) => {
+  if (!isConfigValid.value) {
+    alert('Lütfen geçerli oyun ayarlarını seçiniz.');
+    return;
+  }
+
   const currentQuery = new URLSearchParams(window.location.search);
   currentQuery.set('game', gameRoute);
 
@@ -251,20 +350,12 @@ const updateQuery = (gameRoute) => {
 const getPackSlugFromUrl = () => {
   const path = window.location.pathname;
   const parts = path.split('/');
-  // URL yapısı: /rendition/words/[packSlug]
-  // packSlug genellikle sondan bir önceki parça
   if (parts.length >= 4) {
     const slugFromUrl = parts[parts.length - 1];
-    console.log('Extracting slug from URL:', slugFromUrl);
     return slugFromUrl;
   }
-  console.log('No slug found in URL');
   return null;
 };
-
-// Log pack props for debugging
-console.log('Pack prop:', props.pack);
-console.log('All language packs:', props.languagePacks);
 
 // Game parametresi
 const queryParams = computed(() => {
