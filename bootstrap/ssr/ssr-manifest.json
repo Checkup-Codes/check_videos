@@ -461,22 +461,22 @@
     "/build/assets/CreateLanguagePacks-CJGBixoM.js"
   ],
   "resources/js/Pages/Rendition/LanguagePacks/Edit/Screen.vue": [
-    "/build/assets/Screen-aFfvoynX.js"
+    "/build/assets/Screen-BD2KIEsD.js"
   ],
   "resources/js/Pages/Rendition/LanguagePacks/EditLanguagePacks.vue": [
-    "/build/assets/EditLanguagePacks-CZWE9rXi.js"
+    "/build/assets/EditLanguagePacks-CMWM83pS.js"
   ],
   "resources/js/Pages/Rendition/LanguagePacks/Index/PacksTable.vue": [
     "/build/assets/PacksTable-B6kltp3m.js"
   ],
   "resources/js/Pages/Rendition/LanguagePacks/Index/Screen.vue": [
-    "/build/assets/Screen-CZKguiOT.js"
+    "/build/assets/Screen-BQOad3J_.js"
   ],
   "resources/js/Pages/Rendition/LanguagePacks/IndexLanguagePacks.vue": [
-    "/build/assets/IndexLanguagePacks-DWSVc7w9.js"
+    "/build/assets/IndexLanguagePacks-Bo9bCuky.js"
   ],
   "resources/js/Pages/Rendition/LanguagePacks/ShowLanguagePacks.vue": [
-    "/build/assets/ShowLanguagePacks-bttR764E.js"
+    "/build/assets/ShowLanguagePacks-B9k0atEW.js"
   ],
   "resources/js/Pages/Rendition/LanguagePacks/Words.vue": [
     "/build/assets/Words-DEcwIGbz.js"
@@ -497,28 +497,34 @@
     "/build/assets/EditWord-BauMUadM.js"
   ],
   "resources/js/Pages/Rendition/Words/Index/Screen.vue": [
-    "/build/assets/Screen-B938AR5L.js"
+    "/build/assets/Screen-Bo7s7A-0.js"
   ],
   "resources/js/Pages/Rendition/Words/Index/WordTable.vue": [
     "/build/assets/WordTable-CZNOA7n_.js"
   ],
   "resources/js/Pages/Rendition/Words/IndexWord.vue": [
-    "/build/assets/IndexWord-xBlIeXRc.js"
+    "/build/assets/IndexWord-d8CJbJqZ.js"
   ],
   "resources/js/Pages/Rendition/Words/Show/Screen.vue": [
-    "/build/assets/Screen-rLbd1MRx.js"
+    "/build/assets/Screen-CH0_pt7r.js"
   ],
   "resources/js/Pages/Rendition/Words/ShowWord.vue": [
-    "/build/assets/ShowWord-CdXDZGpI.js"
+    "/build/assets/ShowWord-yJ215JQx.js"
+  ],
+  "resources/js/Pages/Rendition/_components/GameConfig.vue": [
+    "/build/assets/GameConfig-BCEvFKg5.js"
   ],
   "resources/js/Pages/Rendition/_components/MultipleChoice.vue": [
-    "/build/assets/MultipleChoice-Bx8rUE-5.js"
+    "/build/assets/MultipleChoice-D8mgxKA_.js"
   ],
   "resources/js/Pages/Rendition/_components/TranslateWord.vue": [
-    "/build/assets/TranslateWord-BiHT-xFJ.js"
+    "/build/assets/TranslateWord-DscFp0aR.js"
+  ],
+  "resources/js/Pages/Rendition/_components/WordCompletion.vue": [
+    "/build/assets/WordCompletion-D4dSCUJm.js"
   ],
   "resources/js/Pages/Rendition/_components/WordsTable.vue": [
-    "/build/assets/WordsTable-cHln5l1Y.js"
+    "/build/assets/WordsTable-BqU-bMcA.js"
   ],
   "resources/js/Pages/Rendition/_layouts/LayoutRendition.vue": [
     "/build/assets/LayoutRendition-DOBo1rlr.js"

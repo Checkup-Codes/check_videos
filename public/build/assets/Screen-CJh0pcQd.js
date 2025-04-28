@@ -1,0 +1,1 @@
+import{_ as e}from"./CheckScreen-CpCONf3O.js";import{_ as r}from"./IntroScreen-D5ccVxYt.js";import{c as t,w as a,o,a as _}from"./app-BM0qUes5.js";/* empty css            */const l={__name:"Screen",setup(c){return(s,m)=>(o(),t(e,null,{default:a(()=>[_(r,{title:"Sürümler"})]),_:1}))}};export{l as default};

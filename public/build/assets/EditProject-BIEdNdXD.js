@@ -1,1 +1,0 @@
-import r from"./CheckLayout-CFgXkrMj.js";import e from"./Screen-CdnWn-Ne.js";import{c as t,w as o,o as c,a}from"./app-Bp_7ERFU.js";import"./SidebarLayoutProject-CBcvVS2C.js";/* empty css            */const u={__name:"EditProject",setup(m){return(s,_)=>(c(),t(r,null,{screen:o(()=>[a(e)]),_:1}))}};export{u as default};

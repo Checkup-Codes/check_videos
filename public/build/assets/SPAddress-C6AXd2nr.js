@@ -1,1 +1,0 @@
-import{g as r,t as e,o}from"./app-Bp_7ERFU.js";/* empty css            */const s={__name:"SPAddress",props:{product:Object},setup(t){return(a,c)=>(o(),r("span",null,e(t.product.platform)+" "+e(t.product.category)+", "+e(t.product.name),1))}};export{s as default};
