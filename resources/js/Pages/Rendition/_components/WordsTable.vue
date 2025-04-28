@@ -171,6 +171,11 @@ const calculateSuccessRate = (word) => {
   const incorrectCount = word.incorrect_count || 0;
   const difficulty = word.difficulty || 1;
   const sentenceCount = word.sentences?.length || 0;
+  const lastReviewDate = word.last_review_date ? new Date(word.last_review_date) : null;
+  const now = new Date();
+
+  // İnceleme sayısı faktörü (0-1 arası)
+  const reviewFactor = Math.min(reviewCount / 10, 1); // 10 incelemeden sonra maksimum değere ulaşır
 
   // Doğruluk oranı (0-1 arası)
   const accuracy = reviewCount > 0 ? 1 - incorrectCount / reviewCount : 0;
@@ -181,8 +186,23 @@ const calculateSuccessRate = (word) => {
   // Cümle sayısı faktörü (0-1 arası, maksimum 5 cümle)
   const sentenceFactor = Math.min(sentenceCount / 5, 1);
 
+  // Son inceleme tarihi faktörü (0-1 arası, 30 gün sonra etkisi azalır)
+  const daysSinceLastReview = lastReviewDate ? (now - lastReviewDate) / (1000 * 60 * 60 * 24) : 30;
+  const recencyFactor = Math.max(0, 1 - daysSinceLastReview / 30);
+
+  // Yanlış cevap ceza faktörü (0-1 arası)
+  const penaltyFactor = Math.max(0, 1 - incorrectCount * 0.2); // Her yanlış cevap %20 ceza
+
   // Toplam başarı puanı (0-100 arası)
-  const successRate = Math.round((accuracy * 0.5 + difficultyFactor * 0.3 + sentenceFactor * 0.2) * 100);
+  const successRate = Math.round(
+    (accuracy * 0.3 +
+      reviewFactor * 0.2 +
+      difficultyFactor * 0.15 +
+      sentenceFactor * 0.15 +
+      recencyFactor * 0.1 +
+      penaltyFactor * 0.1) *
+      100
+  );
 
   return successRate;
 };
