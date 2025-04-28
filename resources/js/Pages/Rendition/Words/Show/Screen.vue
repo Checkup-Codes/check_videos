@@ -36,6 +36,13 @@
       :words="props.words"
       :gameConfig="queryParams"
     />
+    <WordCompletion
+      v-else-if="!props.error && queryParams.game === 'word-completion'"
+      :gameType="queryParams.game"
+      :packSlug="props.pack?.slug || getPackSlugFromUrl()"
+      :words="props.words"
+      :gameConfig="queryParams"
+    />
 
     <!-- Liste görünümü -->
     <div v-else-if="!props.error">
@@ -207,6 +214,7 @@ import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
 import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
 import MultipleChoice from '@/Pages/Rendition/_components/MultipleChoice.vue';
 import TranslateWord from '@/Pages/Rendition/_components/TranslateWord.vue';
+import WordCompletion from '@/Pages/Rendition/_components/WordCompletion.vue';
 import WordsTable from '@/Pages/Rendition/_components/WordsTable.vue';
 
 // Props
@@ -329,10 +337,7 @@ const confirmDelete = (word) => {
 const games = ref([
   { name: 'Çoktan Seçmeli', route: 'multiple-choice' },
   { name: 'Boşluk Doldurma', route: 'fill-in-the-blank' },
-  { name: 'Çeviri', route: 'translation' },
-  { name: 'Eşleştirme', route: 'matching' },
-  { name: 'Hızlı Yanıt', route: 'fast-response' },
-  { name: 'Kelime Tahmini', route: 'word-guess' },
+  { name: 'Kelime Tamamlama', route: 'word-completion' },
 ]);
 
 // Query parametre yönetimi
