@@ -19,8 +19,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { Inertia } from '@inertiajs/inertia';
-import { usePage, Link } from '@inertiajs/inertia-vue3';
+import { usePage, Link, router } from '@inertiajs/vue3';
 import CheckSubsidebar from '@/Components/CekapUI/Modals/CheckSubsidebar.vue';
 import ToggleSubSidebarButtonClose from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 import TopSubsidebar from '@/Components/CekapUI/Typography/TopSubsidebar.vue';
@@ -48,7 +47,7 @@ const updateQuery = (gameRoute) => {
   const currentQuery = new URLSearchParams(window.location.search);
   currentQuery.set('game', gameRoute); // Yeni oyun parametresini ekle/güncelle
 
-  Inertia.visit(`${window.location.pathname}?${currentQuery.toString()}`, {
+  router.visit(`${window.location.pathname}?${currentQuery.toString()}`, {
     method: 'get',
     preserveState: true,
     replace: true,

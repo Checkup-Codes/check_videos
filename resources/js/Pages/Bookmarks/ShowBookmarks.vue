@@ -54,8 +54,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { usePage } from '@inertiajs/vue3';
-import { Inertia } from '@inertiajs/inertia';
+import { usePage, router } from '@inertiajs/vue3';
 import SidebarLayoutBookmarks from './SidebarLayoutBookmarks.vue';
 
 const { props } = usePage();
@@ -65,7 +64,8 @@ const baseUrl = 'http://check_videos.test/storage/bookmarks';
 
 const deleteWrite = (id) => {
   if (confirm('Are you sure you want to delete this write?')) {
-    Inertia.delete(route('writes.destroy', id))
+    router
+      .delete(route('writes.destroy', id))
       .then(() => {})
       .catch((error) => {
         console.error('Error deleting write:', error);

@@ -1,5 +1,5 @@
 <template>
-  <aside class="z-20 col-span-1 h-full border-theme bg-theme-background text-theme-text">
+  <aside class="z-20 col-span-1 h-full border-gray-200 bg-white text-gray-800">
     <div class="flex flex-col items-center text-sm">
       <div class="w-full pb-4" style="perspective: 1000px">
         <div
@@ -20,51 +20,7 @@
             class="backface-hidden absolute inset-0 flex flex-col items-center justify-center space-y-4 p-4"
             style="transform: rotateY(180deg)"
           >
-            <div class="flex items-center justify-between space-x-4 rounded-lg bg-theme-background p-3">
-              <div class="flex items-center space-x-3">
-                <button
-                  @click="toggleThemeMode"
-                  class="relative flex h-5 w-10 items-center rounded-full bg-gray-300 px-1 shadow-inner transition-all duration-300"
-                  :class="{
-                    'bg-primary-500': selectedTheme === 'dark',
-                    'bg-gray-300': selectedTheme === 'light',
-                  }"
-                >
-                  <span
-                    class="absolute -left-4 top-[2px] h-4 w-4 rounded-full bg-white shadow-md transition-transform duration-300"
-                    :class="{
-                      'translate-x-9': selectedTheme === 'dark',
-                      'translate-x-5': selectedTheme === 'light',
-                    }"
-                  ></span>
-                </button>
-              </div>
-
-              <div class="flex items-center space-x-3">
-                <div class="flex items-center space-x-2">
-                  <button
-                    v-for="(palette, name) in themeStore.palettes"
-                    :key="name"
-                    @click="applyPalette(name)"
-                    class="h-4 w-4 rounded-full border-2 transition-transform hover:scale-110"
-                    :style="{ background: palette.light.colors.primary }"
-                    :class="{
-                      'border-primary-500': currentPalette === name,
-                      'border-gray-300': currentPalette !== name,
-                    }"
-                  >
-                    <span
-                      v-if="currentPalette === name"
-                      class="block h-full w-full rounded-full bg-black opacity-20"
-                    ></span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
             <div class="flex space-x-4">
-              <Button size="xsmall" @click="resetThemeSettings">Sıfırla</Button>
-
               <Button size="xsmall" @click="flipCard">Geri Dön</Button>
               <Link href="/login">
                 <Button size="xsmall"> L </Button>
@@ -74,10 +30,10 @@
         </div>
       </div>
 
-      <hr class="w-full border-theme" />
+      <hr class="w-full border-gray-200" />
 
       <!-- Ana navigasyon -->
-      <nav class="w-full space-y-2 bg-theme-background p-2">
+      <nav class="w-full space-y-2 bg-white p-2">
         <Link href="/" :class="getLinkClasses('/')"> <font-awesome-icon icon="home" class="mr-2" /> Ana Sayfa </Link>
         <Link href="/writes" :class="getLinkClasses(['/writes'])">
           <font-awesome-icon icon="fa-solid fa-pencil" class="mr-2" /> Yazılar
@@ -93,10 +49,10 @@
         </Link>
       </nav>
 
-      <hr class="w-full border-theme" />
+      <hr class="w-full border-gray-200" />
 
       <!-- Sosyal medya linkleri -->
-      <nav class="w-full space-y-2 bg-theme-background px-2">
+      <nav class="w-full space-y-2 bg-white px-2">
         <a href="https://www.instagram.com/checkup_codes/" target="_blank" :class="getLinkClasses('/instagram')">
           <font-awesome-icon :icon="['fab', 'instagram']" class="mr-2" /> Instagram
         </a>
@@ -122,10 +78,8 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link, usePage, router } from '@inertiajs/vue3';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { Inertia } from '@inertiajs/inertia';
-import { useThemeStore } from '@/Stores/themeStore';
 import Button from '@/Components/CekapUI/Buttons/Button.vue';
 import axios from 'axios';
 
@@ -134,10 +88,6 @@ const imagePath = ref('/images/checkup_codes_logo.png');
 const currentUrl = ref(window.location.pathname);
 const auth = ref(props.auth);
 
-const themeStore = useThemeStore();
-const currentPalette = ref('modern');
-const selectedTheme = ref(themeStore.currentTheme);
-
 const isFlipped = ref(false);
 const seoTitle = ref('');
 
@@ -145,32 +95,7 @@ const flipCard = () => {
   isFlipped.value = !isFlipped.value;
 };
 
-const applyPalette = (paletteName) => {
-  currentPalette.value = paletteName;
-  themeStore.applyPalette(paletteName);
-  localStorage.setItem('selectedPalette', paletteName);
-};
-
-const toggleThemeMode = () => {
-  selectedTheme.value = selectedTheme.value === 'light' ? 'dark' : 'light';
-  themeStore.setTheme(selectedTheme.value);
-  localStorage.setItem('selectedTheme', selectedTheme.value);
-};
-
 onMounted(async () => {
-  const savedTheme = localStorage.getItem('selectedTheme');
-  const savedPalette = localStorage.getItem('selectedPalette');
-
-  if (savedTheme) {
-    selectedTheme.value = savedTheme;
-    themeStore.setTheme(savedTheme);
-  }
-
-  if (savedPalette) {
-    currentPalette.value = savedPalette;
-    themeStore.applyPalette(savedPalette);
-  }
-
   try {
     const response = await axios.get('/api/seo/home');
     if (response.data && response.data.title) {
@@ -192,7 +117,7 @@ watch(
   }
 );
 
-Inertia.on('navigate', (event) => {
+router.on('navigate', (event) => {
   currentUrl.value = event.detail.page.url;
 });
 
@@ -207,17 +132,8 @@ const getLinkClasses = (hrefs) => {
   });
 
   return isActive
-    ? 'block cursor-pointer px-4 py-2 border-l-4 hover:bg-primary-100 bg-primary-100 border-primary-500'
-    : 'block cursor-pointer px-2 py-2 hover:bg-primary-100';
-};
-
-const resetThemeSettings = () => {
-  localStorage.removeItem('selectedTheme');
-  localStorage.removeItem('selectedPalette');
-  selectedTheme.value = 'light';
-  currentPalette.value = 'modern';
-  themeStore.setTheme('light');
-  themeStore.applyPalette('modern');
+    ? 'block cursor-pointer px-4 py-2 border-l-4 hover:bg-blue-100 bg-blue-100 border-blue-500'
+    : 'block cursor-pointer px-2 py-2 hover:bg-blue-100';
 };
 </script>
 

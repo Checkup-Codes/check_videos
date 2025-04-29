@@ -1,9 +1,9 @@
 <template>
-  <div class="container bg-theme-background p-5 text-theme-text">
-    <div class="prose prose-lg ql-container-custom prose-custom mb-8" v-html="content"></div>
+  <div class="bg-theme-background text-theme-text container p-5">
+    <div class="prose-lg ql-container-custom prose-custom prose mb-8" v-html="content"></div>
     <div class="rounded-theme border-theme bg-theme-background p-3 shadow-inner">
-      <h2 class="mb-3 text-xl font-semibold text-theme-text-light">Özet</h2>
-      <div class="break-words rounded-theme bg-theme-background p-4">
+      <h2 class="text-theme-text-light mb-3 text-xl font-semibold">Özet</h2>
+      <div class="rounded-theme bg-theme-background break-words p-4">
         {{ summary }}
       </div>
     </div>
@@ -18,9 +18,8 @@
 
 <script setup>
 import { ref } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
 import Button from '@/Components/CekapUI/Buttons/Button.vue';
-import { Inertia } from '@inertiajs/inertia';
 
 const props = defineProps({
   content: String,
@@ -31,7 +30,8 @@ const props = defineProps({
 
 const onDelete = () => {
   if (confirm('Are you sure you want to delete this write?')) {
-    Inertia.delete(route('writes.destroy', id))
+    router
+      .delete(route('writes.destroy', id))
       .then(() => {})
       .catch((error) => {
         console.error('Error deleting write:', error);

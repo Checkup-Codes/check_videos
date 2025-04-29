@@ -209,7 +209,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
-import { Inertia } from '@inertiajs/inertia';
 import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
 import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
 import MultipleChoice from '@/Pages/Rendition/_components/MultipleChoice.vue';
@@ -354,7 +353,7 @@ const updateQuery = (gameRoute) => {
   currentQuery.set('difficulty', gameConfig.value.difficulty);
   currentQuery.set('learningStatus', gameConfig.value.learningStatus);
 
-  Inertia.visit(`${window.location.pathname}?${currentQuery.toString()}`, {
+  router.visit(`${window.location.pathname}?${currentQuery.toString()}`, {
     method: 'get',
     preserveState: true,
     replace: true,
