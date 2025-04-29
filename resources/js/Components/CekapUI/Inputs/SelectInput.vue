@@ -1,6 +1,6 @@
 <template>
   <div class="mb-4">
-    <label :for="id" class="mb-1 block text-sm font-bold text-theme-text">{{ label }}</label>
+    <label :for="id" class="mb-1 block text-sm font-bold text-gray-800">{{ label }}</label>
     <select v-model="modelValue" :id="id" :class="selectClass">
       <option value="" disabled>Kategori seç</option>
       <option v-for="option in options" :key="option.value" :value="option.value">

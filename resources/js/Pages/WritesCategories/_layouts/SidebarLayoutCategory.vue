@@ -72,8 +72,8 @@ const toggleSidebar = () => {
 
 const getLinkClasses = (href) => {
   return url === href
-    ? 'px-4 border-l-4 text-theme-text border-primary-500 bg-primary-100 shadow-inner hover:bg-primary-100'
-    : 'px-4 bg-theme-background text-theme-text';
+    ? 'px-4 border-l-4 text-gray-800 border-primary-500 bg-primary-100 shadow-inner hover:bg-primary-100'
+    : 'px-4 bg-white text-gray-800';
 };
 
 const calculateCategoryCounts = () => {

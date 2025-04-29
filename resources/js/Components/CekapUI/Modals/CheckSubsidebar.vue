@@ -15,6 +15,6 @@ const props = defineProps({
 });
 
 const computedClass = computed(() => {
-  return `${props.infoClass} bg-theme-background rounded-theme text-theme-text relative border-r flex-shrink-0 min-w-[var(--subsidebar-width)]`;
+  return `${props.infoClass} bg-white rounded-md text-gray-800 relative border-r flex-shrink-0 min-w-[var(--subsidebar-width)]`;
 });
 </script>

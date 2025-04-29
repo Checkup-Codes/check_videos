@@ -1,17 +1,17 @@
 <template>
-  <div class="bg-theme-background text-theme-text container p-5">
+  <div class="bg-white text-gray-800 container p-5">
     <div class="prose-lg ql-container-custom prose-custom prose mb-8" v-html="content"></div>
-    <div class="rounded-theme border-theme bg-theme-background p-3 shadow-inner">
-      <h2 class="text-theme-text-light mb-3 text-xl font-semibold">Özet</h2>
-      <div class="rounded-theme bg-theme-background break-words p-4">
+    <div class="rounded-md border-gray-200 bg-white p-3 shadow-inner">
+      <h2 class="text-gray-800-light mb-3 text-xl font-semibold">Özet</h2>
+      <div class="rounded-md bg-white break-words p-4">
         {{ summary }}
       </div>
     </div>
     <div v-if="user" class="mt-4 flex justify-end space-x-3">
       <Link :href="`/writes/${id}/edit`">
-        <Button class="rounded-theme"> Yazıyı Düzenle </Button>
+        <Button class="rounded-md"> Yazıyı Düzenle </Button>
       </Link>
-      <Button class="rounded-theme" @click="onDelete"> Yazıyı Sil </Button>
+      <Button class="rounded-md" @click="onDelete"> Yazıyı Sil </Button>
     </div>
   </div>
 </template>

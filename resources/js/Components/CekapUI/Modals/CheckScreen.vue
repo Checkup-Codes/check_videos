@@ -1,7 +1,7 @@
 <template>
   <div :class="computedClass">
     <div
-      class="h-screen-minus-10 w-full max-w-full overflow-y-scroll break-words rounded-lg bg-theme-background lg:h-screen"
+      class="h-screen-minus-10 w-full max-w-full overflow-y-scroll break-words rounded-lg bg-white lg:h-screen"
     >
       <div class="container mx-auto">
         <slot />

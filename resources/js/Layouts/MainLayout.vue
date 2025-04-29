@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-theme-background">
+  <div class="bg-white">
     <SidebarLayout
-      class="fixed inset-y-0 left-0 z-40 hidden w-56 overflow-hidden rounded-theme border-theme bg-theme-background text-theme-text shadow lg:block"
+      class="fixed inset-y-0 left-0 z-40 hidden w-56 overflow-hidden rounded border bg-white text-gray-900 shadow lg:block"
       @link-clicked="toggleSidebar"
     />
 
@@ -27,42 +27,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import HeaderLayout from './MainLayout/HeaderLayout.vue';
 import SidebarLayout from './MainLayout/SidebarLayout.vue';
-import { useThemeStore } from '@/Stores/themeStore';
 
-const themeStore = useThemeStore();
 const showSidebar = ref(false);
-const selectedTheme = ref('light');
-const currentPalette = ref('modern');
 
 const toggleSidebar = () => {
   showSidebar.value = !showSidebar.value;
 };
-
-onMounted(() => {
-  const storedTheme = localStorage.getItem('selectedTheme');
-  const storedPalette = localStorage.getItem('selectedPalette');
-
-  if (!storedTheme) {
-    selectedTheme.value = 'light';
-    themeStore.setTheme('light');
-    localStorage.setItem('selectedTheme', 'light');
-  } else {
-    selectedTheme.value = storedTheme;
-    themeStore.setTheme(storedTheme);
-  }
-
-  if (!storedPalette) {
-    currentPalette.value = 'modern';
-    themeStore.applyPalette('modern');
-    localStorage.setItem('selectedPalette', 'modern');
-  } else {
-    currentPalette.value = storedPalette;
-    themeStore.applyPalette(storedPalette);
-  }
-});
 </script>
 
 <style scoped>

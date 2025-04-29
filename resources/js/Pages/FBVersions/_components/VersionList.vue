@@ -1,6 +1,6 @@
 <template>
   <CheckSubsidebar>
-    <div v-for="version in versions" class="border-theme" :key="version.id">
+    <div v-for="version in versions" class="border-gray-200" :key="version.id">
       <Link
         :href="`/versions/${version.version}`"
         :class="getLinkClasses(`/versions/${version.version}`)"
@@ -40,7 +40,7 @@ const props = defineProps({
 
 const getLinkClasses = (href) => {
   return props.currentUrl === `${href}`
-    ? 'px-4 border-l-4 text-theme-text border-primary-500 bg-primary-100 shadow-inner hover:bg-primary-100'
-    : 'px-4 bg-theme-background text-theme-text';
+    ? 'px-4 border-l-4 text-gray-800 border-primary-500 bg-primary-100 shadow-inner hover:bg-primary-100'
+    : 'px-4 bg-white text-gray-800';
 };
 </script>

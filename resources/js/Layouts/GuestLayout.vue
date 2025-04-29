@@ -5,7 +5,7 @@ import { Link } from '@inertiajs/vue3';
 
 <template>
   <div
-    class="flex min-h-screen flex-col items-center bg-theme-background pt-6 text-theme-text sm:justify-center sm:pt-0"
+    class="flex min-h-screen flex-col items-center bg-white pt-6 text-gray-800 sm:justify-center sm:pt-0"
   >
     <div class="text-2xl font-bold">Check-up Codes Admin</div>
 

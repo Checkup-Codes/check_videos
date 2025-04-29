@@ -2,7 +2,7 @@
   <div>
     <h1
       :class="[
-        'group mb-4 flex h-[50px] cursor-pointer select-none items-center justify-between border-b pl-3 font-extrabold text-theme-text lg:text-2xl',
+        'group mb-4 flex h-[50px] cursor-pointer select-none items-center justify-between border-b pl-3 font-extrabold text-gray-800 lg:text-2xl',
       ]"
     >
       <span

@@ -16,72 +16,7 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['var(--font-family)', ...defaultTheme.fontFamily.sans],
-            },
-            colors: {
-                'theme': {
-                    primary: 'var(--color-primary)',
-                    secondary: 'var(--color-secondary)',
-                    accent: 'var(--color-accent)',
-                    background: 'var(--color-background)',
-                    text: 'var(--color-text)',
-                    'text-light': 'var(--color-text-light)',
-                    'text-dark': 'var(--color-text-dark)',
-                },
-                'primary': {
-                    50: 'var(--color-primary-50)',
-                    100: 'var(--color-primary-100)',
-                    200: 'var(--color-primary-200)',
-                    300: 'var(--color-primary-300)',
-                    400: 'var(--color-primary-400)',
-                    500: 'var(--color-primary-500)',
-                    600: 'var(--color-primary-600)',
-                    700: 'var(--color-primary-700)',
-                    800: 'var(--color-primary-800)',
-                    900: 'var(--color-primary-900)',
-                },
-                'sidebar': {
-                    light: 'var(--color-sidebar-light)',
-                    DEFAULT: 'var(--color-sidebar)',
-                    dark: 'var(--color-sidebar-dark)',
-                },
-                'accent': {
-                    light: 'var(--color-accent-light)',
-                    DEFAULT: 'var(--color-accent)',
-                    dark: 'var(--color-accent-dark)',
-                },
-                'screen': {
-                    light: 'var(--color-screen-light)',
-                    DEFAULT: 'var(--color-screen)',
-                    dark: 'var(--color-screen-dark)',
-                },
-                'neutral': {
-                    50: 'var(--color-neutral-50)',
-                    100: 'var(--color-neutral-100)',
-                    200: 'var(--color-neutral-200)',
-                    300: 'var(--color-neutral-300)',
-                    400: 'var(--color-neutral-400)',
-                    500: 'var(--color-neutral-500)',
-                    600: 'var(--color-neutral-600)',
-                    700: 'var(--color-neutral-700)',
-                    800: 'var(--color-neutral-800)',
-                    900: 'var(--color-neutral-900)',
-                },
-            },
-            borderColor: {
-                'theme': {
-                    light: 'var(--color-border-light)',
-                    dark: 'var(--color-border-dark)',
-                }
-            },
-            borderWidth: {
-                'theme': 'var(--border-width)',
-            },
-            borderRadius: {
-                'theme': 'var(--border-radius)',
-            },
-            backgroundImage: {
-                'theme-pattern': 'var(--background-image)',
+                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
             gridTemplateColumns: {
                 'subsidebar': '1fr 2fr',

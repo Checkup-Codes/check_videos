@@ -1,7 +1,7 @@
 <template>
   <CheckScreen>
     <TopScreen title="Versionu Düzenle" />
-    <form @submit.prevent="submitForm" class="space-y-5 bg-theme-background p-5 text-theme-text">
+    <form @submit.prevent="submitForm" class="space-y-5 bg-white p-5 text-gray-800">
       <!-- Version Input -->
       <div class="space-y-2">
         <label
@@ -122,7 +122,7 @@
           <button
             type="button"
             @click="removeBug(index)"
-            class="text-destructive hover:text-destructive/80 text-sm font-medium text-theme-text"
+            class="text-destructive hover:text-destructive/80 text-sm font-medium text-gray-800"
           >
             Kaldır
           </button>

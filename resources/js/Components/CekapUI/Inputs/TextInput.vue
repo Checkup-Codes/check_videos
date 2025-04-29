@@ -22,7 +22,7 @@ const props = defineProps({
   },
   labelClass: {
     type: String,
-    default: 'block font-semibold mb-2 text-sm text-theme-text',
+    default: 'block font-semibold mb-2 text-sm text-gray-800',
   },
   inputClass: {
     type: String,

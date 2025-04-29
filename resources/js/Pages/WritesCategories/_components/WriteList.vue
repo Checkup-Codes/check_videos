@@ -62,7 +62,7 @@ const formatDate = (dateString) => {
 const getLinkClasses = (href) => {
   const isActive = window.location.pathname === href;
   return `
-    bg-theme-background text-theme-text px-4 py-3 block cursor-pointer p-2 text-sm
+    bg-white text-gray-800 px-4 py-3 block cursor-pointer p-2 text-sm
     ${isActive ? 'border-l-4 border-primary-500 bg-primary-100 shadow-inner hover:bg-primary-100' : 'hover:bg-primary-100'}
     
   `;

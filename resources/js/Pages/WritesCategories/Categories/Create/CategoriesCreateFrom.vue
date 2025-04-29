@@ -6,7 +6,7 @@
         <TextInput v-model="form.name" id="name" label="İsim" />
         <TextInput v-model="form.slug" id="slug" label="Slug" />
         <div class="mt-4">
-          <label for="parent_id_input" class="block text-sm font-medium text-theme-text">Üst Kategori</label>
+          <label for="parent_id_input" class="block text-sm font-medium text-gray-800">Üst Kategori</label>
           <input
             type="text"
             id="parent_id_input"

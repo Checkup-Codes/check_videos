@@ -2,7 +2,7 @@
   <CheckScreen>
     <TopScreen title="Versiyon Oluştur" />
 
-    <form @submit.prevent="submitForm" class="space-y-5 bg-theme-background p-5 text-theme-text">
+    <form @submit.prevent="submitForm" class="space-y-5 bg-white p-5 text-gray-800">
       <!-- Version Input -->
       <div class="space-y-2">
         <label

@@ -7,7 +7,7 @@
       <div
         v-for="write in writes"
         :key="write.id"
-        class="rounded-lg border text-theme-text shadow transition hover:shadow-lg"
+        class="rounded-lg border text-gray-800 shadow transition hover:shadow-lg"
       >
         <Link
           :href="
@@ -43,7 +43,7 @@
       <div
         v-for="write in writes"
         :key="write.id"
-        class="flex items-center space-x-4 rounded-lg border p-4 text-theme-text shadow hover:shadow-md"
+        class="flex items-center space-x-4 rounded-lg border p-4 text-gray-800 shadow hover:shadow-md"
       >
         <!-- <img
             :src="write.cover_image || 'https://via.placeholder.com/150x100'"
@@ -74,7 +74,7 @@
       </div>
     </div>
 
-    <div v-if="writes.length === 0" class="mt-6 text-center text-theme-text">
+    <div v-if="writes.length === 0" class="mt-6 text-center text-gray-800">
       Bu kategoriye ait yazı bulunmamaktadır.
     </div>
   </CheckScreen>

@@ -2,15 +2,15 @@
   <div v-if="flashMessage" class="rounded bg-green-200 p-3 text-green-800">
     {{ flashMessage }}
   </div>
-  <div class="bg-theme-background px-2 lg:p-3">
-    <div class="flex justify-between rounded-md px-1 py-2 text-theme-text sm:mx-3 md:mx-5">
+  <div class="bg-white px-2 lg:p-3">
+    <div class="flex justify-between rounded-md px-1 py-2 text-gray-800 sm:mx-3 md:mx-5">
       <div class="flex">
         <label for="versionDropdown" class="my-auto px-3 font-semibold">Versiyon Seç:</label>
         <select
           id="versionDropdown"
           v-model="selectedVersion"
           @change="loadSelectedVersion"
-          class="mx-5 border py-0 pl-2 text-theme-text shadow-sm focus:outline-none focus:ring focus:ring-gray-200"
+          class="mx-5 border py-0 pl-2 text-gray-800 shadow-sm focus:outline-none focus:ring focus:ring-gray-200"
         >
           <option v-for="draw in writeDraws" :key="draw.id" :value="draw.id">Versiyon {{ draw.version }}</option>
         </select>

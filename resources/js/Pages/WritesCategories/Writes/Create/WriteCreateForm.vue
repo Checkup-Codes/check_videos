@@ -13,7 +13,7 @@
     <TextInput v-model="form.summary" id="summary" label="Özet" textarea rows="3" :error="errors.summary" />
 
     <div class="mb-4">
-      <label for="status" class="mb-1 block text-sm font-bold text-theme-text">Durumu:</label>
+      <label for="status" class="mb-1 block text-sm font-bold text-gray-800">Durumu:</label>
       <select v-model="form.status" id="status" class="mt-1 block w-full rounded border-gray-300">
         <option value="draft">Şablon</option>
         <option value="published">Yayında</option>
@@ -23,7 +23,7 @@
     </div>
 
     <div class="mb-4">
-      <label for="category_id" class="mb-1 block text-sm font-bold text-theme-text">Kategori:</label>
+      <label for="category_id" class="mb-1 block text-sm font-bold text-gray-800">Kategori:</label>
       <select v-model="form.category_id" id="category_id" class="mt-1 block w-full rounded border-gray-300">
         <option value="" disabled>Kategori seç</option>
         <option v-for="category in categories" :key="category.id" :value="category.id">
@@ -43,7 +43,7 @@
     <TextInput v-model="form.tags" id="tags" label="Etiketler" :error="errors.tags" />
 
     <div class="mb-4">
-      <label for="views_count" class="mb-1 block text-sm font-bold text-theme-text">Görüntülenme Sayısı:</label>
+      <label for="views_count" class="mb-1 block text-sm font-bold text-gray-800">Görüntülenme Sayısı:</label>
       <input
         v-model="form.views_count"
         type="number"
@@ -54,7 +54,7 @@
     </div>
 
     <div class="mb-4 flex items-center">
-      <label for="hasDraw" class="mb-1 mr-2 text-sm font-bold text-theme-text">Çizim Var Mı?</label>
+      <label for="hasDraw" class="mb-1 mr-2 text-sm font-bold text-gray-800">Çizim Var Mı?</label>
       <input v-model="form.hasDraw" type="checkbox" id="hasDraw" />
     </div>
 

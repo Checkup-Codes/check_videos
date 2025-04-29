@@ -1,5 +1,5 @@
 <template>
-  <div class="container bg-theme-background px-5 text-theme-text">
+  <div class="container bg-white px-5 text-gray-800">
     <table class="w-full table-auto">
       <thead>
         <tr>
