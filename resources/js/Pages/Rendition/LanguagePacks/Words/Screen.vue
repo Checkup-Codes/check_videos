@@ -20,6 +20,12 @@
             Kelime Ekle
           </button>
           <a
+            :href="route('rendition.language-packs.export', languagePack.id)"
+            class="rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+          >
+            Dışa Aktar
+          </a>
+          <a
             :href="route('rendition.language-packs.index')"
             class="rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
           >

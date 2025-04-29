@@ -3,15 +3,15 @@
     <div class="p-6">
       <div class="mb-6 flex items-center justify-between">
         <div>
-          <h2 class="text-xl font-bold">Kelime Listesi</h2>
-          <p class="text-sm">Toplam Kelime Sayısı: {{ isLoading ? '...' : filteredWords.length }}</p>
+          <h2 class="text-xl font-bold">Dil Paketleri</h2>
+          <p class="text-sm">Toplam Paket Sayısı: {{ languagePacks.length }}</p>
         </div>
         <a
           v-if="isLoggedIn"
-          :href="route('rendition.words.create')"
-          class="rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:ring-2"
+          :href="route('rendition.language-packs.create')"
+          class="rounded-md bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          Yeni Kelime Ekle
+          Yeni Paket Oluştur
         </a>
       </div>
 
@@ -58,29 +58,55 @@
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Kelime</th>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Anlam</th>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Zorluk</th>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Durum</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  Paket Adı
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Dil</th>
+                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  Kelime Sayısı
+                </th>
                 <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">İşlemler</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 bg-white">
-              <tr v-if="filteredWords.length === 0" class="text-center">
-                <td colspan="5" class="px-6 py-4 text-sm text-gray-500">Arama kriterlerine uygun kelime bulunamadı</td>
-              </tr>
-              <tr v-for="word in filteredWords" :key="word.id" class="hover:bg-gray-50">
-                <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">{{ word.word }}</td>
-                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{{ word.meaning }}</td>
-                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {{ difficultyText(word.difficulty_level) }}
+              <tr v-for="pack in languagePacks" :key="pack.id" class="hover:bg-gray-50">
+                <td class="whitespace-nowrap px-6 py-4">
+                  <div class="text-sm font-medium text-gray-900">{{ pack.name }}</div>
+                  <div class="text-sm text-gray-500">{{ pack.description }}</div>
+                </td>
+                <td class="whitespace-nowrap px-6 py-4">
+                  <span class="inline-flex rounded-full bg-blue-100 px-2 text-xs font-semibold leading-5 text-blue-800">
+                    {{ getLanguageName(pack.language) }}
+                  </span>
                 </td>
                 <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {{ learningStatusText(word.learning_status) }}
+                  {{ pack.word_count }}
                 </td>
-                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                <td class="whitespace-nowrap px-6 py-4 text-sm font-medium">
                   <div class="flex space-x-2">
-                    <button @click="confirmDelete(word)" class="text-red-600 hover:text-red-900">Sil</button>
+                    <a
+                      :href="route('rendition.language-packs.words', pack.id)"
+                      class="text-blue-600 hover:text-blue-900"
+                    >
+                      Kelimeler
+                    </a>
+                    <a
+                      v-if="isLoggedIn"
+                      :href="route('rendition.language-packs.edit', pack.id)"
+                      class="text-indigo-600 hover:text-indigo-900"
+                    >
+                      Düzenle
+                    </a>
+                    <a
+                      v-if="isLoggedIn"
+                      :href="route('rendition.language-packs.export', pack.id)"
+                      class="text-green-600 hover:text-green-900"
+                    >
+                      Dışa Aktar
+                    </a>
+                    <button v-if="isLoggedIn" @click="confirmDelete(pack)" class="text-red-600 hover:text-red-900">
+                      Sil
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -165,9 +191,9 @@ const difficultyText = (level) => ['Bilinmiyor', 'Kolay', 'Orta', 'Zor', 'Çok Z
 const learningStatusText = (status) => ['Öğrenilmedi', 'Öğreniliyor', 'Öğrenildi'][status] || 'Bilinmiyor';
 
 // Silme işlemi
-const confirmDelete = (word) => {
-  if (confirm(`"${word.word}" kelimesini silmek istediğinize emin misiniz?`)) {
-    router.delete(route('rendition.words.destroy', word.id));
+const confirmDelete = (pack) => {
+  if (confirm(`"${pack.name}" dil paketini silmek istediğinize emin misiniz?`)) {
+    router.delete(route('rendition.language-packs.destroy', pack.id));
   }
 };
 
@@ -175,5 +201,21 @@ const confirmDelete = (word) => {
 const clearFilters = () => {
   searchQuery.value = '';
   statusFilter.value = '';
+};
+
+// Dil kodunu dil adına çevirme
+const getLanguageName = (code) => {
+  const languages = {
+    tr: 'Türkçe',
+    en: 'İngilizce',
+    de: 'Almanca',
+    fr: 'Fransızca',
+    es: 'İspanyolca',
+    it: 'İtalyanca',
+    ru: 'Rusça',
+    ar: 'Arapça',
+  };
+
+  return languages[code] || code;
 };
 </script>

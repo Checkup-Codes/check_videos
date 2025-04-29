@@ -48,6 +48,23 @@
           <div v-if="errors.language" class="mt-1 text-sm text-red-500">{{ errors.language }}</div>
         </div>
 
+        <div class="mb-6">
+          <label for="import_file" class="mb-1 block text-sm font-medium text-gray-700"
+            >JSON Dosyası İçe Aktar (Opsiyonel)</label
+          >
+          <input
+            id="import_file"
+            type="file"
+            accept=".json"
+            @change="handleFileUpload"
+            class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          />
+          <p class="mt-1 text-sm text-gray-500">
+            Daha önce dışa aktarılmış bir JSON dosyasını yükleyerek kelimeleri otomatik olarak içe aktarabilirsiniz.
+          </p>
+          <div v-if="errors.import_file" class="mt-1 text-sm text-red-500">{{ errors.import_file }}</div>
+        </div>
+
         <div class="flex justify-end space-x-3">
           <button
             type="button"
@@ -85,9 +102,17 @@ const form = useForm({
   slug: '',
   description: '',
   language: '',
+  import_file: null,
 });
 
 const processing = ref(false);
+
+const handleFileUpload = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    form.import_file = file;
+  }
+};
 
 const submitForm = () => {
   processing.value = true;

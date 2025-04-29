@@ -104,6 +104,9 @@ Route::group(['prefix' => 'rendition', 'as' => 'rendition.'], function () {
     Route::delete('language-packs/{id}/words/{wordId}', [LanguagePackController::class, 'removeWord'])
         ->name('language-packs.remove-word');
 
+    Route::get('language-packs/{id}/export', [LanguagePackController::class, 'export'])
+        ->name('language-packs.export');
+
     // RESOURCE ROUTELAR en sona!
 
     // Words resource

@@ -75,6 +75,7 @@
         <div>
           <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold text-gray-900">Eksik harfleri tamamlayın:</h2>
+            <!-- 
             <button
               v-if="!gameState.showAnswer"
               @click="showHint"
@@ -91,11 +92,12 @@
                   : 'İpucu Göster'
               }}
             </button>
+            -->
           </div>
           <p class="mt-1 text-sm text-gray-500">Anlam: {{ gameState.currentQuestion.meaning }}</p>
         </div>
 
-        <!-- İpucu Gösterimi -->
+        <!-- İpucu Gösterimi 
         <div v-if="gameState.hintShown" class="rounded-lg bg-blue-50 p-3">
           <p class="text-sm text-blue-600">Örnek Cümle:</p>
           <p
@@ -105,7 +107,7 @@
             {{ gameState.currentQuestion.example_sentences[gameState.currentHintIndex].sentence }}
           </p>
           <p v-else class="mt-1 text-sm text-gray-700">Bu kelime için örnek cümle bulunmuyor.</p>
-        </div>
+        </div>-->
 
         <!-- Kelime Gösterimi -->
         <div class="flex justify-center space-x-2">
@@ -147,7 +149,7 @@
         <!-- Harf Seçimi -->
         <div class="grid grid-cols-7 gap-2">
           <button
-            v-for="char in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')"
+            v-for="char in getAlphabet()"
             :key="char"
             @click="selectLetter(char)"
             :disabled="gameState.showAnswer || gameState.selectedLetters.includes(char)"
@@ -408,9 +410,10 @@ const handleKeyPress = (event) => {
   if (gameState.value.showAnswer || !gameState.value.isPlaying) return;
 
   const key = event.key.toUpperCase();
+  const alphabet = getAlphabet();
 
-  // Sadece A-Z arası harfleri ve boşluk karakterini kabul et
-  if (/^[A-Z]$/.test(key) || key === ' ') {
+  // Sadece dil paketinin alfabesindeki harfleri ve boşluk karakterini kabul et
+  if (alphabet.includes(key) || key === ' ') {
     selectLetter(key);
   }
 
@@ -435,5 +438,36 @@ const clearLastLetter = () => {
 // Tüm seçilen harfleri temizle
 const clearSelectedLetters = () => {
   gameState.value.selectedLetters = [];
+};
+
+// Dil paketinin alfabesini döndür
+const getAlphabet = () => {
+  if (!currentPack.value) return 'abcdefghijklmnopqrstuvwxyz'.split('');
+
+  // Dil koduna göre alfabe döndür
+  switch (currentPack.value.language) {
+    case 'tr':
+      return 'abcçdefgğhıijklmnoöprsştuüvyz'.split('');
+    case 'de':
+      return 'abcdefghijklmnopqrstuvwxyzäöüß'.split('');
+    case 'fr':
+      return 'abcdefghijklmnopqrstuvwxyzàâçéèêëîïôùûüÿ'.split('');
+    case 'es':
+      return 'abcdefghijklmnñopqrstuvwxyz'.split('');
+    case 'it':
+      return 'abcdefghijklmnopqrstuvwxyzàèéìòù'.split('');
+    case 'pt':
+      return 'abcdefghijklmnopqrstuvwxyzáâãàçéêíóôõú'.split('');
+    case 'ru':
+      return 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'.split('');
+    case 'ar':
+      return 'أبتثجحخدذرزسشصضطظعغفقكلمنهوي'.split('');
+    case 'ja':
+      return 'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん'.split('');
+    case 'ko':
+      return '가나다라마바사아자차카타파하'.split('');
+    default:
+      return 'abcdefghijklmnopqrstuvwxyz'.split('');
+  }
 };
 </script>
