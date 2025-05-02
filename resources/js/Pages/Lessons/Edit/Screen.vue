@@ -176,9 +176,9 @@
 import { ref } from 'vue';
 import { Link, useForm, router } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
-import GoBackButton from '@/Components/molecules/GoBackButton.vue';
-import CheckScreen from '@/Components/templates/CheckScreen.vue';
-import Card from '@/Components/molecules/Card.vue';
+import GoBackButton from '@/Components/GoBackButton.vue';
+import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import Card from '@/Pages/WritesCategories/_components/Card.vue';
 
 const { props } = usePage();
 const lesson = props.lesson;

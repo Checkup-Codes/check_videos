@@ -1,1 +1,0 @@
-import r from"./CheckLayout-CILCKCOo.js";import e from"./Screen-VpvT8m93.js";import{c as t,w as o,o as a,a as c}from"./app-BM0qUes5.js";import"./SidebarLayoutProject-CYpk7PqR.js";/* empty css            */const u={__name:"EditService",setup(_){return(m,s)=>(a(),t(r,null,{screen:o(()=>[c(e)]),_:1}))}};export{u as default};

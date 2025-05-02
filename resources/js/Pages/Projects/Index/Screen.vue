@@ -127,9 +127,9 @@
 <script setup>
 import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
-import TopScreen from '@/Components/molecules/TopScreen.vue';
-import CheckScreen from '@/Components/templates/CheckScreen.vue';
-import Card from '@/Components/molecules/Card.vue';
+import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
+import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import Card from '@/Pages/WritesCategories/_components/Card.vue';
 
 const props = defineProps({
   projects: {

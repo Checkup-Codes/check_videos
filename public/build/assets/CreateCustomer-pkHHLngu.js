@@ -1,1 +1,0 @@
-import e from"./CheckLayout-CILCKCOo.js";import r from"./Screen-BeJTR1GN.js";import{c as t,w as o,o as a,a as c}from"./app-BM0qUes5.js";import"./SidebarLayoutProject-CYpk7PqR.js";/* empty css            */const l={__name:"CreateCustomer",setup(m){return(s,_)=>(a(),t(e,null,{screen:o(()=>[c(r)]),_:1}))}};export{l as default};

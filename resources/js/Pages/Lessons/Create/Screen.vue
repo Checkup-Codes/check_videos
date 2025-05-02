@@ -118,9 +118,9 @@
 <script setup>
 import { ref } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
-import GoBackButton from '@/Components/molecules/GoBackButton.vue';
-import CheckScreen from '@/Components/templates/CheckScreen.vue';
-import Card from '@/Components/molecules/Card.vue';
+import GoBackButton from '@/Components/GoBackButton.vue';
+import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import Card from '@/Pages/WritesCategories/_components/Card.vue';
 
 const form = useForm({
   title: '',

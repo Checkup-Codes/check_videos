@@ -1,1 +1,0 @@
-import e from"./CheckLayout-CILCKCOo.js";import r from"./Screen-D4ImDhU0.js";import{c as o,w as t,o as a,a as c}from"./app-BM0qUes5.js";import"./SidebarLayoutProject-CYpk7PqR.js";/* empty css            */const l={__name:"IndexCustomer",setup(m){return(s,n)=>(a(),o(e,null,{screen:t(()=>[c(r)]),_:1}))}};export{l as default};

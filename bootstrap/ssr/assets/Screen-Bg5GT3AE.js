@@ -1,0 +1,213 @@
+import { computed, withCtx, createBlock, openBlock, createVNode, Fragment, renderList, unref, createTextVNode, useSSRContext } from "vue";
+import { ssrRenderComponent, ssrRenderList } from "vue/server-renderer";
+import { usePage, Link } from "@inertiajs/vue3";
+import ServiceItem from "./ServiceItem-DyTzeKJa.js";
+import { _ as _sfc_main$1 } from "./CheckScreen-CM3g7Drr.js";
+import { _ as _sfc_main$2 } from "./TopScreen-DnNmtdW-.js";
+import _sfc_main$3 from "./Card-qmctt-Ej.js";
+import { _ as _export_sfc } from "./_plugin-vue_export-helper-1tPrXgE0.js";
+const _sfc_main = {
+  __name: "Screen",
+  __ssrInlineRender: true,
+  setup(__props) {
+    const { props } = usePage();
+    const services = computed(() => props.services || []);
+    const parents = computed(() => services.value.filter((service) => service.sub_category_id === null));
+    return (_ctx, _push, _parent, _attrs) => {
+      _push(ssrRenderComponent(_sfc_main$1, _attrs, {
+        default: withCtx((_, _push2, _parent2, _scopeId) => {
+          if (_push2) {
+            _push2(ssrRenderComponent(_sfc_main$2, { title: "Servisler" }, null, _parent2, _scopeId));
+            _push2(ssrRenderComponent(_sfc_main$3, { elevated: "" }, {
+              action: withCtx((_2, _push3, _parent3, _scopeId2) => {
+                if (_push3) {
+                  _push3(ssrRenderComponent(unref(Link), {
+                    href: "/services/create",
+                    class: "btn btn-primary btn-sm"
+                  }, {
+                    default: withCtx((_3, _push4, _parent4, _scopeId3) => {
+                      if (_push4) {
+                        _push4(`<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 h-4 w-4" data-v-6809fa26${_scopeId3}><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" data-v-6809fa26${_scopeId3}></path></svg> Yeni Servis `);
+                      } else {
+                        return [
+                          (openBlock(), createBlock("svg", {
+                            xmlns: "http://www.w3.org/2000/svg",
+                            fill: "none",
+                            viewBox: "0 0 24 24",
+                            "stroke-width": "1.5",
+                            stroke: "currentColor",
+                            class: "mr-1 h-4 w-4"
+                          }, [
+                            createVNode("path", {
+                              "stroke-linecap": "round",
+                              "stroke-linejoin": "round",
+                              d: "M12 4.5v15m7.5-7.5h-15"
+                            })
+                          ])),
+                          createTextVNode(" Yeni Servis ")
+                        ];
+                      }
+                    }),
+                    _: 1
+                  }, _parent3, _scopeId2));
+                } else {
+                  return [
+                    createVNode(unref(Link), {
+                      href: "/services/create",
+                      class: "btn btn-primary btn-sm"
+                    }, {
+                      default: withCtx(() => [
+                        (openBlock(), createBlock("svg", {
+                          xmlns: "http://www.w3.org/2000/svg",
+                          fill: "none",
+                          viewBox: "0 0 24 24",
+                          "stroke-width": "1.5",
+                          stroke: "currentColor",
+                          class: "mr-1 h-4 w-4"
+                        }, [
+                          createVNode("path", {
+                            "stroke-linecap": "round",
+                            "stroke-linejoin": "round",
+                            d: "M12 4.5v15m7.5-7.5h-15"
+                          })
+                        ])),
+                        createTextVNode(" Yeni Servis ")
+                      ]),
+                      _: 1
+                    })
+                  ];
+                }
+              }),
+              default: withCtx((_2, _push3, _parent3, _scopeId2) => {
+                if (_push3) {
+                  if (!parents.value || parents.value.length === 0) {
+                    _push3(`<div class="alert alert-info" data-v-6809fa26${_scopeId2}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current" data-v-6809fa26${_scopeId2}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" data-v-6809fa26${_scopeId2}></path></svg><span data-v-6809fa26${_scopeId2}>Henüz servis bulunmamaktadır.</span></div>`);
+                  } else {
+                    _push3(`<ul class="menu bg-base-100 w-full" data-v-6809fa26${_scopeId2}><!--[-->`);
+                    ssrRenderList(parents.value, (parent) => {
+                      _push3(ssrRenderComponent(ServiceItem, {
+                        key: parent.id,
+                        service: parent,
+                        "all-services": services.value
+                      }, null, _parent3, _scopeId2));
+                    });
+                    _push3(`<!--]--></ul>`);
+                  }
+                } else {
+                  return [
+                    !parents.value || parents.value.length === 0 ? (openBlock(), createBlock("div", {
+                      key: 0,
+                      class: "alert alert-info"
+                    }, [
+                      (openBlock(), createBlock("svg", {
+                        xmlns: "http://www.w3.org/2000/svg",
+                        fill: "none",
+                        viewBox: "0 0 24 24",
+                        class: "h-6 w-6 shrink-0 stroke-current"
+                      }, [
+                        createVNode("path", {
+                          "stroke-linecap": "round",
+                          "stroke-linejoin": "round",
+                          "stroke-width": "2",
+                          d: "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        })
+                      ])),
+                      createVNode("span", null, "Henüz servis bulunmamaktadır.")
+                    ])) : (openBlock(), createBlock("ul", {
+                      key: 1,
+                      class: "menu bg-base-100 w-full"
+                    }, [
+                      (openBlock(true), createBlock(Fragment, null, renderList(parents.value, (parent) => {
+                        return openBlock(), createBlock(ServiceItem, {
+                          key: parent.id,
+                          service: parent,
+                          "all-services": services.value
+                        }, null, 8, ["service", "all-services"]);
+                      }), 128))
+                    ]))
+                  ];
+                }
+              }),
+              _: 1
+            }, _parent2, _scopeId));
+          } else {
+            return [
+              createVNode(_sfc_main$2, { title: "Servisler" }),
+              createVNode(_sfc_main$3, { elevated: "" }, {
+                action: withCtx(() => [
+                  createVNode(unref(Link), {
+                    href: "/services/create",
+                    class: "btn btn-primary btn-sm"
+                  }, {
+                    default: withCtx(() => [
+                      (openBlock(), createBlock("svg", {
+                        xmlns: "http://www.w3.org/2000/svg",
+                        fill: "none",
+                        viewBox: "0 0 24 24",
+                        "stroke-width": "1.5",
+                        stroke: "currentColor",
+                        class: "mr-1 h-4 w-4"
+                      }, [
+                        createVNode("path", {
+                          "stroke-linecap": "round",
+                          "stroke-linejoin": "round",
+                          d: "M12 4.5v15m7.5-7.5h-15"
+                        })
+                      ])),
+                      createTextVNode(" Yeni Servis ")
+                    ]),
+                    _: 1
+                  })
+                ]),
+                default: withCtx(() => [
+                  !parents.value || parents.value.length === 0 ? (openBlock(), createBlock("div", {
+                    key: 0,
+                    class: "alert alert-info"
+                  }, [
+                    (openBlock(), createBlock("svg", {
+                      xmlns: "http://www.w3.org/2000/svg",
+                      fill: "none",
+                      viewBox: "0 0 24 24",
+                      class: "h-6 w-6 shrink-0 stroke-current"
+                    }, [
+                      createVNode("path", {
+                        "stroke-linecap": "round",
+                        "stroke-linejoin": "round",
+                        "stroke-width": "2",
+                        d: "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      })
+                    ])),
+                    createVNode("span", null, "Henüz servis bulunmamaktadır.")
+                  ])) : (openBlock(), createBlock("ul", {
+                    key: 1,
+                    class: "menu bg-base-100 w-full"
+                  }, [
+                    (openBlock(true), createBlock(Fragment, null, renderList(parents.value, (parent) => {
+                      return openBlock(), createBlock(ServiceItem, {
+                        key: parent.id,
+                        service: parent,
+                        "all-services": services.value
+                      }, null, 8, ["service", "all-services"]);
+                    }), 128))
+                  ]))
+                ]),
+                _: 1
+              })
+            ];
+          }
+        }),
+        _: 1
+      }, _parent));
+    };
+  }
+};
+const _sfc_setup = _sfc_main.setup;
+_sfc_main.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Projects/Services/Index/Screen.vue");
+  return _sfc_setup ? _sfc_setup(props, ctx) : void 0;
+};
+const Screen = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-6809fa26"]]);
+export {
+  Screen as default
+};

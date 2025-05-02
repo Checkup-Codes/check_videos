@@ -1,0 +1,1 @@
+import{_ as a}from"./CheckScreen-B81BHdcu.js";import{_ as e}from"./GoBackButton-CzSHNWSs.js";import o from"./CategoriesEditFrom-Dx9VA5r8.js";import{c as t,o as _,w as c,a as r}from"./app-bzSXT2H4.js";/* empty css            */const d={__name:"Screen",setup(s){return(m,i)=>(_(),t(a,null,{default:c(()=>[r(e,{url:"/categories"}),r(o)]),_:1}))}};export{d as default};
