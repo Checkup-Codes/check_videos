@@ -1,117 +1,64 @@
 <template>
   <CheckScreen>
-    <header class="flex h-[100%] items-center justify-center text-gray-800">
-      <div class="text-center">
-        <img
-          src="../../../../public/images/checkup_codes_logo.png"
-          alt="Yakup Sarı"
-          class="mx-auto h-96 w-96 rounded-full"
-        />
-        <h2 class="animate__animated animate__fadeInDown text-4xl font-bold">{{ seoTitle }}</h2>
-        <p class="animate__animated animate__fadeInUp text-lg">{{ seoDescription }}</p>
-      </div>
-    </header>
+    <div ref="vantaRef" class="h-screen w-full">
+      <header class="relative z-10 flex h-full items-center justify-center text-gray-800">
+        <div class="text-center">
+          <img
+            src="../../../../public/images/checkup_codes_logo.png"
+            alt="Yakup Sarı"
+            class="mx-auto h-96 w-96 rounded-full"
+          />
+          <h2 class="animate__animated animate__fadeInDown text-4xl font-bold">{{ seoTitle }}</h2>
+          <p class="animate__animated animate__fadeInUp text-lg">{{ seoDescription }}</p>
+        </div>
+      </header>
+    </div>
   </CheckScreen>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import * as THREE from 'three';
+import NET from 'vanta/dist/vanta.net.min';
 import axios from 'axios';
 
 const seoTitle = ref('');
 const seoDescription = ref('');
-
-onMounted(async () => {
-  try {
-    const response = await axios.get('/api/seo/home');
-    if (response.data) {
-      if (response.data.title) {
-        seoTitle.value = response.data.title;
-      }
-      if (response.data.description) {
-        seoDescription.value = response.data.description;
-      }
-    }
-  } catch (error) {
-    console.error('Error fetching SEO data:', error);
-  }
-});
-</script>
-
-<!-- <template>
-  <div class="container mx-auto py-8">
-    <h2 class="mb-6 text-center text-3xl font-bold">My YouTube Playlist</h2>
-    <div class="flex flex-wrap justify-center">
-      <div
-        v-for="video in videos"
-        :key="video.id"
-        class="animate__animated animate__fadeInUp m-4 w-full max-w-sm overflow-hidden rounded-lg shadow-md lg:flex lg:max-w-full"
-      >
-        <div
-          class="flex-none bg-cover bg-center"
-          :style="{ backgroundImage: `url(${video.snippet.thumbnails.medium.url})` }"
-          style="width: 200px; height: 150px"
-        ></div>
-        <div class="flex flex-col justify-between bg-white p-4 leading-normal">
-          <div class="mb-8">
-            <p class="flex items-center text-sm text-gray-600">
-              {{ video.snippet.channelTitle }}
-            </p>
-            <div class="mb-2 text-xl font-bold text-gray-900">
-              {{ video.snippet.title }}
-            </div>
-            <p class="text-base text-gray-700"></p>
-          </div>
-          <div class="flex items-center">
-            <button
-              @click="openVideo(video.id)"
-              class="rounded-md bg-blue-600 px-4 py-2 font-bold text-white transition duration-300 hover:bg-blue-700"
-            >
-              Watch Video
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
-<script setup>
-import { ref, onMounted } from 'vue';
-const API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY;
-const BASE_URL = 'https://www.googleapis.com/youtube/v3';
-
-const playlistId = ref('PLXcQxEjxyk31WyqhATafLwZoTm7whKh_l');
-const videos = ref([]);
-const loading = ref(false);
-
-const fetchVideos = async () => {
-  loading.value = true;
-  try {
-    const response = await fetch(
-      `${BASE_URL}/playlistItems?part=snippet&playlistId=${playlistId.value}&maxResults=10&key=${API_KEY}`
-    );
-    const data = await response.json();
-    videos.value = data.items;
-  } catch (error) {
-    console.error('Error fetching videos:', error);
-  } finally {
-    loading.value = false;
-  }
-};
-
-const openVideo = (videoId) => {
-  window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
-};
+const vantaRef = ref(null);
+let vantaEffect = null;
 
 onMounted(() => {
-  fetchVideos();
+  // SEO verilerini çek
+  axios
+    .get('/api/seo/home')
+    .then(({ data }) => {
+      if (data?.title) seoTitle.value = data.title;
+      if (data?.description) seoDescription.value = data.description;
+    })
+    .catch((err) => console.error('SEO fetch error:', err));
+
+  // Vanta animasyonu başlat
+  if (!vantaEffect) {
+    vantaEffect = NET({
+      el: vantaRef.value,
+      THREE,
+      mouseControls: true,
+      touchControls: true,
+      minHeight: 200.0,
+      minWidth: 200.0,
+      scale: 1.0,
+      scaleMobile: 1.0,
+      color: 0x88ccff,
+      backgroundColor: 0xf8fafc,
+      points: 12.0,
+      maxDistance: 25.0,
+      spacing: 15.0,
+    });
+  }
+});
+
+onBeforeUnmount(() => {
+  if (vantaEffect) vantaEffect.destroy();
 });
 </script>
-
-<style scoped>
-.container {
-  padding: 1rem;
-}
-</style> -->

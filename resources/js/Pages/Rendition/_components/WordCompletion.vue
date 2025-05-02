@@ -20,27 +20,38 @@
           <p class="text-sm text-gray-600">Yanlış</p>
         </div>
       </div>
-      <ul class="mb-4 space-y-2 text-left text-sm text-gray-800">
-        <li
-          v-for="response in gameState.userResponses"
-          :key="response.word_id"
-          class="flex justify-between rounded-md bg-gray-50 px-4 py-2"
-        >
-          <span :class="response.correct ? 'text-green-600' : 'text-red-600'">
-            {{ wordsMap[response.word_id]?.word || 'Unknown' }}
-          </span>
-          <span>
-            {{ response.correct ? '✓' : '✗' }}
-          </span>
-        </li>
-      </ul>
+
+      <!-- Cevap Listesi -->
+      <div class="mb-4 max-h-60 overflow-y-auto">
+        <h3 class="mb-2 font-medium text-gray-700">Cevaplarınız:</h3>
+        <ul class="space-y-2 text-left text-sm text-gray-800">
+          <li
+            v-for="response in gameState.userResponses"
+            :key="response.word_id"
+            class="flex items-center justify-between rounded-md bg-gray-50 px-4 py-2"
+          >
+            <div class="flex flex-col">
+              <span :class="response.correct ? 'font-medium text-green-600' : 'font-medium text-red-600'">
+                {{ wordsMap[response.word_id]?.word || 'Unknown' }}
+              </span>
+              <span class="text-xs text-gray-500">
+                {{ wordsMap[response.word_id]?.meaning || '' }}
+              </span>
+            </div>
+            <span :class="response.correct ? 'text-lg text-green-600' : 'text-lg text-red-600'">
+              {{ response.correct ? '✓' : '✗' }}
+            </span>
+          </li>
+        </ul>
+      </div>
+
       <div class="flex gap-2">
-        <Link
-          :href="`/rendition/words/${props.packSlug}`"
+        <button
+          @click="emit('game-completed')"
           class="flex-1 rounded-lg bg-black px-4 py-2 text-center text-sm font-medium text-white transition hover:bg-gray-700"
         >
           Pakete Dön
-        </Link>
+        </button>
         <button
           @click="restartGame"
           class="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
@@ -75,39 +86,9 @@
         <div>
           <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold text-gray-900">Eksik harfleri tamamlayın:</h2>
-            <!-- 
-            <button
-              v-if="!gameState.showAnswer"
-              @click="showHint"
-              class="rounded-lg border border-gray-200 px-3 py-1 text-sm text-gray-600 hover:bg-gray-50"
-              :disabled="
-                gameState.hintShown &&
-                (!gameState.currentQuestion.example_sentences ||
-                  gameState.currentQuestion.example_sentences.length <= 1)
-              "
-            >
-              {{
-                gameState.hintShown
-                  ? `İpucu (${gameState.currentHintIndex + 1}/${gameState.currentQuestion.example_sentences?.length || 0})`
-                  : 'İpucu Göster'
-              }}
-            </button>
-            -->
           </div>
           <p class="mt-1 text-sm text-gray-500">Anlam: {{ gameState.currentQuestion.meaning }}</p>
         </div>
-
-        <!-- İpucu Gösterimi 
-        <div v-if="gameState.hintShown" class="rounded-lg bg-blue-50 p-3">
-          <p class="text-sm text-blue-600">Örnek Cümle:</p>
-          <p
-            v-if="gameState.currentQuestion.example_sentences && gameState.currentQuestion.example_sentences.length > 0"
-            class="mt-1 text-sm text-gray-700"
-          >
-            {{ gameState.currentQuestion.example_sentences[gameState.currentHintIndex].sentence }}
-          </p>
-          <p v-else class="mt-1 text-sm text-gray-700">Bu kelime için örnek cümle bulunmuyor.</p>
-        </div>-->
 
         <!-- Kelime Gösterimi -->
         <div class="flex justify-center space-x-2">
@@ -188,9 +169,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { usePage, router, Link } from '@inertiajs/vue3';
-import GameConfig from './GameConfig.vue';
 
 const props = defineProps({
   gameType: String,
@@ -198,6 +178,8 @@ const props = defineProps({
   words: Array,
   gameConfig: Object,
 });
+
+const emit = defineEmits(['game-completed']);
 
 const page = usePage();
 const allPacks = page.props.languagePacks || [];
@@ -236,42 +218,20 @@ const isAnswerComplete = computed(() => {
 
 // Oyunu başlat
 const startGameWithConfig = async () => {
-  if (!props.words || props.words.length < 5) {
-    alert('Oyunu başlatmak için en az 5 kelime gereklidir.');
+  if (!props.words || props.words.length < 2) {
+    alert('Oyunu başlatmak için en az 2 kelime gereklidir.');
     return;
   }
 
   gameState.value.isLoading = true;
 
-  // Kelimeleri filtrele
-  let filteredWords = [...props.words];
-
-  // Zorluk seviyesine göre filtrele
-  if (props.gameConfig.difficulty !== 'all') {
-    filteredWords = filteredWords.filter((word) => word.difficulty_level === parseInt(props.gameConfig.difficulty));
-  }
-
-  // Öğrenme durumuna göre filtrele
-  if (props.gameConfig.learningStatus !== 'all') {
-    filteredWords = filteredWords.filter((word) => word.learning_status === parseInt(props.gameConfig.learningStatus));
-  }
-
-  // Kelime seçimine göre sırala
-  if (props.gameConfig.wordSelection === 'difficult') {
-    filteredWords.sort((a, b) => b.incorrect_count - a.incorrect_count);
-  } else if (props.gameConfig.wordSelection === 'easy') {
-    filteredWords.sort((a, b) => a.incorrect_count - b.incorrect_count);
-  } else {
-    filteredWords.sort(() => Math.random() - 0.5);
-  }
-
-  // Soru sayısını ayarla
-  const questionCount = Math.min(parseInt(props.gameConfig.questionCount), filteredWords.length);
-  filteredWords = filteredWords.slice(0, questionCount);
+  // Kelimeleri karıştır
+  let gameWords = [...props.words];
+  gameWords.sort(() => Math.random() - 0.5);
 
   // Kelimeleri yükle
   await new Promise((resolve) => {
-    words.value = filteredWords;
+    words.value = gameWords;
     gameState.value.totalQuestions = words.value.length;
     gameState.value.currentIndex = 0;
     gameState.value.userResponses = [];
@@ -283,17 +243,26 @@ const startGameWithConfig = async () => {
   loadNextQuestion();
 };
 
-// İpucu göster
-const showHint = () => {
-  if (!gameState.value.currentQuestion.example_sentences) return;
+// Puan hesapla
+const calculateScore = computed(() => {
+  if (!gameState.value.userResponses.length) return 0;
+  const correctAnswers = gameState.value.userResponses.filter((response) => response.correct).length;
+  return Math.round((correctAnswers / gameState.value.userResponses.length) * 100);
+});
 
-  if (!gameState.value.hintShown) {
-    gameState.value.hintShown = true;
-    gameState.value.currentHintIndex = 0;
-  } else if (gameState.value.currentQuestion.example_sentences.length > gameState.value.currentHintIndex + 1) {
-    gameState.value.currentHintIndex++;
-  }
+// Türkçe alfabe
+const getAlphabet = () => {
+  return 'ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ'.split('');
 };
+
+// Doğru ve yanlış sayıları
+const correctCount = computed(() => {
+  return gameState.value.userResponses.filter((response) => response.correct).length;
+});
+
+const incorrectCount = computed(() => {
+  return gameState.value.userResponses.filter((response) => !response.correct).length;
+});
 
 // Sonraki soruyu yükle
 const loadNextQuestion = () => {
@@ -303,51 +272,84 @@ const loadNextQuestion = () => {
   }
 
   gameState.value.currentQuestion = words.value[gameState.value.currentIndex];
-  gameState.value.showAnswer = false;
   gameState.value.selectedLetters = [];
+  gameState.value.showAnswer = false;
   gameState.value.hintShown = false;
   gameState.value.currentHintIndex = 0;
 
-  // Kelimenin uzunluğuna göre maskelenecek harf sayısını belirle
-  const wordLength = gameState.value.currentQuestion.word.length;
-  const maskedCount = Math.max(2, Math.floor(wordLength * 0.4)); // Kelimenin %40'ı kadar harf maskelenir
+  // Rastgele maskeli indeksler oluştur
+  createMaskedIndices();
+};
 
-  // Rastgele harfleri maskele, boşluk karakterlerini maskeleme
-  const indices = Array.from({ length: wordLength }, (_, i) => i).filter(
-    (i) => gameState.value.currentQuestion.word[i] !== ' '
-  ); // Boşluk karakterlerini hariç tut
+// Rastgele maskeli indeksler oluştur
+const createMaskedIndices = () => {
+  const word = gameState.value.currentQuestion.word;
+  const wordLength = word.length;
 
-  gameState.value.maskedIndices = indices
-    .sort(() => Math.random() - 0.5)
-    .slice(0, maskedCount)
-    .sort((a, b) => a - b);
+  // 3-5 arası rastgele maskeli harf sayısı belirle (kelime uzunluğuna bağlı olarak)
+  const maskCountMap = {
+    1: 1,
+    2: 1,
+    3: 1,
+    4: 2,
+    5: 2,
+    6: 3,
+    7: 3,
+    8: 3,
+    9: 4,
+    10: 4,
+  };
+
+  const defaultMaskCount = Math.min(4, Math.floor(wordLength / 2));
+  const maskCount = maskCountMap[wordLength] || defaultMaskCount;
+
+  // Unique indeksler oluştur
+  const indices = new Set();
+  while (indices.size < maskCount) {
+    const randomIndex = Math.floor(Math.random() * wordLength);
+    indices.add(randomIndex);
+  }
+
+  gameState.value.maskedIndices = Array.from(indices).sort((a, b) => a - b);
 };
 
 // Harf seç
 const selectLetter = (letter) => {
-  if (gameState.value.selectedLetters.length < gameState.value.maskedIndices.length) {
-    gameState.value.selectedLetters.push(letter);
+  if (gameState.value.showAnswer) return;
+  if (gameState.value.selectedLetters.length >= gameState.value.maskedIndices.length) return;
+
+  gameState.value.selectedLetters.push(letter);
+
+  if (gameState.value.selectedLetters.length === gameState.value.maskedIndices.length) {
+    // Otomatik kontrol et
+    checkAnswer();
   }
+};
+
+// Seçilen harfleri temizle
+const clearSelectedLetters = () => {
+  if (gameState.value.showAnswer) return;
+  gameState.value.selectedLetters = [];
 };
 
 // Cevabı kontrol et
 const checkAnswer = () => {
+  if (gameState.value.showAnswer) return;
   if (!isAnswerComplete.value) return;
 
-  const userAnswer = gameState.value.currentQuestion.word
-    .split('')
-    .map((char, index) => {
-      if (gameState.value.maskedIndices.includes(index)) {
-        const letterIndex = gameState.value.maskedIndices.indexOf(index);
-        return gameState.value.selectedLetters[letterIndex];
-      }
-      return char;
-    })
-    .join('');
+  const word = gameState.value.currentQuestion.word;
+  let isCorrect = true;
 
-  const isCorrect = userAnswer.toLowerCase() === gameState.value.currentQuestion.word.toLowerCase();
+  for (let i = 0; i < gameState.value.maskedIndices.length; i++) {
+    const correctChar = word[gameState.value.maskedIndices[i]].toLowerCase();
+    const userChar = gameState.value.selectedLetters[i].toLowerCase();
 
-  gameState.value.showAnswer = true;
+    if (correctChar !== userChar) {
+      isCorrect = false;
+      break;
+    }
+  }
+
   gameState.value.isCorrect = isCorrect;
 
   // Kullanıcı yanıtını kaydet
@@ -356,118 +358,75 @@ const checkAnswer = () => {
     correct: isCorrect,
   });
 
-  // İlerlemeyi güncelle
-  gameState.value.progress = ((gameState.value.currentIndex + 1) / gameState.value.totalQuestions) * 100;
+  // Cevabı göster
+  gameState.value.showAnswer = true;
 
-  // 3 saniye sonra sonraki soruya geç
-  setTimeout(() => {
-    gameState.value.currentIndex++;
-    loadNextQuestion();
-  }, 3000);
+  // Progress bar'ı başlat
+  gameState.value.progress = 0;
+  const interval = setInterval(() => {
+    gameState.value.progress += 1;
+    if (gameState.value.progress >= 100) {
+      clearInterval(interval);
+      // Sonraki soruya geç
+      gameState.value.currentIndex++;
+      gameState.value.selectedLetters = [];
+      gameState.value.showAnswer = false;
+      gameState.value.progress = 0;
+      loadNextQuestion();
+    }
+  }, 20); // 2 saniyede 100'e ulaşmak için 20ms aralıklarla artır
 };
 
 // Oyunu bitir
 const endGame = () => {
   gameState.value.isPlaying = false;
+  updateWordStats();
+  // Display summary screen without emitting the event
 };
 
 // Oyunu yeniden başlat
 const restartGame = () => {
-  gameState.value.currentIndex = 0;
-  gameState.value.userResponses = [];
-  gameState.value.isPlaying = true;
-  loadNextQuestion();
+  gameState.value = {
+    isLoading: true,
+    isPlaying: false,
+    currentQuestion: null,
+    showAnswer: false,
+    isCorrect: false,
+    progress: 0,
+    currentIndex: 0,
+    totalQuestions: 0,
+    userResponses: [],
+    maskedIndices: [],
+    selectedLetters: [],
+    hintShown: false,
+    currentHintIndex: 0,
+  };
+  startGameWithConfig();
 };
 
-// Puan hesapla
-const calculateScore = computed(() => {
-  if (!gameState.value.userResponses.length) return 0;
-  const correctAnswers = gameState.value.userResponses.filter((response) => response.correct).length;
-  return Math.round((correctAnswers / gameState.value.userResponses.length) * 100);
-});
+// Kelime istatistiklerini güncelle
+const updateWordStats = () => {
+  if (!gameState.value.userResponses.length) return;
 
-// Doğru ve yanlış sayılarını hesapla
-const correctCount = computed(() => {
-  return gameState.value.userResponses.filter((response) => response.correct).length;
-});
+  const updateData = gameState.value.userResponses.map((response) => ({
+    word_id: response.word_id,
+    review_count: 1,
+    incorrect_count: response.correct ? 0 : 1,
+  }));
 
-const incorrectCount = computed(() => {
-  return gameState.value.userResponses.filter((response) => !response.correct).length;
-});
+  router.post(
+    '/update-words',
+    { words: updateData },
+    {
+      preserveState: true,
+      onSuccess: () => console.log('Words updated successfully'),
+      onError: (error) => console.error('Failed to update word stats', error),
+    }
+  );
+};
 
-// Klavye olaylarını dinle
+// Sayfa yüklendiğinde oyunu başlat
 onMounted(() => {
   startGameWithConfig();
-  window.addEventListener('keydown', handleKeyPress);
 });
-
-onUnmounted(() => {
-  window.removeEventListener('keydown', handleKeyPress);
-});
-
-// Klavye girişini işle
-const handleKeyPress = (event) => {
-  if (gameState.value.showAnswer || !gameState.value.isPlaying) return;
-
-  const key = event.key.toUpperCase();
-  const alphabet = getAlphabet();
-
-  // Sadece dil paketinin alfabesindeki harfleri ve boşluk karakterini kabul et
-  if (alphabet.includes(key) || key === ' ') {
-    selectLetter(key);
-  }
-
-  // Backspace ile son harfi sil
-  if (event.key === 'Backspace') {
-    clearLastLetter();
-  }
-
-  // Enter ile cevabı kontrol et
-  if (event.key === 'Enter' && isAnswerComplete.value) {
-    checkAnswer();
-  }
-};
-
-// Son harfi sil
-const clearLastLetter = () => {
-  if (gameState.value.selectedLetters.length > 0) {
-    gameState.value.selectedLetters.pop();
-  }
-};
-
-// Tüm seçilen harfleri temizle
-const clearSelectedLetters = () => {
-  gameState.value.selectedLetters = [];
-};
-
-// Dil paketinin alfabesini döndür
-const getAlphabet = () => {
-  if (!currentPack.value) return 'abcdefghijklmnopqrstuvwxyz'.split('');
-
-  // Dil koduna göre alfabe döndür
-  switch (currentPack.value.language) {
-    case 'tr':
-      return 'abcçdefgğhıijklmnoöprsştuüvyz'.split('');
-    case 'de':
-      return 'abcdefghijklmnopqrstuvwxyzäöüß'.split('');
-    case 'fr':
-      return 'abcdefghijklmnopqrstuvwxyzàâçéèêëîïôùûüÿ'.split('');
-    case 'es':
-      return 'abcdefghijklmnñopqrstuvwxyz'.split('');
-    case 'it':
-      return 'abcdefghijklmnopqrstuvwxyzàèéìòù'.split('');
-    case 'pt':
-      return 'abcdefghijklmnopqrstuvwxyzáâãàçéêíóôõú'.split('');
-    case 'ru':
-      return 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'.split('');
-    case 'ar':
-      return 'أبتثجحخدذرزسشصضطظعغفقكلمنهوي'.split('');
-    case 'ja':
-      return 'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん'.split('');
-    case 'ko':
-      return '가나다라마바사아자차카타파하'.split('');
-    default:
-      return 'abcdefghijklmnopqrstuvwxyz'.split('');
-  }
-};
 </script>

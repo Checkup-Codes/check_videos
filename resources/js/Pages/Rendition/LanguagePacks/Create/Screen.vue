@@ -1,40 +1,35 @@
 <template>
   <CheckScreen>
+    <GoBackButton url="/rendition/language-packs" />
     <TopScreen title="Yeni Dil Paketi Oluştur" />
 
-    <div class="mx-auto max-w-3xl rounded-lg bg-white p-6 shadow-md">
-      <form @submit.prevent="submitForm">
-        <div class="mb-6">
-          <label for="name" class="mb-1 block text-sm font-medium text-gray-700">Paket Adı</label>
-          <input
-            id="name"
-            v-model="form.name"
-            type="text"
-            class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
-            required
-          />
-          <div v-if="errors.name" class="mt-1 text-sm text-red-500">{{ errors.name }}</div>
+    <Card elevated>
+      <form @submit.prevent="submitForm" class="space-y-6">
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text">Paket Adı</span>
+          </label>
+          <input v-model="form.name" type="text" class="input input-bordered w-full" required />
+          <label v-if="errors.name" class="label">
+            <span class="label-text-alt text-error">{{ errors.name }}</span>
+          </label>
         </div>
 
-        <div class="mb-6">
-          <label for="description" class="mb-1 block text-sm font-medium text-gray-700">Açıklama</label>
-          <textarea
-            id="description"
-            v-model="form.description"
-            rows="3"
-            class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
-          ></textarea>
-          <div v-if="errors.description" class="mt-1 text-sm text-red-500">{{ errors.description }}</div>
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text">Açıklama</span>
+          </label>
+          <textarea v-model="form.description" rows="3" class="textarea textarea-bordered w-full"></textarea>
+          <label v-if="errors.description" class="label">
+            <span class="label-text-alt text-error">{{ errors.description }}</span>
+          </label>
         </div>
 
-        <div class="mb-6">
-          <label for="language" class="mb-1 block text-sm font-medium text-gray-700">Dil Kodu (2 karakter)</label>
-          <select
-            id="language"
-            v-model="form.language"
-            class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
-            required
-          >
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text">Dil Kodu (2 karakter)</span>
+          </label>
+          <select v-model="form.language" class="select select-bordered w-full" required>
             <option value="" disabled>Dil seçiniz</option>
             <option value="tr">Türkçe (TR)</option>
             <option value="en">İngilizce (EN)</option>
@@ -45,44 +40,38 @@
             <option value="ru">Rusça (RU)</option>
             <option value="ar">Arapça (AR)</option>
           </select>
-          <div v-if="errors.language" class="mt-1 text-sm text-red-500">{{ errors.language }}</div>
+          <label v-if="errors.language" class="label">
+            <span class="label-text-alt text-error">{{ errors.language }}</span>
+          </label>
         </div>
 
-        <div class="mb-6">
-          <label for="import_file" class="mb-1 block text-sm font-medium text-gray-700"
-            >JSON Dosyası İçe Aktar (Opsiyonel)</label
-          >
-          <input
-            id="import_file"
-            type="file"
-            accept=".json"
-            @change="handleFileUpload"
-            class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
-          />
-          <p class="mt-1 text-sm text-gray-500">
-            Daha önce dışa aktarılmış bir JSON dosyasını yükleyerek kelimeleri otomatik olarak içe aktarabilirsiniz.
-          </p>
-          <div v-if="errors.import_file" class="mt-1 text-sm text-red-500">{{ errors.import_file }}</div>
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text">JSON Dosyası İçe Aktar (Opsiyonel)</span>
+          </label>
+          <input type="file" accept=".json" @change="handleFileUpload" class="file-input file-input-bordered w-full" />
+          <label class="label">
+            <span class="label-text-alt"
+              >Daha önce dışa aktarılmış bir JSON dosyasını yükleyerek kelimeleri otomatik olarak içe
+              aktarabilirsiniz.</span
+            >
+          </label>
+          <label v-if="errors.import_file" class="label">
+            <span class="label-text-alt text-error">{{ errors.import_file }}</span>
+          </label>
         </div>
 
-        <div class="flex justify-end space-x-3">
-          <button
-            type="button"
-            @click="goBack"
-            class="rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
-          >
-            İptal
-          </button>
-          <button
-            type="submit"
-            class="rounded-md bg-black px-4 py-2 text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
-            :disabled="processing"
-          >
+        <div class="divider"></div>
+
+        <div class="flex justify-end gap-2">
+          <button type="button" @click="goBack" class="btn btn-ghost">İptal</button>
+          <button type="submit" class="btn btn-primary" :disabled="processing">
+            <span v-if="processing" class="loading loading-spinner loading-sm"></span>
             {{ processing ? 'Kaydediliyor...' : 'Kaydet' }}
           </button>
         </div>
       </form>
-    </div>
+    </Card>
   </CheckScreen>
 </template>
 
@@ -90,8 +79,10 @@
 import { ref, watch } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { router } from '@inertiajs/vue3';
-import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
+import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
+import GoBackButton from '@/Components/GoBackButton.vue';
+import Card from '@/Pages/WritesCategories/_components/Card.vue';
 
 const props = defineProps({
   screen: Object,

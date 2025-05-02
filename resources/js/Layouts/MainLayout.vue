@@ -1,11 +1,10 @@
 <template>
-  <div class="bg-white">
+  <div>
     <SidebarLayout
-      class="fixed inset-y-0 left-0 z-40 hidden w-56 overflow-hidden rounded border bg-white text-gray-900 shadow lg:block"
+      class="fixed inset-y-0 left-0 z-40 hidden w-56 overflow-hidden lg:block"
       @link-clicked="toggleSidebar"
     />
-
-    <div class="h-full overflow-hidden lg:pl-56">
+    <div class="lg:pl-56">
       <HeaderLayout @toggle-sidebar="toggleSidebar" />
       <div>
         <slot>Default Content</slot>
@@ -37,23 +36,3 @@ const toggleSidebar = () => {
   showSidebar.value = !showSidebar.value;
 };
 </script>
-
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease-out;
-}
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.slide-up-enter-active,
-.slide-up-leave-active {
-  transition: transform 0.3s ease-out;
-}
-.slide-up-enter,
-.slide-up-leave-to {
-  transform: translateY(100%);
-}
-</style>

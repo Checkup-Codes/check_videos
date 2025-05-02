@@ -152,7 +152,7 @@
 import { ref, computed } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
-import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
+import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
 
 const props = defineProps({

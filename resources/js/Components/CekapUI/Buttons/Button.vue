@@ -37,7 +37,7 @@ const buttonClasses = computed(() => {
     'inline-flex my-2 items-center justify-center font-semibold transition-colors focus:outline-none rounded-md';
 
   const variantClasses = {
-    default: 'bg-gray-800 text-white hover:bg-gray-700 focus:ring-gray-500',
+    default: 'bg-base-300 text-base-content ',
     primary: 'bg-indigo-600 text-white hover:bg-indigo-500 focus:ring-indigo-500',
     secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-400',
     outline: 'border border-gray-300 text-gray-900 hover:bg-gray-100 focus:ring-gray-400',

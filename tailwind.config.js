@@ -1,5 +1,6 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
+import daisyui from 'daisyui';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -34,10 +35,27 @@ export default {
                 '5xl': '3200px',
             },
             height: {
+                'screen-minus': 'calc(100vh)',
+                'screen-minus-1': 'calc(100vh - 0.25rem)',
+                'screen-minus-4': 'calc(100vh - 1rem)',
                 'screen-minus-10': 'calc(100vh - 2.5rem)',
+                'screen-minus-12': 'calc(100vh - 3rem)',
+                'screen-minus-16': 'calc(100vh - 4rem)',
+                'screen-minus-18': 'calc(100vh - 4.5rem)',
+                'screen-minus-20': 'calc(100vh - 5rem)',
+                'screen-minus-28': 'calc(100vh - 7rem)',
               },
         },
     },
 
-    plugins: [forms],
+    plugins: [forms, daisyui],
+    daisyui: {
+        themes: ["light", "dark"],
+        darkTheme: "dark",
+        base: true,
+        styled: true,
+        utils: true,
+        prefix: "",
+        logs: false,
+    },
 };

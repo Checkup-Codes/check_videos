@@ -1,12 +1,12 @@
 <template>
-  <CheckLayout>
+  <LayoutProjects>
     <template #screen>
       <Screen />
     </template>
-  </CheckLayout>
+  </LayoutProjects>
 </template>
 
 <script setup>
-import CheckLayout from '@/Pages/Projects/_layouts/CheckLayout.vue';
+import LayoutProjects from '@/Pages/Projects/_layouts/LayoutProjects.vue';
 import Screen from '@/Pages/Projects/Customers/Edit/Screen.vue';
 </script>

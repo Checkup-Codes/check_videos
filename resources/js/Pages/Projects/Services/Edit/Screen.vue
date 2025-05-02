@@ -1,115 +1,207 @@
 <template>
-  <div class="flex min-h-screen flex-col items-center bg-gray-50 p-6">
-    <h1 class="mb-8 text-3xl font-bold text-gray-700">Hizmeti Düzenle</h1>
+  <CheckScreen>
+    <GoBackButton :url="`/services/${form.id}`" />
+    <TopScreen title="Servisi Düzenle" />
 
-    <form @submit.prevent="handleSubmit" class="w-full max-w-lg space-y-8">
-      <div class="rounded-lg border border-gray-200 bg-white p-6 shadow">
-        <label class="mb-2 block font-medium text-gray-700">Hizmet Adı</label>
-        <input
-          v-model="form.name"
-          type="text"
-          class="w-full rounded border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
-          placeholder="Hizmet adını girin"
-        />
+    <Card elevated>
+      <form @submit.prevent="handleSubmit" class="space-y-6">
+        <div class="divider">Servis Bilgileri</div>
 
-        <label class="mb-2 mt-4 block font-medium text-gray-700">Hizmet Açıklaması</label>
-        <textarea
-          v-model="form.description"
-          class="w-full rounded border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
-          placeholder="Hizmet açıklamasını girin"
-          rows="3"
-        ></textarea>
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text">Servis Adı</span>
+          </label>
+          <input
+            v-model="form.name"
+            type="text"
+            class="input input-bordered w-full"
+            placeholder="Servis adı"
+            required
+          />
+        </div>
 
-        <label class="mb-2 mt-4 block font-medium text-gray-700">Fiyat (USD)</label>
-        <input
-          v-model="form.price"
-          type="number"
-          class="w-full rounded border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
-          placeholder="Fiyatı girin"
-        />
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text">Servis Açıklaması</span>
+          </label>
+          <textarea
+            v-model="form.description"
+            class="textarea textarea-bordered min-h-[120px] w-full"
+            placeholder="Servis açıklaması"
+          ></textarea>
+        </div>
 
-        <label class="mb-2 mt-4 block font-medium text-gray-700">Üst Kategori</label>
-        <select
-          v-model="form.parent_id"
-          class="w-full rounded border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text">Fiyat</span>
+          </label>
+          <div class="input-group">
+            <input v-model="form.price" type="number" class="input input-bordered w-full" placeholder="Fiyat" />
+            <span class="bg-primary text-primary-content">USD</span>
+          </div>
+        </div>
+
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text">Üst Kategori</span>
+          </label>
+          <select v-model="form.parent_id" class="select select-bordered w-full">
+            <option :value="null">Yok</option>
+            <option v-for="parent in parentOptions" :key="parent.id" :value="parent.id">
+              {{ parent.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="divider">Alt Kategoriler</div>
+
+        <div v-if="form.subCategories.length === 0" class="alert alert-info">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            class="h-6 w-6 shrink-0 stroke-current"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          <span>Henüz alt kategori bulunmamaktadır. "Alt Kategori Ekle" butonuyla ekleyebilirsiniz.</span>
+        </div>
+
+        <div
+          v-for="(subCategory, index) in form.subCategories"
+          :key="index"
+          class="border-primary bg-base-100 rounded-r-lg border-l-4 p-4 shadow-sm"
         >
-          <option :value="null">Yok</option>
-          <option v-for="parent in parentOptions" :key="parent.id" :value="parent.id">
-            {{ parent.name }}
-          </option>
-        </select>
-      </div>
-
-      <div class="rounded-lg border border-gray-200 bg-white p-6 shadow">
-        <h2 class="mb-4 text-xl font-semibold text-blue-600">Alt Kategoriler</h2>
-
-        <ul class="space-y-6">
-          <li v-for="(subCategory, index) in form.subCategories" :key="index" class="border-l-4 border-gray-200 pl-4">
-            <label class="block font-medium text-gray-700">Alt Kategori Adı</label>
+          <div class="form-control mb-2 w-full">
+            <label class="label">
+              <span class="label-text">Alt Kategori Adı</span>
+            </label>
             <input
               v-model="subCategory.name"
               type="text"
-              class="w-full rounded border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
-              placeholder="Alt kategori adını girin"
+              class="input input-bordered w-full"
+              placeholder="Alt kategori adı"
             />
+          </div>
 
-            <label class="mt-4 block font-medium text-gray-700">Fiyat (USD)</label>
-            <input
-              v-model="subCategory.price"
-              type="number"
-              class="w-full rounded border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
-              placeholder="Alt kategori fiyatını girin"
-            />
+          <div class="form-control w-full">
+            <label class="label">
+              <span class="label-text">Fiyat</span>
+            </label>
+            <div class="input-group">
+              <input
+                v-model="subCategory.price"
+                type="number"
+                class="input input-bordered w-full"
+                placeholder="Fiyat"
+              />
+              <span class="bg-primary text-primary-content">USD</span>
+            </div>
+          </div>
 
-            <button @click.prevent="removeSubCategory(index)" class="mt-3 text-red-500 hover:text-red-600">
-              Alt Kategoriyi Kaldır
+          <div class="mt-4 flex justify-end">
+            <button @click.prevent="removeSubCategory(index)" class="btn btn-sm btn-error">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="mr-1 h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+              Kaldır
             </button>
-          </li>
-        </ul>
+          </div>
+        </div>
 
-        <button
-          @click.prevent="addSubCategory"
-          class="mt-6 w-full rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-        >
-          Yeni Alt Kategori Ekle
-        </button>
-      </div>
-
-      <div class="flex space-x-4">
-        <button
-          type="submit"
-          class="flex-1 rounded bg-green-500 p-3 font-semibold text-white shadow-md hover:bg-green-600"
-        >
-          Değişiklikleri Kaydet
+        <button @click.prevent="addSubCategory" class="btn btn-outline btn-primary w-full">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="mr-1 h-5 w-5"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          Alt Kategori Ekle
         </button>
 
-        <button
-          @click.prevent="deleteService"
-          class="flex-1 rounded bg-red-500 p-3 font-semibold text-white shadow-md hover:bg-red-600"
-        >
-          Hizmeti Sil
-        </button>
-      </div>
-    </form>
-  </div>
+        <div class="divider"></div>
+
+        <div class="flex items-center justify-between">
+          <button @click.prevent="deleteService" class="btn btn-error">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="mr-1 h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+            Servisi Sil
+          </button>
+          <div class="flex gap-2">
+            <Link :href="`/services/${form.id}`" class="btn btn-ghost">İptal</Link>
+            <button type="submit" class="btn btn-primary">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="mr-1 h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              Kaydet
+            </button>
+          </div>
+        </div>
+      </form>
+    </Card>
+  </CheckScreen>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
-import { usePage, useForm } from '@inertiajs/vue3';
+import { usePage, useForm, Link } from '@inertiajs/vue3';
+import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
+import GoBackButton from '@/Components/GoBackButton.vue';
+import Card from '@/Pages/WritesCategories/_components/Card.vue';
 
 const { props } = usePage();
+const service = computed(() => props.service || {});
+
 const form = useForm({
-  id: props.service.id,
-  name: props.service.name || '',
-  description: props.service.description || '',
-  price: props.service.price || '',
-  parent_id: props.service.parent_id || null,
-  subCategories: props.service.subCategories || [],
+  id: service.value.id,
+  name: service.value.name || '',
+  description: service.value.description || '',
+  price: service.value.price || '',
+  parent_id: service.value.parent_id || null,
+  subCategories: service.value.subCategories || [],
 });
 
 const parentOptions = computed(() => {
-  return props.services.filter((s) => s.id !== form.id);
+  return (props.services || []).filter((s) => s.id !== form.id);
 });
 
 const addSubCategory = () => {
@@ -125,7 +217,7 @@ const handleSubmit = () => {
 };
 
 const deleteService = () => {
-  if (confirm('Bu hizmeti silmek istediğinize emin misiniz?')) {
+  if (confirm('Bu servisi silmek istediğinize emin misiniz?')) {
     form.delete(`/services/${form.id}`);
   }
 };

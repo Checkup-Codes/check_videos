@@ -10,7 +10,7 @@
 import { ref, computed } from 'vue';
 import { Link, usePage, router } from '@inertiajs/vue3';
 import WriteContent from '@/Components/CekapUI/Typography/TextScreen.vue';
-import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
+import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
 import '@/Shared/Css/quill-custom-styles.css';
 

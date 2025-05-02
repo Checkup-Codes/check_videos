@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import CheckLayout from '@/Components/CekapUI/Modals/CheckLayout.vue';
+import CheckLayout from '@/Components/CekapUI/Slots/CheckLayout.vue';
 import SidebarLayoutWrite from '@/Pages/WritesCategories/_layouts/SidebarLayoutWrite.vue';
 import SidebarLayoutCategory from '@/Pages/WritesCategories/_layouts/SidebarLayoutCategory.vue';
 import FlashMessage from '@/Components/CekapUI/Notifications/FlashMessage.vue';

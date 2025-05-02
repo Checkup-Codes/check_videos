@@ -1,69 +1,39 @@
 <template>
   <CheckScreen>
-    <TopScreen title="Kelime Oluştur" />
+    <GoBackButton url="/rendition/words" />
+    <Card elevated>
+      <form @submit.prevent="submitForm" class="space-y-6">
+        <div class="divider">Temel Bilgiler</div>
 
-    <!-- Error Alert -->
-    <div v-if="props.error" class="mx-6 mt-6 rounded-md bg-red-50 p-4">
-      <div class="flex">
-        <div class="flex-shrink-0">
-          <svg class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-            />
-          </svg>
-        </div>
-        <div class="ml-3">
-          <h3 class="text-sm font-medium text-red-800">{{ props.error }}</h3>
-        </div>
-      </div>
-    </div>
-
-    <div class="mx-auto max-w-4xl rounded-lg bg-white p-6 shadow-md">
-      <form @submit.prevent="submitForm">
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <!-- Temel Bilgiler -->
-          <div class="col-span-1 md:col-span-2">
-            <h3 class="mb-3 text-lg font-semibold text-gray-700">Temel Bilgiler</h3>
-          </div>
-
           <!-- Kelime -->
-          <div class="mb-4">
-            <label for="word" class="mb-1 block text-sm font-medium text-gray-700">Kelime</label>
-            <input
-              id="word"
-              v-model="form.word"
-              type="text"
-              class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
-              required
-            />
-            <div v-if="errors.word" class="mt-1 text-sm text-red-500">{{ errors.word }}</div>
+          <div class="form-control w-full">
+            <label class="label">
+              <span class="label-text">Kelime</span>
+            </label>
+            <input type="text" v-model="form.word" class="input input-bordered w-full" required />
+            <label v-if="errors.word" class="label">
+              <span class="label-text-alt text-error">{{ errors.word }}</span>
+            </label>
           </div>
 
           <!-- Anlam -->
-          <div class="mb-4">
-            <label for="meaning" class="mb-1 block text-sm font-medium text-gray-700">Anlam</label>
-            <input
-              id="meaning"
-              v-model="form.meaning"
-              type="text"
-              class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
-              required
-            />
-            <div v-if="errors.meaning" class="mt-1 text-sm text-red-500">{{ errors.meaning }}</div>
+          <div class="form-control w-full">
+            <label class="label">
+              <span class="label-text">Anlam</span>
+            </label>
+            <input type="text" v-model="form.meaning" class="input input-bordered w-full" required />
+            <label v-if="errors.meaning" class="label">
+              <span class="label-text-alt text-error">{{ errors.meaning }}</span>
+            </label>
           </div>
 
           <!-- Tür -->
-          <div class="mb-4">
-            <label for="type" class="mb-1 block text-sm font-medium text-gray-700">Tür</label>
-            <select
-              id="type"
-              v-model="form.type"
-              class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
-              required
-            >
+          <div class="form-control w-full">
+            <label class="label">
+              <span class="label-text">Tür</span>
+            </label>
+            <select v-model="form.type" class="select select-bordered w-full" required>
               <option value="" disabled>Tür seçiniz</option>
               <option value="noun">İsim (Noun)</option>
               <option value="verb">Fiil (Verb)</option>
@@ -75,18 +45,17 @@
               <option value="interjection">Ünlem (Interjection)</option>
               <option value="phrase">Deyim (Phrase)</option>
             </select>
-            <div v-if="errors.type" class="mt-1 text-sm text-red-500">{{ errors.type }}</div>
+            <label v-if="errors.type" class="label">
+              <span class="label-text-alt text-error">{{ errors.type }}</span>
+            </label>
           </div>
 
           <!-- Dil -->
-          <div class="mb-4">
-            <label for="language" class="mb-1 block text-sm font-medium text-gray-700">Dil</label>
-            <select
-              id="language"
-              v-model="form.language"
-              class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
-              required
-            >
+          <div class="form-control w-full">
+            <label class="label">
+              <span class="label-text">Dil</span>
+            </label>
+            <select v-model="form.language" class="select select-bordered w-full" required>
               <option value="" disabled>Dil seçiniz</option>
               <option value="tr">Türkçe (TR)</option>
               <option value="en">İngilizce (EN)</option>
@@ -97,267 +66,191 @@
               <option value="ru">Rusça (RU)</option>
               <option value="ar">Arapça (AR)</option>
             </select>
-            <div v-if="errors.language" class="mt-1 text-sm text-red-500">{{ errors.language }}</div>
+            <label v-if="errors.language" class="label">
+              <span class="label-text-alt text-error">{{ errors.language }}</span>
+            </label>
           </div>
 
           <!-- Zorluk Seviyesi -->
-          <div class="mb-4">
-            <label for="difficulty_level" class="mb-1 block text-sm font-medium text-gray-700">Zorluk Seviyesi</label>
-            <select
-              id="difficulty_level"
-              v-model="form.difficulty_level"
-              class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
-              required
-            >
+          <div class="form-control w-full">
+            <label class="label">
+              <span class="label-text">Zorluk Seviyesi</span>
+            </label>
+            <select v-model="form.difficulty_level" class="select select-bordered w-full" required>
               <option value="" disabled>Zorluk seviyesi seçiniz</option>
               <option :value="1">Kolay</option>
               <option :value="2">Orta</option>
               <option :value="3">Zor</option>
               <option :value="4">Çok Zor</option>
             </select>
-            <div v-if="errors.difficulty_level" class="mt-1 text-sm text-red-500">{{ errors.difficulty_level }}</div>
+            <label v-if="errors.difficulty_level" class="label">
+              <span class="label-text-alt text-error">{{ errors.difficulty_level }}</span>
+            </label>
           </div>
 
           <!-- Öğrenme Durumu -->
-          <div class="mb-4">
-            <label for="learning_status" class="mb-1 block text-sm font-medium text-gray-700">Öğrenme Durumu</label>
-            <select
-              id="learning_status"
-              v-model="form.learning_status"
-              class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
-            >
+          <div class="form-control w-full">
+            <label class="label">
+              <span class="label-text">Öğrenme Durumu</span>
+            </label>
+            <select v-model="form.learning_status" class="select select-bordered w-full">
               <option :value="0">Öğrenilmedi</option>
               <option :value="1">Öğreniliyor</option>
               <option :value="2">Öğrenildi</option>
             </select>
-            <div v-if="errors.learning_status" class="mt-1 text-sm text-red-500">{{ errors.learning_status }}</div>
           </div>
 
           <!-- Öne Çıkar -->
-          <div class="mb-4">
-            <div class="flex items-center">
-              <input id="flag" v-model="form.flag" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-black" />
-              <label for="flag" class="ml-2 block text-sm text-gray-700">Öne Çıkar</label>
-            </div>
-            <div v-if="errors.flag" class="mt-1 text-sm text-red-500">{{ errors.flag }}</div>
+          <div class="form-control">
+            <label class="label cursor-pointer">
+              <span class="label-text">Öne Çıkar</span>
+              <input type="checkbox" v-model="form.flag" class="checkbox" />
+            </label>
           </div>
+        </div>
 
-          <!-- Dil Paketleri -->
-          <div class="col-span-1 mb-4 md:col-span-2">
-            <label class="mb-1 block text-sm font-medium text-gray-700">Dil Paketleri</label>
-            <div class="max-h-60 overflow-y-auto rounded-md border border-gray-300 p-3">
-              <div v-if="props.languagePacks.length === 0" class="text-sm text-gray-500">
-                Henüz dil paketi bulunmamaktadır.
-              </div>
-              <div v-else class="grid grid-cols-1 gap-2 md:grid-cols-2">
-                <div v-for="pack in props.languagePacks" :key="pack.id" class="flex items-center">
-                  <input
-                    :id="`pack-${pack.id}`"
-                    v-model="form.language_pack_ids"
-                    :value="pack.id"
-                    type="checkbox"
-                    class="h-4 w-4 rounded border-gray-300 text-black"
-                  />
-                  <label :for="`pack-${pack.id}`" class="ml-2 block text-sm text-gray-700">
-                    {{ pack.name }} ({{ getLanguageName(pack.language) }})
-                  </label>
-                </div>
-              </div>
-            </div>
-            <div v-if="errors.language_pack_ids" class="mt-1 text-sm text-red-500">{{ errors.language_pack_ids }}</div>
+        <!-- Dil Paketleri -->
+        <div class="divider">Dil Paketleri</div>
+
+        <Card>
+          <div v-if="props.languagePacks.length === 0" class="text-sm opacity-70">
+            Henüz dil paketi bulunmamaktadır.
           </div>
-
-          <!-- Örnek Cümleler -->
-          <div class="col-span-1 md:col-span-2">
-            <h3 class="mb-3 text-lg font-semibold text-gray-700">Örnek Cümleler</h3>
-            <div
-              v-for="(sentence, index) in form.example_sentences"
-              :key="index"
-              class="mb-3 grid grid-cols-1 gap-4 md:grid-cols-2"
-            >
-              <div>
-                <label :for="`sentence-${index}`" class="mb-1 block text-sm font-medium text-gray-700">Cümle</label>
-                <input
-                  :id="`sentence-${index}`"
-                  v-model="form.example_sentences[index]"
-                  type="text"
-                  class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                />
-              </div>
-              <div class="flex items-end">
-                <div class="flex-grow">
-                  <label :for="`translation-${index}`" class="mb-1 block text-sm font-medium text-gray-700"
-                    >Çeviri</label
-                  >
-                  <input
-                    :id="`translation-${index}`"
-                    v-model="form.example_translations[index]"
-                    type="text"
-                    class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                  />
-                </div>
-                <button
-                  type="button"
-                  @click="removeExampleSentence(index)"
-                  class="ml-2 px-2 py-2 text-red-600 hover:text-red-800 focus:outline-none"
-                >
-                  <svg
-                    class="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                    ></path>
-                  </svg>
-                </button>
-              </div>
+          <div v-else class="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
+            <div v-for="pack in props.languagePacks" :key="pack.id" class="form-control">
+              <label class="label cursor-pointer">
+                <span class="label-text">
+                  {{ pack.name }}
+                  <span class="badge badge-sm badge-outline ml-1">{{ pack.language }}</span>
+                </span>
+                <input type="checkbox" v-model="form.language_pack_ids" :value="pack.id" class="checkbox checkbox-sm" />
+              </label>
             </div>
-            <button
-              type="button"
-              @click="addExampleSentence"
-              class="mt-2 rounded-md bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
-            >
-              Örnek Cümle Ekle
-            </button>
           </div>
+          <label v-if="errors.language_pack_ids" class="label">
+            <span class="label-text-alt text-error">{{ errors.language_pack_ids }}</span>
+          </label>
+        </Card>
 
-          <!-- Eş Anlamlılar -->
-          <div class="col-span-1 mb-6 md:col-span-2">
-            <h3 class="mb-3 text-lg font-semibold text-gray-700">Eş Anlamlılar</h3>
-            <div class="mb-2 flex flex-wrap gap-2">
-              <div
-                v-for="(synonym, index) in form.synonyms"
-                :key="index"
-                class="flex items-center rounded-full bg-gray-100 px-3 py-1"
-              >
-                <span>{{ synonym }}</span>
-                <button
-                  type="button"
-                  @click="removeSynonym(index)"
-                  class="ml-2 text-gray-500 hover:text-gray-700 focus:outline-none"
-                >
-                  <svg
-                    class="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    ></path>
-                  </svg>
-                </button>
-              </div>
+        <!-- Örnek Cümleler -->
+        <div class="divider">Örnek Cümleler</div>
+
+        <Card>
+          <div
+            v-for="(sentence, index) in form.example_sentences"
+            :key="index"
+            class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2"
+          >
+            <div class="form-control w-full">
+              <label class="label">
+                <span class="label-text">Cümle {{ index + 1 }}</span>
+              </label>
+              <input v-model="form.example_sentences[index]" class="input input-bordered w-full" />
             </div>
-            <div class="flex">
-              <input
-                v-model="newSynonym"
-                type="text"
-                placeholder="Eş anlamlı kelime ekleyin"
-                class="flex-grow rounded-l-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                @keydown.enter.prevent="addSynonym"
-              />
+            <div class="flex items-end gap-2">
+              <div class="form-control w-full">
+                <label class="label">
+                  <span class="label-text">Çeviri</span>
+                </label>
+                <input v-model="form.example_translations[index]" class="input input-bordered w-full" />
+              </div>
               <button
                 type="button"
-                @click="addSynonym"
-                class="rounded-r-md bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                @click="removeExampleSentence(index)"
+                class="btn btn-circle btn-outline btn-sm btn-error mb-2"
               >
-                Ekle
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
           </div>
-        </div>
+          <button type="button" @click="addExampleSentence" class="btn btn-outline btn-sm">Örnek Cümle Ekle</button>
+        </Card>
 
-        <div class="mt-6 flex justify-end space-x-3">
-          <button
-            type="button"
-            @click="goBack"
-            class="rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
-          >
-            İptal
-          </button>
-          <button
-            type="submit"
-            class="rounded-md bg-black px-4 py-2 text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
-            :disabled="processing"
-          >
-            {{ processing ? 'Kaydediliyor...' : 'Kaydet' }}
+        <!-- Eş Anlamlılar -->
+        <div class="divider">Eş Anlamlılar</div>
+
+        <Card>
+          <div class="mb-4 flex flex-wrap gap-2">
+            <div v-for="(synonym, index) in form.synonyms" :key="index" class="badge badge-lg badge-outline gap-1">
+              {{ synonym }}
+              <button type="button" @click="removeSynonym(index)" class="btn btn-circle btn-ghost btn-xs">
+                <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <input
+              v-model="newSynonym"
+              type="text"
+              class="input input-bordered w-full"
+              placeholder="Yeni eş anlamlı kelime"
+              @keyup.enter.prevent="addSynonym"
+            />
+            <button type="button" @click="addSynonym" class="btn btn-outline">Ekle</button>
+          </div>
+        </Card>
+
+        <!-- Form Buttons -->
+        <div class="divider"></div>
+
+        <div class="flex justify-end gap-2">
+          <Link :href="route('rendition.words.index')" class="btn btn-ghost"> İptal </Link>
+          <button type="submit" class="btn btn-primary" :disabled="processing">
+            <span v-if="processing" class="loading loading-spinner loading-sm"></span>
+            Kaydet
           </button>
         </div>
       </form>
-    </div>
+    </Card>
   </CheckScreen>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useForm, usePage } from '@inertiajs/vue3';
-import { router } from '@inertiajs/vue3';
-import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
+import { ref, computed } from 'vue';
+import { useForm, usePage, Link } from '@inertiajs/vue3';
+import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
+import GoBackButton from '@/Components/GoBackButton.vue';
+import Card from '@/Pages/WritesCategories/_components/Card.vue';
 
 const props = defineProps({
   languagePacks: Array,
-  screen: Object,
   error: String,
+  screen: Object,
 });
+
+const errors = computed(() => usePage().props.errors);
+const processing = ref(false);
+const newSynonym = ref('');
 
 const form = useForm({
   word: '',
   meaning: '',
   type: '',
   language: '',
+  difficulty_level: '',
   learning_status: 0,
   flag: false,
-  difficulty_level: '',
   language_pack_ids: [],
-  example_sentences: [],
-  example_translations: [],
+  example_sentences: [''],
+  example_translations: [''],
   synonyms: [],
 });
 
-const processing = ref(false);
-const newSynonym = ref('');
-
-// Dil kodunu dil adına çevirme
-const getLanguageName = (code) => {
-  const languages = {
-    tr: 'Türkçe',
-    en: 'İngilizce',
-    de: 'Almanca',
-    fr: 'Fransızca',
-    es: 'İspanyolca',
-    it: 'İtalyanca',
-    ru: 'Rusça',
-    ar: 'Arapça',
-  };
-
-  return languages[code] || code;
-};
-
-// Örnek cümle ekleme
 const addExampleSentence = () => {
   form.example_sentences.push('');
   form.example_translations.push('');
 };
 
-// Örnek cümle silme
 const removeExampleSentence = (index) => {
   form.example_sentences.splice(index, 1);
   form.example_translations.splice(index, 1);
 };
 
-// Eş anlamlı ekleme
 const addSynonym = () => {
   if (newSynonym.value.trim()) {
     form.synonyms.push(newSynonym.value.trim());
@@ -365,14 +258,27 @@ const addSynonym = () => {
   }
 };
 
-// Eş anlamlı silme
 const removeSynonym = (index) => {
   form.synonyms.splice(index, 1);
 };
 
-// Form gönderme
 const submitForm = () => {
   processing.value = true;
+
+  // Remove empty example sentences
+  const validSentences = [];
+  const validTranslations = [];
+
+  form.example_sentences.forEach((sentence, index) => {
+    if (sentence.trim()) {
+      validSentences.push(sentence);
+      validTranslations.push(form.example_translations[index] || '');
+    }
+  });
+
+  form.example_sentences = validSentences;
+  form.example_translations = validTranslations;
+
   form.post(route('rendition.words.store'), {
     onSuccess: () => {
       processing.value = false;
@@ -382,11 +288,4 @@ const submitForm = () => {
     },
   });
 };
-
-// Geri dönme
-const goBack = () => {
-  router.visit(route('rendition.words.index'));
-};
-
-const errors = usePage().props.errors;
 </script>

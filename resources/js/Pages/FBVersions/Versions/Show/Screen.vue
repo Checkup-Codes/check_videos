@@ -1,57 +1,167 @@
 <template>
   <CheckScreen>
-    <div class="rounded-lg bg-white p-6 text-gray-800">
-      <div class="mb-4 flex items-center justify-between border-b pb-4">
-        <h1 class="text-2xl font-medium text-gray-800">{{ version.version }}</h1>
-        <Link
-          v-if="props.auth.user"
-          :href="`/versions/${version.id}/edit`"
-          class="text-sm font-medium text-gray-800-light hover:text-gray-800"
-        >
-          Bu versiyonu düzenle
+    <GoBackButton url="/versions" />
+    <Card elevated>
+      <div class="mb-6 flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold">{{ version.version }}</h1>
+          <p class="text-sm text-gray-500">
+            <span class="badge badge-neutral">{{ formatDate(version.release_date) }}</span>
+          </p>
+        </div>
+        <Link :href="`/versions/${version.id}/edit`" class="btn btn-sm btn-outline">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="mr-1 h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+            />
+          </svg>
+          Düzenle
         </Link>
       </div>
-      <p class="text-sm text-gray-800">{{ version.release_date }}</p>
 
-      <div v-if="version.features.length > 0" class="mt-6">
-        <h2 class="mb-2 text-lg font-semibold text-gray-800">Özellikler</h2>
-        <ul class="space-y-2">
-          <li v-for="feature in version.features" :key="feature.id" class="flex items-start">
-            <span class="mr-2 text-blue-500">&#8226;</span>
-            <div>
-              <strong class="font-bold text-gray-800">{{ feature.feature_name }}:</strong>
-              <span class="whitespace-pre-line text-gray-800">{{ feature.feature_detail }}</span>
-            </div>
-          </li>
-        </ul>
+      <!-- Description -->
+      <div class="mb-6">
+        <h2 class="mb-2 text-lg font-semibold">Açıklama</h2>
+        <div class="bg-base-200 min-h-[80px] whitespace-pre-wrap rounded-lg p-4">
+          {{ version.description ? version.description : 'Açıklama yok' }}
+        </div>
       </div>
 
-      <div v-if="version.bugs.length > 0" class="mt-6">
-        <h2 class="mb-2 text-lg font-semibold text-gray-800">Düzeltilen Hatalar</h2>
-        <ul class="space-y-2">
-          <li v-for="bug in version.bugs" :key="bug.id" class="flex items-start">
-            <span class="mr-2 text-red-500">&#8226;</span>
-            <div>
-              <strong class="text-gray-800">{{ bug.bug_name }}:</strong>
-              <span class="text-gray-800">{{ bug.bug_detail }}</span>
+      <div class="divider"></div>
+
+      <!-- Features -->
+      <div class="mb-6">
+        <h2 class="mb-4 text-lg font-semibold">Yeni Özellikler</h2>
+
+        <div v-if="!version.features || version.features.length === 0" class="alert alert-info">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            class="h-6 w-6 shrink-0 stroke-current"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          <span>Bu versiyonda yeni özellik bulunmamaktadır.</span>
+        </div>
+
+        <div v-for="(feature, index) in version.features" :key="`feature-${index}`" class="mb-4">
+          <div class="border-base-300 rounded-lg border p-4">
+            <div class="flex items-center">
+              <div class="bg-success/20 mr-3 rounded-full p-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="text-success h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 class="text-md font-semibold">{{ feature.feature_name }}</h3>
             </div>
-          </li>
-        </ul>
+            <div class="mt-3 pl-10">
+              <p class="whitespace-pre-wrap text-gray-600">{{ feature.feature_detail }}</p>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+
+      <div class="divider"></div>
+
+      <!-- Bugs -->
+      <div>
+        <h2 class="mb-4 text-lg font-semibold">Düzeltilen Hatalar</h2>
+
+        <div v-if="!version.bugs || version.bugs.length === 0" class="alert alert-info">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            class="h-6 w-6 shrink-0 stroke-current"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          <span>Bu versiyonda düzeltilen hata bulunmamaktadır.</span>
+        </div>
+
+        <div v-for="(bug, index) in version.bugs" :key="`bug-${index}`" class="mb-4">
+          <div class="border-base-300 rounded-lg border p-4">
+            <div class="flex items-center">
+              <div class="bg-error/20 mr-3 rounded-full p-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="text-error h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+              <h3 class="text-md font-semibold">{{ bug.bug_name }}</h3>
+            </div>
+            <div class="mt-3 pl-10">
+              <p class="whitespace-pre-wrap text-gray-600">{{ bug.bug_detail }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Card>
   </CheckScreen>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { usePage, Link } from '@inertiajs/vue3';
-import dayjs from 'dayjs';
-import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
+import { computed } from 'vue';
+import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
+import GoBackButton from '@/Components/GoBackButton.vue';
+import Card from '@/Pages/WritesCategories/_components/Card.vue';
+import { Link, usePage } from '@inertiajs/vue3';
 
-import 'dayjs/locale/tr';
+const props = usePage().props;
+const version = computed(() => props.version || {});
 
-dayjs.locale('tr');
+function formatDate(dateString) {
+  if (!dateString) return 'Tarih Yok';
 
-const { props } = usePage();
-const version = ref(props.version);
+  try {
+    // Tarih formatını kontrol et
+    const date = new Date(dateString);
+
+    // Geçerli tarih kontrolü
+    if (isNaN(date.getTime())) {
+      return dateString; // Eğer geçersizse, orijinal string'i döndür
+    }
+
+    return new Intl.DateTimeFormat('tr-TR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }).format(date);
+  } catch (error) {
+    console.error('Tarih formatı hatası:', error);
+    return dateString; // Hata durumunda orijinal string'i döndür
+  }
+}
 </script>

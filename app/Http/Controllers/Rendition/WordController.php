@@ -20,10 +20,37 @@ class WordController extends Controller
     public function index()
     {
         try {
-            // Use with eager loading but add error handling
-            $words = Word::with(['exampleSentences', 'synonyms', 'languagePacks'])->get();
+            // Get query parameters
+            $search = request()->input('search');
+            $language = request()->input('language');
+            $status = request()->input('status');
+            $perPage = 15; // Number of words per page
 
-            // SQL sorgusunun Eloquent versiyonu - Alternative approach to avoid GROUP BY issues
+            // Start building the query
+            $query = Word::query();
+
+            // Apply filters
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('word', 'like', "%{$search}%")
+                        ->orWhere('meaning', 'like', "%{$search}%");
+                });
+            }
+
+            if ($language) {
+                $query->where('language', $language);
+            }
+
+            if ($status !== null && $status !== '') {
+                $query->where('learning_status', $status);
+            }
+
+            // Execute query with pagination
+            $words = $query->with(['exampleSentences', 'synonyms'])
+                ->orderBy('word')
+                ->paginate($perPage);
+
+            // Get language packs for the sidebar
             $languagePacks = LanguagePack::select([
                 'language_packs.id',
                 'language_packs.name',
@@ -36,7 +63,20 @@ class WordController extends Controller
                 ->get();
 
             return Inertia::render('Rendition/Words/IndexWord', [
-                'words' => $words,
+                'words' => $words->items(),
+                'pagination' => [
+                    'current_page' => $words->currentPage(),
+                    'last_page' => $words->lastPage(),
+                    'per_page' => $words->perPage(),
+                    'total' => $words->total(),
+                    'from' => $words->firstItem(),
+                    'to' => $words->lastItem(),
+                ],
+                'filters' => [
+                    'search' => $search,
+                    'language' => $language,
+                    'status' => $status,
+                ],
                 'languagePacks' => $languagePacks,
                 'screen' => [
                     'isMobileSidebar' => true,
@@ -51,6 +91,19 @@ class WordController extends Controller
             // Fall back to returning an empty dataset
             return Inertia::render('Rendition/Words/IndexWord', [
                 'words' => [],
+                'pagination' => [
+                    'current_page' => 1,
+                    'last_page' => 1,
+                    'per_page' => 15,
+                    'total' => 0,
+                    'from' => 0,
+                    'to' => 0,
+                ],
+                'filters' => [
+                    'search' => $search ?? '',
+                    'language' => $language ?? '',
+                    'status' => $status ?? '',
+                ],
                 'languagePacks' => [],
                 'screen' => [
                     'isMobileSidebar' => true,

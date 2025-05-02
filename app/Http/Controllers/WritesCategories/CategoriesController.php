@@ -3,73 +3,63 @@
 namespace App\Http\Controllers\WritesCategories;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use App\Models\WritesCategories\Category;
 use App\Models\WritesCategories\Write;
-use Illuminate\Support\Facades\Auth;
+use App\Services\WritesCategories\CategoryService;
+use App\Services\WritesCategories\WriteService;
+use Illuminate\Http\Request;
 
 class CategoriesController extends Controller
 {
+    private $categoryService;
+    private $writeService;
+
+    private array $screenDefault = [
+        'isMobileSidebar' => false,
+        'name' => 'categories'
+    ];
+
+    public function __construct(CategoryService $categoryService, WriteService $writeService)
+    {
+        $this->categoryService = $categoryService;
+        $this->writeService = $writeService;
+    }
+
     public function index()
     {
-        $categories = Cache::remember('categories', 60, function () {
-            return Category::with('children')->get();
-        });
+        $categories = $this->categoryService->getCategories();
+        $writes = $this->writeService->getWrites();
 
-        $writes = Cache::remember('writes', 60, function () {
-            if (Auth::check()) {
-                return Write::all();
-            }
-
-            return Write::where('status', 'published')->get();
-        });
-
-        $screen = [
-            'isMobileSidebar' => true,
-            'name' => 'categories'
-        ];
 
         return inertia('WritesCategories/Categories/IndexCategory', [
-            'writes' => $writes,
+            'screen'     => [
+                'isMobileSidebar' => true,
+                'name'            => 'categories'
+            ],
             'categories' => $categories,
-            'screen' => $screen
+            'writes'     => $writes,
         ]);
     }
 
     public function show($slug)
     {
         $category = Category::with('children')->where('slug', $slug)->firstOrFail();
-
-        $categories = Cache::remember('categories', 60, function () {
-            return Category::with('children')->get();
-        });
+        $categories = $this->categoryService->getCategories();
 
         // Mevcut kategori ve tüm alt kategorilerin ID'lerini toplama
         $categoryIds = collect([$category->id]);
         $this->getChildCategoryIds($category, $categoryIds);
 
-        $writes = Write::whereIn('category_id', $categoryIds)
-            ->when(!Auth::check(), function ($query) {
-                $query->where('status', 'published');
-            })
-            ->select('id', 'title', 'slug', 'author_id', 'category_id', 'published_at', 'status', 'views_count', 'seo_keywords', 'tags', 'meta_description', 'cover_image', 'created_at', 'updated_at')
-            ->get()
-            ->map(function ($write) {
-                return Cache::remember("write_{$write->id}", 60, function () use ($write) {
-                    return $write;
-                });
-            });
+        $writes = $this->writeService->getWritesByCategories($categoryIds);
 
-        $screen = [
-            'isMobileSidebar' => false,
-            'name' => 'categories'
-        ];
+        // Kategori için yazı sayısını hesapla
+        $category->writes_count = $writes->count();
+
         return inertia('WritesCategories/Categories/ShowCategory', [
             'category' => $category,
             'categories' => $categories,
             'writes' => $writes,
-            'screen' => $screen
+            'screen' => $this->screenDefault
         ]);
     }
 
@@ -86,18 +76,11 @@ class CategoriesController extends Controller
 
     public function create()
     {
-        $categories = Cache::remember('categories', 60, function () {
-            return Category::with('children')->get();
-        });
-
-        $screen = [
-            'isMobileSidebar' => false,
-            'name' => 'categories'
-        ];
+        $categories = $this->categoryService->getCategories();
 
         return inertia('WritesCategories/Categories/CreateCategory', [
             'categories' => $categories,
-            'screen' => $screen
+            'screen' => $this->screenDefault
         ]);
     }
 
@@ -106,104 +89,77 @@ class CategoriesController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:categories,slug',
-            'parent_id' => 'nullable|exists:categories,id',
+            'parent_id' => 'nullable|string|exists:categories,id',
+            'description' => 'nullable|string',
         ]);
 
-        $category = new Category();
-        $category->name = $request->name;
-        $category->slug = $request->slug;
-        $category->parent_id = $request->parent_id;
-        $category->save();
+        $category = $this->categoryService->createCategory($request->all());
 
-        Cache::forget('categories');
-        Cache::forget('writes');
-
-        return redirect()->route('categories.index')->with('success', 'Yeni bir kategori eklendi!');
+        return redirect()
+            ->route('categories.index')
+            ->with('success', 'Kategori başarıyla oluşturuldu.');
     }
 
-    public function edit($id)
+    public function edit(Category $category)
     {
-        $categories = Category::with('children')->get();
-
-        $category = Category::where('id', $id)->with('parent')->firstOrFail(); // Üst kategori bilgisiyle al
-
-        $screen = [
-            'isMobileSidebar' => false,
-            'name' => 'categories'
-        ];
+        $categories = $this->categoryService->getCategories();
 
         return inertia('WritesCategories/Categories/EditCategory', [
+            'category' => $category->load('parent'),
             'categories' => $categories,
-            'category' => $category,
-            'screen' => $screen
+            'screen'   => $this->screenDefault
         ]);
     }
 
-
-    public function update(Request $request, $id)
+    public function update(Request $request, Category $category)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:categories,slug,' . $id,
-            'parent_id' => 'nullable|exists:categories,id',
+            'slug' => 'required|string|max:255|unique:categories,slug,' . $category->id,
+            'parent_id' => 'nullable|string|exists:categories,id|different:id',
+            'description' => 'nullable|string',
         ]);
 
-        $category = Category::findOrFail($id);
-        $category->name = $request->name;
-        $category->slug = $request->slug;
-        $category->parent_id = $request->parent_id;
-        $category->save();
+        // Kendisininin alt kategorisi olmasını engelle
+        if ($request->filled('parent_id')) {
+            $childIds = collect();
+            $this->getChildCategoryIds($category, $childIds);
 
-        Cache::forget('categories');
+            if ($childIds->contains($request->parent_id)) {
+                return back()->withErrors(['parent_id' => 'Bir kategori kendi alt kategorisinin altına yerleştirilemez.']);
+            }
+        }
 
-        return redirect()->route('categories.index')->with('success', 'Kategori başarı ile güncellendi!');
+        $this->categoryService->updateCategory($category, $request->all());
+
+        return redirect()
+            ->route('categories.index')
+            ->with('success', 'Kategori başarıyla güncellendi.');
     }
 
-
-    public function destroy($id)
+    public function destroy(Category $category)
     {
-        $category = Category::findOrFail($id);
-        $category->delete();
+        $this->categoryService->deleteCategory($category);
 
-        Cache::forget('categories');
-        Cache::forget('writes');
-
-        return redirect()->route('categories.index')->with('success', 'Kategori silindi!');
+        return redirect()
+            ->route('categories.index')
+            ->with('success', 'Kategori başarıyla silindi.');
     }
 
     public function showByCategory($categorySlug, $writeSlug)
     {
         $category = Category::with('children')->where('slug', $categorySlug)->firstOrFail();
+        $categories = $this->categoryService->getCategories();
 
-        $categories = Cache::remember('categories', 60, function () {
-            return Category::with('children')->get();
-        });
-
-        $writes = Write::where('category_id', $category->id)
-            ->when(!Auth::check(), function ($query) {
-                $query->where('status', 'published');
-            })
-            ->select('id', 'title', 'slug', 'author_id', 'category_id', 'published_at', 'summary', 'status', 'views_count', 'seo_keywords', 'tags', 'meta_description', 'cover_image', 'created_at', 'updated_at')
-            ->get()
-            ->map(function ($write) {
-                return Cache::remember("write_{$write->id}", 60, function () use ($write) {
-                    return $write;
-                });
-            });
-
-        $write = Write::where('slug', $writeSlug)->firstOrFail();
-
-        $screen = [
-            'isMobileSidebar' => false,
-            'name' => 'categories'
-        ];
+        $writes = $this->writeService->getWritesByCategory($category);
+        $write = $this->writeService->getWriteBySlug($writeSlug);
 
         return inertia('WritesCategories/Categories/WriteByCategory', [
             'category' => $category,
             'writes' => $writes,
             'write' => $write,
             'categories' => $categories,
-            'screen' => $screen
+            'screen' => $this->screenDefault
         ]);
     }
 }

@@ -20,7 +20,7 @@
 <script setup>
 import { ref } from 'vue';
 import { usePage, Link, router } from '@inertiajs/vue3';
-import CheckSubsidebar from '@/Components/CekapUI/Modals/CheckSubsidebar.vue';
+import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
 import ToggleSubSidebarButtonClose from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 import TopSubsidebar from '@/Components/CekapUI/Typography/TopSubsidebar.vue';
 

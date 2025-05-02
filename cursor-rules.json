@@ -1,0 +1,45 @@
+{
+  "$schema": "https://raw.githubusercontent.com/codium-ai/codiumai/main/cursor.schema.json",
+  "rules": [
+    {
+      "filter": {
+        "filePath": {
+          "exclude": [
+            "routes/*",
+            "app/*",
+            "database/*",
+            "tests/*",
+            "public/*",
+            "resources/js/bootstrap.js",
+            "resources/js/app.js"
+          ]
+        }
+      },
+      "description": "Laravel backend ile ilgili veya giriş dosyaları analiz dışında bırakıldı."
+    },
+    {
+      "filter": {
+        "filePath": {
+          "include": ["resources/js/**/*.vue"]
+        }
+      },
+      "actions": {
+        "analyzeComponents": true,
+        "analyzeComposition": true,
+        "analyzeStyle": true
+      },
+      "description": "Sadece Vue component dosyaları incelensin. Composition API ve stil yapısı da analiz edilsin."
+    },
+    {
+      "filter": {
+        "componentName": {
+          "include": ["WritesCategories"]
+        }
+      },
+      "actions": {
+        "inheritComponentPatterns": ["Writes"]
+      },
+      "description": "WritesCategories bileşeninde, Writes bileşeninin modül ve yapı örnekleri dikkate alınsın."
+    }
+  ]
+}

@@ -8,24 +8,30 @@
       @update:isCollapsed="handleSidebarCollapse"
       :class="sidebarStyle"
     />
-    <div :class="isMobile ? 'hidden' : 'block'">
+    <div :class="isMobile ? 'hidden' : 'block'" class="w-full">
       <slot name="screen"></slot>
     </div>
   </CheckLayout>
 </template>
 
 <script setup>
-import CheckLayout from '@/Components/CekapUI/Modals/CheckLayout.vue';
+import CheckLayout from '@/Components/CekapUI/Slots/CheckLayout.vue';
 import SidebarLayoutVersion from '@/Pages/FBVersions/_layouts/SidebarLayoutVersion.vue';
 import FlashMessage from '@/Components/CekapUI/Notifications/FlashMessage.vue';
 import ToggleSubSidebarButtonOpen from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 import { usePage, Head } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
-const { props } = usePage();
-const sidebarStyle = props.isMobileSidebar ? '' : 'hidden lg:block';
-const screenName = props.name;
-const titleName = screenName.charAt(0).toUpperCase() + screenName.slice(1) + ' - ';
+const page = usePage();
+const props = computed(() => page.props);
+const flashSuccess = computed(() => props.value.flash?.message);
+const sidebarStyle = computed(() => (props.value.isMobileSidebar ? '' : 'hidden lg:block'));
+const screenName = computed(() => props.value.name);
+const titleName = computed(() => {
+  const name = screenName.value;
+  return name ? name.charAt(0).toUpperCase() + name.slice(1) + ' - ' : '';
+});
+const isMobile = computed(() => props.value.isMobile || false);
 const isSidebarCollapsed = ref(true);
 
 const collapseSidebar = () => {

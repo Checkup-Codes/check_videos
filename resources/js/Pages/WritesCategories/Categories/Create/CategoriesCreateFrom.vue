@@ -1,76 +1,193 @@
 <template>
-  <div class="bg-screen-bg mx-auto mt-10 w-full max-w-full overflow-auto px-5 lg:mt-0">
+  <div class="bg-base-100 mx-auto mt-10 w-full max-w-full px-5 lg:mt-0">
     <div class="container mx-auto p-4">
-      <FormDesc>Kategorileriniz için kategoriler oluşturun. İsterseniz bir üst kategori seçebilirsiniz.</FormDesc>
-      <Form @submit="createCategory">
-        <TextInput v-model="form.name" id="name" label="İsim" />
-        <TextInput v-model="form.slug" id="slug" label="Slug" />
-        <div class="mt-4">
-          <label for="parent_id_input" class="block text-sm font-medium text-gray-800">Üst Kategori</label>
-          <input
-            type="text"
-            id="parent_id_input"
-            v-model="parentSearch"
-            placeholder="Üst kategori arayın"
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          />
-          <ul
-            v-if="filteredCategories.length"
-            class="mt-2 max-h-40 overflow-y-auto rounded-md border border-gray-300 bg-white shadow-sm"
-          >
-            <li
-              v-for="category in filteredCategories"
-              :key="category.id"
-              @click="selectParentCategory(category)"
-              class="cursor-pointer px-4 py-2 hover:bg-gray-100"
-            >
-              {{ category.name }}
-            </li>
-          </ul>
-          <p v-else class="mt-2 text-sm text-gray-500">Sonuç bulunamadı.</p>
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title text-primary">Yeni Kategori</h2>
+          <p class="text-sm opacity-80">
+            Kategorileriniz için kategoriler oluşturun. İsterseniz bir üst kategori seçebilirsiniz.
+          </p>
+
+          <div class="divider"></div>
+
+          <form @submit.prevent="createCategory">
+            <div class="form-control w-full">
+              <label class="label">
+                <span class="label-text">İsim</span>
+              </label>
+              <input type="text" v-model="form.name" class="input input-bordered w-full" placeholder="Kategori ismi" />
+              <label v-if="form.errors.name" class="label">
+                <span class="label-text-alt text-error">{{ form.errors.name }}</span>
+              </label>
+            </div>
+
+            <div class="form-control mt-4 w-full">
+              <label class="label">
+                <span class="label-text">Slug</span>
+              </label>
+              <input type="text" v-model="form.slug" class="input input-bordered w-full" placeholder="kategori-slug" />
+              <label v-if="form.errors.slug" class="label">
+                <span class="label-text-alt text-error">{{ form.errors.slug }}</span>
+              </label>
+            </div>
+
+            <div class="form-control mt-4 w-full">
+              <label class="label">
+                <span class="label-text">Üst Kategori</span>
+              </label>
+              <div class="relative w-full">
+                <input
+                  type="text"
+                  v-model="parentSearch"
+                  @focus="handleFocus"
+                  @blur="handleBlur"
+                  @input="handleParentSearch"
+                  @keydown.esc="showParentList = false"
+                  class="input input-bordered w-full"
+                  placeholder="Üst kategori ara"
+                />
+
+                <div v-if="showParentList && filteredCategories.length > 0" class="absolute z-30 mt-1 w-full">
+                  <ul
+                    class="menu bg-base-100 rounded-box border-base-300 max-h-60 w-full overflow-y-auto border p-2 shadow-lg"
+                  >
+                    <li v-for="category in filteredCategories" :key="category.id">
+                      <a
+                        @mousedown="selectParentCategory(category)"
+                        class="hover:bg-primary hover:text-primary-content"
+                      >
+                        {{ category.name }}
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+
+                <div v-if="form.parent_id" class="mt-2 flex items-center">
+                  <div class="badge badge-primary">{{ parentCategoryName }}</div>
+                  <button
+                    type="button"
+                    @click="clearParentCategory"
+                    class="btn btn-ghost btn-xs ml-2"
+                    aria-label="Üst kategoriyi kaldır"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <label v-if="form.errors.parent_id" class="label">
+                <span class="label-text-alt text-error">{{ form.errors.parent_id }}</span>
+              </label>
+            </div>
+
+            <div class="card-actions mt-6 justify-end">
+              <button type="submit" class="btn btn-primary" :disabled="form.processing || isFormDisabled">
+                <span v-if="form.processing" class="loading loading-spinner loading-sm"></span>
+                Kategori Oluştur
+              </button>
+            </div>
+          </form>
         </div>
-        <Button type="submit" class="mt-4">Kategori Oluştur</Button>
-      </Form>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue';
-import { useForm, usePage } from '@inertiajs/vue3';
-import TextInput from '@/Components/CekapUI/Inputs/TextInput.vue';
-import Button from '@/Components/CekapUI/Buttons/Button.vue';
-import Form from '@/Components/CekapUI/Forms/Form.vue';
-import FormDesc from '@/Components/CekapUI/Typography/FromDesc.vue';
+import { ref, watch, computed, onMounted, nextTick } from 'vue';
+import { useForm, usePage, router } from '@inertiajs/vue3';
 
 const props = defineProps({
-  categories: Array,
+  categories: {
+    type: Array,
+    default: () => [],
+  },
 });
 
-const categories = ref(props.categories);
+// Mevcut kategorileri al veya prop'lardan kullan
+const categories = ref(props.categories || []);
 const form = useForm({
   name: '',
   slug: '',
   parent_id: '',
 });
 
+// Parent kategori arama ve seçme
 const parentSearch = ref('');
+const parentCategoryName = ref('');
+const showParentList = ref(false);
+const isLoading = ref(false);
+const dropdownTimer = ref(null);
 
-const filteredCategories = computed(() => {
-  if (!parentSearch.value) {
-    return categories.value;
+// Focus ve blur işlemleri
+const handleFocus = () => {
+  clearTimeout(dropdownTimer.value);
+  if (filteredCategories.value.length > 0) {
+    showParentList.value = true;
   }
-  return categories.value.filter((category) => category.name.toLowerCase().includes(parentSearch.value.toLowerCase()));
-});
-
-const selectParentCategory = (category) => {
-  form.parent_id = category.id;
-  parentSearch.value = category.name;
 };
 
+const handleBlur = () => {
+  dropdownTimer.value = setTimeout(() => {
+    showParentList.value = false;
+  }, 100);
+};
+
+// Filtrelenmiş kategoriler
+const filteredCategories = computed(() => {
+  if (!categories.value || categories.value.length === 0) return [];
+  if (!parentSearch.value) return categories.value;
+
+  return categories.value.filter(
+    (category) => category && category.name && category.name.toLowerCase().includes(parentSearch.value.toLowerCase())
+  );
+});
+
+// Form durumu
+const isFormDisabled = computed(() => {
+  return !form.name || !form.slug;
+});
+
+// Üst kategori araması
+const handleParentSearch = () => {
+  form.parent_id = '';
+  if (parentSearch.value.length >= 1) {
+    showParentList.value = true;
+  }
+};
+
+// Üst kategori seçme
+const selectParentCategory = (category) => {
+  if (!category || !category.id) return;
+
+  form.parent_id = category.id;
+  parentSearch.value = category.name;
+  parentCategoryName.value = category.name;
+  nextTick(() => {
+    showParentList.value = false;
+  });
+};
+
+// Üst kategoriyi temizleme
+const clearParentCategory = () => {
+  form.parent_id = '';
+  parentSearch.value = '';
+  parentCategoryName.value = '';
+};
+
+// Slug oluşturma
 watch(
   () => form.name,
   (newName) => {
+    if (!newName) return;
+
     form.slug = newName
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
@@ -78,19 +195,60 @@ watch(
   }
 );
 
-const fetchCategories = async () => {
-  const response = await fetch(route('categories.index'), { headers: { Accept: 'application/json' } });
-  const data = await response.json();
-  categories.value = data.categories || [];
-};
-
+// Kategori kaydetme
 const createCategory = () => {
-  form.post(route('categories.store')).then(() => {
-    form.reset();
-    parentSearch.value = '';
-    fetchCategories();
-  });
+  form
+    .post(route('categories.store'))
+    .then(() => {
+      console.log('Kategori başarıyla oluşturuldu');
+      form.reset();
+      parentSearch.value = '';
+      parentCategoryName.value = '';
+    })
+    .catch((error) => {
+      console.error('Kategori oluşturulurken hata:', error);
+    });
 };
 
-fetchCategories();
+// Component yüklendiğinde kategorileri getir
+onMounted(() => {
+  if (!categories.value || categories.value.length === 0) {
+    fetchCategories();
+  }
+
+  // Escape tuşu ile dropdownı kapatma için global listener
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      showParentList.value = false;
+    }
+  });
+});
+
+// Kategorileri getir
+const fetchCategories = async () => {
+  isLoading.value = true;
+
+  try {
+    const response = await fetch(route('categories.index'), {
+      headers: {
+        Accept: 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (data && data.categories) {
+      categories.value = data.categories;
+      console.log('Kategoriler yüklendi:', categories.value.length);
+    }
+  } catch (error) {
+    console.error('Kategoriler yüklenirken hata:', error);
+  } finally {
+    isLoading.value = false;
+  }
+};
 </script>

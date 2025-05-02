@@ -2,9 +2,22 @@
   <div class="border-color-one overflow-hidden border-b-2 lg:relative">
     <div class="flex h-12 items-center justify-between px-5 text-sm font-semibold">
       <span class="">{{ title }}</span>
-      <Link v-if="userName" :href="href" class="text-primary-500">
-        <Button :title="title" size="xsmall"> + </Button>
-      </Link>
+      <div class="flex items-center gap-2">
+        <button
+          v-if="showExpandCollapseButton"
+          @click="$emit('toggle-expand')"
+          class="btn btn-ghost btn-xs"
+          :title="isExpanded ? 'Tümünü Daralt' : 'Tümünü Genişlet'"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path v-if="isExpanded" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+            <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <Link v-if="userName" :href="href" class="text-primary-500">
+          <Button :title="title" size="xsmall"> + </Button>
+        </Link>
+      </div>
     </div>
   </div>
 </template>
@@ -19,5 +32,15 @@ const userName = props.auth.user?.name;
 const vueProps = defineProps({
   title: String,
   href: String,
+  showExpandCollapseButton: {
+    type: Boolean,
+    default: false,
+  },
+  isExpanded: {
+    type: Boolean,
+    default: false,
+  },
 });
+
+defineEmits(['toggle-expand']);
 </script>

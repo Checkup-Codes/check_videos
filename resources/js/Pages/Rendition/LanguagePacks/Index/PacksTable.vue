@@ -126,7 +126,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
-import CheckScreen from '@/Components/CekapUI/Modals/CheckScreen.vue';
+import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
 
 // Props tanımı

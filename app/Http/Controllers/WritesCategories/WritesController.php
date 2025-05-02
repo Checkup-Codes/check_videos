@@ -3,27 +3,28 @@
 namespace App\Http\Controllers\WritesCategories;
 
 use App\Http\Controllers\Controller;
-use App\Models\WritesCategories\Category;
 use App\Models\WritesCategories\Write;
+use App\Services\WritesCategories\WriteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 
 class WritesController extends Controller
 {
-    private const CACHE_TTL = 60;
-
+    private $writeService;
 
     private array $screenDefault = [
         'isMobileSidebar' => false,
         'name' => 'writes'
     ];
 
+    public function __construct(WriteService $writeService)
+    {
+        $this->writeService = $writeService;
+    }
 
     public function index()
     {
-        $categories = $this->getCategories();
-        $writes = $this->getWrites();
+        $writes = $this->writeService->getWrites();
 
         return inertia('WritesCategories/Writes/IndexWrite', [
             'screen'     => [
@@ -31,29 +32,25 @@ class WritesController extends Controller
                 'name'            => 'writes'
             ],
             'writes'     => $writes,
-            'categories' => $categories,
         ]);
     }
 
     public function create()
     {
         return inertia('WritesCategories/Writes/CreateWrite', [
-            'writes'     => $this->getAllWrites(),
-            'categories' => $this->getCategories(),
+            'writes'     => $this->writeService->getAllWrites(),
+            'categories' => $this->writeService->getCategories(),
             'screen'     => $this->screenDefault
         ]);
     }
 
     public function show($slug)
     {
-        $categories = $this->getCategories();
-        $writes     = $this->getWrites();
+        $categories = $this->writeService->getCategories();
+        $writes     = $this->writeService->getWrites();
+        $write      = $this->writeService->getWriteBySlug($slug);
 
-        $write = Write::with(['writeDraws' => function ($query) {
-            $query->orderBy('version', 'desc')->latest();
-        }])->where('slug', $slug)->firstOrFail();
-
-        $write->increment('views_count');
+        $this->writeService->incrementViewCount($write);
 
         return inertia('WritesCategories/Writes/ShowWrite', [
             'writes'     => $writes,
@@ -64,13 +61,12 @@ class WritesController extends Controller
         ]);
     }
 
-
     public function edit(Write $write)
     {
         return inertia('WritesCategories/Writes/EditWrite', [
             'write'      => $write,
-            'writes'     => $this->getAllWrites(),
-            'categories' => $this->getCategories(),
+            'writes'     => $this->writeService->getAllWrites(),
+            'categories' => $this->writeService->getCategories(),
             'screen'     => $this->screenDefault
         ]);
     }
@@ -80,9 +76,7 @@ class WritesController extends Controller
      */
     public function destroy(Write $write)
     {
-
-        $write->delete();
-        $this->clearCache();
+        $this->writeService->deleteWrite($write);
 
         return redirect()
             ->route('writes.index')
@@ -108,22 +102,10 @@ class WritesController extends Controller
             'hasDraw'      => 'required|boolean',
         ]);
 
-        $write = new Write();
-        $write->title        = $request->title;
-        $write->slug         = $request->slug;
-        $write->content      = $request->input('content');
-        $write->published_at = $request->published_at;
-        $write->summary      = $request->summary;
-        $write->status       = $request->status;
-        $write->cover_image  = $request->cover_image;
-        $write->category_id  = $request->category_id;
-        $write->author_id    = Auth::id();
-        $write->seo_keywords = $request->seo_keywords;
-        $write->tags         = $request->tags;
-        $write->hasDraw      = $request->hasDraw;
-        $write->save();
+        $data = $request->all();
+        $data['author_id'] = Auth::id();
 
-        $this->clearCache();
+        $this->writeService->createWrite($data);
 
         return redirect()
             ->route('writes.index')
@@ -149,20 +131,7 @@ class WritesController extends Controller
             'hasDraw'      => 'required|boolean',
         ]);
 
-        $write->title        = $request->title;
-        $write->slug         = $request->slug;
-        $write->content      = $request->input('content');
-        $write->published_at = $request->published_at;
-        $write->summary      = $request->summary;
-        $write->status       = $request->status;
-        $write->cover_image  = $request->cover_image;
-        $write->category_id  = $request->category_id;
-        $write->seo_keywords = $request->seo_keywords;
-        $write->tags         = $request->tags;
-        $write->hasDraw      = $request->hasDraw;
-        $write->save();
-
-        $this->clearCache();
+        $this->writeService->updateWrite($write, $request->all());
 
         return redirect()
             ->route('writes.index')
@@ -175,12 +144,8 @@ class WritesController extends Controller
     public function storeDraw(Request $request, $writeId)
     {
         $write = Write::findOrFail($writeId);
-
-        $latestVersion = $write->writeDraws()->max('version') ?? 0;
-
-        $writeDraw = $write->writeDraws()->create([
-            'elements' => $request->input('elements'),
-            'version'  => $latestVersion + 1,
+        $writeDraw = $this->writeService->addDraw($write, [
+            'elements' => $request->input('elements')
         ]);
 
         return response()->json($writeDraw);
@@ -192,69 +157,8 @@ class WritesController extends Controller
     public function destroyDraw($writeId, $drawId)
     {
         $write = Write::findOrFail($writeId);
-
-        $writeDraw = $write->writeDraws()->findOrFail($drawId);
-        $writeDraw->delete();
-
-        $this->clearCache();
+        $this->writeService->deleteDraw($write, $drawId);
 
         return response()->json(['message' => 'Versiyon başarıyla silindi.']);
-    }
-
-    /**
-     * Tüm kategorileri cache üzerinden veya veritabanından çeker.
-     */
-    private function getCategories()
-    {
-        return Cache::remember('categories', self::CACHE_TTL, function () {
-            return Category::all();
-        });
-    }
-
-    /**
-     * Ziyaretçiye (veya auth durumuna) göre yazıları çeker.
-     * - Auth varsa sadece published'ları çekiyorsa, ihtiyacınıza göre düzenleyebilirsiniz.
-     */
-    private function getWrites()
-    {
-        /*
-        if (Auth::check()) {
-            // Eğer üye girişi varsa, sadece published göstermek yerine hepsini göstermek isterseniz burayı değiştirin.
-            return Write::select('views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
-                ->where('status', 'published')
-                ->orderByDesc('created_at')
-                ->get();
-        }
-        */
-
-        // Ziyaretçi için cache'le
-        return Cache::remember('writes', self::CACHE_TTL, function () {
-            return Write::select('views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
-                ->where('status', 'published')
-                ->orderByDesc('created_at')
-                ->get();
-        });
-    }
-
-    /**
-     * Tüm yazıları çeker (örneğin create vb. yerlerde lazım olabilir).
-     */
-    private function getAllWrites()
-    {
-        // Tekrarlamamak adına cache kullanabilirsiniz ama bu kez "tüm yazılar" demek
-        // istenmeyen sonuçlara sebep olabilir. Duruma göre dilediğiniz gibi uyarlayın.
-        return Cache::remember('writes_all', self::CACHE_TTL, function () {
-            return Write::all();
-        });
-    }
-
-    /**
-     * Cache temizleme metodu (tekrarları önlemek için).
-     */
-    private function clearCache()
-    {
-        Cache::forget('categories');
-        Cache::forget('writes');
-        Cache::forget('writes_all');
     }
 }

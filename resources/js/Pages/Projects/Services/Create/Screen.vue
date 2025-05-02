@@ -1,85 +1,116 @@
 <template>
-  <div class="flex min-h-screen flex-col items-center bg-gray-100 p-6">
-    <h1 class="mb-8 text-3xl font-bold text-gray-700">Yeni Hizmet Oluştur</h1>
+  <CheckScreen>
+    <GoBackButton url="/services" />
+    <TopScreen title="Yeni Servis Oluştur" />
 
-    <form @submit.prevent="handleSubmit" class="w-full max-w-md space-y-6">
-      <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-lg">
-        <label class="mb-2 block font-medium text-gray-700">Hizmet Adı</label>
-        <input
-          v-model="form.name"
-          type="text"
-          class="w-full rounded border border-gray-300 p-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-          placeholder="Hizmet adı"
-          required
-        />
+    <Card elevated>
+      <form @submit.prevent="handleSubmit" class="space-y-6">
+        <div class="divider">Servis Bilgileri</div>
 
-        <label class="mb-2 mt-4 block font-medium text-gray-700">Hizmet Kısa Adı</label>
-        <input
-          v-model="form.slug"
-          type="text"
-          class="w-full rounded border border-gray-300 p-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-          placeholder="Hizmet kısa adı"
-          required
-        />
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text">Servis Adı</span>
+          </label>
+          <input
+            v-model="form.name"
+            type="text"
+            class="input input-bordered w-full"
+            placeholder="Servis adı"
+            required
+          />
+        </div>
 
-        <label class="mb-2 mt-4 block font-medium text-gray-700">Hizmet Açıklaması</label>
-        <textarea
-          v-model="form.description"
-          class="w-full rounded border border-gray-300 p-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-          placeholder="Hizmet açıklaması"
-          rows="3"
-          required
-        ></textarea>
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text">Servis Kısa Adı</span>
+          </label>
+          <input
+            v-model="form.slug"
+            type="text"
+            class="input input-bordered w-full"
+            placeholder="Servis kısa adı"
+            required
+          />
+        </div>
 
-        <label class="mb-2 mt-4 block font-medium text-gray-700">Fiyat</label>
-        <input
-          v-model="form.price"
-          type="number"
-          class="w-full rounded border border-gray-300 p-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-          placeholder="Fiyat (USD)"
-        />
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text">Servis Açıklaması</span>
+          </label>
+          <textarea
+            v-model="form.description"
+            class="textarea textarea-bordered min-h-[120px] w-full"
+            placeholder="Servis açıklaması"
+            required
+          ></textarea>
+        </div>
 
-        <label class="mb-2 mt-4 block font-medium text-gray-700">Üst Kategori</label>
-        <input
-          v-model="searchQuery"
-          type="text"
-          class="w-full rounded border border-gray-300 p-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-          placeholder="Üst kategori arayın ve seçin"
-          @focus="showDropdown = true"
-          @blur="hideDropdownWithDelay"
-        />
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text">Fiyat</span>
+          </label>
+          <div class="input-group">
+            <input v-model="form.price" type="number" class="input input-bordered w-full" placeholder="Fiyat" />
+            <span class="bg-primary text-primary-content">USD</span>
+          </div>
+        </div>
 
-        <ul
-          v-if="showDropdown && filteredCategories.length"
-          class="absolute mt-1 w-full max-w-md rounded-lg border border-gray-200 bg-white shadow-lg"
-        >
-          <li
-            v-for="parent in filteredCategories"
-            :key="parent.id"
-            @click="selectParent(parent)"
-            class="cursor-pointer px-4 py-2 hover:bg-blue-100"
-          >
-            {{ parent.name }}
-          </li>
-        </ul>
-      </div>
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text">Üst Kategori</span>
+          </label>
+          <div class="relative">
+            <input
+              v-model="searchQuery"
+              type="text"
+              class="input input-bordered w-full"
+              placeholder="Üst kategori arayın ve seçin"
+              @focus="showDropdown = true"
+              @blur="hideDropdownWithDelay"
+            />
+            <ul
+              v-if="showDropdown && filteredCategories.length"
+              class="menu bg-base-100 rounded-box border-base-300 absolute z-10 mt-1 max-h-60 w-full overflow-y-auto border p-2 shadow"
+            >
+              <li v-for="parent in filteredCategories" :key="parent.id">
+                <a @click.prevent="selectParent(parent)">{{ parent.name }}</a>
+              </li>
+            </ul>
+          </div>
+        </div>
 
-      <button
-        type="submit"
-        class="w-full rounded bg-blue-500 p-3 font-semibold text-white shadow transition-colors duration-200 hover:bg-blue-600"
-      >
-        Hizmeti Oluştur
-      </button>
-    </form>
-  </div>
+        <div class="divider"></div>
+
+        <div class="flex justify-end gap-2">
+          <Link href="/services" class="btn btn-ghost">İptal</Link>
+          <button type="submit" class="btn btn-primary">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="mr-1 h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Servisi Oluştur
+          </button>
+        </div>
+      </form>
+    </Card>
+  </CheckScreen>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
-import { useForm, usePage } from '@inertiajs/vue3';
+import { useForm, usePage, Link } from '@inertiajs/vue3';
+import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
+import GoBackButton from '@/Components/GoBackButton.vue';
+import Card from '@/Pages/WritesCategories/_components/Card.vue';
 
 const { props } = usePage();
-const parentOptions = props.services;
+const parentOptions = computed(() => props.services || []);
 
 const form = useForm({
   name: '',
@@ -93,7 +124,8 @@ const searchQuery = ref('');
 const showDropdown = ref(false);
 
 const filteredCategories = computed(() => {
-  return parentOptions.filter((parent) => parent.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
+  if (!searchQuery.value) return parentOptions.value;
+  return parentOptions.value.filter((parent) => parent.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
 });
 
 const selectParent = (parent) => {

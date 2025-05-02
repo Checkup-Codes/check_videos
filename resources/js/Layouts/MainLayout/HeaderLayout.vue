@@ -1,11 +1,9 @@
 <template>
-  <header
-    class="sticky top-0 z-50 flex min-h-10 items-center justify-between border-b-2 border-gray-300 bg-gray-100 px-5 lg:hidden"
-  >
+  <header class="sticky top-0 z-50 flex min-h-10 items-center justify-between border-b-2 px-5 lg:hidden">
     <Link v-if="basePath" :href="`/${basePath}`" class="hover:underline">
       <GoBackSvg class="text-gray-800" />
     </Link>
-    <div class="rounded bg-black px-2 font-extrabold uppercase text-white">
+    <div class="bg-black px-2 font-extrabold uppercase text-white">
       <Link href="/">{{ seoTitle }}</Link>
     </div>
     <div class="flex items-center space-x-4">
