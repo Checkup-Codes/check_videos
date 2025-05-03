@@ -1,19 +1,14 @@
 <template>
   <CheckScreen>
-    <div class="mb-5">
-      <!-- Mobil tasarım için düzenlenmiş başlık bölümü -->
-      <div class="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
-        <GoBackButton href="/lessons" />
-        <div class="w-full sm:w-auto">
-          <h2 class="text-primary truncate text-xl font-bold sm:text-2xl">
-            {{ form.title }} <span class="text-base opacity-70">Düzenle</span>
-          </h2>
-        </div>
-      </div>
+    <GoBackButton url="/lessons" />
 
-      <Card class="card-compact mt-5 w-full shadow-md">
-        <form @submit.prevent="form.put(`/lessons/${lesson.id}`)" class="p-4">
-          <div class="form-control mb-4 w-full">
+    <!-- Card component directly implemented -->
+    <div
+      class="card border border-gray-200 bg-white shadow-lg transition-all duration-200 dark:border-gray-700 dark:bg-base-100"
+    >
+      <div class="card-body p-6">
+        <form @submit.prevent="form.put(`/lessons/${lesson.id}`)" class="space-y-4">
+          <div class="form-control w-full">
             <label for="title" class="label">
               <span class="label-text font-medium">Ders Başlığı</span>
             </label>
@@ -22,7 +17,7 @@
               type="text"
               id="title"
               placeholder="Ders başlığını girin"
-              class="input input-bordered w-full"
+              class="input-bordered input w-full"
               :class="{ 'input-error': form.errors.title }"
             />
             <label v-if="form.errors.title" class="label">
@@ -40,10 +35,10 @@
                 type="text"
                 id="slug"
                 placeholder="Slug girin (slug-format)"
-                class="input input-bordered w-full"
+                class="input-bordered input w-full"
                 :class="{ 'input-error': form.errors.slug }"
               />
-              <button type="button" @click="generateSlug" class="btn btn-square btn-outline shrink-0">
+              <button type="button" @click="generateSlug" class="btn btn-outline btn-square shrink-0">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   class="h-5 w-5"
@@ -74,7 +69,7 @@
               type="text"
               id="playlist_id"
               placeholder="YouTube Playlist ID girin"
-              class="input input-bordered w-full"
+              class="input-bordered input w-full"
               :class="{ 'input-error': form.errors.playlist_id }"
             />
             <label v-if="form.errors.playlist_id" class="label">
@@ -136,7 +131,7 @@
             </div>
           </div>
         </form>
-      </Card>
+      </div>
     </div>
 
     <!-- Delete Confirmation Modal -->
@@ -178,7 +173,6 @@ import { Link, useForm, router } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
 import GoBackButton from '@/Components/GoBackButton.vue';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
-import Card from '@/Pages/WritesCategories/_components/Card.vue';
 
 const { props } = usePage();
 const lesson = props.lesson;

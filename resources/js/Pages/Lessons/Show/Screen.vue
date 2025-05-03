@@ -5,161 +5,197 @@
       <div class="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
         <GoBackButton href="/lessons" />
         <div class="w-full sm:w-auto">
-          <h2 class="text-primary truncate text-xl font-bold sm:text-2xl">{{ lesson.title }}</h2>
+          <h2 class="truncate text-xl font-bold text-primary sm:text-2xl">{{ lesson.title }}</h2>
         </div>
       </div>
 
-      <Card class="card-compact mt-5 w-full shadow-md">
-        <div v-if="loading" class="space-y-4 p-4">
-          <div v-for="n in 3" :key="n" class="flex animate-pulse items-center space-x-4">
-            <div class="bg-base-200 h-28 w-40 flex-shrink-0 rounded-lg md:w-52"></div>
-            <div class="flex-1 space-y-4 py-1">
-              <div class="bg-base-200 h-4 w-3/4 rounded"></div>
-              <div class="bg-base-200 h-4 w-1/2 rounded"></div>
-            </div>
-          </div>
-        </div>
-
-        <div v-else>
-          <div v-if="videos.length === 0" class="p-4">
-            <div class="alert alert-warning">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6 shrink-0 stroke-current"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                />
-              </svg>
-              <span>Bu oynatma listesinde görüntülenecek video bulunamadı.</span>
-            </div>
+      <!-- Card component directly implemented -->
+      <div
+        class="card mt-5 border border-gray-200 bg-white shadow-lg transition-all duration-200 dark:border-gray-700 dark:bg-base-100"
+      >
+        <div class="card-body p-6">
+          <!-- Loading Indicator -->
+          <div v-if="loading" class="flex justify-center p-8">
+            <span class="loading loading-spinner loading-lg"></span>
           </div>
 
-          <ul v-else class="divide-base-200 divide-y">
-            <li v-for="video in videos" :key="video.id" class="hover:bg-base-100 p-4">
-              <!-- Mobil ekranlarda video kartı tasarımı -->
-              <div class="flex flex-col md:flex-row md:items-center">
-                <div class="mb-3 h-auto w-full md:mb-0 md:h-28 md:w-40 lg:w-52">
-                  <img
-                    :src="video.thumbnail"
-                    alt="Video Thumbnail"
-                    class="h-full w-full rounded-lg object-cover shadow-sm"
+          <div v-else>
+            <div v-if="videos.length === 0" class="p-4">
+              <div class="alert alert-warning">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6 shrink-0 stroke-current"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                   />
-                </div>
-                <div class="w-full md:px-6">
-                  <a
-                    :href="`https://www.youtube.com/watch?v=${video.id}`"
-                    target="_blank"
-                    class="link link-hover link-primary text-base font-medium md:text-lg"
-                  >
-                    {{ video.title }}
-                  </a>
+                </svg>
+                <span>Bu oynatma listesinde görüntülenecek video bulunamadı.</span>
+              </div>
+            </div>
 
-                  <!-- Mobil için badge'ler yatay scroll ile -->
-                  <div
-                    class="mt-2 flex flex-nowrap gap-2 overflow-x-auto pb-2 md:flex-wrap md:overflow-visible md:pb-0"
-                  >
-                    <span class="badge badge-neutral whitespace-nowrap">{{ video.duration }}</span>
-                    <span class="badge badge-neutral whitespace-nowrap"
-                      >{{ formatNumber(video.viewCount) }} görüntülenme</span
-                    >
-                    <span class="badge badge-neutral whitespace-nowrap"
-                      >{{ formatNumber(video.likeCount) }} beğeni</span
-                    >
-                  </div>
-
-                  <div class="mt-3 flex flex-wrap gap-2">
+            <ul v-else class="divide-y">
+              <li v-for="video in videos" :key="video.id" class="py-4 hover:bg-base-100">
+                <div class="flex flex-col md:flex-row md:space-x-4">
+                  <!-- Video thumbnail -->
+                  <div class="relative mb-3 md:mb-0 md:w-1/3">
                     <a
                       :href="`https://www.youtube.com/watch?v=${video.id}`"
                       target="_blank"
-                      class="btn btn-sm btn-primary"
+                      class="aspect-w-16 aspect-h-9 block overflow-hidden rounded-lg"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="mr-1 h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
+                      <img :src="video.thumbnail" alt="Video thumbnail" class="h-full w-full object-cover" />
+                      <div
+                        class="absolute bottom-2 right-2 rounded bg-black bg-opacity-70 px-1 py-0.5 text-xs text-white"
                       >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                        />
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                      İzle
+                        {{ video.duration }}
+                      </div>
                     </a>
-                    <button class="btn btn-sm btn-outline" @click="toggleChecked(video)">
-                      <svg
-                        v-if="isChecked(video.id)"
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="mr-1 h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
+                  </div>
+
+                  <!-- Video details -->
+                  <div class="flex flex-col justify-between md:w-2/3">
+                    <div>
+                      <h3 class="mb-1 text-base font-medium leading-tight">
+                        {{ video.title }}
+                      </h3>
+                      <div class="mb-3 flex space-x-4 text-xs text-gray-500">
+                        <div class="flex items-center">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="mr-1 h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                            />
+                          </svg>
+                          {{ formatNumber(video.viewCount) }} görüntülenme
+                        </div>
+                        <div class="flex items-center">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="mr-1 h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
+                            />
+                          </svg>
+                          {{ formatNumber(video.likeCount) }}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="flex space-x-2">
+                      <a
+                        :href="`https://www.youtube.com/watch?v=${video.id}`"
+                        target="_blank"
+                        class="btn btn-primary btn-sm"
                       >
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span v-if="isChecked(video.id)">İzlendi</span>
-                      <span v-else>İzlenmedi</span>
-                    </button>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="mr-1 h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                          />
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        İzle
+                      </a>
+                      <button class="btn btn-outline btn-sm" @click="toggleChecked(video)">
+                        <svg
+                          v-if="isChecked(video.id)"
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="mr-1 h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span v-if="isChecked(video.id)">İzlendi</span>
+                        <span v-else>İzlenmedi</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
+              </li>
+            </ul>
+
+            <!-- Pagination - Mobil uyumlu -->
+            <div class="flex justify-center overflow-x-auto p-4">
+              <div class="join">
+                <button
+                  :disabled="currentPage === 1"
+                  @click="goToPage(1)"
+                  class="btn btn-sm join-item"
+                  :class="currentPage === 1 ? 'btn-active' : ''"
+                >
+                  1
+                </button>
+
+                <span v-if="currentPage > 3" class="btn btn-disabled btn-sm join-item">...</span>
+
+                <button
+                  v-for="page in visiblePages"
+                  :key="page"
+                  @click="goToPage(page)"
+                  class="btn btn-sm join-item"
+                  :class="currentPage === page ? 'btn-active' : ''"
+                >
+                  {{ page }}
+                </button>
+
+                <span v-if="currentPage < totalPages - 2" class="btn btn-disabled btn-sm join-item">...</span>
+
+                <button
+                  v-if="totalPages > 1"
+                  :disabled="currentPage === totalPages"
+                  @click="goToPage(totalPages)"
+                  class="btn btn-sm join-item"
+                  :class="currentPage === totalPages ? 'btn-active' : ''"
+                >
+                  {{ totalPages }}
+                </button>
               </div>
-            </li>
-          </ul>
-
-          <!-- Pagination - Mobil uyumlu -->
-          <div class="flex justify-center overflow-x-auto p-4">
-            <div class="join">
-              <button
-                :disabled="currentPage === 1"
-                @click="goToPage(1)"
-                class="join-item btn btn-sm"
-                :class="currentPage === 1 ? 'btn-active' : ''"
-              >
-                1
-              </button>
-
-              <span v-if="currentPage > 3" class="join-item btn btn-sm btn-disabled">...</span>
-
-              <button
-                v-for="page in visiblePages"
-                :key="page"
-                @click="goToPage(page)"
-                class="join-item btn btn-sm"
-                :class="currentPage === page ? 'btn-active' : ''"
-              >
-                {{ page }}
-              </button>
-
-              <span v-if="currentPage < totalPages - 2" class="join-item btn btn-sm btn-disabled">...</span>
-
-              <button
-                v-if="totalPages > 1"
-                :disabled="currentPage === totalPages"
-                @click="goToPage(totalPages)"
-                class="join-item btn btn-sm"
-                :class="currentPage === totalPages ? 'btn-active' : ''"
-              >
-                {{ totalPages }}
-              </button>
             </div>
           </div>
         </div>
-      </Card>
+      </div>
     </div>
   </CheckScreen>
 </template>
@@ -170,7 +206,6 @@ import axios from 'axios';
 import { usePage } from '@inertiajs/vue3';
 import GoBackButton from '@/Components/GoBackButton.vue';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
-import Card from '@/Pages/WritesCategories/_components/Card.vue';
 
 const { props } = usePage();
 const lesson = ref(props.lesson);
