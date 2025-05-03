@@ -24,7 +24,7 @@ import { computed } from 'vue';
 const props = defineProps({
   variant: {
     type: String,
-    default: 'primary',
+    default: 'neutral',
     validator: (value) =>
       [
         'default',
@@ -72,7 +72,9 @@ const props = defineProps({
 });
 
 const variantClass = computed(() => {
-  if (props.variant === 'default') return '';
+  if (props.variant === 'default') {
+    return 'bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700';
+  }
   return `btn-${props.variant}`;
 });
 

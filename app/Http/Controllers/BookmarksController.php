@@ -36,7 +36,7 @@ class BookmarksController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:writes,slug',
+            'slug' => 'required|string|max:255|unique:content_writes,slug',
             'content' => 'required',
             'author_id' => 'required|exists:users,id',
             'published_at' => 'nullable|date',
@@ -78,7 +78,7 @@ class BookmarksController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:writes,slug,' . $id,
+            'slug' => 'required|string|max:255|unique:content_writes,slug,' . $id,
             'content' => 'required',
             'author_id' => 'required|exists:users,id',
             'published_at' => 'nullable|date',

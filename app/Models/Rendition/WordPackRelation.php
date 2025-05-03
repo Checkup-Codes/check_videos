@@ -9,6 +9,7 @@ class WordPackRelation extends Model
 {
     use HasFactory;
 
+    protected $table = 'lang_word_pack_relations';
     protected $fillable = [
         'word_id',
         'pack_id'
@@ -16,10 +17,10 @@ class WordPackRelation extends Model
 
     public function word()
     {
-        return $this->belongsTo(Word::class);
+        return $this->belongsTo(Word::class, 'word_id');
     }
 
-    public function languagePack()
+    public function pack()
     {
         return $this->belongsTo(LanguagePack::class, 'pack_id');
     }

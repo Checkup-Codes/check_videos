@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 
 class Seo extends Model
 {
+    protected $table = 'util_seos';
     public $incrementing = false;
     protected $keyType = 'string';
 

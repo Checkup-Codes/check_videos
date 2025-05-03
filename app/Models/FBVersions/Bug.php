@@ -10,6 +10,7 @@ class Bug extends Model
 {
     use HasFactory;
 
+    protected $table = 'version_bugs';
     protected $keyType = 'string';
     public $incrementing = false;
 

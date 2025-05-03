@@ -10,6 +10,7 @@ class Project extends Model
 {
     use HasFactory;
 
+    protected $table = 'proj_projects';
     protected $keyType = 'string';
     public $incrementing = false;
 
@@ -28,7 +29,7 @@ class Project extends Model
 
     public function services()
     {
-        return $this->belongsToMany(Service::class, 'project_services', 'project_id', 'service_id');
+        return $this->belongsToMany(Service::class, 'proj_project_services', 'project_id', 'service_id');
     }
 
 

@@ -18,6 +18,8 @@ use App\Http\Controllers\Projects\ServicesController;
 use App\Http\Controllers\Projects\CustomersController;
 use App\Http\Controllers\Rendition\WordController;
 use App\Http\Controllers\Rendition\LanguagePackController;
+use App\Http\Middleware\CheckWriteAccess;
+use App\Http\Controllers\WritesCategories\ImageUploadController;
 
 
 Route::get('/', function () {
@@ -47,7 +49,7 @@ Route::resource('/bookmarks', BookmarksController::class);
 Route::resource('/software-products', SoftwareProductsController::class);
 
 // Writes and Categories
-Route::resource('/writes', WritesController::class);
+Route::resource('/writes', WritesController::class)->middleware(CheckWriteAccess::class);
 Route::resource('/categories', CategoriesController::class);
 Route::get('/categories/{category}/{slug}', [CategoriesController::class, 'showByCategory'])->name('categories.showByCategory');
 Route::middleware('auth')->group(function () {
@@ -117,3 +119,8 @@ Route::group(['prefix' => 'rendition', 'as' => 'rendition.'], function () {
 });
 
 Route::post('/update-words', [\App\Http\Controllers\Rendition\WordController::class, 'updateWords']);
+
+// Resim yükleme için route ekliyorum
+Route::post('/image-upload', [\App\Http\Controllers\WritesCategories\ImageUploadController::class, 'upload'])
+    ->middleware(['auth'])
+    ->name('image.upload');

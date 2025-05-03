@@ -22,13 +22,19 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { usePage, Link } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
 import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
 import ToggleSubSidebarButtonClose from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 import SubSidebarScreen from '@/Components/CekapUI/Slots/SubSidebarScreen.vue';
 import CategoryTree from '@/Pages/WritesCategories/_components/CategoryTree.vue';
 import TopSubsidebar from '@/Components/CekapUI/Typography/TopSubsidebar.vue';
 
+// Component name definition for dev tools
+defineOptions({
+  name: 'SidebarLayoutCategory',
+});
+
+// Get page props
 const { props, url } = usePage();
 const categories = ref(props.categories || []);
 const writes = ref(props.writes || []);
@@ -40,12 +46,13 @@ const categoryTreeRef = ref(null);
 
 const emit = defineEmits(['update:isCollapsed']);
 
+// Toggle sidebar collapse state
 const collapseSidebar = () => {
   isCollapsed.value = !isCollapsed.value;
   emit('update:isCollapsed', isCollapsed.value);
 };
 
-// Tüm kategorileri genişlet veya daralt
+// Toggle expansion state of all categories
 const toggleAllCategories = () => {
   areAllCategoriesExpanded.value = !areAllCategoriesExpanded.value;
 
@@ -54,35 +61,32 @@ const toggleAllCategories = () => {
   }
 };
 
+// Determine active link style based on current URL
 const getLinkClasses = (href) => {
   return url === href ? 'active' : '';
 };
 
+// Calculate counts for each category
 const calculateCategoryCounts = () => {
-  const counts = {};
-  writes.value.forEach((write) => {
-    if (write.category_id) {
-      counts[write.category_id] = (counts[write.category_id] || 0) + 1;
-    }
-  });
-
-  categories.value.forEach((category) => {
-    category.writeCount = counts[category.id] || 0;
-  });
+  // Use writes_count from backend, or calculate based on category_id if needed
+  // This is now handled by the backend
 };
 
+// Build hierarchical category tree from flat list
 const buildCategoryTree = () => {
   const map = {};
   const roots = [];
 
+  // Create map of categories with empty children arrays
   categories.value.forEach((category) => {
     map[category.id] = { ...category, children: [] };
   });
 
+  // Populate children arrays and identify root categories
   categories.value.forEach((category) => {
-    if (category.parent_id) {
+    if (category.parent_id && map[category.parent_id]) {
       map[category.parent_id]?.children.push(map[category.id]);
-    } else {
+    } else if (!category.parent_id) {
       roots.push(map[category.id]);
     }
   });

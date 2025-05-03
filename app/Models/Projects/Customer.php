@@ -8,6 +8,9 @@ use Illuminate\Support\Str;
 
 class Customer extends Model
 {
+    use HasFactory;
+
+    protected $table = 'proj_customers';
     protected $keyType = 'string';
     public $incrementing = false;
 
@@ -31,5 +34,10 @@ class Customer extends Model
                 $model->id = (string) Str::uuid();
             }
         });
+    }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class, 'customer_id');
     }
 }

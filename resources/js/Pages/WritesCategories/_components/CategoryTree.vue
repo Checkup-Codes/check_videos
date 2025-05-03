@@ -8,6 +8,16 @@
               :href="route('categories.show', { category: category.slug })"
               :class="[getLinkClasses(`/categories/${category.slug}`), 'flex flex-grow items-center font-medium']"
             >
+              <!-- Lock icon for hidden category -->
+              <span v-if="category.status === 'hidden'" class="text-neutral-content mr-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    fill-rule="evenodd"
+                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </span>
               <span class="text-base">{{ category.name }}</span>
             </Link>
             <div class="flex items-center">
@@ -27,11 +37,11 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              <div class="badge badge-sm badge-outline">{{ getTotalWriteCount(category) }}</div>
+              <div class="badge badge-sm badge-neutral">{{ getTotalWriteCount(category) }}</div>
             </div>
           </div>
 
-          <!-- Alt Kategoriler -->
+          <!-- Subcategories -->
           <ul v-if="category.children.length" class="menu-sm pl-4" v-show="!isCollapsed(category.id)">
             <li v-for="child in category.children" :key="child.id" class="mt-1">
               <div class="flex w-full items-center">
@@ -39,6 +49,16 @@
                   :href="route('categories.show', { category: child.slug })"
                   :class="[getLinkClasses(`/categories/${child.slug}`), 'flex flex-grow items-center']"
                 >
+                  <!-- Lock icon for hidden category -->
+                  <span v-if="child.status === 'hidden' || child.parent_hidden" class="text-neutral-content mr-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                      <path
+                        fill-rule="evenodd"
+                        d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </span>
                   <span class="text-sm">{{ child.name }}</span>
                 </Link>
                 <div class="flex items-center">
@@ -58,11 +78,11 @@
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
-                  <div class="badge badge-sm badge-outline">{{ getTotalWriteCount(child) }}</div>
+                  <div class="badge badge-sm badge-neutral">{{ getTotalWriteCount(child) }}</div>
                 </div>
               </div>
 
-              <!-- Alt Alt Kategoriler -->
+              <!-- Third-level categories -->
               <ul v-if="child.children.length" class="menu-xs pl-3" v-show="!isCollapsed(child.id)">
                 <li v-for="subChild in child.children" :key="subChild.id" class="mt-1">
                   <div class="flex w-full items-center">
@@ -70,9 +90,22 @@
                       :href="route('categories.show', { category: subChild.slug })"
                       :class="[getLinkClasses(`/categories/${subChild.slug}`), 'flex flex-grow items-center']"
                     >
+                      <!-- Lock icon for hidden category -->
+                      <span
+                        v-if="subChild.status === 'hidden' || subChild.parent_hidden"
+                        class="text-neutral-content mr-1"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                          <path
+                            fill-rule="evenodd"
+                            d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                            clip-rule="evenodd"
+                          />
+                        </svg>
+                      </span>
                       <span class="text-xs">{{ subChild.name }}</span>
                     </Link>
-                    <div class="badge badge-sm badge-outline">{{ subChild.writes_count || 0 }}</div>
+                    <div class="badge badge-sm badge-neutral">{{ getTotalWriteCount(subChild) }}</div>
                   </div>
                 </li>
               </ul>
@@ -85,8 +118,13 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue';
+import { ref, watch } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
+
+// Component name definition for dev tools
+defineOptions({
+  name: 'CategoryTree',
+});
 
 const props = defineProps({
   parentCategories: {
@@ -109,10 +147,12 @@ const { url } = usePage();
 const scrollContainer = ref(null);
 const collapsedCategories = ref(new Set());
 
-// Bir kategori ve alt kategorilerindeki toplam yazı sayısını hesapla
+// Calculate total write count for a category and its children
 const getTotalWriteCount = (category) => {
+  // Start with the category's own write count
   let total = category.writes_count || 0;
 
+  // Add write counts from children (recursively)
   if (category.children && category.children.length) {
     category.children.forEach((child) => {
       total += getTotalWriteCount(child);
@@ -122,12 +162,12 @@ const getTotalWriteCount = (category) => {
   return total;
 };
 
-// Tüm kategorileri daralt veya genişlet
+// Expand or collapse all categories
 const expandAllCategories = (expand = true) => {
   collapsedCategories.value.clear();
 
   if (!expand) {
-    // Daralt - tüm kategorileri collapsed olarak işaretle
+    // Collapse - mark all categories as collapsed
     props.parentCategories.forEach((category) => {
       collapsedCategories.value.add(category.id);
 
@@ -146,7 +186,7 @@ const expandAllCategories = (expand = true) => {
   }
 };
 
-// Tekil kategori için daralt/genişlet
+// Toggle collapse state for a single category
 const toggleCollapse = (categoryId) => {
   if (collapsedCategories.value.has(categoryId)) {
     collapsedCategories.value.delete(categoryId);
@@ -155,11 +195,12 @@ const toggleCollapse = (categoryId) => {
   }
 };
 
+// Check if a category is collapsed
 const isCollapsed = (categoryId) => {
   return collapsedCategories.value.has(categoryId);
 };
 
-// expandAll prop değiştiğinde
+// Watch for changes to expandAll prop
 watch(
   () => props.expandAll,
   (newVal) => {
@@ -168,40 +209,29 @@ watch(
   { immediate: true }
 );
 
-// Dışa aktarılan metodlar
+// Expose methods to parent component
 defineExpose({
   expandAllCategories,
+  scrollContainer,
 });
 </script>
 
 <style scoped>
-.menu :where(li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title)):not(.active):focus,
-.menu :where(li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title)):not(.active):hover {
-  background-color: rgba(0, 0, 0, 0.05);
+.overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 
-.menu :where(li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title)).active {
-  background-color: rgba(0, 0, 0, 0.1);
-  color: rgba(0, 0, 0, 0.9);
-  font-weight: 600;
-  border-left: 3px solid #000;
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
 }
 
-.badge-outline {
-  background-color: transparent;
-  border-color: rgba(0, 0, 0, 0.2);
-  color: rgba(0, 0, 0, 0.7);
-  font-size: 0.65rem;
-  min-width: 1.5rem;
-  height: 1.25rem;
-  padding: 0 0.35rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-/* Prevent link from wrapping around badge */
-li > div {
-  align-items: center;
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
 }
 </style>

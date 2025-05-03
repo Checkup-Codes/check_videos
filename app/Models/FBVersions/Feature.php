@@ -10,6 +10,7 @@ class Feature extends Model
 {
     use HasFactory;
 
+    protected $table = 'version_features';
     protected $keyType = 'string';
     public $incrementing = false;
 

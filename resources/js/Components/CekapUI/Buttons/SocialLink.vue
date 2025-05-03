@@ -1,15 +1,10 @@
 <template>
-  <a :href="href" target="_blank" class="btn btn-ghost text-base-content w-full justify-between px-4 py-3 normal-case">
-    <div class="flex items-center">
-      <font-awesome-icon :icon="icon" class="mr-3 w-5 text-center" />
-      <span>{{ label }}</span>
-    </div>
-    <div v-if="shortcut" class="badge badge-sm">{{ shortcut }}</div>
+  <a :href="href" target="_blank" class="btn btn-circle btn-xs text-base-content hover:bg-base-300" :title="label">
+    <font-awesome-icon :icon="icon" class="h-3.5 w-3.5" />
   </a>
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 const props = defineProps({
@@ -30,25 +25,4 @@ const props = defineProps({
     default: null,
   },
 });
-
-onMounted(() => {
-  if (props.shortcut) {
-    document.addEventListener('keydown', handleKeyPress);
-  }
-});
-
-function handleKeyPress(event) {
-  // Check if no input element is focused
-  if (
-    document.activeElement.tagName !== 'INPUT' &&
-    document.activeElement.tagName !== 'TEXTAREA' &&
-    !event.ctrlKey &&
-    !event.altKey &&
-    !event.metaKey
-  ) {
-    if (event.key === props.shortcut) {
-      window.open(props.href, '_blank');
-    }
-  }
-}
 </script>

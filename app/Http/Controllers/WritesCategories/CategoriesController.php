@@ -8,6 +8,7 @@ use App\Models\WritesCategories\Write;
 use App\Services\WritesCategories\CategoryService;
 use App\Services\WritesCategories\WriteService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CategoriesController extends Controller
 {
@@ -29,7 +30,7 @@ class CategoriesController extends Controller
     {
         $categories = $this->categoryService->getCategories();
         $writes = $this->writeService->getWrites();
-
+        $isAdmin = Auth::check();
 
         return inertia('WritesCategories/Categories/IndexCategory', [
             'screen'     => [
@@ -38,13 +39,21 @@ class CategoriesController extends Controller
             ],
             'categories' => $categories,
             'writes'     => $writes,
+            'isAdmin'    => $isAdmin
         ]);
     }
 
     public function show($slug)
     {
         $category = Category::with('children')->where('slug', $slug)->firstOrFail();
+
+        // Eğer kategori gizli ve kullanıcı admin değilse 404 hatası döndür
+        if ($category->status === 'hidden' && !Auth::check()) {
+            abort(404);
+        }
+
         $categories = $this->categoryService->getCategories();
+        $isAdmin = Auth::check();
 
         // Mevcut kategori ve tüm alt kategorilerin ID'lerini toplama
         $categoryIds = collect([$category->id]);
@@ -52,14 +61,16 @@ class CategoriesController extends Controller
 
         $writes = $this->writeService->getWritesByCategories($categoryIds);
 
-        // Kategori için yazı sayısını hesapla
-        $category->writes_count = $writes->count();
+        // Artık kategorilerin yazı sayıları CategoryService üzerinden doğru hesaplanıyor
+        // Burada tekrar hesaplamaya gerek yok
+        // $category->writes_count = $writes->count();
 
         return inertia('WritesCategories/Categories/ShowCategory', [
             'category' => $category,
             'categories' => $categories,
             'writes' => $writes,
-            'screen' => $this->screenDefault
+            'screen' => $this->screenDefault,
+            'isAdmin' => $isAdmin
         ]);
     }
 
@@ -77,10 +88,12 @@ class CategoriesController extends Controller
     public function create()
     {
         $categories = $this->categoryService->getCategories();
+        $isAdmin = Auth::check();
 
         return inertia('WritesCategories/Categories/CreateCategory', [
             'categories' => $categories,
-            'screen' => $this->screenDefault
+            'screen' => $this->screenDefault,
+            'isAdmin' => $isAdmin
         ]);
     }
 
@@ -88,9 +101,10 @@ class CategoriesController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:categories,slug',
-            'parent_id' => 'nullable|string|exists:categories,id',
+            'slug' => 'required|string|max:255|unique:content_categories,slug',
+            'parent_id' => 'nullable|string|exists:content_categories,id',
             'description' => 'nullable|string',
+            'status' => 'required|in:public,hidden',
         ]);
 
         $category = $this->categoryService->createCategory($request->all());
@@ -103,11 +117,13 @@ class CategoriesController extends Controller
     public function edit(Category $category)
     {
         $categories = $this->categoryService->getCategories();
+        $isAdmin = Auth::check();
 
         return inertia('WritesCategories/Categories/EditCategory', [
             'category' => $category->load('parent'),
             'categories' => $categories,
-            'screen'   => $this->screenDefault
+            'screen'   => $this->screenDefault,
+            'isAdmin' => $isAdmin
         ]);
     }
 
@@ -115,9 +131,10 @@ class CategoriesController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:categories,slug,' . $category->id,
-            'parent_id' => 'nullable|string|exists:categories,id|different:id',
+            'slug' => 'required|string|max:255|unique:content_categories,slug,' . $category->id,
+            'parent_id' => 'nullable|string|exists:content_categories,id|different:id',
             'description' => 'nullable|string',
+            'status' => 'required|in:public,hidden',
         ]);
 
         // Kendisininin alt kategorisi olmasını engelle
@@ -150,6 +167,7 @@ class CategoriesController extends Controller
     {
         $category = Category::with('children')->where('slug', $categorySlug)->firstOrFail();
         $categories = $this->categoryService->getCategories();
+        $isAdmin = Auth::check();
 
         $writes = $this->writeService->getWritesByCategory($category);
         $write = $this->writeService->getWriteBySlug($writeSlug);
@@ -159,7 +177,8 @@ class CategoriesController extends Controller
             'writes' => $writes,
             'write' => $write,
             'categories' => $categories,
-            'screen' => $this->screenDefault
+            'screen' => $this->screenDefault,
+            'isAdmin' => $isAdmin
         ]);
     }
 }

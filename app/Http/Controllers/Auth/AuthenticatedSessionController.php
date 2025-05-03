@@ -8,6 +8,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -33,6 +35,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Login işleminden sonra cache'i temizle
+        $this->clearApplicationCache();
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
@@ -47,6 +52,33 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
+        // Logout işleminden sonra cache'i temizle
+        $this->clearApplicationCache();
+
         return redirect('/');
+    }
+
+    /**
+     * Uygulama cache'ini temizler.
+     * 
+     * @return void
+     */
+    private function clearApplicationCache()
+    {
+        try {
+            $cacheKeys = [
+                'categories',
+                'writes',
+                'writes_all'
+            ];
+
+            foreach ($cacheKeys as $key) {
+                Cache::forget($key);
+            }
+
+            Log::info('AuthController üzerinden cache temizlendi.');
+        } catch (\Exception $e) {
+            Log::error('AuthController üzerinden cache temizlenirken hata: ' . $e->getMessage());
+        }
     }
 }

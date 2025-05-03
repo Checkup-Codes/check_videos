@@ -51,7 +51,7 @@ class LessonsController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:lessons,slug',
+            'slug' => 'required|string|max:255|unique:util_lessons,slug',
             'playlist_id' => 'required|string|max:255',
         ]);
 
@@ -94,7 +94,7 @@ class LessonsController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:lessons,slug,' . $lesson->id,
+            'slug' => 'required|string|max:255|unique:util_lessons,slug,' . $lesson->id,
             'playlist_id' => 'required|string|max:255',
         ]);
 

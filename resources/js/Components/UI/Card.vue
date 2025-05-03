@@ -5,7 +5,7 @@
       <div v-if="$slots.header || title" class="card-title flex items-center justify-between">
         <div class="flex items-center gap-2">
           <slot name="icon"></slot>
-          <h2>{{ title }}</h2>
+          <h2 class="text-gray-800 dark:text-white">{{ title }}</h2>
         </div>
         <slot name="action"></slot>
       </div>
@@ -62,7 +62,7 @@ const bgClass = computed(() => {
     case 'error':
       return 'bg-error text-error-content';
     default:
-      return 'bg-base-100';
+      return 'bg-white dark:bg-base-100 border border-gray-200 dark:border-gray-700';
   }
 });
 

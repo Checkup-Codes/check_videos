@@ -10,6 +10,7 @@ class Service extends Model
 {
     use HasFactory;
 
+    protected $table = 'proj_services';
     protected $fillable = [
         'name',
         'slug',
@@ -34,7 +35,7 @@ class Service extends Model
 
     public function projects()
     {
-        return $this->belongsToMany(Project::class, 'project_services', 'service_id', 'project_id');
+        return $this->belongsToMany(Project::class, 'proj_project_services', 'service_id', 'project_id');
     }
 
     public function subCategories()

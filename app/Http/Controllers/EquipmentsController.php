@@ -36,7 +36,7 @@ class EquipmentsController extends Controller
 
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:equipments',
+            'slug' => 'required|string|max:255|unique:util_equipments',
             'specs' => 'required|string',
             'link' => 'required|url',
         ]);
@@ -73,7 +73,7 @@ class EquipmentsController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:equipments,slug,' . $equipment->id,
+            'slug' => 'required|string|max:255|unique:util_equipments,slug,' . $equipment->id,
             'specs' => 'required|string',
             'link' => 'required|url',
         ]);

@@ -11,6 +11,7 @@ class Synonym extends Model
 {
     use HasFactory, HasUuids;
 
+    protected $table = 'lang_synonyms';
     public $incrementing = false;
     protected $keyType = 'string';
 

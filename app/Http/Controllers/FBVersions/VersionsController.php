@@ -120,15 +120,15 @@ class VersionsController extends Controller
     private function validateVersion(Request $request, $id = null)
     {
         return $request->validate([
-            'version' => 'required|string|max:255|unique:versions,version,' . $id,
+            'version' => 'required|string|max:255|unique:version_versions,version,' . $id,
             'release_date' => 'required|date',
             'description' => 'nullable|string',
             'features' => 'required|array',
             'features.*.feature_name' => 'required|string|max:255',
-            'features.*.feature_detail' => 'required|string|max:255',
+            'features.*.feature_detail' => 'required|string',
             'bugs' => 'required|array',
             'bugs.*.bug_name' => 'required|string|max:255',
-            'bugs.*.bug_detail' => 'required|string|max:255',
+            'bugs.*.bug_detail' => 'required|string',
         ]);
     }
 

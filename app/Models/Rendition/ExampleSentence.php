@@ -11,6 +11,7 @@ class ExampleSentence extends Model
 {
     use HasFactory, HasUuids;
 
+    protected $table = 'lang_example_sentences';
     public $incrementing = false;
     protected $keyType = 'string';
 

@@ -87,6 +87,19 @@
               </label>
             </div>
 
+            <div class="form-control mt-4 w-full">
+              <label class="label">
+                <span class="label-text">Durum</span>
+              </label>
+              <select v-model="form.status" class="select select-bordered w-full">
+                <option value="public">Açık</option>
+                <option value="hidden">Gizli</option>
+              </select>
+              <label v-if="form.errors.status" class="label">
+                <span class="label-text-alt text-error">{{ form.errors.status }}</span>
+              </label>
+            </div>
+
             <div class="card-actions mt-6 justify-end">
               <button type="submit" class="btn btn-primary" :disabled="form.processing || isFormDisabled">
                 <span v-if="form.processing" class="loading loading-spinner loading-sm"></span>
@@ -117,6 +130,7 @@ const form = useForm({
   name: '',
   slug: '',
   parent_id: '',
+  status: 'public',
 });
 
 // Parent kategori arama ve seçme

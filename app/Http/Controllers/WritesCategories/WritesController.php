@@ -25,6 +25,7 @@ class WritesController extends Controller
     public function index()
     {
         $writes = $this->writeService->getWrites();
+        $isAdmin = Auth::check();
 
         return inertia('WritesCategories/Writes/IndexWrite', [
             'screen'     => [
@@ -32,15 +33,19 @@ class WritesController extends Controller
                 'name'            => 'writes'
             ],
             'writes'     => $writes,
+            'isAdmin'    => $isAdmin
         ]);
     }
 
     public function create()
     {
+        $isAdmin = Auth::check();
+
         return inertia('WritesCategories/Writes/CreateWrite', [
             'writes'     => $this->writeService->getAllWrites(),
             'categories' => $this->writeService->getCategories(),
-            'screen'     => $this->screenDefault
+            'screen'     => $this->screenDefault,
+            'isAdmin'    => $isAdmin
         ]);
     }
 
@@ -49,6 +54,7 @@ class WritesController extends Controller
         $categories = $this->writeService->getCategories();
         $writes     = $this->writeService->getWrites();
         $write      = $this->writeService->getWriteBySlug($slug);
+        $isAdmin    = Auth::check();
 
         $this->writeService->incrementViewCount($write);
 
@@ -57,17 +63,21 @@ class WritesController extends Controller
             'write'      => $write,
             'categories' => $categories,
             'screen'     => $this->screenDefault,
-            'showDraw'   => filter_var(request()->query('showDraw', false), FILTER_VALIDATE_BOOLEAN)
+            'showDraw'   => filter_var(request()->query('showDraw', false), FILTER_VALIDATE_BOOLEAN),
+            'isAdmin'    => $isAdmin
         ]);
     }
 
     public function edit(Write $write)
     {
+        $isAdmin = Auth::check();
+
         return inertia('WritesCategories/Writes/EditWrite', [
             'write'      => $write,
             'writes'     => $this->writeService->getAllWrites(),
             'categories' => $this->writeService->getCategories(),
-            'screen'     => $this->screenDefault
+            'screen'     => $this->screenDefault,
+            'isAdmin'    => $isAdmin
         ]);
     }
 
@@ -90,13 +100,13 @@ class WritesController extends Controller
     {
         $request->validate([
             'title'        => 'required|string|max:255',
-            'slug'         => 'required|string|max:255|unique:writes,slug',
-            'content'      => 'required',
+            'slug'         => 'required|string|max:255|unique:content_writes,slug',
+            'content'      => 'required|string',
             'published_at' => 'nullable|date',
             'summary'      => 'nullable|string',
             'status'       => 'required|in:draft,published,private',
             'cover_image'  => 'nullable|string|max:255',
-            'category_id'  => 'required|exists:categories,id',
+            'category_id'  => 'required|exists:content_categories,id',
             'seo_keywords' => 'nullable|string|max:255',
             'tags'         => 'nullable|string|max:255',
             'hasDraw'      => 'required|boolean',
@@ -119,13 +129,13 @@ class WritesController extends Controller
     {
         $request->validate([
             'title'        => 'required|string|max:255',
-            'slug'         => 'required|string|max:255|unique:writes,slug,' . $write->id,
-            'content'      => 'required',
+            'slug'         => 'required|string|max:255|unique:content_writes,slug,' . $write->id,
+            'content'      => 'required|string',
             'published_at' => 'nullable|date',
             'summary'      => 'nullable|string',
             'status'       => 'required|in:draft,published,private',
             'cover_image'  => 'nullable|string|max:255',
-            'category_id'  => 'required|exists:categories,id',
+            'category_id'  => 'required|exists:content_categories,id',
             'seo_keywords' => 'nullable|string|max:255',
             'tags'         => 'nullable|string|max:255',
             'hasDraw'      => 'required|boolean',

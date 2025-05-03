@@ -12,6 +12,7 @@ class WriteDraw extends Model
 {
     use HasFactory;
 
+    protected $table = 'content_write_draws';
     protected $fillable = [
         'write_id',
         'elements',

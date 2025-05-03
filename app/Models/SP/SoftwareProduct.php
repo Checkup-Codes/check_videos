@@ -10,6 +10,7 @@ class SoftwareProduct extends Model
 {
     use HasFactory;
 
+    protected $table = 'sp_software_products';
     protected $fillable = [
         'name',
         'slug',

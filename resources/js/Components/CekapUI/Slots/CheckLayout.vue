@@ -1,5 +1,6 @@
 <template>
   <div :class="isCollapsed ? infoClass : ''">
+    <slot name="sidebar"></slot>
     <slot />
   </div>
 </template>

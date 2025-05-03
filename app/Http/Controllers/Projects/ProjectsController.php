@@ -47,9 +47,9 @@ class ProjectsController extends Controller
     {
         $request->validate([
             'project_name' => 'required|string|max:255',
-            'customer_id' => 'required|exists:customers,id',
+            'customer_id' => 'required|exists:proj_customers,id',
             'services' => 'required|array',
-            'services.*' => 'exists:services,id',
+            'services.*' => 'exists:proj_services,id',
         ]);
 
         $project = Project::create([
@@ -91,9 +91,9 @@ class ProjectsController extends Controller
     {
         $request->validate([
             'project_name' => 'required|string|max:255',
-            'customer_id' => 'required|exists:customers,id',
+            'customer_id' => 'required|exists:proj_customers,id',
             'services' => 'required|array',
-            'services.*' => 'exists:services,id',
+            'services.*' => 'exists:proj_services,id',
         ]);
 
         $project = Project::findOrFail($projectId);

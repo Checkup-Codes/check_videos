@@ -174,7 +174,7 @@ class LanguagePackController extends Controller
     {
         $request->validate([
             'word_ids' => 'required|array',
-            'word_ids.*' => 'exists:words,id'
+            'word_ids.*' => 'exists:lang_words,id'
         ]);
 
         $languagePack = LanguagePack::findOrFail($id);

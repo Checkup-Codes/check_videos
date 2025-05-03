@@ -51,15 +51,17 @@ class WordController extends Controller
                 ->paginate($perPage);
 
             // Get language packs for the sidebar
-            $languagePacks = LanguagePack::select([
-                'language_packs.id',
-                'language_packs.name',
-                'language_packs.slug',
-                'language_packs.language'
+            $languagePacks = DB::table('lang_language_packs')->select([
+                'lang_language_packs.id',
+                'lang_language_packs.name',
+                'lang_language_packs.slug',
+                'lang_language_packs.language',
+                DB::raw('COUNT(lang_words.id) as word_count')
             ])
-                ->selectRaw('(SELECT COUNT(*) FROM word_pack_relations WHERE word_pack_relations.pack_id = language_packs.id) as word_count')
-                ->orderBy('language_packs.language')
-                ->orderBy('language_packs.name')
+                ->leftJoin('lang_word_pack_relations', 'lang_language_packs.id', '=', 'lang_word_pack_relations.pack_id')
+                ->leftJoin('lang_words', 'lang_word_pack_relations.word_id', '=', 'lang_words.id')
+                ->groupBy('lang_language_packs.id', 'lang_language_packs.name', 'lang_language_packs.slug', 'lang_language_packs.language')
+                ->orderBy('lang_language_packs.language')
                 ->get();
 
             return Inertia::render('Rendition/Words/IndexWord', [
@@ -118,15 +120,15 @@ class WordController extends Controller
     {
         try {
             // Tüm dil paketlerini getir
-            $languagePacks = LanguagePack::select([
-                'language_packs.id',
-                'language_packs.name',
-                'language_packs.slug',
-                'language_packs.language'
+            $languagePacks = DB::table('lang_language_packs')->select([
+                'lang_language_packs.id',
+                'lang_language_packs.name',
+                'lang_language_packs.slug',
+                'lang_language_packs.language'
             ])
-                ->selectRaw('(SELECT COUNT(*) FROM word_pack_relations WHERE word_pack_relations.pack_id = language_packs.id) as word_count')
-                ->orderBy('language_packs.language')
-                ->orderBy('language_packs.name')
+                ->selectRaw('(SELECT COUNT(*) FROM lang_word_pack_relations WHERE lang_word_pack_relations.pack_id = lang_language_packs.id) as word_count')
+                ->orderBy('lang_language_packs.language')
+                ->orderBy('lang_language_packs.name')
                 ->get();
 
             // Slug'a göre istenen paket ve kelimeleri getir
@@ -180,18 +182,18 @@ class WordController extends Controller
 
     public function create()
     {
-        $languagePacks = LanguagePack::select([
-            'language_packs.id',
-            'language_packs.name',
-            'language_packs.slug',
-            'language_packs.language',
-            DB::raw('COUNT(words.id) as word_count')
+        $languagePacks = DB::table('lang_language_packs')->select([
+            'lang_language_packs.id',
+            'lang_language_packs.name',
+            'lang_language_packs.slug',
+            'lang_language_packs.language',
+            DB::raw('COUNT(lang_words.id) as word_count')
         ])
-            ->leftJoin('word_pack_relations', 'language_packs.id', '=', 'word_pack_relations.pack_id')
-            ->leftJoin('words', 'word_pack_relations.word_id', '=', 'words.id')
-            ->groupBy('language_packs.id', 'language_packs.name', 'language_packs.slug', 'language_packs.language')
-            ->orderBy('language_packs.language')
-            ->orderBy('language_packs.name')
+            ->leftJoin('lang_word_pack_relations', 'lang_language_packs.id', '=', 'lang_word_pack_relations.pack_id')
+            ->leftJoin('lang_words', 'lang_word_pack_relations.word_id', '=', 'lang_words.id')
+            ->groupBy('lang_language_packs.id', 'lang_language_packs.name', 'lang_language_packs.slug', 'lang_language_packs.language')
+            ->orderBy('lang_language_packs.language')
+            ->orderBy('lang_language_packs.name')
             ->get();
 
         return Inertia::render('Rendition/Words/CreateWord', [
@@ -228,7 +230,7 @@ class WordController extends Controller
                 'language' => 'required|string|size:2',
                 'difficulty_level' => 'required|integer|min:1|max:4',
                 'language_pack_ids' => 'required|array',
-                'language_pack_ids.*' => 'exists:language_packs,id',
+                'language_pack_ids.*' => 'exists:lang_language_packs,id',
                 'learning_status' => 'integer|min:0|max:2',
                 'flag' => 'boolean',
                 'example_sentences' => 'nullable|array',
@@ -292,18 +294,18 @@ class WordController extends Controller
     {
         $word = Word::with(['exampleSentences', 'synonyms', 'languagePacks'])->findOrFail($id);
 
-        $languagePacks = LanguagePack::select([
-            'language_packs.id',
-            'language_packs.name',
-            'language_packs.slug',
-            'language_packs.language',
-            DB::raw('COUNT(words.id) as word_count')
+        $languagePacks = DB::table('lang_language_packs')->select([
+            'lang_language_packs.id',
+            'lang_language_packs.name',
+            'lang_language_packs.slug',
+            'lang_language_packs.language',
+            DB::raw('COUNT(lang_words.id) as word_count')
         ])
-            ->leftJoin('word_pack_relations', 'language_packs.id', '=', 'word_pack_relations.pack_id')
-            ->leftJoin('words', 'word_pack_relations.word_id', '=', 'words.id')
-            ->groupBy('language_packs.id', 'language_packs.name', 'language_packs.slug', 'language_packs.language')
-            ->orderBy('language_packs.language')
-            ->orderBy('language_packs.name')
+            ->leftJoin('lang_word_pack_relations', 'lang_language_packs.id', '=', 'lang_word_pack_relations.pack_id')
+            ->leftJoin('lang_words', 'lang_word_pack_relations.word_id', '=', 'lang_words.id')
+            ->groupBy('lang_language_packs.id', 'lang_language_packs.name', 'lang_language_packs.slug', 'lang_language_packs.language')
+            ->orderBy('lang_language_packs.language')
+            ->orderBy('lang_language_packs.name')
             ->get();
 
         return Inertia::render('Rendition/Words/EditWord', [
@@ -340,7 +342,7 @@ class WordController extends Controller
                 'language' => 'required|string|size:2',
                 'difficulty_level' => 'required|integer|min:1|max:4',
                 'language_pack_ids' => 'required|array',
-                'language_pack_ids.*' => 'exists:language_packs,id',
+                'language_pack_ids.*' => 'exists:lang_language_packs,id',
                 'learning_status' => 'integer|min:0|max:2',
                 'flag' => 'boolean',
                 'example_sentences' => 'nullable|array',

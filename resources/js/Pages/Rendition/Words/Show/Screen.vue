@@ -1,264 +1,268 @@
 <template>
   <CheckScreen>
-    <Card elevated>
-      <div class="mb-4 flex items-center justify-between">
-        <div class="flex-1">
-          <h1 class="text-2xl font-bold">
-            {{ props.pack?.name || 'Kelimeler' }}
-            <span class="badge badge-outline ml-2">{{ props.words?.length || 0 }} kelime</span>
-          </h1>
+    <div
+      class="card dark:bg-base-100 border border-gray-200 bg-white shadow-lg transition-all duration-200 dark:border-gray-700"
+    >
+      <div class="card-body p-6">
+        <div class="mb-4 flex items-center justify-between">
+          <div class="flex-1">
+            <h1 class="text-2xl font-bold">
+              {{ props.pack?.name || 'Kelimeler' }}
+              <span class="badge badge-outline ml-2">{{ props.words?.length || 0 }} kelime</span>
+            </h1>
+          </div>
+          <div class="flex gap-2">
+            <Link
+              v-if="isLoggedIn && props.pack"
+              :href="route('rendition.language-packs.edit', props.pack.id)"
+              class="btn btn-sm btn-outline"
+            >
+              Paketi Düzenle
+            </Link>
+            <Link v-if="isLoggedIn" :href="route('rendition.words.create')" class="btn btn-sm btn-primary">
+              Yeni Kelime
+            </Link>
+          </div>
         </div>
-        <div class="flex gap-2">
-          <Link
-            v-if="isLoggedIn && props.pack"
-            :href="route('rendition.language-packs.edit', props.pack.id)"
-            class="btn btn-sm btn-outline"
+
+        <div class="divider my-2"></div>
+
+        <!-- Filtreler -->
+        <div v-if="!showGameInterface" class="mb-4 flex flex-wrap gap-3">
+          <!-- Arama Kutusu -->
+          <div class="form-control min-w-[200px] flex-1">
+            <div class="input-group">
+              <input
+                type="text"
+                v-model="searchQuery"
+                placeholder="Kelime ara..."
+                class="input input-bordered input-sm w-full"
+                @keyup.enter="filterWords"
+              />
+              <button class="btn btn-square btn-sm" @click="filterWords">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Tür Filtresi -->
+          <select
+            v-model="filterType"
+            class="select select-bordered select-sm min-w-[150px] flex-1"
+            @change="filterWords"
           >
-            Paketi Düzenle
-          </Link>
-          <Link v-if="isLoggedIn" :href="route('rendition.words.create')" class="btn btn-sm btn-primary">
-            Yeni Kelime
-          </Link>
+            <option value="">Tüm Türler</option>
+            <option value="noun">İsim</option>
+            <option value="verb">Fiil</option>
+            <option value="adjective">Sıfat</option>
+            <option value="adverb">Zarf</option>
+          </select>
+
+          <!-- Durum Filtresi -->
+          <select
+            v-model="filterStatus"
+            class="select select-bordered select-sm min-w-[150px] flex-1"
+            @change="filterWords"
+          >
+            <option value="">Tüm Durumlar</option>
+            <option value="0">Öğrenilmedi</option>
+            <option value="1">Öğreniliyor</option>
+            <option value="2">Öğrenildi</option>
+          </select>
         </div>
-      </div>
 
-      <div class="divider my-2"></div>
+        <!-- Oyun Komponentleri -->
+        <transition name="game-transition" mode="out-in">
+          <div v-if="showGameInterface" key="game">
+            <div v-if="loadingGame" class="flex h-60 items-center justify-center">
+              <span class="loading loading-spinner loading-lg"></span>
+            </div>
 
-      <!-- Filtreler -->
-      <div v-if="!showGameInterface" class="mb-4 flex flex-wrap gap-3">
-        <!-- Arama Kutusu -->
-        <div class="form-control min-w-[200px] flex-1">
-          <div class="input-group">
-            <input
-              type="text"
-              v-model="searchQuery"
-              placeholder="Kelime ara..."
-              class="input input-bordered input-sm w-full"
-              @keyup.enter="filterWords"
+            <MultipleChoice
+              v-else-if="currentGame === 'multiple-choice'"
+              :gameType="currentGame"
+              :packSlug="props.pack?.slug || getPackSlugFromUrl()"
+              :words="filteredWords"
+              :gameConfig="gameConfig"
+              @game-completed="handleGameComplete"
             />
-            <button class="btn btn-square btn-sm" @click="filterWords">
+            <TranslateWord
+              v-else-if="currentGame === 'fill-in-the-blank'"
+              :gameType="currentGame"
+              :packSlug="props.pack?.slug || getPackSlugFromUrl()"
+              :words="filteredWords"
+              :gameConfig="gameConfig"
+              @game-completed="handleGameComplete"
+            />
+            <WordCompletion
+              v-else-if="currentGame === 'word-completion'"
+              :gameType="currentGame"
+              :packSlug="props.pack?.slug || getPackSlugFromUrl()"
+              :words="filteredWords"
+              :gameConfig="gameConfig"
+              @game-completed="handleGameComplete"
+            />
+          </div>
+
+          <!-- Kelimeler Görünümü -->
+          <div v-else key="wordList">
+            <!-- Oyun Seçenekleri ve Ayarları -->
+            <div v-if="hasEnoughWords" class="border-base-300 bg-base-100 mb-6 rounded-lg border p-4">
+              <div class="flex flex-wrap items-center gap-4">
+                <div class="form-control">
+                  <label class="label cursor-pointer gap-2">
+                    <span class="label-text">Soru Sayısı: {{ gameConfig.questionCount }}</span>
+                    <input
+                      type="range"
+                      min="5"
+                      max="20"
+                      v-model="gameConfig.questionCount"
+                      class="range range-xs range-primary"
+                    />
+                  </label>
+                </div>
+
+                <div class="form-control">
+                  <label class="label cursor-pointer">
+                    <span class="label-text mr-2">Öğrenilmemiş Kelimelere Öncelik Ver</span>
+                    <input type="checkbox" class="toggle toggle-sm" v-model="prioritizeUnlearned" />
+                  </label>
+                </div>
+
+                <div class="divider divider-horizontal"></div>
+
+                <div class="grid grid-cols-3 gap-2">
+                  <button
+                    v-for="game in games"
+                    :key="game.route"
+                    @click="startGame(game.route)"
+                    class="btn btn-sm"
+                    :class="{ 'btn-primary': currentGame === game.route, 'btn-outline': currentGame !== game.route }"
+                  >
+                    {{ game.name }}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Kelime Tablosu -->
+            <div class="overflow-x-auto">
+              <table class="table-zebra table">
+                <thead>
+                  <tr>
+                    <th>Kelime</th>
+                    <th>Anlam</th>
+                    <th>Tür</th>
+                    <th>Durum</th>
+                    <th>Zorluk</th>
+                    <th v-if="isLoggedIn"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-if="isLoading">
+                    <td colspan="6" class="text-center">
+                      <span class="loading loading-spinner loading-md"></span>
+                    </td>
+                  </tr>
+                  <tr v-else-if="displayedWords.length === 0">
+                    <td colspan="6" class="text-center">Sonuç bulunamadı</td>
+                  </tr>
+                  <tr v-for="word in displayedWords" :key="word.id">
+                    <td class="font-medium">{{ word.word }}</td>
+                    <td>{{ truncateText(word.meaning, 50) }}</td>
+                    <td>
+                      <div class="badge">{{ word.type }}</div>
+                    </td>
+                    <td>
+                      <div class="badge badge-sm" :class="getLearningStatusBadgeClass(word.learning_status)">
+                        {{ getLearningStatusLabel(word.learning_status) }}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="badge badge-sm" :class="getDifficultyBadgeClass(word.difficulty_level)">
+                        {{ getDifficultyLabel(word.difficulty_level) }}
+                      </div>
+                    </td>
+                    <td v-if="isLoggedIn">
+                      <Link :href="route('rendition.words.edit', word.id)" class="btn btn-xs btn-ghost"> Düzenle </Link>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination -->
+            <div v-if="filteredWordList.length > perPage" class="mt-4 flex justify-between">
+              <div>
+                <span class="text-sm opacity-70">
+                  {{ paginationInfo }}
+                </span>
+              </div>
+              <div class="join">
+                <button class="join-item btn btn-sm" :disabled="currentPage <= 1" @click="changePage(currentPage - 1)">
+                  «
+                </button>
+                <button class="join-item btn btn-sm">{{ currentPage }}</button>
+                <button
+                  class="join-item btn btn-sm"
+                  :disabled="currentPage >= totalPages"
+                  @click="changePage(currentPage + 1)"
+                >
+                  »
+                </button>
+              </div>
+            </div>
+
+            <div v-if="props.words?.length === 0" class="alert alert-info mt-6">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke="currentColor"
+                class="h-6 w-6 shrink-0 stroke-current"
               >
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
               </svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- Tür Filtresi -->
-        <select
-          v-model="filterType"
-          class="select select-bordered select-sm min-w-[150px] flex-1"
-          @change="filterWords"
-        >
-          <option value="">Tüm Türler</option>
-          <option value="noun">İsim</option>
-          <option value="verb">Fiil</option>
-          <option value="adjective">Sıfat</option>
-          <option value="adverb">Zarf</option>
-        </select>
-
-        <!-- Durum Filtresi -->
-        <select
-          v-model="filterStatus"
-          class="select select-bordered select-sm min-w-[150px] flex-1"
-          @change="filterWords"
-        >
-          <option value="">Tüm Durumlar</option>
-          <option value="0">Öğrenilmedi</option>
-          <option value="1">Öğreniliyor</option>
-          <option value="2">Öğrenildi</option>
-        </select>
-      </div>
-
-      <!-- Oyun Komponentleri -->
-      <transition name="game-transition" mode="out-in">
-        <div v-if="showGameInterface" key="game">
-          <div v-if="loadingGame" class="flex h-60 items-center justify-center">
-            <span class="loading loading-spinner loading-lg"></span>
-          </div>
-
-          <MultipleChoice
-            v-else-if="currentGame === 'multiple-choice'"
-            :gameType="currentGame"
-            :packSlug="props.pack?.slug || getPackSlugFromUrl()"
-            :words="filteredWords"
-            :gameConfig="gameConfig"
-            @game-completed="handleGameComplete"
-          />
-          <TranslateWord
-            v-else-if="currentGame === 'fill-in-the-blank'"
-            :gameType="currentGame"
-            :packSlug="props.pack?.slug || getPackSlugFromUrl()"
-            :words="filteredWords"
-            :gameConfig="gameConfig"
-            @game-completed="handleGameComplete"
-          />
-          <WordCompletion
-            v-else-if="currentGame === 'word-completion'"
-            :gameType="currentGame"
-            :packSlug="props.pack?.slug || getPackSlugFromUrl()"
-            :words="filteredWords"
-            :gameConfig="gameConfig"
-            @game-completed="handleGameComplete"
-          />
-        </div>
-
-        <!-- Kelimeler Görünümü -->
-        <div v-else key="wordList">
-          <!-- Oyun Seçenekleri ve Ayarları -->
-          <div v-if="hasEnoughWords" class="border-base-300 bg-base-100 mb-6 rounded-lg border p-4">
-            <div class="flex flex-wrap items-center gap-4">
-              <div class="form-control">
-                <label class="label cursor-pointer gap-2">
-                  <span class="label-text">Soru Sayısı: {{ gameConfig.questionCount }}</span>
-                  <input
-                    type="range"
-                    min="5"
-                    max="20"
-                    v-model="gameConfig.questionCount"
-                    class="range range-xs range-primary"
-                  />
-                </label>
-              </div>
-
-              <div class="form-control">
-                <label class="label cursor-pointer">
-                  <span class="label-text mr-2">Öğrenilmemiş Kelimelere Öncelik Ver</span>
-                  <input type="checkbox" class="toggle toggle-sm" v-model="prioritizeUnlearned" />
-                </label>
-              </div>
-
-              <div class="divider divider-horizontal"></div>
-
-              <div class="grid grid-cols-3 gap-2">
-                <button
-                  v-for="game in games"
-                  :key="game.route"
-                  @click="startGame(game.route)"
-                  class="btn btn-sm"
-                  :class="{ 'btn-primary': currentGame === game.route, 'btn-outline': currentGame !== game.route }"
-                >
-                  {{ game.name }}
-                </button>
-              </div>
+              <span>Bu pakette kelime bulunmamaktadır.</span>
             </div>
-          </div>
 
-          <!-- Kelime Tablosu -->
-          <div class="overflow-x-auto">
-            <table class="table-zebra table">
-              <thead>
-                <tr>
-                  <th>Kelime</th>
-                  <th>Anlam</th>
-                  <th>Tür</th>
-                  <th>Durum</th>
-                  <th>Zorluk</th>
-                  <th v-if="isLoggedIn"></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-if="isLoading">
-                  <td colspan="6" class="text-center">
-                    <span class="loading loading-spinner loading-md"></span>
-                  </td>
-                </tr>
-                <tr v-else-if="displayedWords.length === 0">
-                  <td colspan="6" class="text-center">Sonuç bulunamadı</td>
-                </tr>
-                <tr v-for="word in displayedWords" :key="word.id">
-                  <td class="font-medium">{{ word.word }}</td>
-                  <td>{{ truncateText(word.meaning, 50) }}</td>
-                  <td>
-                    <div class="badge">{{ word.type }}</div>
-                  </td>
-                  <td>
-                    <div class="badge badge-sm" :class="getLearningStatusBadgeClass(word.learning_status)">
-                      {{ getLearningStatusLabel(word.learning_status) }}
-                    </div>
-                  </td>
-                  <td>
-                    <div class="badge badge-sm" :class="getDifficultyBadgeClass(word.difficulty_level)">
-                      {{ getDifficultyLabel(word.difficulty_level) }}
-                    </div>
-                  </td>
-                  <td v-if="isLoggedIn">
-                    <Link :href="route('rendition.words.edit', word.id)" class="btn btn-xs btn-ghost"> Düzenle </Link>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Pagination -->
-          <div v-if="filteredWordList.length > perPage" class="mt-4 flex justify-between">
-            <div>
-              <span class="text-sm opacity-70">
-                {{ paginationInfo }}
-              </span>
-            </div>
-            <div class="join">
-              <button class="join-item btn btn-sm" :disabled="currentPage <= 1" @click="changePage(currentPage - 1)">
-                «
-              </button>
-              <button class="join-item btn btn-sm">{{ currentPage }}</button>
-              <button
-                class="join-item btn btn-sm"
-                :disabled="currentPage >= totalPages"
-                @click="changePage(currentPage + 1)"
+            <div v-else-if="!hasEnoughWords" class="alert alert-warning mt-6">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                class="h-6 w-6 shrink-0 stroke-current"
               >
-                »
-              </button>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                ></path>
+              </svg>
+              <span>Oyunları başlatabilmek için en az 5 kelime gerekiyor.</span>
             </div>
           </div>
-
-          <div v-if="props.words?.length === 0" class="alert alert-info mt-6">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              class="h-6 w-6 shrink-0 stroke-current"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              ></path>
-            </svg>
-            <span>Bu pakette kelime bulunmamaktadır.</span>
-          </div>
-
-          <div v-else-if="!hasEnoughWords" class="alert alert-warning mt-6">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              class="h-6 w-6 shrink-0 stroke-current"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              ></path>
-            </svg>
-            <span>Oyunları başlatabilmek için en az 5 kelime gerekiyor.</span>
-          </div>
-        </div>
-      </transition>
-    </Card>
+        </transition>
+      </div>
+    </div>
   </CheckScreen>
 </template>
 
@@ -266,7 +270,6 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { Link, usePage, router } from '@inertiajs/vue3';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
-import Card from '@/Pages/WritesCategories/_components/Card.vue';
 import MultipleChoice from '@/Pages/Rendition/_components/MultipleChoice.vue';
 import TranslateWord from '@/Pages/Rendition/_components/TranslateWord.vue';
 import WordCompletion from '@/Pages/Rendition/_components/WordCompletion.vue';

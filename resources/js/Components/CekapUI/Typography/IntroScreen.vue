@@ -1,5 +1,5 @@
 <template>
-  <header class="flex h-screen items-center justify-center text-gray-800">
+  <header class="flex h-screen items-center justify-center">
     <div class="text-center">
       <h2 class="text-4xl font-bold">{{ title }}</h2>
     </div>

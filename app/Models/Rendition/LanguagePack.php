@@ -11,6 +11,7 @@ class LanguagePack extends Model
 {
     use HasFactory, HasUuids;
 
+    protected $table = 'lang_language_packs';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -34,6 +35,6 @@ class LanguagePack extends Model
 
     public function words()
     {
-        return $this->belongsToMany(Word::class, 'word_pack_relations', 'pack_id', 'word_id');
+        return $this->belongsToMany(Word::class, 'lang_word_pack_relations', 'pack_id', 'word_id');
     }
 }

@@ -10,6 +10,7 @@ class Version extends Model
 {
     use HasFactory;
 
+    protected $table = 'version_versions';
     protected $fillable = [
         'version',
         'release_date',

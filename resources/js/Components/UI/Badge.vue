@@ -10,7 +10,7 @@ import { computed } from 'vue';
 const props = defineProps({
   variant: {
     type: String,
-    default: 'primary',
+    default: 'neutral',
     validator: (value) =>
       ['default', 'primary', 'secondary', 'accent', 'info', 'success', 'warning', 'error', 'ghost', 'neutral'].includes(
         value
@@ -28,7 +28,9 @@ const props = defineProps({
 });
 
 const variantClass = computed(() => {
-  if (props.variant === 'default') return '';
+  if (props.variant === 'default') {
+    return 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
+  }
   return `badge-${props.variant}`;
 });
 

@@ -42,14 +42,14 @@ class SoftwareProductsController extends Controller
         // Validate the request data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:software_products',
+            'slug' => 'required|string|max:255|unique:sp_software_products',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'category' => 'required|string|max:255',
             'platform' => 'required|string|max:255',
             'version' => 'required|string|max:255',
-            'license_key' => 'required|string|max:255|unique:software_products',
+            'license_key' => 'required|string|max:255|unique:sp_software_products',
             'is_subscription' => 'required|boolean',
             'subscription_duration' => 'nullable|integer|min:0',
             'download_url' => 'required|url',
@@ -94,14 +94,14 @@ class SoftwareProductsController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:software_products,slug,' . $softwareProduct->id,
+            'slug' => 'required|string|max:255|unique:sp_software_products,slug,' . $softwareProduct->id,
             'description' => 'nullable|string',
             'price' => 'required|integer|min:0',
             'stock' => 'required|integer|min:0',
             'category' => 'nullable|string|max:255',
             'version' => 'required|string|max:255',
             'platform' => 'nullable|in:Windows,Mac,Linux,Web,Mobile',
-            'license_key' => 'required|string|max:255|unique:software_products,license_key,' . $softwareProduct->id,
+            'license_key' => 'required|string|max:255|unique:sp_software_products,license_key,' . $softwareProduct->id,
             'is_subscription' => 'required|boolean',
             'subscription_duration' => 'nullable|integer|min:1',
             'download_url' => 'nullable|url|max:255',

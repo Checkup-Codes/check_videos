@@ -11,11 +11,12 @@ class Write extends Model
 {
     use HasFactory;
 
+    protected $table = 'content_writes';
     protected $fillable = [
         'title',
         'slug',
         'content',
-        'auor_id',
+        'author_id',
         'category_id',
         'published_at',
         'summary',
@@ -47,6 +48,11 @@ class Write extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'content_category_write', 'write_id', 'category_id');
     }
 
     public function writeDraws()

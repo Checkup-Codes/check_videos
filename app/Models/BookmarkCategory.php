@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 
 class BookmarkCategory extends Model
 {
+    protected $table = 'bm_bookmark_categories';
     protected $keyType = 'string';
     public $incrementing = false;
 

@@ -15,7 +15,7 @@ class ServicesController extends Controller
     {
         $this->screen = [
             'isMobileSidebar' => false,
-            'name' => 'services'
+            'name' => 'proj_services'
         ];
     }
 
@@ -64,7 +64,7 @@ class ServicesController extends Controller
             'slug' => 'string|max:255',
             'description' => 'string|max:255',
             'price' => 'nullable|numeric',
-            'parent_id' => 'nullable|exists:services,id',
+            'parent_id' => 'nullable|exists:proj_services,id',
         ]);
 
         Service::create([
@@ -97,10 +97,10 @@ class ServicesController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:services,slug,' . $id,
+            'slug' => 'required|string|max:255|unique:proj_services,slug,' . $id,
             'description' => 'nullable|string',
             'price' => 'nullable|numeric',
-            'parent_id' => 'nullable|exists:services,id',
+            'parent_id' => 'nullable|exists:proj_services,id',
         ]);
 
         $service = Service::findOrFail($id);

@@ -87,6 +87,19 @@
               </label>
             </div>
 
+            <div class="form-control mt-4 w-full">
+              <label class="label">
+                <span class="label-text">Durum</span>
+              </label>
+              <select v-model="form.status" class="select select-bordered w-full">
+                <option value="public">Açık</option>
+                <option value="hidden">Gizli</option>
+              </select>
+              <label v-if="form.errors.status" class="label">
+                <span class="label-text-alt text-error">{{ form.errors.status }}</span>
+              </label>
+            </div>
+
             <div class="mt-6 flex justify-between">
               <button type="button" @click="deleteCategory(props.category.id)" class="btn btn-error btn-outline">
                 Kategoriyi Sil
@@ -118,6 +131,7 @@ const form = useForm({
   name: currentCategory.value.name || '',
   slug: currentCategory.value.slug || '',
   parent_id: currentCategory.value.parent_id || null,
+  status: currentCategory.value.status || 'public',
 });
 
 // Parent kategori arama ve seçme
