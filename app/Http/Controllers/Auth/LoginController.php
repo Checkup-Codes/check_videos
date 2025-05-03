@@ -55,9 +55,9 @@ class LoginController extends Controller
     {
         try {
             $cacheKeys = [
-                'categories',
-                'writes',
-                'writes_all'
+                'content_categories',
+                'content_writes',
+                'content_writes_all'
             ];
 
             foreach ($cacheKeys as $key) {

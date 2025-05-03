@@ -27,7 +27,7 @@ class WriteService
      */
     public function getWrites()
     {
-        return Cache::remember('writes', self::CACHE_TTL, function () {
+        return Cache::remember('content_writes', self::CACHE_TTL, function () {
             return Write::select('id', 'views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
                 ->when(!Auth::check(), function ($query) {
                     $query->where('status', 'published');
@@ -42,7 +42,7 @@ class WriteService
      */
     public function getAllWrites()
     {
-        return Cache::remember('writes_all', self::CACHE_TTL, function () {
+        return Cache::remember('content_writes_all', self::CACHE_TTL, function () {
             return Write::select('id', 'views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
                 ->when(!Auth::check(), function ($query) {
                     $query->where('status', 'published');
@@ -205,8 +205,8 @@ class WriteService
      */
     public function clearCache()
     {
-        Cache::forget('categories');
-        Cache::forget('writes');
-        Cache::forget('writes_all');
+        Cache::forget('content_categories');
+        Cache::forget('content_writes');
+        Cache::forget('content_writes_all');
     }
 }

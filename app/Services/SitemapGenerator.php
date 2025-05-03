@@ -25,8 +25,8 @@ class SitemapGenerator
 
         // Ana başlıklar
         $mainPages = [
-            '/writes' => 0.9,
-            '/categories' => 0.9,
+            '/content_writes' => 0.9,
+            '/content_categories' => 0.9,
             '/versions' => 0.9,
         ];
 
@@ -43,7 +43,7 @@ class SitemapGenerator
         Category::with('writes')->chunk(100, function ($categories) use ($sitemap, $now) {
             foreach ($categories as $category) {
                 $sitemap->add(
-                    SitemapUrl::create('https://checkupcodes.com/categories/' . $category->slug)
+                    SitemapUrl::create('https://checkupcodes.com/content_categories/' . $category->slug)
                         ->setLastModificationDate($category->updated_at ?? $now)
                         ->setChangeFrequency('weekly')
                         ->setPriority(0.8)
@@ -52,7 +52,7 @@ class SitemapGenerator
                 // Her kategorinin yazıları
                 foreach ($category->writes as $write) {
                     $sitemap->add(
-                        SitemapUrl::create('https://checkupcodes.com/writes/' . $write->slug)
+                        SitemapUrl::create('https://checkupcodes.com/content_writes/' . $write->slug)
                             ->setLastModificationDate($write->updated_at ?? $now)
                             ->setChangeFrequency('monthly')
                             ->setPriority(0.6)

@@ -90,7 +90,7 @@ class VersionsController extends Controller
 
     private function getAllVersionsWithDetails()
     {
-        return Version::with(['features', 'bugs'])
+        return Version::with(['version_features', 'version_bugs'])
             ->orderBy('release_date', 'desc')
             ->get()
             ->map(function ($version) {
@@ -101,7 +101,7 @@ class VersionsController extends Controller
 
     private function getVersionBySlug($slug)
     {
-        $version = Version::with(['features', 'bugs'])
+        $version = Version::with(['version_features', 'version_bugs'])
             ->where('version', $slug)
             ->firstOrFail();
         $version->release_date = Carbon::parse($version->release_date)->translatedFormat('d F Y');
@@ -111,7 +111,7 @@ class VersionsController extends Controller
 
     private function getVersionById($id)
     {
-        $version = Version::with(['features', 'bugs'])->findOrFail($id);
+        $version = Version::with(['version_features', 'version_bugs'])->findOrFail($id);
         $version->release_date = Carbon::parse($version->release_date)->translatedFormat('d F Y');
 
         return $version;

@@ -17,7 +17,7 @@ class CategoryService
     public function getCategories()
     {
         // Cache'leme işlemini tekrar aktif et, çünkü artık doğru çalışıyor
-        return Cache::remember('categories', self::CACHE_TTL, function () {
+        return Cache::remember('content_categories', self::CACHE_TTL, function () {
             // Admin mi kontrolü
             $isAdmin = Auth::check();
 
@@ -166,6 +166,6 @@ class CategoryService
      */
     public function clearCache()
     {
-        Cache::forget('categories');
+        Cache::forget('content_categories');
     }
 }
