@@ -1,1 +1,0 @@
-import{i as r,g as t,o as n,r as l,n as c}from"./app-bzSXT2H4.js";const u={__name:"CheckSubsidebar",props:{infoClass:{type:String,default:""}},setup(s){const e=s,a=r(()=>`${e.infoClass} bg-base-200 p-2 overflow-hidden`);return(o,p)=>(n(),t("div",{class:c(a.value)},[l(o.$slots,"default")],2))}};export{u as _};

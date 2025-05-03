@@ -1,1 +1,0 @@
-import{g as s,o as c,b as e,t as o}from"./app-bzSXT2H4.js";const r={class:"flex h-screen items-center justify-center text-gray-800"},n={class:"text-center"},a={class:"text-4xl font-bold"},d={__name:"IntroScreen",props:{title:String},setup(t){return(i,_)=>(c(),s("header",r,[e("div",n,[e("h2",a,o(t.title),1)])]))}};export{d as _};

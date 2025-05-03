@@ -1,0 +1,1 @@
+import r from"./WriteUpdateForm-BmcfMKMv.js";import{_ as t}from"./CheckScreen-D1jLOQhP.js";import{c as o,o as a,w as e,a as _}from"./app-B_HoVpoV.js";import"./quill.snow-Byi3oO6t.js";import"./lodash-CTNgtvGg.js";/* empty css            */const d={__name:"Screen",setup(c){return(m,s)=>(a(),o(t,null,{default:e(()=>[_(r)]),_:1}))}};export{d as default};
