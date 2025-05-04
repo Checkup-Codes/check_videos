@@ -1,10 +1,10 @@
 <template>
   <div>
     <SidebarLayout
-      class="fixed inset-y-0 left-0 z-40 hidden w-56 overflow-hidden lg:block"
+      class="fixed inset-y-0 left-0 z-40 hidden overflow-hidden lg:block lg:w-64 xl:w-72"
       @link-clicked="toggleSidebar"
     />
-    <div class="lg:pl-56">
+    <div class="lg:pl-64 xl:pl-72">
       <HeaderLayout @toggle-sidebar="toggleSidebar" />
       <div>
         <slot>Default Content</slot>

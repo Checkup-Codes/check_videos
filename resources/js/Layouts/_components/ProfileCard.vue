@@ -1,15 +1,14 @@
 <template>
-  <div class="card p-4">
-    <div class="flex flex-col items-center">
-      <div class="avatar mb-3 cursor-pointer" @contextmenu.prevent="downloadLogo" data-tooltip-id="logo-tooltip">
-        <div class="w-16 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
-          <img :src="imagePath" alt="Logo" />
-        </div>
+  <div class="flex w-fit items-center gap-4 rounded-lg p-4">
+    <div class="avatar cursor-pointer" @contextmenu.prevent="downloadLogo" data-tooltip-id="logo-tooltip">
+      <div class="h-14 w-14 rounded-full bg-white ring ring-primary ring-offset-2 ring-offset-base-100">
+        <img :src="imagePath" alt="Logo" />
       </div>
-      <div class="mb-1 flex items-center gap-2">
-        <h2 class="text-lg font-medium text-base-content">{{ seoTitle }}</h2>
-        <ThemeSwitcher />
-      </div>
+    </div>
+
+    <div class="flex flex-col">
+      <div class="font-semibold text-base-content">{{ seoTitle }}</div>
+      <div class="text-sm font-thin text-base-content">Your daily dose of live dev</div>
     </div>
   </div>
 </template>
@@ -17,7 +16,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import ThemeSwitcher from '../../Components/CekapUI/Buttons/ThemeSwitcher.vue';
 
 const props = defineProps({
   imagePath: {
@@ -28,7 +26,6 @@ const props = defineProps({
 
 const seoTitle = ref('');
 
-// Function to download the logo when right-clicked
 const downloadLogo = () => {
   const link = document.createElement('a');
   link.href = props.imagePath;

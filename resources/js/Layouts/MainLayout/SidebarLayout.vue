@@ -1,20 +1,17 @@
 <template>
-  <aside class="bg-base-200 p-3">
+  <aside class="border-r-2 border-base-300 bg-base-200">
     <ProfileCard :imagePath="imagePath" />
-    <Divider />
     <MainNavigation />
-    <Divider />
     <SocialLinks />
   </aside>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue';
-import { usePage, router } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
 import ProfileCard from '@/Layouts/_components/ProfileCard.vue';
 import MainNavigation from '@/Layouts/_components/MainNavigation.vue';
 import SocialLinks from '@/Layouts/_components/SocialLinks.vue';
-import Divider from '@/Layouts/_components/Divider.vue';
 
 const { props } = usePage();
 const imagePath = ref('/images/checkup_codes_logo.png');

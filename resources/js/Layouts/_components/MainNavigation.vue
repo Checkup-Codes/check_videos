@@ -1,5 +1,5 @@
 <template>
-  <nav class="w-full">
+  <nav class="w-full border-y-2 border-base-300 bg-base-200 p-2">
     <NavItem href="/" icon="home" label="Ana Sayfa" shortcut="1" />
     <NavItem href="/writes" icon="fa-solid fa-pencil" label="Yazılar" shortcut="2" />
     <NavItem href="/categories" icon="fa-solid fa-book" label="Kategoriler" shortcut="3" />

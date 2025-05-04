@@ -54,6 +54,12 @@
               <li>
                 <Link href="/categories" @click="closeMenu" class="py-3">Kategoriler</Link>
               </li>
+              <li>
+                <Link href="/rendition/words" @click="closeMenu" class="py-3">Kelimeler</Link>
+              </li>
+              <li>
+                <Link href="/versions" @click="closeMenu" class="py-3">Versiyonlar</Link>
+              </li>
               <li v-if="$page.props.auth?.user">
                 <Link href="/dashboard" @click="closeMenu" class="py-3">Panel</Link>
               </li>

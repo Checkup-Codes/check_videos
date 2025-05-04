@@ -1,45 +1,33 @@
 <template>
   <Link
     :href="href"
-    :class="[
-      'btn btn-ghost w-full justify-between px-4 py-3 normal-case text-base-content',
-      { 'bg-base-200': isActive },
-    ]"
+    class="flex w-full items-center justify-between rounded-md px-4 py-2 transition-colors duration-150 hover:bg-base-200"
+    :class="{ 'bg-base-300': isActive }"
   >
-    <div class="flex items-center">
-      <font-awesome-icon :icon="dynamicIcon" class="mr-3 w-5 text-center" />
-      <span>{{ label }}</span>
+    <!-- Sol kısım: İkon + Label -->
+    <div class="flex items-center gap-3">
+      <font-awesome-icon :icon="dynamicIcon" class="h-5 w-5 text-base-content" />
+      <span class="text-sm font-medium text-base-content">{{ label }}</span>
     </div>
-    <div v-if="shortcut" class="badge badge-sm">{{ shortcut }}</div>
+
+    <!-- Sağ kısım: Shortcut badge -->
+    <div v-if="shortcut" class="badge text-xs">
+      {{ shortcut }}
+    </div>
   </Link>
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, onBeforeUnmount } from 'vue';
 import { Link, usePage, router } from '@inertiajs/vue3';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 const props = defineProps({
-  href: {
-    type: String,
-    required: true,
-  },
-  icon: {
-    type: [String, Array],
-    required: true,
-  },
-  label: {
-    type: String,
-    required: true,
-  },
-  shortcut: {
-    type: String,
-    default: null,
-  },
-  external: {
-    type: Boolean,
-    default: false,
-  },
+  href: String,
+  icon: [String, Array],
+  label: String,
+  shortcut: String,
+  external: Boolean,
 });
 
 const dynamicIcon = computed(() => {
@@ -54,24 +42,28 @@ const isActive = computed(() => {
   return isRoot ? currentUrl.value === props.href : currentUrl.value.startsWith(props.href);
 });
 
+function handleKeyPress(event) {
+  if (
+    document.activeElement.tagName !== 'INPUT' &&
+    document.activeElement.tagName !== 'TEXTAREA' &&
+    !event.ctrlKey &&
+    !event.altKey &&
+    !event.metaKey &&
+    event.key === props.shortcut
+  ) {
+    router.visit(props.href);
+  }
+}
+
 onMounted(() => {
   if (props.shortcut) {
     document.addEventListener('keydown', handleKeyPress);
   }
 });
 
-function handleKeyPress(event) {
-  // Check if no input element is focused
-  if (
-    document.activeElement.tagName !== 'INPUT' &&
-    document.activeElement.tagName !== 'TEXTAREA' &&
-    !event.ctrlKey &&
-    !event.altKey &&
-    !event.metaKey
-  ) {
-    if (event.key === props.shortcut) {
-      router.visit(props.href);
-    }
+onBeforeUnmount(() => {
+  if (props.shortcut) {
+    document.removeEventListener('keydown', handleKeyPress);
   }
-}
+});
 </script>

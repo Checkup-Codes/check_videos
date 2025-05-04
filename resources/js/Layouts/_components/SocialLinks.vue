@@ -9,9 +9,13 @@
       <SocialLink href="https://medium.com/@cekapykp" :icon="['fab', 'medium']" label="Medium" />
       <SocialLink href="https://x.com/checkupcodes" :icon="['fab', 'twitter']" label="Twitter" />
     </div>
+    <div>
+      <ThemeSwitcher class="mx-auto mt-2" />
+    </div>
   </nav>
 </template>
 
 <script setup>
 import SocialLink from '../../Components/CekapUI/Buttons/SocialLink.vue';
+import ThemeSwitcher from '@/Components/CekapUI/Buttons/ThemeSwitcher.vue';
 </script>
