@@ -1,7 +1,7 @@
 <template>
   <div class="flex w-fit items-center gap-4 rounded-lg p-4">
     <div class="avatar cursor-pointer" @contextmenu.prevent="downloadLogo" data-tooltip-id="logo-tooltip">
-      <div class="h-14 w-14 rounded-full bg-white ring ring-primary ring-offset-2 ring-offset-base-100">
+      <div class="h-10 w-10 rounded-full bg-white ring ring-primary ring-offset-2 ring-offset-base-100">
         <img :src="imagePath" alt="Logo" />
       </div>
     </div>

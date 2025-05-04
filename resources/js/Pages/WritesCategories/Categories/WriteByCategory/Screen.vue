@@ -13,9 +13,7 @@
         </div>
 
         <!-- Mobile action buttons (fixed at bottom on mobile) -->
-        <div
-          class="sticky bottom-0 left-0 right-0 z-10 -mx-4 mt-4 border-t border-base-200 bg-base-100 p-2 sm:static sm:z-0 sm:mx-0 sm:mt-0 sm:border-0 sm:bg-transparent sm:p-0"
-        >
+        <div class="sticky">
           <div class="flex items-center justify-between">
             <!-- Left side: Toggle content button -->
             <button
@@ -44,7 +42,7 @@
                   d="M9 12.75l3 3m0 0l3-3m-3 3v-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              {{ showDraw ? 'Metni Göster' : 'Çizim Göster' }}
+              {{ showDraw ? 'Metni Göster' : 'Çizimi Göster' }}
             </button>
 
             <!-- Right side: Admin actions -->
@@ -64,7 +62,6 @@
                     d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
                   />
                 </svg>
-                Düzenle
               </Link>
 
               <button @click="deleteWrite(write.id)" class="btn btn-ghost btn-sm text-xs text-error">
@@ -82,13 +79,12 @@
                     d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
                   />
                 </svg>
-                Sil
               </button>
             </div>
           </div>
         </div>
 
-        <div class="divider my-2"></div>
+        <div class="divider my-1"></div>
 
         <!-- Main content area -->
         <div v-if="showDraw" class="min-h-[500px]">
@@ -275,6 +271,99 @@ const processedContent = computed(() => {
     }
   });
 
+  // Listelerin doğru şekilde işlenmesini sağla
+  const listItems = doc.querySelectorAll('li');
+  listItems.forEach((item) => {
+    // data-list özelliği yoksa varsayılan olarak bullet ekle
+    if (!item.hasAttribute('data-list')) {
+      if (item.parentElement && item.parentElement.tagName === 'OL') {
+        item.setAttribute('data-list', 'ordered');
+      } else {
+        item.setAttribute('data-list', 'bullet');
+      }
+    }
+
+    // Varsa span.ql-ui elementine contenteditable="false" ekle
+    const qlUi = item.querySelector('.ql-ui');
+    if (qlUi) {
+      qlUi.setAttribute('contenteditable', 'false');
+    }
+  });
+
+  // Boş paragrafları kontrol et ve düzelt
+  const paragraphs = doc.querySelectorAll('p');
+  paragraphs.forEach((p) => {
+    // Sadece içi boş olan paragraflar için işlem yapın
+    if (p.innerHTML.trim() === '<br>' || p.innerHTML.trim() === '' || !p.innerHTML.trim()) {
+      p.innerHTML = '&nbsp;'; // Boş paragrafları görünür kıl
+      p.style.marginBottom = '1rem';
+      p.style.height = '1.5rem';
+    }
+  });
+
+  // DOĞRUDAN CODE BLOCK İŞLEME - DaisyUI mockup-code stilleri
+  const codeBlocks = doc.querySelectorAll('.ql-code-block-container');
+  codeBlocks.forEach((container) => {
+    // Orijinal kod container üzerine doğrudan DaisyUI mockup-code stilleri uygula
+    container.setAttribute('class', 'mockup-code w-full');
+    
+    // İçerik elementi stil özelliklerini ayarla
+    const contentBlock = container.querySelector('.ql-code-block');
+    
+    if (contentBlock) {
+      // İçeriği al ve mockup-code formatına dönüştür
+      const codeContent = contentBlock.textContent || contentBlock.innerText;
+      container.innerHTML = ''; // İçeriği temizle
+      
+      // Tüm içeriği tek bir pre elementinde göster
+      const pre = doc.createElement('pre');
+      const code = doc.createElement('code');
+      
+      // İçeriği temiz şekilde ekle
+      code.textContent = codeContent;
+      pre.appendChild(code);
+      
+      // Stillerini ayarla
+      pre.style.fontFamily = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace';
+      pre.style.margin = '0';
+      pre.style.padding = '0.75rem';
+      pre.style.whiteSpace = 'pre-wrap';
+      pre.style.wordBreak = 'break-word';
+      pre.setAttribute('data-prefix', '$');
+      
+      code.style.fontFamily = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace';
+      code.style.color = 'inherit';
+      code.style.background = 'transparent';
+      code.style.padding = '0';
+      code.style.margin = '0';
+      code.style.border = 'none';
+      
+      // mockup-code özelliklerini ekleyin
+      container.style.backgroundColor = 'hsl(var(--n))';
+      container.style.color = 'hsl(var(--nc))';
+      container.style.borderRadius = '0.5rem';
+      container.style.margin = '1.5rem 0';
+      container.style.padding = '1rem';
+      container.style.width = '100%';
+      container.style.position = 'relative';
+      container.style.overflow = 'hidden';
+      
+      // Tamamlanmış pre elementini ekle
+      container.appendChild(pre);
+    }
+  });
+
+  // Renk ve arkaplan renkli elemanlara ek sınıflar ekle
+  const styledElements = doc.querySelectorAll('[style*="color"], [style*="background-color"]');
+  styledElements.forEach((el) => {
+    if (el.style.color) {
+      el.classList.add('quill-colored-text');
+    }
+    if (el.style.backgroundColor) {
+      el.classList.add('quill-colored-background');
+    }
+  });
+
   // Düzenlenmiş HTML'i döndür
   return doc.body.innerHTML;
 });
@@ -408,6 +497,152 @@ const deleteWrite = (id) => {
   overflow-wrap: break-word;
   word-break: break-word;
   max-width: 100%;
+}
+
+/* Empty paragraphs treatment */
+.article-content p:empty,
+.article-content p:has(br:only-child) {
+  min-height: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Improve paragraph spacing */
+.article-content p {
+  margin-bottom: 1rem;
+}
+
+.article-content p + p {
+  margin-top: 0.5rem; /* Add extra space between consecutive paragraphs */
+}
+
+/* Improved quill-specific elements */
+.article-content li[data-list="ordered"] {
+  list-style-type: none !important;
+  list-style-position: outside !important;
+  display: block !important;
+  position: relative !important;
+  padding-left: 0.5rem !important;
+}
+
+.article-content li[data-list="ordered"]::before {
+  content: counter(list-0) ".";
+  position: absolute;
+  left: -1.8em;
+  width: 1.8em;
+  text-align: right;
+}
+
+.article-content li[data-list="bullet"] {
+  list-style-type: none !important;
+  list-style-position: outside !important;
+  display: block !important;
+  position: relative !important;
+  padding-left: 0.5rem !important;
+}
+
+.article-content li[data-list="bullet"]::before {
+  content: "•";
+  position: absolute;
+  left: -1.5em;
+  width: 1.5em;
+  text-align: center;
+}
+
+/* Explicit hide of quill ui elements */
+.article-content .ql-ui {
+  display: none !important;
+}
+
+/* DIRECT MOCKUP CODE STYLING - Start */
+.article-content .ql-code-block-container,
+.content-container .ql-code-block-container {
+  background-color: hsl(var(--n)) !important;
+  color: hsl(var(--nc)) !important;
+  border-radius: 0.5rem !important;
+  margin: 1.5rem 0 !important;
+  padding: 1rem !important;
+  width: 100% !important;
+  display: block !important;
+  overflow: hidden !important;
+  border: none !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
+
+.article-content .ql-code-block,
+.content-container .ql-code-block {
+  background-color: transparent !important;
+  color: hsl(var(--nc)) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
+
+/* Custom mockup-code fallback */
+.mockup-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  background-color: hsl(var(--n)) !important;
+  color: hsl(var(--nc)) !important;
+  border-radius: 0.5rem !important;
+  padding: 1rem !important;
+  white-space: pre-wrap !important;
+  overflow-x: auto !important;
+}
+
+.mockup-code pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  padding: 0.3rem 0.75rem !important;
+  margin: 0 !important;
+}
+
+.mockup-code code {
+  background-color: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  color: hsl(var(--nc)) !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
+/* DIRECT MOCKUP CODE STYLING - End */
+
+.article-content .ql-code-block-container {
+  margin: 1.25rem 0;
+  background-color: hsl(var(--b2));
+  border-radius: 0.5rem;
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  border: 1px solid hsl(var(--b3));
+}
+
+.article-content .ql-code-block {
+  padding: 1rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  background-color: hsl(var(--b2));
+  color: hsl(var(--bc));
+  white-space: pre;
+  overflow-x: auto;
+  display: block;
+  width: 100%;
+}
+
+.article-content p[class*="ql-align-"] {
+  margin: 1rem 0;
+}
+
+.article-content span[style*="color"] {
+  display: inline-block; /* Ensures color styling works properly */
+}
+
+.article-content span[style*="background-color"] {
+  padding: 0.1rem 0.3rem;
+  border-radius: 0.25rem;
+}
+
+.article-content .ql-font-monospace {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 /* Code element için özel tasarım - en yüksek öncelikli */

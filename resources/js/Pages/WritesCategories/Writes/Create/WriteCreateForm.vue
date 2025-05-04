@@ -1,8 +1,6 @@
 <template>
   <!-- Form component implemented directly -->
-  <div
-    class="card mx-auto max-w-4xl border border-gray-200 bg-white shadow-lg transition-all duration-200 dark:border-gray-700 dark:bg-base-100"
-  >
+  <div class="card">
     <div class="card-body p-6">
       <!-- Header with optional icon and title -->
       <div class="card-title flex items-center justify-between">

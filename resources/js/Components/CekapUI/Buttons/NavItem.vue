@@ -1,8 +1,8 @@
 <template>
   <Link
     :href="href"
-    class="flex w-full items-center justify-between rounded-md px-4 py-2 transition-colors duration-150 hover:bg-base-200"
-    :class="{ 'bg-base-300': isActive }"
+    class="flex w-full items-center justify-between px-4 py-2 transition-colors duration-150"
+    :class="{ 'border-l-4 border-primary bg-base-200': isActive }"
   >
     <!-- Sol kısım: İkon + Label -->
     <div class="flex items-center gap-3">

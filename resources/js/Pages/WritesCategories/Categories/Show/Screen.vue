@@ -189,7 +189,7 @@ const categoryStatus = computed(() => {
  * Navigate to edit page
  */
 const editCategory = () => {
-  router.visit(route('categories.edit', { category: category.value.slug }));
+  router.visit(route('categories.edit', { category: category.value.id }));
 };
 
 const toggleView = () => {
@@ -199,6 +199,21 @@ const toggleView = () => {
 
 const truncateSummary = (summary) => {
   if (!summary) return 'Açıklama bulunmamaktadır.';
+  
+  // Eğer içerik HTML etiketleri içeriyorsa, temizleyerek metin olarak işle
+  if (summary.includes('<') && summary.includes('>')) {
+    // Geçici bir div oluştur ve HTML'i yükle
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = summary;
+    
+    // Düz metni çıkar
+    const plainText = tempDiv.textContent || tempDiv.innerText || '';
+    
+    // Metni kısalt
+    return plainText.length > 100 ? plainText.slice(0, 100) + '...' : plainText;
+  }
+  
+  // HTML içermeyen düz metin için doğrudan kısalt
   return summary.length > 100 ? summary.slice(0, 100) + '...' : summary;
 };
 
@@ -228,5 +243,31 @@ onMounted(() => {
   .badge {
     font-size: 0.65rem;
   }
+}
+
+/* Quill specific styles for truncated content */
+:deep(.ql-align-right) {
+  text-align: right;
+}
+
+:deep(.ql-align-center) {
+  text-align: center;
+}
+
+:deep(.ql-align-justify) {
+  text-align: justify;
+}
+
+:deep(.ql-font-monospace) {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+:deep([style*="color:"]) {
+  /* Colors are handled by inline styles */
+}
+
+:deep([style*="background-color:"]) {
+  padding: 0.1rem 0.2rem;
+  border-radius: 0.2rem;
 }
 </style>

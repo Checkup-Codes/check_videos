@@ -20,7 +20,7 @@ export default {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
             gridTemplateColumns: {
-                'subsidebar': '1fr 2fr',
+                'subsidebar': 'minmax(0, 380px) 1fr',
                 'sidebar': '2fr 10fr',
             },
             boxShadow: {

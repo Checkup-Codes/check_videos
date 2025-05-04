@@ -3,7 +3,7 @@
     <button
       @click="toggleMonitor"
       ref="buttonRef"
-      class="btn btn-ghost btn-sm tooltip"
+      class="btn btn-ghost btn-sm"
       :data-tip="hasSlowOperations ? 'Yavaş işlem tespit edildi' : 'Performans Paneli'"
       :class="{ 'text-error': hasSlowOperations }"
     >
@@ -52,7 +52,7 @@
                       :data-tip="titleTooltip"
                       :class="titleLengthStatus"
                     >
-                      {{ truncateText(pageTitle, 45) }}
+                      {{ truncateText(pageTitle, 100) }}
                       <span
                         class="seo-indicator ml-1 inline-block"
                         :class="titleLengthStatus"
@@ -61,7 +61,7 @@
                     </div>
                   </div>
                   <div class="google-url tooltip" data-tip="URL as shown in search results">
-                    {{ truncateText(pageUrl, 60) }}
+                    {{ truncateText(pageUrl, 80) }}
                   </div>
                   <div class="flex flex-wrap items-start">
                     <div

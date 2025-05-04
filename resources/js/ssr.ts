@@ -12,7 +12,7 @@ import store from './Store';
 const appName = import.meta.env.VITE_APP_NAME;
 
 createInertiaApp({
-  title: (title) => `${title} - ${appName}`,
+  title: (title) => title ? `${title} - ${appName}` : appName,
   resolve: async (name) => {
     const page = (
       await resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob<DefineComponent>('./Pages/**/*.vue'))

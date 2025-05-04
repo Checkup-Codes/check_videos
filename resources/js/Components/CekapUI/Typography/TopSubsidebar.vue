@@ -1,5 +1,5 @@
 <template>
-  <div class="border-color-one overflow-hidden border-b-2 lg:relative">
+  <div class="overflow-hidden border-b-2 border-base-300 lg:relative">
     <div class="flex h-12 items-center justify-between px-5 text-sm font-semibold">
       <span class="">{{ title }}</span>
       <div class="flex items-center gap-2">

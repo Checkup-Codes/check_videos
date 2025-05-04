@@ -1,20 +1,18 @@
 <template>
-  <div ref="scrollContainer" class="h-full w-full overflow-y-auto px-2 py-3">
+  <div ref="scrollContainer" class="h-full w-full space-y-1 overflow-y-auto p-1">
     <Link
       v-for="write in filteredWrites"
       :key="write.id"
       :href="route('writes.show', { write: write.slug })"
       :class="[
-        activeWrite === `/writes/${write.slug}`
-          ? 'border-l-4 border-l-primary bg-base-200'
-          : 'border-l border-l-base-200',
-        'mb-2 block rounded-r p-3 transition-all hover:bg-base-200',
+        'block p-2 transition-colors duration-150',
+        activeWrite === `/writes/${write.slug}` ? 'border-l-4 border-primary bg-base-200' : 'hover:bg-base-100',
       ]"
       @click="saveScrollPosition"
     >
-      <!-- Başlık ve kilit ikonu -->
-      <div class="flex items-center gap-2 font-medium">
-        <span v-if="write.status === 'private'" class="text-base-content opacity-60">
+      <!-- Başlık + Kilit -->
+      <div class="mb-1 flex items-center gap-2 text-[15px] font-semibold text-base-content">
+        <span v-if="write.status === 'private'" class="text-base-content/60">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
             <path
               fill-rule="evenodd"
@@ -23,16 +21,16 @@
             />
           </svg>
         </span>
-        <span class="truncate text-sm">{{ write.title }}</span>
+        <span class="">{{ write.title }}</span>
       </div>
 
-      <!-- Tarih ve görüntülenme -->
-      <div class="mt-1.5 flex justify-between text-xs opacity-60">
+      <!-- Tarih ve view bilgisi -->
+      <div class="text-base-content/60 flex justify-between text-sm">
         <span>{{ formatDate(write.created_at) }}</span>
-        <div class="inline-flex items-center gap-1">
+        <span class="flex items-center gap-1">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-3.5 w-3.5"
+            class="h-[14px] w-[14px]"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -44,7 +42,7 @@
             <circle cx="12" cy="12" r="3" />
           </svg>
           {{ write.views_count }}
-        </div>
+        </span>
       </div>
     </Link>
 
