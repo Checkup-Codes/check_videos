@@ -1,0 +1,1 @@
+import{_ as e}from"./IntroScreen-B_ZJXz_k.js";import{g as t,o,a}from"./app-CAgCsGWV.js";const r={class:"hidden lg:block"},l={__name:"Screen",setup(c){return(s,_)=>(o(),t("div",r,[a(e,{title:"Kategoriler"})]))}};export{l as default};

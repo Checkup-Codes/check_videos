@@ -1,0 +1,1 @@
+import{g as s,o as c,b as e,t as o}from"./app-CAgCsGWV.js";const n={class:"flex h-screen items-center justify-center"},r={class:"text-center"},a={class:"text-4xl font-bold"},d={__name:"IntroScreen",props:{title:String},setup(t){return(i,_)=>(c(),s("header",n,[e("div",r,[e("h2",a,o(t.title),1)])]))}};export{d as _};

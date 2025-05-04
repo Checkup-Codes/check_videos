@@ -1,0 +1,1 @@
+import{_ as a}from"./CheckScreen-D1P0fGBv.js";import{_ as r}from"./GoBackButton-DiohFQCi.js";import t from"./CategoriesEditFrom-DqyiGoZO.js";import{c as o,o as c,w as s,a as e}from"./app-CAgCsGWV.js";const u=Object.assign({name:"EditCategoryScreen"},{__name:"Screen",setup(_){return(m,n)=>(c(),o(a,null,{default:s(()=>[e(r,{url:"/categories"}),e(t)]),_:1}))}});export{u as default};
