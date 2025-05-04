@@ -3,6 +3,9 @@
     <div class="flex h-12 items-center justify-between px-5 text-sm font-semibold">
       <span class="">{{ title }}</span>
       <div class="flex items-center gap-2">
+        <!-- Performance monitor slot -->
+        <slot name="actions"></slot>
+
         <button
           v-if="showExpandCollapseButton"
           @click="$emit('toggle-expand')"
@@ -14,7 +17,7 @@
             <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
           </svg>
         </button>
-        <Link v-if="userName" :href="href" class="text-primary-500">
+        <Link v-if="userName && href" :href="href" class="text-primary-500">
           <Button :title="title" size="xsmall"> + </Button>
         </Link>
       </div>
@@ -28,7 +31,10 @@ import Button from '@/Components/CekapUI/Buttons/Button.vue';
 import { Link } from '@inertiajs/vue3';
 const { props } = usePage();
 
-const userName = props.auth.user?.name;
+// Check if user is authenticated
+const userName = props.auth?.user?.name;
+
+// Define component props
 const vueProps = defineProps({
   title: String,
   href: String,

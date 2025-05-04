@@ -7,4 +7,11 @@
 <script setup>
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 import WriteCreateFrom from '@/Pages/WritesCategories/Writes/Create/WriteCreateForm.vue';
+
+/**
+ * Component name definition
+ */
+defineOptions({
+  name: 'CreateWriteScreen',
+});
 </script>

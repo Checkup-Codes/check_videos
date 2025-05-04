@@ -9,6 +9,7 @@ use App\Services\WritesCategories\CategoryService;
 use App\Services\WritesCategories\WriteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CategoriesController extends Controller
 {
@@ -26,55 +27,89 @@ class CategoriesController extends Controller
         $this->writeService = $writeService;
     }
 
+    /**
+     * Display a listing of categories
+     * 
+     * @return \Inertia\Response
+     */
     public function index()
     {
-        $categories = $this->categoryService->getCategories();
-        $writes = $this->writeService->getWrites();
+        $categoriesResult = $this->categoryService->getCategories();
+        $writesResult = $this->writeService->getWrites();
         $isAdmin = Auth::check();
+
+        Log::info('Categories listed', [
+            'execution_time' => $categoriesResult['execution_time']['value'],
+            'is_slow' => $categoriesResult['execution_time']['is_slow'],
+            'count' => $categoriesResult['count']
+        ]);
 
         return inertia('WritesCategories/Categories/IndexCategory', [
             'screen'     => [
                 'isMobileSidebar' => true,
                 'name'            => 'categories'
             ],
-            'categories' => $categories,
-            'writes'     => $writes,
-            'isAdmin'    => $isAdmin
+            'categories' => $categoriesResult['data'],
+            'writes'     => $writesResult['data'],
+            'isAdmin'    => $isAdmin,
+            'performance' => [
+                'categories_execution_time' => $categoriesResult['execution_time'],
+                'writes_execution_time' => $writesResult['execution_time']
+            ]
         ]);
     }
 
+    /**
+     * Display the specified category
+     * 
+     * @param string $slug
+     * @return \Inertia\Response
+     */
     public function show($slug)
     {
         $category = Category::with('children')->where('slug', $slug)->firstOrFail();
 
-        // Eğer kategori gizli ve kullanıcı admin değilse 404 hatası döndür
+        // If category is hidden and user is not admin, return 404
         if ($category->status === 'hidden' && !Auth::check()) {
             abort(404);
         }
 
-        $categories = $this->categoryService->getCategories();
+        $categoriesResult = $this->categoryService->getCategories();
         $isAdmin = Auth::check();
 
-        // Mevcut kategori ve tüm alt kategorilerin ID'lerini toplama
+        // Collect IDs of current category and all its children
         $categoryIds = collect([$category->id]);
         $this->getChildCategoryIds($category, $categoryIds);
 
-        $writes = $this->writeService->getWritesByCategories($categoryIds);
+        $writesResult = $this->writeService->getWritesByCategories($categoryIds);
 
-        // Artık kategorilerin yazı sayıları CategoryService üzerinden doğru hesaplanıyor
-        // Burada tekrar hesaplamaya gerek yok
-        // $category->writes_count = $writes->count();
+        Log::info('Category viewed', [
+            'slug' => $slug,
+            'writes_count' => $writesResult['count'],
+            'execution_time' => $writesResult['execution_time']['value'],
+            'is_slow' => $writesResult['execution_time']['is_slow']
+        ]);
 
         return inertia('WritesCategories/Categories/ShowCategory', [
             'category' => $category,
-            'categories' => $categories,
-            'writes' => $writes,
+            'categories' => $categoriesResult['data'],
+            'writes' => $writesResult['data'],
             'screen' => $this->screenDefault,
-            'isAdmin' => $isAdmin
+            'isAdmin' => $isAdmin,
+            'performance' => [
+                'categories_execution_time' => $categoriesResult['execution_time'],
+                'writes_execution_time' => $writesResult['execution_time']
+            ]
         ]);
     }
 
-    // Alt kategorilerin ID'lerini toplayan yardımcı metod
+    /**
+     * Helper method to collect child category IDs
+     * 
+     * @param Category $category
+     * @param \Illuminate\Support\Collection $categoryIds
+     * @return void
+     */
     private function getChildCategoryIds($category, &$categoryIds)
     {
         foreach ($category->children as $child) {
@@ -85,18 +120,32 @@ class CategoriesController extends Controller
         }
     }
 
+    /**
+     * Show the form for creating a new category
+     * 
+     * @return \Inertia\Response
+     */
     public function create()
     {
-        $categories = $this->categoryService->getCategories();
+        $categoriesResult = $this->categoryService->getCategories();
         $isAdmin = Auth::check();
 
         return inertia('WritesCategories/Categories/CreateCategory', [
-            'categories' => $categories,
+            'categories' => $categoriesResult['data'],
             'screen' => $this->screenDefault,
-            'isAdmin' => $isAdmin
+            'isAdmin' => $isAdmin,
+            'performance' => [
+                'categories_execution_time' => $categoriesResult['execution_time']
+            ]
         ]);
     }
 
+    /**
+     * Store a newly created category
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -107,26 +156,48 @@ class CategoriesController extends Controller
             'status' => 'required|in:public,hidden',
         ]);
 
-        $category = $this->categoryService->createCategory($request->all());
+        $result = $this->categoryService->createCategory($request->all());
+
+        Log::info('Category created', [
+            'id' => $result['data']->id,
+            'execution_time' => $result['execution_time']['value'],
+            'is_slow' => $result['execution_time']['is_slow']
+        ]);
 
         return redirect()
             ->route('categories.index')
             ->with('success', 'Kategori başarıyla oluşturuldu.');
     }
 
+    /**
+     * Show the form for editing the specified category
+     * 
+     * @param Category $category
+     * @return \Inertia\Response
+     */
     public function edit(Category $category)
     {
-        $categories = $this->categoryService->getCategories();
+        $categoriesResult = $this->categoryService->getCategories();
         $isAdmin = Auth::check();
 
         return inertia('WritesCategories/Categories/EditCategory', [
             'category' => $category->load('parent'),
-            'categories' => $categories,
+            'categories' => $categoriesResult['data'],
             'screen'   => $this->screenDefault,
-            'isAdmin' => $isAdmin
+            'isAdmin' => $isAdmin,
+            'performance' => [
+                'categories_execution_time' => $categoriesResult['execution_time']
+            ]
         ]);
     }
 
+    /**
+     * Update the specified category
+     * 
+     * @param Request $request
+     * @param Category $category
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(Request $request, Category $category)
     {
         $request->validate([
@@ -137,7 +208,7 @@ class CategoriesController extends Controller
             'status' => 'required|in:public,hidden',
         ]);
 
-        // Kendisininin alt kategorisi olmasını engelle
+        // Prevent a category from being its own child's parent
         if ($request->filled('parent_id')) {
             $childIds = collect();
             $this->getChildCategoryIds($category, $childIds);
@@ -147,38 +218,77 @@ class CategoriesController extends Controller
             }
         }
 
-        $this->categoryService->updateCategory($category, $request->all());
+        $result = $this->categoryService->updateCategory($category, $request->all());
+
+        Log::info('Category updated', [
+            'id' => $category->id,
+            'execution_time' => $result['execution_time']['value'],
+            'is_slow' => $result['execution_time']['is_slow']
+        ]);
 
         return redirect()
             ->route('categories.index')
             ->with('success', 'Kategori başarıyla güncellendi.');
     }
 
+    /**
+     * Remove the specified category from storage
+     * 
+     * @param Category $category
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function destroy(Category $category)
     {
-        $this->categoryService->deleteCategory($category);
+        $result = $this->categoryService->deleteCategory($category);
+
+        Log::info('Category deleted', [
+            'id' => $category->id,
+            'execution_time' => $result['execution_time']['value'],
+            'is_slow' => $result['execution_time']['is_slow']
+        ]);
 
         return redirect()
             ->route('categories.index')
             ->with('success', 'Kategori başarıyla silindi.');
     }
 
+    /**
+     * Display write by category
+     * 
+     * @param string $categorySlug
+     * @param string $writeSlug
+     * @return \Inertia\Response
+     */
     public function showByCategory($categorySlug, $writeSlug)
     {
         $category = Category::with('children')->where('slug', $categorySlug)->firstOrFail();
-        $categories = $this->categoryService->getCategories();
+        $categoriesResult = $this->categoryService->getCategories();
         $isAdmin = Auth::check();
 
-        $writes = $this->writeService->getWritesByCategory($category);
-        $write = $this->writeService->getWriteBySlug($writeSlug);
+        $writesResult = $this->writeService->getWritesByCategory($category);
+        $writeResult = $this->writeService->getWriteBySlug($writeSlug);
+
+        Log::info('Write by category viewed', [
+            'category_slug' => $categorySlug,
+            'write_slug' => $writeSlug,
+            'writes_execution_time' => $writesResult['execution_time']['value'],
+            'writes_is_slow' => $writesResult['execution_time']['is_slow'],
+            'write_execution_time' => $writeResult['execution_time']['value'],
+            'write_is_slow' => $writeResult['execution_time']['is_slow']
+        ]);
 
         return inertia('WritesCategories/Categories/WriteByCategory', [
             'category' => $category,
-            'writes' => $writes,
-            'write' => $write,
-            'categories' => $categories,
+            'writes' => $writesResult['data'],
+            'write' => $writeResult['data'],
+            'categories' => $categoriesResult['data'],
             'screen' => $this->screenDefault,
-            'isAdmin' => $isAdmin
+            'isAdmin' => $isAdmin,
+            'performance' => [
+                'categories_execution_time' => $categoriesResult['execution_time'],
+                'writes_execution_time' => $writesResult['execution_time'],
+                'write_execution_time' => $writeResult['execution_time']
+            ]
         ]);
     }
 }

@@ -30,7 +30,7 @@ import SidebarLayoutCategory from '@/Pages/WritesCategories/_layouts/SidebarLayo
 import FlashMessage from '@/Components/CekapUI/Notifications/FlashMessage.vue';
 import ToggleSubSidebarButtonOpen from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 import { usePage, Head, router } from '@inertiajs/vue3';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue';
 
 // Component name definition for dev tools
 defineOptions({
@@ -39,9 +39,9 @@ defineOptions({
 
 // Get page props
 const { props } = usePage();
-const isMobile = props.screen.isMobileSidebar;
+const isMobile = props.screen?.isMobileSidebar || false;
 const sidebarStyle = isMobile ? '' : 'hidden lg:block';
-const screenName = props.screen.name;
+const screenName = props.screen?.name || '';
 
 // Generate SEO-friendly title with site name
 const siteName = 'Yazı Platformu';
@@ -70,7 +70,7 @@ const pageMeta = computed(() => {
     meta.description =
       props.write.meta_description ||
       props.write.summary ||
-      truncateText(props.write.content?.replace(/<[^>]*>?/gm, ''), 160);
+      truncateText(props.write.content?.replace(/<[^>]*>?/gm, '') || '', 160);
     meta.keywords = props.write.seo_keywords || '';
   } else if (props.category) {
     // Use category description for meta description
@@ -93,8 +93,18 @@ const truncateText = (text, maxLength) => {
   return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
 };
 
-const flashSuccess = ref(props.flash.success);
+const flashSuccess = ref(props.flash?.success || '');
 const isSidebarCollapsed = ref(true);
+
+// Watch for flash message changes
+watch(
+  () => props.flash?.success,
+  (newVal) => {
+    if (newVal) {
+      flashSuccess.value = newVal;
+    }
+  }
+);
 
 // Sidebar component mapping
 const sidebarComponents = {
@@ -114,11 +124,17 @@ const sidebarComponent = computed(() => {
 onMounted(() => {
   // Preserve scroll and state when navigating between writes and categories
   if (window.Inertia) {
-    window.Inertia.visit = Object.assign(window.Inertia.visit, {
+    window.Inertia.visit = Object.assign(window.Inertia.visit || {}, {
       preserveScroll: true,
       preserveState: true,
     });
   }
+});
+
+// Clean up when component is unmounted
+onBeforeUnmount(() => {
+  // Clear state to prevent memory leaks
+  flashSuccess.value = '';
 });
 
 // Event handlers for sidebar collapse state

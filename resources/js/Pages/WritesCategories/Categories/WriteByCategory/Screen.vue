@@ -1,52 +1,106 @@
 <template>
   <CheckScreen>
-    <div
-      class="card dark:bg-base-100 border border-gray-200 bg-white shadow-lg transition-all duration-200 dark:border-gray-700"
-    >
-      <div class="card-body p-6">
-        <div class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div class="mb-3 w-full sm:mb-0">
-            <h1 class="break-words text-2xl font-bold">{{ write.title }}</h1>
-            <div class="mt-2">
-              <span v-if="write.category" class="badge badge-secondary">
-                {{ write.category.name }}
-              </span>
-            </div>
+    <div class="card border border-base-200 bg-base-100 shadow-md transition-all duration-200">
+      <div class="card-body p-4 sm:p-6">
+        <!-- Title and category section -->
+        <div class="mb-2 sm:mb-4">
+          <h1 class="break-words text-xl font-bold sm:text-2xl">{{ write.title }}</h1>
+          <div class="mt-2">
+            <span v-if="write.category" class="badge badge-outline text-xs">
+              {{ write.category.name }}
+            </span>
           </div>
+        </div>
 
-          <div class="mt-2 flex flex-shrink-0 gap-2 sm:mt-0">
-            <button @click="toggleContent" class="btn" :class="showDraw ? 'btn-primary' : 'btn-ghost'" size="sm">
+        <!-- Mobile action buttons (fixed at bottom on mobile) -->
+        <div
+          class="sticky bottom-0 left-0 right-0 z-10 -mx-4 mt-4 border-t border-base-200 bg-base-100 p-2 sm:static sm:z-0 sm:mx-0 sm:mt-0 sm:border-0 sm:bg-transparent sm:p-0"
+        >
+          <div class="flex items-center justify-between">
+            <!-- Left side: Toggle content button -->
+            <button
+              @click="toggleContent"
+              class="btn btn-sm grow-0 sm:grow-0"
+              :class="showDraw ? 'btn-primary' : 'btn-outline'"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="mr-1 h-4 w-4"
+              >
+                <path
+                  v-if="showDraw"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                />
+                <path
+                  v-else
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 12.75l3 3m0 0l3-3m-3 3v-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
               {{ showDraw ? 'Metni Göster' : 'Çizim Göster' }}
             </button>
 
-            <div v-if="auth.user" class="dropdown dropdown-end">
-              <button class="btn btn-ghost btn-sm dropdown-toggle">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <!-- Right side: Admin actions -->
+            <div v-if="auth.user" class="flex gap-2">
+              <Link :href="route('writes.edit', write.id)" class="btn btn-ghost btn-sm text-xs">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="mr-1 h-4 w-4"
+                >
                   <path
-                    d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
                   />
                 </svg>
+                Düzenle
+              </Link>
+
+              <button @click="deleteWrite(write.id)" class="btn btn-ghost btn-sm text-xs text-error">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="mr-1 h-4 w-4"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                  />
+                </svg>
+                Sil
               </button>
-              <ul class="dropdown-content menu rounded-box bg-base-100 z-[1] w-52 p-2 shadow">
-                <li><a :href="route('writes.edit', write.id)">Düzenle</a></li>
-                <li><a href="#" class="text-error" @click.prevent="deleteWrite(write.id)">Sil</a></li>
-              </ul>
             </div>
           </div>
         </div>
 
         <div class="divider my-2"></div>
 
+        <!-- Main content area -->
         <div v-if="showDraw" class="min-h-[500px]">
           <ExcalidrawComponent :write="write" />
         </div>
         <div v-else class="content-container">
-          <div v-if="write.summary" class="alert alert-info mb-6">
+          <div v-if="write.summary" class="alert alert-info mb-4 px-3 py-2 text-sm sm:mb-6 sm:p-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              class="h-6 w-6 shrink-0 stroke-current"
+              class="h-5 w-5 shrink-0 stroke-current"
             >
               <path
                 stroke-linecap="round"
@@ -61,8 +115,9 @@
           <div class="article-content ql-editor" ref="contentRef" v-html="processedContent"></div>
         </div>
 
+        <!-- Footer metadata -->
         <div
-          class="text-base-content/70 mt-6 flex flex-col space-y-2 p-3 text-sm sm:flex-row sm:items-center sm:justify-between sm:space-y-0"
+          class="text-base-content/70 mt-4 flex flex-col space-y-2 p-2 text-xs sm:mt-6 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 sm:p-3 sm:text-sm"
         >
           <div>Oluşturma: {{ formatDate(write.created_at) }}</div>
           <div class="flex flex-wrap items-center gap-2">
@@ -72,7 +127,7 @@
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                class="h-4 w-4"
+                class="h-3.5 w-3.5 sm:h-4 sm:w-4"
               >
                 <path
                   stroke-linecap="round"
@@ -101,18 +156,32 @@
 
 <script setup>
 import { ref, onMounted, computed, nextTick } from 'vue';
-import { usePage, router } from '@inertiajs/vue3';
+import { usePage, router, Link } from '@inertiajs/vue3';
 import ExcalidrawComponent from '@/Components/ExcalidrawComponent.vue';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 import '@/Shared/Css/quill-custom-styles.css';
+import GoBackButton from '@/Components/GoBackButton.vue';
 
+/**
+ * Component name definition
+ */
+defineOptions({
+  name: 'WriteByCategoryScreen',
+});
+
+/**
+ * Get data from page props
+ */
 const { props } = usePage();
-const write = ref(props.write);
-const auth = props.auth;
+const category = ref(props.category || {});
+const write = ref(props.write || {});
 const contentRef = ref(null);
+const auth = props.auth || {};
 const showDraw = ref(false);
 
-// İçerik içindeki resimleri işle ve skeleton ekle
+/**
+ * Process content for display with proper safety measures
+ */
 const processedContent = computed(() => {
   if (!write.value.content) return '';
 
@@ -210,8 +279,37 @@ const processedContent = computed(() => {
   return doc.body.innerHTML;
 });
 
-// Sayfa ilk açıldığında resimleri önden yükle
+/**
+ * Format date for display
+ * @param {string} dateString - ISO date string
+ * @returns {string} Formatted date
+ */
+const formatDate = (dateString) => {
+  if (!dateString) return '';
+
+  const date = new Date(dateString);
+  return date.toLocaleDateString('tr-TR', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+};
+
+/**
+ * Navigate to edit page
+ */
+const editWrite = () => {
+  router.visit(route('writes.edit', { write: write.value.slug }));
+};
+
+/**
+ * Handle content after component mount
+ */
 onMounted(() => {
+  if (contentRef.value) {
+    setupLinkHandling();
+  }
+
   // URL parametrelerine göre çizim/içerik gösterme durumunu belirle
   if (window.location.pathname.includes('categories')) {
     showDraw.value = true;
@@ -252,6 +350,25 @@ onMounted(() => {
   }
 });
 
+/**
+ * Setup handling for links in content
+ */
+const setupLinkHandling = () => {
+  if (!contentRef.value) return;
+
+  // Get all links in the content
+  const links = contentRef.value.querySelectorAll('a');
+
+  // Add target blank to external links
+  links.forEach((link) => {
+    const url = link.getAttribute('href');
+    if (url && !url.startsWith('/') && !url.startsWith('#')) {
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+    }
+  });
+};
+
 const toggleContent = () => {
   showDraw.value = !showDraw.value;
   const url = new URL(window.location.href);
@@ -269,11 +386,6 @@ const deleteWrite = (id) => {
   if (confirm('Bu yazıyı silmek istediğinize emin misiniz?')) {
     router.delete(route('writes.destroy', id));
   }
-};
-
-const formatDate = (dateString) => {
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  return new Date(dateString).toLocaleDateString('tr-TR', options);
 };
 </script>
 
@@ -313,42 +425,39 @@ const formatDate = (dateString) => {
   word-break: normal !important;
 }
 
+/* Skeleton animation */
+.skeleton {
+  background: linear-gradient(90deg, hsl(var(--b3)) 25%, hsl(var(--b2)) 50%, hsl(var(--b3)) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 /* Mobil için ek düzenlemeler */
 @media (max-width: 640px) {
-  /* Başlık stilini iyileştir */
-  h1.text-2xl {
-    font-size: 1.4rem;
-    line-height: 1.3;
-    margin-bottom: 0.5rem;
-  }
-
-  /* Card iç dolgusu */
-  .card {
-    padding: 0.75rem !important;
-  }
-
   /* İçerik alanı */
   .article-content {
     font-size: 0.95rem;
-  }
-
-  /* Summary kutusu */
-  .alert.alert-info {
-    padding: 0.75rem !important;
-    font-size: 0.9rem;
-  }
-
-  /* Daha dar ekranlar için alternatif metin kesmesi */
-  .break-words {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-word;
-    hyphens: auto;
+    /* Add more bottom padding to prevent content from being hidden behind fixed action bar */
+    padding-bottom: 3rem;
   }
 
   /* Badge boyutu */
   .badge {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
+  }
+
+  /* Sticky action buttons */
+  .sticky {
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
   }
 }
 </style>

@@ -1,33 +1,31 @@
 <template>
   <CheckScreen>
-    <div
-      class="card dark:bg-base-100 border border-gray-200 bg-white shadow-lg transition-all duration-200 dark:border-gray-700"
-    >
-      <div class="card-body p-6">
+    <div class="card border border-base-200 bg-base-100 shadow-md transition-all duration-200">
+      <div class="card-body p-4 sm:p-6">
         <div class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div class="mb-3 w-full sm:mb-0">
-            <h1 class="break-words text-2xl font-bold">{{ write.title }}</h1>
+            <h1 class="break-words text-xl font-bold sm:text-2xl">{{ write.title }}</h1>
             <div class="mt-2">
-              <span class="badge badge-secondary" v-if="write.category">{{ write.category.name }}</span>
+              <span v-if="write.category" class="badge badge-outline text-xs">{{ write.category.name }}</span>
             </div>
           </div>
 
           <div class="mt-2 flex flex-shrink-0 gap-2 sm:mt-0">
-            <button @click="toggleContent" :class="['btn', showDraw ? 'btn-primary' : 'btn-ghost', 'btn-sm']">
+            <button @click="toggleContent" class="btn btn-sm" :class="showDraw ? 'btn-primary' : 'btn-ghost'">
               {{ showDraw ? 'Metni Göster' : 'Çizim Göster' }}
             </button>
 
             <div v-if="props.auth.user" class="dropdown dropdown-end">
-              <button class="btn btn-ghost btn-sm dropdown-toggle">
+              <button class="btn btn-ghost btn-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path
                     d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"
                   />
                 </svg>
               </button>
-              <ul class="dropdown-content menu rounded-box bg-base-100 z-[1] w-52 p-2 shadow">
-                <li><a :href="route('writes.edit', write.id)">Düzenle</a></li>
-                <li><a href="#" class="text-error" @click.prevent="deleteWrite(write.id)">Sil</a></li>
+              <ul class="dropdown-content menu z-[1] w-52 rounded-box border border-base-200 bg-base-100 p-2 shadow-md">
+                <li><a :href="route('writes.edit', write.id)" class="text-sm">Düzenle</a></li>
+                <li><a href="#" class="text-sm text-error" @click.prevent="deleteWrite(write.id)">Sil</a></li>
               </ul>
             </div>
           </div>
@@ -39,12 +37,12 @@
           <ExcalidrawComponent :write="write" />
         </div>
         <div v-else class="content-container">
-          <div v-if="write.summary" class="alert alert-info mb-6">
+          <div v-if="write.summary" class="alert alert-info mb-4 px-3 py-2 text-sm sm:mb-6 sm:p-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              class="h-6 w-6 shrink-0 stroke-current"
+              class="h-5 w-5 shrink-0 stroke-current"
             >
               <path
                 stroke-linecap="round"
@@ -60,7 +58,7 @@
         </div>
 
         <div
-          class="text-base-content/70 mt-6 flex flex-col space-y-2 p-3 text-sm sm:flex-row sm:items-center sm:justify-between sm:space-y-0"
+          class="text-base-content/70 mt-6 flex flex-col space-y-2 p-2 text-xs sm:flex-row sm:items-center sm:justify-between sm:space-y-0 sm:p-3 sm:text-sm"
         >
           <div>Oluşturma: {{ formatDate(write.created_at) }}</div>
           <div class="flex flex-wrap items-center gap-2">
@@ -70,7 +68,7 @@
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                class="h-4 w-4"
+                class="h-3.5 w-3.5 sm:h-4 sm:w-4"
               >
                 <path
                   stroke-linecap="round"
@@ -99,18 +97,30 @@
 
 <script setup>
 import { ref, onMounted, computed, nextTick } from 'vue';
-import { usePage, router } from '@inertiajs/vue3';
+import { usePage, router, Link } from '@inertiajs/vue3';
 import ExcalidrawComponent from '@/Components/ExcalidrawComponent.vue';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 import '@/Shared/Css/quill-custom-styles.css';
 
+/**
+ * Component name definition
+ */
+defineOptions({
+  name: 'ShowWriteScreen',
+});
+
+/**
+ * Get write data from page props
+ */
 const { props } = usePage();
-const write = ref(props.write);
+const write = ref(props.write || {});
 const auth = props.auth;
 const contentRef = ref(null);
 const showDraw = ref(false);
 
-// İçerik içindeki resimleri işle ve skeleton ekle
+/**
+ * Process content for display with proper safety measures
+ */
 const processedContent = computed(() => {
   if (!write.value.content) return '';
 
@@ -208,8 +218,32 @@ const processedContent = computed(() => {
   return doc.body.innerHTML;
 });
 
-// Sayfa ilk açıldığında resimleri önden yükle
+/**
+ * Format date for display
+ * @param {string} dateString - ISO date string
+ * @returns {string} Formatted date
+ */
+const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  return new Date(dateString).toLocaleDateString('tr-TR', options);
+};
+
+/**
+ * Navigate to edit page
+ */
+const editWrite = () => {
+  router.visit(route('writes.edit', { write: write.value.slug }));
+};
+
+/**
+ * Handle content after component mount
+ */
 onMounted(() => {
+  if (contentRef.value) {
+    // Add any needed post-processing for content display
+    setupLinkHandling();
+  }
+
   // URL parametrelerine göre çizim/içerik gösterme durumunu belirle
   if (window.location.pathname.includes('categories')) {
     showDraw.value = true;
@@ -250,6 +284,25 @@ onMounted(() => {
   }
 });
 
+/**
+ * Setup handling for links in content
+ */
+const setupLinkHandling = () => {
+  if (!contentRef.value) return;
+
+  // Get all links in the content
+  const links = contentRef.value.querySelectorAll('a');
+
+  // Add target blank to external links
+  links.forEach((link) => {
+    const url = link.getAttribute('href');
+    if (url && !url.startsWith('/') && !url.startsWith('#')) {
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+    }
+  });
+};
+
 const toggleContent = () => {
   showDraw.value = !showDraw.value;
   const url = new URL(window.location.href);
@@ -267,11 +320,6 @@ const deleteWrite = (id) => {
   if (confirm('Bu yazıyı silmek istediğinize emin misiniz?')) {
     router.delete(route('writes.destroy', id));
   }
-};
-
-const formatDate = (dateString) => {
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  return new Date(dateString).toLocaleDateString('tr-TR', options);
 };
 </script>
 
@@ -311,42 +359,32 @@ const formatDate = (dateString) => {
   word-break: normal !important;
 }
 
+/* Skeleton animation */
+.skeleton {
+  background: linear-gradient(90deg, hsl(var(--b3)) 25%, hsl(var(--b2)) 50%, hsl(var(--b3)) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 /* Mobil için ek düzenlemeler */
 @media (max-width: 640px) {
-  /* Başlık stilini iyileştir */
-  h1.text-2xl {
-    font-size: 1.4rem;
-    line-height: 1.3;
-    margin-bottom: 0.5rem;
-  }
-
-  /* Card iç dolgusu */
-  .card {
-    padding: 0.75rem !important;
-  }
-
   /* İçerik alanı */
   .article-content {
     font-size: 0.95rem;
   }
 
-  /* Summary kutusu */
-  .alert.alert-info {
-    padding: 0.75rem !important;
-    font-size: 0.9rem;
-  }
-
-  /* Daha dar ekranlar için alternatif metin kesmesi */
-  .break-words {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-word;
-    hyphens: auto;
-  }
-
   /* Badge boyutu */
   .badge {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
   }
 }
 </style>

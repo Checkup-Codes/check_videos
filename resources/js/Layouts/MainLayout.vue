@@ -10,18 +10,6 @@
         <slot>Default Content</slot>
       </div>
     </div>
-
-    <transition name="fade">
-      <div v-if="showSidebar" class="fixed inset-0 z-50 flex lg:hidden">
-        <div class="absolute inset-0 bg-opacity-50" @click="toggleSidebar"></div>
-
-        <transition name="slide-up">
-          <div class="relative h-full w-56 overflow-y-auto shadow">
-            <SidebarLayout @link-clicked="toggleSidebar" />
-          </div>
-        </transition>
-      </div>
-    </transition>
   </div>
 </template>
 

@@ -6,9 +6,17 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
+    /**
+     * Where to redirect users after login.
+     *
+     * @var string
+     */
+    protected $redirectTo = '/dashboard';
+
     /**
      * The user has been authenticated.
      *
@@ -23,18 +31,18 @@ class LoginController extends Controller
         // Cache'i temizle
         $this->clearApplicationCache();
 
-        return redirect()->intended($this->redirectPath());
+        return redirect()->intended($this->redirectTo);
     }
 
     /**
      * Log the user out of the application.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
     public function logout(Request $request)
     {
-        $this->guard()->logout();
+        Auth::logout();
 
         $request->session()->invalidate();
 
@@ -43,7 +51,7 @@ class LoginController extends Controller
         // Cache'i temizle
         $this->clearApplicationCache();
 
-        return $this->loggedOut($request) ?: redirect('/');
+        return redirect('/');
     }
 
     /**

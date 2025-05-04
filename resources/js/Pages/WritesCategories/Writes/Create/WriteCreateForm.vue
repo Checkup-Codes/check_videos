@@ -429,7 +429,7 @@ const showToast = ref(false);
 const toastMessage = ref('');
 const toastType = ref('alert-info');
 
-// DaisyUI ile uyumlu renkleri tanımlayalım
+// Define colors compatible with DaisyUI theme
 const daisyColors = [
   '#570DF8', // primary
   '#F000B8', // secondary
@@ -444,40 +444,48 @@ const daisyColors = [
   '#000000', // black
 ];
 
-// Toast gösterme fonksiyonu
+/**
+ * Display toast notification with auto-dismiss
+ *
+ * @param {string} message - Message to display
+ * @param {string} type - Alert type (alert-info, alert-success, etc.)
+ */
 const showToastMessage = (message, type = 'alert-info') => {
   toastMessage.value = message;
   toastType.value = type;
   showToast.value = true;
 
-  // Toast'ı 3 saniye sonra kapat
+  // Auto-dismiss toast after 3 seconds
   setTimeout(() => {
     showToast.value = false;
   }, 3000);
 };
 
-// Resim yükleme için handler oluşturalım
+/**
+ * Custom image handler for Quill editor
+ * Opens file selector and uploads selected image
+ */
 const imageHandler = () => {
   const input = document.createElement('input');
   input.setAttribute('type', 'file');
   input.setAttribute('accept', 'image/*');
   input.click();
 
-  // Dosya seçildiğinde
+  // Handle file selection
   input.onchange = async () => {
     const file = input.files[0];
     if (!file) return;
 
-    // Dosya kontrolü
+    // Validate file type
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
     if (!allowedTypes.includes(file.type)) {
-      showToastMessage('Sadece JPEG, PNG veya GIF formatları desteklenmektedir.', 'alert-error');
+      showToastMessage('Only JPEG, PNG or GIF formats are supported.', 'alert-error');
       return;
     }
 
-    // Dosya boyutu kontrolü (10MB maksimum)
+    // Validate file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
-      showToastMessage("Resim boyutu 10MB'dan küçük olmalıdır.", 'alert-error');
+      showToastMessage('Image size must be less than 10MB.', 'alert-error');
       return;
     }
 
@@ -485,12 +493,11 @@ const imageHandler = () => {
     errorMessage.value = '';
 
     try {
-      // Önce bir placeholder skeleton ekle
+      // Insert a placeholder skeleton while image uploads
       const range = quill.getSelection();
-      // Benzersiz bir ID oluştur
       const placeholderId = 'img-loading-' + Date.now();
 
-      // Özel bir div oluştur ve içine skeleton ekle (HTML olarak)
+      // Create placeholder with loading animation
       const placeholderHtml = `
         <div id="${placeholderId}" class="skeleton-placeholder w-full my-4">
           <div class="skeleton h-32 w-full rounded-lg"></div>
@@ -500,10 +507,10 @@ const imageHandler = () => {
         </div>
       `;
 
-      // HTML olarak placeholder ekle
+      // Insert placeholder HTML at cursor position
       quill.clipboard.dangerouslyPasteHTML(range.index, placeholderHtml);
 
-      // Resmi yükleme endpoint'ine gönder
+      // Prepare and send upload request
       const formData = new FormData();
       formData.append('image', file);
 
@@ -513,37 +520,34 @@ const imageHandler = () => {
         },
       });
 
-      // Resim başarıyla yüklendiyse
+      // Handle successful upload
       if (response.data.success && response.data.url) {
-        // Placeholder'ı bul ve kaldır
+        // Find and remove placeholder
         const placeholderElement = document.getElementById(placeholderId);
         if (placeholderElement) {
           const placeholderIndex = quill.getIndex(quill.scroll.descendant(Node, placeholderElement)[0][0]);
           quill.deleteText(placeholderIndex, placeholderElement.outerHTML.length);
 
-          // Editöre resmi URL olarak ekle
+          // Insert actual image at placeholder position
           quill.insertEmbed(placeholderIndex, 'image', response.data.url);
         } else {
-          // Placeholder bulunamazsa, mevcut konuma ekle
+          // If placeholder not found, insert at current cursor position
           quill.insertEmbed(range.index, 'image', response.data.url);
         }
-        showToastMessage('Resim başarıyla yüklendi', 'alert-success');
+        showToastMessage('Image uploaded successfully', 'alert-success');
       } else {
-        // Yükleme başarısız olursa placeholder'ı kaldır
+        // Handle failed upload
         const placeholderElement = document.getElementById(placeholderId);
         if (placeholderElement) {
           const placeholderIndex = quill.getIndex(quill.scroll.descendant(Node, placeholderElement)[0][0]);
           quill.deleteText(placeholderIndex, placeholderElement.outerHTML.length);
         }
-        console.error('Resim yüklenemedi');
-        showToastMessage('Resim yüklenirken bir hata oluştu.', 'alert-error');
+        console.error('Image upload failed');
+        showToastMessage('Error uploading image.', 'alert-error');
       }
     } catch (error) {
-      console.error('Resim yükleme hatası:', error);
-      showToastMessage(
-        'Resim yüklenirken bir hata oluştu: ' + (error.response?.data?.message || error.message),
-        'alert-error'
-      );
+      console.error('Image upload error:', error);
+      showToastMessage('Error uploading image: ' + (error.response?.data?.message || error.message), 'alert-error');
     } finally {
       editorLoading.value = false;
     }
@@ -551,7 +555,7 @@ const imageHandler = () => {
 };
 
 onMounted(() => {
-  // Editörü özelleştirilmiş yapılandırmayla başlat
+  // Initialize Quill editor with custom configuration
   quill = new Quill(quillEditor.value, {
     theme: 'snow',
     modules: {
@@ -568,21 +572,20 @@ onMounted(() => {
           ['clean'],
         ],
         handlers: {
-          // Özel resim yükleme handler'ı
+          // Custom image upload handler
           image: imageHandler,
         },
       },
     },
-    placeholder: 'İçeriği buraya yazın...',
+    placeholder: 'Write content here...',
     bounds: quillEditor.value,
-    // Daha büyük içerikler için sınırlamaları kaldır
+    // Remove limits for larger content
     maxLength: Infinity,
   });
 
-  // İçerik değiştiğinde emit
+  // Update form content when editor changes
   quill.on('text-change', () => {
     try {
-      // İçeriği güncelle
       const content = quill.root.innerHTML;
       form.content = content;
     } catch (error) {
@@ -590,7 +593,7 @@ onMounted(() => {
     }
   });
 
-  // İlk içeriği yükle - timeout kullanarak daha güvenli yükle
+  // Load initial content with slight delay for stability
   setTimeout(() => {
     if (form.content && !isInitialContentSet) {
       try {
@@ -602,16 +605,16 @@ onMounted(() => {
     }
   }, 100);
 
-  // Editörün yüksekliğini ayarla
+  // Set editor height
   quillEditor.value.style.height = '400px';
 
-  // Stil ayarlamalarını sonradan ekleyelim
+  // Apply additional styles
   if (quillEditor.value) {
     quillEditor.value.classList.add('daisy-quill-editor');
   }
 });
 
-// form.content değiştiğinde editörü güncelle - debounce ekle
+// Update editor when form.content changes (with debounce)
 let debounceTimer = null;
 watch(
   () => form.content,

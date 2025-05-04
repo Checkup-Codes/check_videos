@@ -111,7 +111,7 @@ class VersionsController extends Controller
 
     private function getVersionById($id)
     {
-        $version = Version::with(['features', 'bugs'])->findOrFail($id);
+        $version = Version::with(['features', 'bugs'])->where('id', $id)->firstOrFail();
         $version->release_date = Carbon::parse($version->release_date)->translatedFormat('d F Y');
 
         return $version;
@@ -143,7 +143,7 @@ class VersionsController extends Controller
 
     private function updateVersion($id, array $validated)
     {
-        $version = Version::findOrFail($id);
+        $version = Version::where('id', $id)->firstOrFail();
         $version->update([
             'version' => $validated['version'],
             'release_date' => $validated['release_date'],
@@ -168,7 +168,7 @@ class VersionsController extends Controller
 
     private function deleteVersion($id)
     {
-        $version = Version::findOrFail($id);
+        $version = Version::where('id', $id)->firstOrFail();
         $version->features()->delete();
         $version->bugs()->delete();
         $version->delete();

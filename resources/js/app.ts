@@ -49,7 +49,7 @@ library.add(
 
 import store from './Store';
 
-const appName = import.meta.env.VITE_APP_NAME;
+const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 InertiaProgress.init({
   delay: 0,
@@ -59,7 +59,7 @@ InertiaProgress.init({
 });
 
 createInertiaApp({
-  title: (title) => `${title} ${appName}`,
+  title: (title) => `${title} - ${appName}`,
   resolve: async (name) => {
     const page = (
       await resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob<DefineComponent>('./Pages/**/*.vue'))
@@ -74,9 +74,11 @@ createInertiaApp({
 
     app.use(plugin).use(ZiggyVue).use(store).component('font-awesome-icon', FontAwesomeIcon);
 
-    app.mount(el);
-  },
-  progress: {
-    color: '#4B5563',
+    // Check if the element exists before mounting
+    if (el) {
+      app.mount(el);
+    } else {
+      console.warn('Target element for mounting app not found');
+    }
   },
 });

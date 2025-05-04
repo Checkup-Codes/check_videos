@@ -1,38 +1,41 @@
 <template>
-  <div class="bg-base-100 mx-auto mt-10 w-full max-w-full px-5 lg:mt-0">
-    <div class="container mx-auto p-4">
-      <div class="card bg-base-100 shadow-xl">
-        <div class="card-body">
+  <div class="mx-auto mt-6 w-full max-w-full bg-base-100 px-3 sm:px-5 lg:mt-0">
+    <div class="container mx-auto p-0 sm:p-4">
+      <div class="card border border-base-200 bg-base-100 shadow-md">
+        <div class="card-body p-4 sm:p-6">
           <h2 class="card-title text-primary">Yeni Kategori</h2>
-          <p class="text-sm opacity-80">
+          <p class="text-xs opacity-70 sm:text-sm">
             Kategorileriniz için kategoriler oluşturun. İsterseniz bir üst kategori seçebilirsiniz.
           </p>
 
-          <div class="divider"></div>
+          <div class="divider my-3"></div>
 
           <form @submit.prevent="createCategory">
+            <!-- Category Name Field -->
             <div class="form-control w-full">
-              <label class="label">
+              <label class="label py-1.5">
                 <span class="label-text">İsim</span>
               </label>
-              <input type="text" v-model="form.name" class="input input-bordered w-full" placeholder="Kategori ismi" />
-              <label v-if="form.errors.name" class="label">
+              <input type="text" v-model="form.name" class="input-bordered input w-full" placeholder="Kategori ismi" />
+              <label v-if="form.errors.name" class="label py-1">
                 <span class="label-text-alt text-error">{{ form.errors.name }}</span>
               </label>
             </div>
 
-            <div class="form-control mt-4 w-full">
-              <label class="label">
+            <!-- Category Slug Field -->
+            <div class="form-control mt-3 w-full">
+              <label class="label py-1.5">
                 <span class="label-text">Slug</span>
               </label>
-              <input type="text" v-model="form.slug" class="input input-bordered w-full" placeholder="kategori-slug" />
-              <label v-if="form.errors.slug" class="label">
+              <input type="text" v-model="form.slug" class="input-bordered input w-full" placeholder="kategori-slug" />
+              <label v-if="form.errors.slug" class="label py-1">
                 <span class="label-text-alt text-error">{{ form.errors.slug }}</span>
               </label>
             </div>
 
-            <div class="form-control mt-4 w-full">
-              <label class="label">
+            <!-- Parent Category Field with Search Dropdown -->
+            <div class="form-control mt-3 w-full">
+              <label class="label py-1.5">
                 <span class="label-text">Üst Kategori</span>
               </label>
               <div class="relative w-full">
@@ -43,32 +46,31 @@
                   @blur="handleBlur"
                   @input="handleParentSearch"
                   @keydown.esc="showParentList = false"
-                  class="input input-bordered w-full"
+                  class="input-bordered input w-full"
                   placeholder="Üst kategori ara"
                 />
 
+                <!-- Dropdown for search results -->
                 <div v-if="showParentList && filteredCategories.length > 0" class="absolute z-30 mt-1 w-full">
                   <ul
-                    class="menu bg-base-100 rounded-box border-base-300 max-h-60 w-full overflow-y-auto border p-2 shadow-lg"
+                    class="menu max-h-60 w-full overflow-y-auto rounded-box border border-base-200 bg-base-100 p-2 shadow-md"
                   >
                     <li v-for="category in filteredCategories" :key="category.id">
-                      <a
-                        @mousedown="selectParentCategory(category)"
-                        class="hover:bg-primary hover:text-primary-content"
-                      >
+                      <a @mousedown="selectParentCategory(category)" class="py-2 text-sm hover:bg-base-200">
                         {{ category.name }}
                       </a>
                     </li>
                   </ul>
                 </div>
 
+                <!-- Selected parent category badge -->
                 <div v-if="form.parent_id" class="mt-2 flex items-center">
-                  <div class="badge badge-primary">{{ parentCategoryName }}</div>
+                  <div class="badge badge-sm">{{ parentCategoryName }}</div>
                   <button
                     type="button"
                     @click="clearParentCategory"
                     class="btn btn-ghost btn-xs ml-2"
-                    aria-label="Üst kategoriyi kaldır"
+                    aria-label="Remove parent category"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -82,27 +84,33 @@
                   </button>
                 </div>
               </div>
-              <label v-if="form.errors.parent_id" class="label">
+              <label v-if="form.errors.parent_id" class="label py-1">
                 <span class="label-text-alt text-error">{{ form.errors.parent_id }}</span>
               </label>
             </div>
 
-            <div class="form-control mt-4 w-full">
-              <label class="label">
+            <!-- Category Status Field -->
+            <div class="form-control mt-3 w-full">
+              <label class="label py-1.5">
                 <span class="label-text">Durum</span>
               </label>
-              <select v-model="form.status" class="select select-bordered w-full">
+              <select v-model="form.status" class="select-bordered select w-full">
                 <option value="public">Açık</option>
                 <option value="hidden">Gizli</option>
               </select>
-              <label v-if="form.errors.status" class="label">
+              <label v-if="form.errors.status" class="label py-1">
                 <span class="label-text-alt text-error">{{ form.errors.status }}</span>
               </label>
             </div>
 
-            <div class="card-actions mt-6 justify-end">
-              <button type="submit" class="btn btn-primary" :disabled="form.processing || isFormDisabled">
-                <span v-if="form.processing" class="loading loading-spinner loading-sm"></span>
+            <!-- Form Actions -->
+            <div class="card-actions mt-5 justify-end">
+              <button
+                type="submit"
+                class="btn btn-primary btn-sm sm:btn-md"
+                :disabled="form.processing || isFormDisabled"
+              >
+                <span v-if="form.processing" class="loading loading-spinner loading-xs sm:loading-sm"></span>
                 Kategori Oluştur
               </button>
             </div>
@@ -117,6 +125,9 @@
 import { ref, watch, computed, onMounted, nextTick } from 'vue';
 import { useForm, usePage, router } from '@inertiajs/vue3';
 
+/**
+ * Component props definition
+ */
 const props = defineProps({
   categories: {
     type: Array,
@@ -124,7 +135,9 @@ const props = defineProps({
   },
 });
 
-// Mevcut kategorileri al veya prop'lardan kullan
+/**
+ * Form state and initialization
+ */
 const categories = ref(props.categories || []);
 const form = useForm({
   name: '',
@@ -133,14 +146,19 @@ const form = useForm({
   status: 'public',
 });
 
-// Parent kategori arama ve seçme
+/**
+ * Parent category search and selection state
+ */
 const parentSearch = ref('');
 const parentCategoryName = ref('');
 const showParentList = ref(false);
 const isLoading = ref(false);
 const dropdownTimer = ref(null);
 
-// Focus ve blur işlemleri
+/**
+ * Handle input focus event
+ * Shows dropdown if filtered categories exist
+ */
 const handleFocus = () => {
   clearTimeout(dropdownTimer.value);
   if (filteredCategories.value.length > 0) {
@@ -148,13 +166,20 @@ const handleFocus = () => {
   }
 };
 
+/**
+ * Handle input blur event
+ * Delays hiding dropdown to allow clicking options
+ */
 const handleBlur = () => {
   dropdownTimer.value = setTimeout(() => {
     showParentList.value = false;
   }, 100);
 };
 
-// Filtrelenmiş kategoriler
+/**
+ * Filter categories based on search input
+ * @returns {Array} Filtered category list
+ */
 const filteredCategories = computed(() => {
   if (!categories.value || categories.value.length === 0) return [];
   if (!parentSearch.value) return categories.value;
@@ -164,12 +189,18 @@ const filteredCategories = computed(() => {
   );
 });
 
-// Form durumu
+/**
+ * Check if form is valid for submission
+ * @returns {Boolean} Whether form is disabled
+ */
 const isFormDisabled = computed(() => {
   return !form.name || !form.slug;
 });
 
-// Üst kategori araması
+/**
+ * Handle parent category search input
+ * Resets parent_id and shows dropdown when input changes
+ */
 const handleParentSearch = () => {
   form.parent_id = '';
   if (parentSearch.value.length >= 1) {
@@ -177,7 +208,10 @@ const handleParentSearch = () => {
   }
 };
 
-// Üst kategori seçme
+/**
+ * Select a parent category from dropdown
+ * @param {Object} category - The selected category
+ */
 const selectParentCategory = (category) => {
   if (!category || !category.id) return;
 
@@ -189,14 +223,18 @@ const selectParentCategory = (category) => {
   });
 };
 
-// Üst kategoriyi temizleme
+/**
+ * Clear selected parent category
+ */
 const clearParentCategory = () => {
   form.parent_id = '';
   parentSearch.value = '';
   parentCategoryName.value = '';
 };
 
-// Slug oluşturma
+/**
+ * Auto-generate slug from name
+ */
 watch(
   () => form.name,
   (newName) => {
@@ -209,28 +247,33 @@ watch(
   }
 );
 
-// Kategori kaydetme
+/**
+ * Submit form to create new category
+ */
 const createCategory = () => {
   form
     .post(route('categories.store'))
     .then(() => {
-      console.log('Kategori başarıyla oluşturuldu');
+      console.log('Category created successfully');
       form.reset();
       parentSearch.value = '';
       parentCategoryName.value = '';
     })
     .catch((error) => {
-      console.error('Kategori oluşturulurken hata:', error);
+      console.error('Error creating category:', error);
     });
 };
 
-// Component yüklendiğinde kategorileri getir
+/**
+ * Component lifecycle - setup on mount
+ */
 onMounted(() => {
+  // Fetch categories if not provided
   if (!categories.value || categories.value.length === 0) {
     fetchCategories();
   }
 
-  // Escape tuşu ile dropdownı kapatma için global listener
+  // Add global escape key listener to close dropdown
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       showParentList.value = false;
@@ -238,7 +281,9 @@ onMounted(() => {
   });
 });
 
-// Kategorileri getir
+/**
+ * Fetch categories from API
+ */
 const fetchCategories = async () => {
   isLoading.value = true;
 
@@ -251,16 +296,13 @@ const fetchCategories = async () => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error: ${response.status}`);
+      throw new Error('Failed to fetch categories');
     }
 
     const data = await response.json();
-    if (data && data.categories) {
-      categories.value = data.categories;
-      console.log('Kategoriler yüklendi:', categories.value.length);
-    }
+    categories.value = data.categories || [];
   } catch (error) {
-    console.error('Kategoriler yüklenirken hata:', error);
+    console.error('Error fetching categories:', error);
   } finally {
     isLoading.value = false;
   }

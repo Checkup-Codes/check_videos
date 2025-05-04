@@ -2,9 +2,9 @@
   <CheckSubsidebar>
     <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="collapseSidebar" />
     <TopSubsidebar title="VERSİYONLAR" :addButton="true" addButtonHref="/versions/create/" />
-    <div class="overflow-y-auto">
+    <SubSidebarScreen>
       <VersionsList :versions="versions" :currentUrl="url" />
-    </div>
+    </SubSidebarScreen>
   </CheckSubsidebar>
 </template>
 
@@ -15,6 +15,7 @@ import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
 import ToggleSubSidebarButtonClose from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 import TopSubsidebar from '@/Components/CekapUI/Typography/TopSubsidebar.vue';
 import VersionsList from '@/Pages/FBVersions/_components/VersionList.vue';
+import SubSidebarScreen from '@/Components/CekapUI/Slots/SubSidebarScreen.vue';
 
 const page = usePage();
 const props = computed(() => page.props);

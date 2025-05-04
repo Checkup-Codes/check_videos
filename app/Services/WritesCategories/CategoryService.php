@@ -11,81 +11,138 @@ class CategoryService
 {
     private const CACHE_TTL = 60;
 
+    // Define threshold for slow operations in seconds
+    private const SLOW_OPERATION_THRESHOLD = 0.5;
+
     /**
-     * Tüm kategorileri cache üzerinden veya veritabanından çeker
+     * Check if operation is slow based on execution time
+     * 
+     * @param float $executionTime
+     * @return bool
      */
-    public function getCategories()
+    private function isSlowOperation($executionTime)
     {
-        // Cache'leme işlemini tekrar aktif et, çünkü artık doğru çalışıyor
-        return Cache::remember('content_categories', self::CACHE_TTL, function () {
-            // Admin mi kontrolü
-            $isAdmin = Auth::check();
-
-            // Önce tüm kategorileri al (admin değilse sadece public olanları)
-            $categories = Category::with(['children' => function ($query) use ($isAdmin) {
-                // Sadece admin ise gizli kategorileri göster
-                if (!$isAdmin) {
-                    $query->where('status', 'public');
-                }
-            }])
-                ->when(!$isAdmin, function ($query) {
-                    // Admin değilse sadece public kategorileri göster
-                    $query->where('status', 'public');
-                })
-                ->get();
-
-            // Gizli üst kategorilerin alt kategorileri için gizlilik durumunu ayarla (bu sadece görsel için)
-            $this->setChildrenHiddenStatus($categories);
-
-            // Her kategori için yazı sayısını doğru bir şekilde hesapla
-            foreach ($categories as $category) {
-                // Her kategoriye ait benzersiz yazı ID'lerini toplayalım
-                $categoryWritesInRelationTable = DB::table('content_category_write')
-                    ->join('content_writes', 'content_category_write.write_id', '=', 'content_writes.id')
-                    ->where('content_category_write.category_id', $category->id)
-                    ->when(!$isAdmin, function ($query) {
-                        $query->where('content_writes.status', 'published');
-                    })
-                    ->pluck('content_category_write.write_id')
-                    ->toArray();
-
-                $categoryWritesInMainTable = DB::table('content_writes')
-                    ->where('category_id', $category->id)
-                    ->when(!$isAdmin, function ($query) {
-                        $query->where('status', 'published');
-                    })
-                    ->pluck('id')
-                    ->toArray();
-
-                // İki listeyi birleştirip benzersiz hale getir
-                $uniqueWriteIds = array_unique(array_merge($categoryWritesInRelationTable, $categoryWritesInMainTable));
-
-                // Benzersiz yazı sayısını kategori özelliği olarak ayarla
-                $category->writes_count = count($uniqueWriteIds);
-
-                // Alt kategorilerin yazı sayılarını da ekle
-                if ($category->children->count() > 0) {
-                    $this->calculateChildCategoriesWritesCount($category, $isAdmin);
-                }
-            }
-
-            return $categories;
-        });
+        return $executionTime > self::SLOW_OPERATION_THRESHOLD;
     }
 
     /**
-     * Gizli üst kategorilerin alt kategorileri için gizlilik durumunu ayarla
-     * Bu görsel anlamda (frontend'de kilit simgesi) için kullanılacak
+     * Format execution time with performance indicators
+     * 
+     * @param float $executionTime
+     * @return array
+     */
+    private function formatExecutionTime($executionTime)
+    {
+        return [
+            'value' => round($executionTime, 4) . ' seconds',
+            'is_slow' => $this->isSlowOperation($executionTime)
+        ];
+    }
+
+    /**
+     * Get all categories from cache or database
+     * 
+     * @return array Associated array with data and execution time
+     */
+    public function getCategories()
+    {
+        $startTime = microtime(true);
+        $isAdmin = Auth::check();
+
+        // For admin users, bypass cache to get fresh data
+        if ($isAdmin) {
+            $categories = $this->fetchCategoriesFromDatabase($isAdmin);
+        } else {
+            // For regular users, use cache for better performance
+            $categories = Cache::remember('content_categories', self::CACHE_TTL, function () use ($isAdmin) {
+                return $this->fetchCategoriesFromDatabase($isAdmin);
+            });
+        }
+
+        $executionTime = microtime(true) - $startTime;
+
+        return [
+            'data' => $categories,
+            'execution_time' => $this->formatExecutionTime($executionTime),
+            'count' => $categories->count()
+        ];
+    }
+
+    /**
+     * Fetch categories directly from database
+     * 
+     * @param bool $isAdmin
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    private function fetchCategoriesFromDatabase($isAdmin)
+    {
+        // Get all categories (only public ones for non-admin users)
+        $categories = Category::with(['children' => function ($query) use ($isAdmin) {
+            // Only show hidden categories to admin
+            if (!$isAdmin) {
+                $query->where('status', 'public');
+            }
+        }])
+            ->when(!$isAdmin, function ($query) {
+                // Only show public categories to non-admin users
+                $query->where('status', 'public');
+            })
+            ->get();
+
+        // Set hidden status for children of hidden parent categories (for UI purposes)
+        $this->setChildrenHiddenStatus($categories);
+
+        // Calculate write count for each category
+        foreach ($categories as $category) {
+            // Get unique write IDs for each category
+            $categoryWritesInRelationTable = DB::table('content_category_write')
+                ->join('content_writes', 'content_category_write.write_id', '=', 'content_writes.id')
+                ->where('content_category_write.category_id', $category->id)
+                ->when(!$isAdmin, function ($query) {
+                    $query->where('content_writes.status', 'published');
+                })
+                ->pluck('content_category_write.write_id')
+                ->toArray();
+
+            $categoryWritesInMainTable = DB::table('content_writes')
+                ->where('category_id', $category->id)
+                ->when(!$isAdmin, function ($query) {
+                    $query->where('status', 'published');
+                })
+                ->pluck('id')
+                ->toArray();
+
+            // Combine lists and remove duplicates
+            $uniqueWriteIds = array_unique(array_merge($categoryWritesInRelationTable, $categoryWritesInMainTable));
+
+            // Set unique write count as category property
+            $category->writes_count = count($uniqueWriteIds);
+
+            // Calculate write counts for child categories
+            if ($category->children->count() > 0) {
+                $this->calculateChildCategoriesWritesCount($category, $isAdmin);
+            }
+        }
+
+        return $categories;
+    }
+
+    /**
+     * Set hidden status for children of hidden parent categories
+     * Used for visual indication in the frontend (lock icon)
+     * 
+     * @param array $categories
+     * @return void
      */
     private function setChildrenHiddenStatus($categories)
     {
         foreach ($categories as $category) {
             if ($category->status === 'hidden' && $category->children->count() > 0) {
                 foreach ($category->children as $child) {
-                    // Alt kategorinin "parent_hidden" özelliğini true olarak ayarla
+                    // Set child's "parent_hidden" property to true
                     $child->parent_hidden = true;
 
-                    // Alt kategorinin kendi alt kategorileri için de aynı işlemi yap
+                    // Apply the same process to the child's children
                     if ($child->children->count() > 0) {
                         $this->setChildrenHiddenStatus([$child]);
                     }
@@ -95,12 +152,16 @@ class CategoryService
     }
 
     /**
-     * Alt kategorilerin yazı sayılarını hesaplayan yardımcı metot
+     * Calculate write counts for child categories
+     * 
+     * @param Category $category
+     * @param bool $isAdmin
+     * @return void
      */
     private function calculateChildCategoriesWritesCount($category, $isAdmin = false)
     {
         foreach ($category->children as $child) {
-            // Her alt kategoriye ait benzersiz yazı ID'lerini toplayalım
+            // Get unique write IDs for each child category
             $childWritesInRelationTable = DB::table('content_category_write')
                 ->join('content_writes', 'content_category_write.write_id', '=', 'content_writes.id')
                 ->where('content_category_write.category_id', $child->id)
@@ -118,13 +179,13 @@ class CategoryService
                 ->pluck('id')
                 ->toArray();
 
-            // İki listeyi birleştirip benzersiz hale getir
+            // Combine lists and remove duplicates
             $childUniqueWriteIds = array_unique(array_merge($childWritesInRelationTable, $childWritesInMainTable));
 
-            // Alt kategorinin kendi yazı sayısını ayarla - ana kategoriye ekleme!
+            // Set the child category's own write count - don't add to parent category!
             $child->writes_count = count($childUniqueWriteIds);
 
-            // Daha da alt kategoriler için tekrar hesapla
+            // Calculate for deeper child categories
             if ($child->children->count() > 0) {
                 $this->calculateChildCategoriesWritesCount($child, $isAdmin);
             }
@@ -132,37 +193,95 @@ class CategoryService
     }
 
     /**
-     * Bir kategori oluşturur
+     * Create a new category
+     * 
+     * @param array $data
+     * @return array Associated array with data and execution time
      */
     public function createCategory(array $data)
     {
-        $category = Category::create($data);
-        $this->clearCache();
-        return $category;
+        $startTime = microtime(true);
+
+        DB::beginTransaction();
+        try {
+            $category = Category::create($data);
+
+            DB::commit();
+            $this->clearCache();
+
+            $executionTime = microtime(true) - $startTime;
+
+            return [
+                'data' => $category,
+                'execution_time' => $this->formatExecutionTime($executionTime)
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     /**
-     * Bir kategoriyi günceller
+     * Update an existing category
+     * 
+     * @param Category $category
+     * @param array $data
+     * @return array Associated array with data and execution time
      */
     public function updateCategory(Category $category, array $data)
     {
-        $category->update($data);
-        $this->clearCache();
-        return $category;
+        $startTime = microtime(true);
+
+        DB::beginTransaction();
+        try {
+            $category->update($data);
+
+            DB::commit();
+            $this->clearCache();
+
+            $executionTime = microtime(true) - $startTime;
+
+            return [
+                'data' => $category,
+                'execution_time' => $this->formatExecutionTime($executionTime)
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     /**
-     * Bir kategoriyi siler
+     * Delete a category
+     * 
+     * @param Category $category
+     * @return array Associated array with result and execution time
      */
     public function deleteCategory(Category $category)
     {
-        $result = $category->delete();
-        $this->clearCache();
-        return $result;
+        $startTime = microtime(true);
+
+        DB::beginTransaction();
+        try {
+            $result = $category->delete();
+
+            DB::commit();
+            $this->clearCache();
+
+            $executionTime = microtime(true) - $startTime;
+
+            return [
+                'success' => $result,
+                'execution_time' => $this->formatExecutionTime($executionTime)
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     /**
-     * Kategoriye ait cache'i temizler
+     * Clear category-related cache
      */
     public function clearCache()
     {
