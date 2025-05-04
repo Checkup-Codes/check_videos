@@ -57,7 +57,7 @@
 /* Code blocks - DaisyUI uyumlu */
 .prose code,
 .ql-editor code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
   background-color: hsl(var(--b2));
   color: hsl(var(--bc));
   border-radius: 0.35rem;
@@ -121,9 +121,15 @@
 }
 
 /* Girinti sınıfları */
-.ql-indent-1 { padding-left: 3em; }
-.ql-indent-2 { padding-left: 6em; }
-.ql-indent-3 { padding-left: 9em; }
+.ql-indent-1 {
+  padding-left: 3em;
+}
+.ql-indent-2 {
+  padding-left: 6em;
+}
+.ql-indent-3 {
+  padding-left: 9em;
+}
 
 /* Additional spacing and general content styling */
 .prose {
@@ -159,7 +165,11 @@
 
 .daisy-quill-editor .ql-editor {
   min-height: 200px;
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont;
   font-size: 1rem;
   line-height: 1.6;
 }
@@ -207,9 +217,15 @@
 
 /* Skeleton stil animasyonu */
 @keyframes pulse {
-  0% { opacity: 0.6; }
-  50% { opacity: 0.3; }
-  100% { opacity: 0.6; }
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0.6;
+  }
 }
 
 .skeleton {
@@ -223,32 +239,37 @@
 
 /* Mobil uyumluluk için ek stiller */
 @media (max-width: 640px) {
-  .prose, .ql-editor {
+  .prose,
+  .ql-editor {
     font-size: 0.9rem;
   }
-  
-  .prose h1, .ql-editor h1 {
+
+  .prose h1,
+  .ql-editor h1 {
     font-size: 1.5rem;
   }
-  
-  .prose h2, .ql-editor h2 {
+
+  .prose h2,
+  .ql-editor h2 {
     font-size: 1.3rem;
   }
-  
-  .prose h3, .ql-editor h3 {
+
+  .prose h3,
+  .ql-editor h3 {
     font-size: 1.1rem;
   }
-  
-  .prose blockquote, .ql-editor blockquote {
+
+  .prose blockquote,
+  .ql-editor blockquote {
     padding: 0.75rem;
     margin: 1rem 0;
   }
-  
+
   .ql-toolbar.ql-snow {
     flex-wrap: wrap;
     padding: 4px;
   }
-  
+
   .ql-toolbar.ql-snow button {
     width: 24px;
     height: 24px;

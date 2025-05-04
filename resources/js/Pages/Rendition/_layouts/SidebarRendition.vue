@@ -5,7 +5,7 @@
     <SubSidebarScreen>
       <div class="w-full overflow-y-auto">
         <div class="min-h-full">
-          <ul class="menu bg-base-100 rounded-box w-full">
+          <ul class="menu w-full rounded-box bg-base-100">
             <li v-for="languagePack in languagePacks" :key="languagePack.id" class="mb-1">
               <div class="flex w-full items-center">
                 <Link
@@ -18,7 +18,7 @@
                   <span class="text-base">{{ languagePack.name }}</span>
                   <span class="text-base-content/70 ml-2 text-xs uppercase">{{ languagePack.language }}</span>
                 </Link>
-                <div class="badge badge-sm badge-outline">{{ languagePack.word_count || 0 }}</div>
+                <div class="badge badge-outline badge-sm">{{ languagePack.word_count || 0 }}</div>
               </div>
             </li>
           </ul>

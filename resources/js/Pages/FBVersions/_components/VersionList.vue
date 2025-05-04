@@ -18,7 +18,7 @@
           :href="`/versions/${version.version}`"
           :class="[
             getLinkClasses(`/versions/${version.version}`),
-            'card bg-base-100 block rounded-lg shadow-sm hover:shadow',
+            'card block rounded-lg bg-base-100 shadow-sm hover:shadow',
           ]"
         >
           <div class="p-3">

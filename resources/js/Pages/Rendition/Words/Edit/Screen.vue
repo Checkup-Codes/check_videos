@@ -43,7 +43,7 @@
 
     <div
       v-if="props.word"
-      class="card dark:bg-base-100 border border-gray-200 bg-white shadow-lg transition-all duration-200 dark:border-gray-700"
+      class="card border border-gray-200 bg-white shadow-lg transition-all duration-200 dark:border-gray-700 dark:bg-base-100"
     >
       <div class="card-body p-6">
         <form @submit.prevent="submitForm" class="space-y-6">
@@ -55,7 +55,7 @@
               <label class="label">
                 <span class="label-text">Kelime</span>
               </label>
-              <input type="text" v-model="form.word" class="input input-bordered w-full" required />
+              <input type="text" v-model="form.word" class="input-bordered input w-full" required />
               <label v-if="errors.word" class="label">
                 <span class="label-text-alt text-error">{{ errors.word }}</span>
               </label>
@@ -66,7 +66,7 @@
               <label class="label">
                 <span class="label-text">Anlam</span>
               </label>
-              <input type="text" v-model="form.meaning" class="input input-bordered w-full" required />
+              <input type="text" v-model="form.meaning" class="input-bordered input w-full" required />
               <label v-if="errors.meaning" class="label">
                 <span class="label-text-alt text-error">{{ errors.meaning }}</span>
               </label>
@@ -77,7 +77,7 @@
               <label class="label">
                 <span class="label-text">Tür</span>
               </label>
-              <select v-model="form.type" class="select select-bordered w-full" required>
+              <select v-model="form.type" class="select-bordered select w-full" required>
                 <option value="" disabled>Tür seçiniz</option>
                 <option value="noun">İsim (Noun)</option>
                 <option value="verb">Fiil (Verb)</option>
@@ -99,7 +99,7 @@
               <label class="label">
                 <span class="label-text">Dil</span>
               </label>
-              <select v-model="form.language" class="select select-bordered w-full" required>
+              <select v-model="form.language" class="select-bordered select w-full" required>
                 <option value="" disabled>Dil seçiniz</option>
                 <option value="tr">Türkçe (TR)</option>
                 <option value="en">İngilizce (EN)</option>
@@ -120,7 +120,7 @@
               <label class="label">
                 <span class="label-text">Zorluk Seviyesi</span>
               </label>
-              <select v-model="form.difficulty_level" class="select select-bordered w-full" required>
+              <select v-model="form.difficulty_level" class="select-bordered select w-full" required>
                 <option value="" disabled>Zorluk seviyesi seçiniz</option>
                 <option :value="1">Kolay</option>
                 <option :value="2">Orta</option>
@@ -137,7 +137,7 @@
               <label class="label">
                 <span class="label-text">Öğrenme Durumu</span>
               </label>
-              <select v-model="form.learning_status" class="select select-bordered w-full">
+              <select v-model="form.learning_status" class="select-bordered select w-full">
                 <option :value="0">Öğrenilmedi</option>
                 <option :value="1">Öğreniliyor</option>
                 <option :value="2">Öğrenildi</option>
@@ -157,7 +157,7 @@
           <div class="divider">İstatistikler</div>
 
           <div
-            class="card dark:bg-base-100 border border-gray-200 bg-white shadow transition-all duration-200 dark:border-gray-700"
+            class="card border border-gray-200 bg-white shadow transition-all duration-200 dark:border-gray-700 dark:bg-base-100"
           >
             <div class="card-body p-4">
               <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -181,7 +181,7 @@
           <div class="divider">Dil Paketleri</div>
 
           <div
-            class="card dark:bg-base-100 border border-gray-200 bg-white shadow transition-all duration-200 dark:border-gray-700"
+            class="card border border-gray-200 bg-white shadow transition-all duration-200 dark:border-gray-700 dark:bg-base-100"
           >
             <div class="card-body p-4">
               <div v-if="props.languagePacks.length === 0" class="text-sm opacity-70">
@@ -192,7 +192,7 @@
                   <label class="label cursor-pointer">
                     <span class="label-text">
                       {{ pack.name }}
-                      <span class="badge badge-sm badge-outline ml-1">{{ getLanguageName(pack.language) }}</span>
+                      <span class="badge badge-outline badge-sm ml-1">{{ getLanguageName(pack.language) }}</span>
                     </span>
                     <input
                       type="checkbox"
@@ -213,7 +213,7 @@
           <div class="divider">Örnek Cümleler</div>
 
           <div
-            class="card dark:bg-base-100 border border-gray-200 bg-white shadow transition-all duration-200 dark:border-gray-700"
+            class="card border border-gray-200 bg-white shadow transition-all duration-200 dark:border-gray-700 dark:bg-base-100"
           >
             <div class="card-body p-4">
               <div
@@ -225,19 +225,19 @@
                   <label class="label">
                     <span class="label-text">Cümle {{ index + 1 }}</span>
                   </label>
-                  <input v-model="form.example_sentences[index]" class="input input-bordered w-full" />
+                  <input v-model="form.example_sentences[index]" class="input-bordered input w-full" />
                 </div>
                 <div class="flex items-end gap-2">
                   <div class="form-control w-full">
                     <label class="label">
                       <span class="label-text">Çeviri</span>
                     </label>
-                    <input v-model="form.example_translations[index]" class="input input-bordered w-full" />
+                    <input v-model="form.example_translations[index]" class="input-bordered input w-full" />
                   </div>
                   <button
                     type="button"
                     @click="removeExampleSentence(index)"
-                    class="btn btn-circle btn-outline btn-sm btn-error mb-2"
+                    class="btn btn-error btn-outline btn-sm btn-circle mb-2"
                   >
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -253,13 +253,13 @@
           <div class="divider">Eş Anlamlılar</div>
 
           <div
-            class="card dark:bg-base-100 border border-gray-200 bg-white shadow transition-all duration-200 dark:border-gray-700"
+            class="card border border-gray-200 bg-white shadow transition-all duration-200 dark:border-gray-700 dark:bg-base-100"
           >
             <div class="card-body p-4">
               <div class="mb-4 flex flex-wrap gap-2">
-                <div v-for="(synonym, index) in form.synonyms" :key="index" class="badge badge-lg badge-outline gap-1">
+                <div v-for="(synonym, index) in form.synonyms" :key="index" class="badge badge-outline badge-lg gap-1">
                   {{ synonym }}
-                  <button type="button" @click="removeSynonym(index)" class="btn btn-circle btn-ghost btn-xs">
+                  <button type="button" @click="removeSynonym(index)" class="btn btn-ghost btn-xs btn-circle">
                     <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -270,7 +270,7 @@
                 <input
                   v-model="newSynonym"
                   type="text"
-                  class="input input-bordered w-full"
+                  class="input-bordered input w-full"
                   placeholder="Yeni eş anlamlı kelime"
                   @keyup.enter.prevent="addSynonym"
                 />

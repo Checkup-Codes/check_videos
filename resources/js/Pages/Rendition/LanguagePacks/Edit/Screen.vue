@@ -4,7 +4,7 @@
     <TopScreen title="Dil Paketi Düzenle" />
 
     <div
-      class="card dark:bg-base-100 border border-gray-200 bg-white shadow-lg transition-all duration-200 dark:border-gray-700"
+      class="card border border-gray-200 bg-white shadow-lg transition-all duration-200 dark:border-gray-700 dark:bg-base-100"
     >
       <div class="card-body p-6">
         <form @submit.prevent="submitForm" class="space-y-6">
@@ -12,7 +12,7 @@
             <label class="label">
               <span class="label-text">Paket Adı</span>
             </label>
-            <input v-model="form.name" type="text" class="input input-bordered w-full" required />
+            <input v-model="form.name" type="text" class="input-bordered input w-full" required />
             <label v-if="errors.name" class="label">
               <span class="label-text-alt text-error">{{ errors.name }}</span>
             </label>
@@ -22,7 +22,7 @@
             <label class="label">
               <span class="label-text">Açıklama</span>
             </label>
-            <textarea v-model="form.description" rows="3" class="textarea textarea-bordered w-full"></textarea>
+            <textarea v-model="form.description" rows="3" class="textarea-bordered textarea w-full"></textarea>
             <label v-if="errors.description" class="label">
               <span class="label-text-alt text-error">{{ errors.description }}</span>
             </label>
@@ -32,7 +32,7 @@
             <label class="label">
               <span class="label-text">Dil Kodu (2 karakter)</span>
             </label>
-            <select v-model="form.language" class="select select-bordered w-full" required>
+            <select v-model="form.language" class="select-bordered select w-full" required>
               <option value="" disabled>Dil seçiniz</option>
               <option value="tr">Türkçe (TR)</option>
               <option value="en">İngilizce (EN)</option>

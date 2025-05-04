@@ -13,7 +13,7 @@
       </div>
 
       <div class="h-[100vh] overflow-auto" ref="scrollContainer" @scroll="handleScroll">
-        <div class="sticky top-0 z-20 bg-sidebar">
+        <div class="bg-sidebar sticky top-0 z-20">
           <div v-for="lesson in lessons" :key="lesson.id" class="py-1">
             <Link
               :href="route('lessons.show', { lesson: lesson.slug })"

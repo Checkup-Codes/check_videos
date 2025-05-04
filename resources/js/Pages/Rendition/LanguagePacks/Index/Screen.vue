@@ -1,12 +1,12 @@
 <template>
   <CheckScreen>
-    <div class="bg-base-100 rounded-lg p-6 shadow-lg">
+    <div class="rounded-lg bg-base-100 p-6 shadow-lg">
       <div class="mb-4 flex items-center justify-between">
         <div class="flex-1">
           <h1 class="text-2xl font-bold">Dil Paketleri</h1>
         </div>
         <div class="flex gap-2">
-          <Link :href="route('rendition.language-packs.create')" class="btn btn-sm btn-primary"> Yeni Paket </Link>
+          <Link :href="route('rendition.language-packs.create')" class="btn btn-primary btn-sm"> Yeni Paket </Link>
         </div>
       </div>
 
@@ -16,7 +16,7 @@
         <div
           v-for="pack in languagePacks"
           :key="pack.id"
-          class="card card-compact bg-base-100 shadow-xl transition-shadow hover:shadow-2xl"
+          class="card-compact card bg-base-100 shadow-xl transition-shadow hover:shadow-2xl"
         >
           <div class="card-body">
             <div class="flex items-center justify-between">
@@ -25,7 +25,7 @@
             </div>
             <p class="text-sm opacity-80">{{ truncateDescription(pack.description) }}</p>
             <div class="card-actions mt-3 justify-between">
-              <Link :href="route('rendition.words.show', { word: pack.slug })" class="btn btn-sm btn-outline">
+              <Link :href="route('rendition.words.show', { word: pack.slug })" class="btn btn-outline btn-sm">
                 Kelimeleri Göster
               </Link>
               <div class="badge badge-lg">{{ pack.word_count || 0 }} kelime</div>

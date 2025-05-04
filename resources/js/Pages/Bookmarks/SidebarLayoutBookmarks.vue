@@ -1,6 +1,6 @@
 <template>
   <div class="z-10 h-screen shadow-right shadow-gray-100">
-    <div class="z-10 flex cursor-pointer justify-between bg-sidebar text-sm text-black">
+    <div class="bg-sidebar z-10 flex cursor-pointer justify-between text-sm text-black">
       <Link href="/bookmarks">
         <div class="m-2 rounded p-1 text-center font-bold text-black underline">All Writes</div>
       </Link>

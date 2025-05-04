@@ -2,7 +2,7 @@
   <CheckScreen>
     <!-- Card component directly implemented -->
     <div
-      class="card dark:bg-base-100 border border-gray-200 bg-white shadow-lg transition-all duration-200 dark:border-gray-700"
+      class="card border border-gray-200 bg-white shadow-lg transition-all duration-200 dark:border-gray-700 dark:bg-base-100"
     >
       <div class="card-body p-6">
         <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -16,7 +16,7 @@
             <Link
               v-if="isLoggedIn"
               :href="route('rendition.words.create')"
-              class="btn btn-sm btn-primary whitespace-nowrap"
+              class="btn btn-primary btn-sm whitespace-nowrap"
             >
               Yeni Kelime
             </Link>
@@ -34,10 +34,10 @@
                 type="text"
                 v-model="searchQuery"
                 placeholder="Kelime ara..."
-                class="input input-bordered input-sm w-full"
+                class="input-bordered input input-sm w-full"
                 @keyup.enter="search"
               />
-              <button class="btn btn-square btn-sm" @click="search">
+              <button class="btn btn-sm btn-square" @click="search">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   class="h-4 w-4"
@@ -59,7 +59,7 @@
           <!-- Dil Filtresi -->
           <select
             v-model="filterLanguage"
-            class="select select-bordered select-sm min-w-[150px] flex-1"
+            class="select-bordered select select-sm min-w-[150px] flex-1"
             @change="search"
           >
             <option value="">Tüm Diller</option>
@@ -71,7 +71,7 @@
           </select>
 
           <!-- Durum Filtresi -->
-          <select v-model="filterStatus" class="select select-bordered select-sm min-w-[150px] flex-1" @change="search">
+          <select v-model="filterStatus" class="select-bordered select select-sm min-w-[150px] flex-1" @change="search">
             <option value="">Tüm Durumlar</option>
             <option value="0">Öğrenilmedi</option>
             <option value="1">Öğreniliyor</option>
@@ -81,7 +81,7 @@
 
         <!-- Tablo -->
         <div class="overflow-x-auto">
-          <table class="table-zebra table w-full text-sm">
+          <table class="table table-zebra w-full text-sm">
             <thead>
               <tr>
                 <th>Kelime</th>
@@ -119,7 +119,7 @@
                 </td>
                 <td v-if="isLoggedIn">
                   <div class="flex gap-1">
-                    <Link :href="route('rendition.words.edit', word.id)" class="btn btn-xs btn-ghost">
+                    <Link :href="route('rendition.words.edit', word.id)" class="btn btn-ghost btn-xs">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         class="h-3 w-3"
@@ -148,12 +148,12 @@
             <span class="text-sm opacity-70">{{ paginationInfo }}</span>
           </div>
           <div class="join">
-            <button class="join-item btn btn-sm" :disabled="currentPage <= 1" @click="changePage(currentPage - 1)">
+            <button class="btn btn-sm join-item" :disabled="currentPage <= 1" @click="changePage(currentPage - 1)">
               «
             </button>
-            <button class="join-item btn btn-sm">{{ currentPage }}</button>
+            <button class="btn btn-sm join-item">{{ currentPage }}</button>
             <button
-              class="join-item btn btn-sm"
+              class="btn btn-sm join-item"
               :disabled="currentPage >= totalPages"
               @click="changePage(currentPage + 1)"
             >

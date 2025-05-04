@@ -1,12 +1,12 @@
 <template>
-  <li class="border-base-300 mb-3 rounded-lg border shadow-sm">
+  <li class="mb-3 rounded-lg border border-base-300 shadow-sm">
     <div @click="toggle" class="flex cursor-pointer items-center justify-between p-4">
       <div>
         <div class="flex items-center">
           <div class="bg-primary/20 mr-3 rounded-full p-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="text-primary h-5 w-5"
+              class="h-5 w-5 text-primary"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -23,7 +23,7 @@
         <div v-if="service.price" class="badge badge-neutral">{{ formatPrice(service.price) }}</div>
 
         <div class="flex space-x-1">
-          <Link :href="`/services/${service.id}`" class="btn btn-sm btn-ghost">
+          <Link :href="`/services/${service.id}`" class="btn btn-ghost btn-sm">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="h-4 w-4"
@@ -46,7 +46,7 @@
             </svg>
           </Link>
 
-          <Link :href="`/services/${service.id}/edit`" class="btn btn-sm btn-ghost">
+          <Link :href="`/services/${service.id}/edit`" class="btn btn-ghost btn-sm">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="h-4 w-4"
@@ -64,7 +64,7 @@
           </Link>
         </div>
 
-        <button v-if="hasChildren" class="btn btn-sm btn-circle btn-ghost" @click.stop="toggle">
+        <button v-if="hasChildren" class="btn btn-ghost btn-sm btn-circle" @click.stop="toggle">
           <svg
             v-if="isOpen"
             xmlns="http://www.w3.org/2000/svg"
@@ -89,7 +89,7 @@
       </div>
     </div>
 
-    <div v-if="isOpen && children.length" class="bg-base-200 rounded-b-lg p-4 pt-2">
+    <div v-if="isOpen && children.length" class="rounded-b-lg bg-base-200 p-4 pt-2">
       <p class="my-2 text-sm font-medium opacity-70">Alt Kategoriler:</p>
       <ul class="ml-4 space-y-3">
         <ServiceItem v-for="child in children" :key="child.id" :service="child" :all-services="allServices" />

@@ -1,9 +1,9 @@
 <template>
-  <div class="bg-white text-gray-800 container p-5">
+  <div class="container bg-white p-5 text-gray-800">
     <div class="prose-lg ql-container-custom prose-custom prose mb-8" v-html="content"></div>
     <div class="rounded-md border-gray-200 bg-white p-3 shadow-inner">
       <h2 class="text-gray-800-light mb-3 text-xl font-semibold">Özet</h2>
-      <div class="rounded-md bg-white break-words p-4">
+      <div class="break-words rounded-md bg-white p-4">
         {{ summary }}
       </div>
     </div>

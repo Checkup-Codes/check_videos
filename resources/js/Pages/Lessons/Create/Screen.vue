@@ -4,12 +4,12 @@
       <div class="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
         <GoBackButton href="/lessons" />
         <div class="w-full sm:w-auto">
-          <h2 class="text-primary truncate text-xl font-bold sm:text-2xl">Yeni Ders Ekle</h2>
+          <h2 class="truncate text-xl font-bold text-primary sm:text-2xl">Yeni Ders Ekle</h2>
         </div>
       </div>
 
       <div
-        class="card card-compact dark:bg-base-100 mt-5 w-full border border-gray-200 bg-white shadow-md shadow-sm transition-all duration-200 dark:border-gray-700"
+        class="card-compact card mt-5 w-full border border-gray-200 bg-white shadow-md shadow-sm transition-all duration-200 dark:border-gray-700 dark:bg-base-100"
       >
         <div class="card-body p-6">
           <form @submit.prevent="form.post('/lessons')" class="p-4">
@@ -22,7 +22,7 @@
                 type="text"
                 id="title"
                 placeholder="Ders başlığını girin"
-                class="input input-bordered w-full"
+                class="input-bordered input w-full"
                 :class="{ 'input-error': form.errors.title }"
               />
               <label v-if="form.errors.title" class="label">
@@ -40,10 +40,10 @@
                   type="text"
                   id="slug"
                   placeholder="Slug girin (slug-format)"
-                  class="input input-bordered w-full"
+                  class="input-bordered input w-full"
                   :class="{ 'input-error': form.errors.slug }"
                 />
-                <button type="button" @click="generateSlug" class="btn btn-square btn-outline shrink-0">
+                <button type="button" @click="generateSlug" class="btn btn-outline btn-square shrink-0">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="h-5 w-5"
@@ -74,7 +74,7 @@
                 type="text"
                 id="playlist_id"
                 placeholder="YouTube Playlist ID girin"
-                class="input input-bordered w-full"
+                class="input-bordered input w-full"
                 :class="{ 'input-error': form.errors.playlist_id }"
               />
               <label v-if="form.errors.playlist_id" class="label">

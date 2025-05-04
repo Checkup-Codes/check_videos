@@ -2,7 +2,7 @@
   <Link
     :href="href"
     :class="[
-      'btn btn-ghost text-base-content w-full justify-between px-4 py-3 normal-case',
+      'btn btn-ghost w-full justify-between px-4 py-3 normal-case text-base-content',
       { 'bg-base-200': isActive },
     ]"
   >

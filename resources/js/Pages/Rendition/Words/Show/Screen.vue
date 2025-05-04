@@ -1,7 +1,7 @@
 <template>
   <CheckScreen>
     <div
-      class="card dark:bg-base-100 border border-gray-200 bg-white shadow-lg transition-all duration-200 dark:border-gray-700"
+      class="card border border-gray-200 bg-white shadow-lg transition-all duration-200 dark:border-gray-700 dark:bg-base-100"
     >
       <div class="card-body p-6">
         <div class="mb-4 flex items-center justify-between">
@@ -15,11 +15,11 @@
             <Link
               v-if="isLoggedIn && props.pack"
               :href="route('rendition.language-packs.edit', props.pack.id)"
-              class="btn btn-sm btn-outline"
+              class="btn btn-outline btn-sm"
             >
               Paketi Düzenle
             </Link>
-            <Link v-if="isLoggedIn" :href="route('rendition.words.create')" class="btn btn-sm btn-primary">
+            <Link v-if="isLoggedIn" :href="route('rendition.words.create')" class="btn btn-primary btn-sm">
               Yeni Kelime
             </Link>
           </div>
@@ -36,10 +36,10 @@
                 type="text"
                 v-model="searchQuery"
                 placeholder="Kelime ara..."
-                class="input input-bordered input-sm w-full"
+                class="input-bordered input input-sm w-full"
                 @keyup.enter="filterWords"
               />
-              <button class="btn btn-square btn-sm" @click="filterWords">
+              <button class="btn btn-sm btn-square" @click="filterWords">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   class="h-4 w-4"
@@ -61,7 +61,7 @@
           <!-- Tür Filtresi -->
           <select
             v-model="filterType"
-            class="select select-bordered select-sm min-w-[150px] flex-1"
+            class="select-bordered select select-sm min-w-[150px] flex-1"
             @change="filterWords"
           >
             <option value="">Tüm Türler</option>
@@ -74,7 +74,7 @@
           <!-- Durum Filtresi -->
           <select
             v-model="filterStatus"
-            class="select select-bordered select-sm min-w-[150px] flex-1"
+            class="select-bordered select select-sm min-w-[150px] flex-1"
             @change="filterWords"
           >
             <option value="">Tüm Durumlar</option>
@@ -120,7 +120,7 @@
           <!-- Kelimeler Görünümü -->
           <div v-else key="wordList">
             <!-- Oyun Seçenekleri ve Ayarları -->
-            <div v-if="hasEnoughWords" class="border-base-300 bg-base-100 mb-6 rounded-lg border p-4">
+            <div v-if="hasEnoughWords" class="mb-6 rounded-lg border border-base-300 bg-base-100 p-4">
               <div class="flex flex-wrap items-center gap-4">
                 <div class="form-control">
                   <label class="label cursor-pointer gap-2">
@@ -130,7 +130,7 @@
                       min="5"
                       max="20"
                       v-model="gameConfig.questionCount"
-                      class="range range-xs range-primary"
+                      class="range range-primary range-xs"
                     />
                   </label>
                 </div>
@@ -160,7 +160,7 @@
 
             <!-- Kelime Tablosu -->
             <div class="overflow-x-auto">
-              <table class="table-zebra table">
+              <table class="table table-zebra">
                 <thead>
                   <tr>
                     <th>Kelime</th>
@@ -197,7 +197,7 @@
                       </div>
                     </td>
                     <td v-if="isLoggedIn">
-                      <Link :href="route('rendition.words.edit', word.id)" class="btn btn-xs btn-ghost"> Düzenle </Link>
+                      <Link :href="route('rendition.words.edit', word.id)" class="btn btn-ghost btn-xs"> Düzenle </Link>
                     </td>
                   </tr>
                 </tbody>
@@ -212,12 +212,12 @@
                 </span>
               </div>
               <div class="join">
-                <button class="join-item btn btn-sm" :disabled="currentPage <= 1" @click="changePage(currentPage - 1)">
+                <button class="btn btn-sm join-item" :disabled="currentPage <= 1" @click="changePage(currentPage - 1)">
                   «
                 </button>
-                <button class="join-item btn btn-sm">{{ currentPage }}</button>
+                <button class="btn btn-sm join-item">{{ currentPage }}</button>
                 <button
-                  class="join-item btn btn-sm"
+                  class="btn btn-sm join-item"
                   :disabled="currentPage >= totalPages"
                   @click="changePage(currentPage + 1)"
                 >

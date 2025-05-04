@@ -2,12 +2,12 @@
   <div class="card p-4">
     <div class="flex flex-col items-center">
       <div class="avatar mb-3 cursor-pointer" @contextmenu.prevent="downloadLogo" data-tooltip-id="logo-tooltip">
-        <div class="ring-primary ring-offset-base-100 w-16 rounded-full ring ring-offset-2">
+        <div class="w-16 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
           <img :src="imagePath" alt="Logo" />
         </div>
       </div>
       <div class="mb-1 flex items-center gap-2">
-        <h2 class="text-base-content text-lg font-medium">{{ seoTitle }}</h2>
+        <h2 class="text-lg font-medium text-base-content">{{ seoTitle }}</h2>
         <ThemeSwitcher />
       </div>
     </div>

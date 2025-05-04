@@ -17,7 +17,7 @@
 
     <div class="mb-5 w-full">
       <div
-        class="card card-compact dark:bg-base-100 w-full border border-gray-200 bg-white shadow-md shadow-sm transition-all duration-200 dark:border-gray-700"
+        class="card-compact card w-full border border-gray-200 bg-white shadow-md shadow-sm transition-all duration-200 dark:border-gray-700 dark:bg-base-100"
       >
         <div class="card-body p-4">
           <div v-if="projects.length === 0" class="p-4">
@@ -40,7 +40,7 @@
           </div>
 
           <div v-else class="overflow-x-auto">
-            <table class="table-zebra table">
+            <table class="table table-zebra">
               <thead>
                 <tr>
                   <th class="text-left">#</th>
@@ -78,7 +78,7 @@
                   <td class="text-center">{{ formatDate(project.created_at) }}</td>
                   <td class="text-center">
                     <div class="flex justify-center space-x-1">
-                      <Link :href="`/projects/${project.id}`" class="btn btn-xs btn-ghost">
+                      <Link :href="`/projects/${project.id}`" class="btn btn-ghost btn-xs">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           class="h-4 w-4"
@@ -100,7 +100,7 @@
                           />
                         </svg>
                       </Link>
-                      <Link :href="`/projects/${project.id}/edit`" class="btn btn-xs btn-ghost">
+                      <Link :href="`/projects/${project.id}/edit`" class="btn btn-ghost btn-xs">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           class="h-4 w-4"
