@@ -50,6 +50,16 @@
 
           <div class="form-control w-full">
             <label class="label">
+              <span class="label-text">Slug</span>
+            </label>
+            <input v-model="form.slug" type="text" class="input-bordered input w-full" required />
+            <label v-if="errors.slug" class="label">
+              <span class="label-text-alt text-error">{{ errors.slug }}</span>
+            </label>
+          </div>
+
+          <div class="form-control w-full">
+            <label class="label">
               <span class="label-text">JSON Dosyası İçe Aktar (Opsiyonel)</span>
             </label>
             <input

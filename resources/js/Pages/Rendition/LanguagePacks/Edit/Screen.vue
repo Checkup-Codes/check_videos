@@ -20,6 +20,16 @@
 
           <div class="form-control w-full">
             <label class="label">
+              <span class="label-text">Slug</span>
+            </label>
+            <input v-model="form.slug" type="text" class="input-bordered input w-full" required />
+            <label v-if="errors.slug" class="label">
+              <span class="label-text-alt text-error">{{ errors.slug }}</span>
+            </label>
+          </div>
+
+          <div class="form-control w-full">
+            <label class="label">
               <span class="label-text">Açıklama</span>
             </label>
             <textarea v-model="form.description" rows="3" class="textarea-bordered textarea w-full"></textarea>
@@ -82,6 +92,7 @@ const props = defineProps({
 
 const form = useForm({
   name: props.languagePack.name,
+  slug: props.languagePack.slug || '',
   description: props.languagePack.description || '',
   language: props.languagePack.language,
 });
