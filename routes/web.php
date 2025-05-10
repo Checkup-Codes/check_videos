@@ -20,20 +20,43 @@ use App\Http\Controllers\Rendition\WordController;
 use App\Http\Controllers\Rendition\LanguagePackController;
 use App\Http\Middleware\CheckWriteAccess;
 use App\Http\Controllers\WritesCategories\ImageUploadController;
+use App\Models\Tenant;
+use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
+use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware([
+    'web',
+    InitializeTenancyByDomain::class,
+    PreventAccessFromCentralDomains::class,
+])->group(function () {
+    Route::get('/dashboard', function () {
+        return 'Tenant Dashboard';
+    });
+});
+
+// Tenant Yönetimi Route'ları
+Route::middleware(['web'])->group(function () {
+    Route::get('/tenants', function () {
+        return Tenant::all();
+    });
+
+    Route::post('/tenants', function () {
+        $tenant = Tenant::create([
+            'name' => request('name'),
+            'email' => request('email'),
+            'domain' => request('domain'),
+        ]);
+
+        $tenant->domains()->create(['domain' => request('domain')]);
+
+        return $tenant;
+    });
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
