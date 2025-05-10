@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
 
 class CreateTenant extends Command
 {
@@ -46,13 +47,26 @@ class CreateTenant extends Command
             // Domain'i ilişkilendir
             $tenant->domains()->create(['domain' => $this->argument('domain')]);
 
+            // Tenant'a özel .env dosyası oluştur
+            $envPath = storage_path("tenants/{$tenant->id}/.env");
+            if (!file_exists(dirname($envPath))) {
+                mkdir(dirname($envPath), 0755, true);
+            }
+
+            $envContent = <<<EOT
+DB_CONNECTION={$connection}
+DB_HOST={$host}
+DB_PORT={$port}
+DB_DATABASE={$databaseName}
+DB_USERNAME={$username}
+DB_PASSWORD={$password}
+EOT;
+
+            file_put_contents($envPath, $envContent);
+
             // Veritabanını oluştur (eğer yoksa)
             $this->info('Veritabanı oluşturuluyor...');
             DB::statement("CREATE DATABASE IF NOT EXISTS `{$databaseName}`");
-
-            // Tenant'ın veritabanı bilgisini kaydet
-            $tenant->database = $databaseName;
-            $tenant->save();
 
             // Tenant'ın veritabanı bağlantısını yapılandır
             config([
