@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Manual dark mode control - devre dışı bırakılan sistem tercihi */
+@layer base {
+  /* Sistem tercihini (prefers-color-scheme) devre dışı bırak, sadece .dark sınıfına göre değiştir */
+  :root {
+    color-scheme: light;
+  }
+  
+  .dark {
+    color-scheme: dark;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    /* Bu media sorgusunu etkisiz hale getiriyoruz */
+    :root:not(.dark) {
+      /* Karanlık mod sistem tercihi olsa bile açık tema stil değerlerini korur */
+      color-scheme: light;
+    }
+  }
+}
+
 body {
   margin: 0;
   padding: 0;

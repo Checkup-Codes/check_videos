@@ -24,6 +24,8 @@ import {
   faLink,
   faShareAlt,
   faGlobe,
+  faSun,
+  faMoon,
 } from '@fortawesome/free-solid-svg-icons';
 import { faInstagram, faGithub, faYoutube, faLinkedin, faMedium, faTwitter } from '@fortawesome/free-brands-svg-icons';
 library.add(
@@ -44,7 +46,9 @@ library.add(
   faFolder,
   faLink,
   faShareAlt,
-  faGlobe
+  faGlobe,
+  faSun,
+  faMoon
 );
 
 import store from './Store';
@@ -58,8 +62,14 @@ InertiaProgress.init({
   showSpinner: true,
 });
 
+// Sistem tercihlerinden bağımsız olarak tema yönetimi
+// prefers-color-scheme medya sorgusu etkisizleştiriliyor
+// CSS dosyalarında kullanılan sistem tercihlerine bağlı kodlar yerine
+// Vue tarafından yönetilen tema sistemi kullanılıyor
+document.documentElement.classList.remove('dark');
+
 createInertiaApp({
-  title: (title) => title ? `${title} - ${appName}` : appName,
+  title: (title) => (title ? `${title} - ${appName}` : appName),
   resolve: async (name) => {
     const page = (
       await resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob<DefineComponent>('./Pages/**/*.vue'))
@@ -76,6 +86,8 @@ createInertiaApp({
 
     // Check if the element exists before mounting
     if (el) {
+      // Tema sistemini başlat
+      store.dispatch('Theme/initTheme');
       app.mount(el);
     } else {
       console.warn('Target element for mounting app not found');

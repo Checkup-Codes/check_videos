@@ -22,41 +22,24 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 
-const isDarkMode = ref(false);
+const store = useStore();
 
-// Function to update theme
-const updateTheme = (isDark) => {
-  const html = document.querySelector('html');
-  if (isDark) {
-    html.setAttribute('data-theme', 'dark');
-    localStorage.setItem('theme', 'dark');
-  } else {
-    html.setAttribute('data-theme', 'light');
-    localStorage.setItem('theme', 'light');
-  }
-};
+// Tema durumunu Vuex store'dan alıyoruz
+const isDarkTheme = computed(() => store.getters['Theme/isDarkTheme']);
 
-// Initialize theme from localStorage or system preference
-onMounted(() => {
-  // Check localStorage first
-  const savedTheme = localStorage.getItem('theme');
-
-  if (savedTheme) {
-    isDarkMode.value = savedTheme === 'dark';
-  } else {
-    // If no saved preference, check system preference
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    isDarkMode.value = prefersDark;
-  }
-
-  // Apply initial theme
-  updateTheme(isDarkMode.value);
+// Vue tarafındaki isDarkMode computed değişkeni
+const isDarkMode = computed({
+  get: () => isDarkTheme.value,
+  set: (value) => {
+    // Değer değiştiğinde store'daki temayı güncelliyoruz
+    store.dispatch('Theme/changeTheme', value ? 'dark' : 'light');
+  },
 });
 
-// Watch for changes to isDarkMode
-watch(isDarkMode, (newValue) => {
-  updateTheme(newValue);
-});
+// Bileşen yüklendiğinde, tema sistemini başlatıyoruz
+// Bu artık app.ts dosyasında yapılıyor, ancak güvenlik için burada da tutuyoruz
+store.dispatch('Theme/initTheme');
 </script>
