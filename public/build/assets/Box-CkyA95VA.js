@@ -1,1 +1,0 @@
-import{_ as t,g as r,o as a,b as s,r as o}from"./app-CAgCsGWV.js";const d={},c={class:"rounded-md border border-gray-200 p-4 text-gray-500 shadow-sm"},n={class:"mb-1 font-medium text-gray-300"},_={class:"mt-2"};function l(e,i){return a(),r("div",c,[s("div",n,[o(e.$slots,"header")]),s("div",_,[o(e.$slots,"default")])])}const f=t(d,[["render",l]]);export{f as default};

@@ -1,1 +1,0 @@
-import{_ as a}from"./ExcalidrawComponent-Az4n5eXT.js";import{g as e,o as r,a as o}from"./app-CAgCsGWV.js";const m={__name:"Excalidraw",setup(t){return(c,_)=>(r(),e("div",null,[o(a)]))}};export{m as default};

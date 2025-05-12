@@ -1,1 +1,0 @@
-import{g as r,o as a,t as e}from"./app-CAgCsGWV.js";const s={__name:"SPAddress",props:{product:Object},setup(t){return(c,o)=>(a(),r("span",null,e(t.product.platform)+" "+e(t.product.category)+", "+e(t.product.name),1))}};export{s as default};
