@@ -20,6 +20,7 @@ use App\Http\Controllers\Rendition\WordController;
 use App\Http\Controllers\Rendition\LanguagePackController;
 use App\Http\Middleware\CheckWriteAccess;
 use App\Http\Controllers\WritesCategories\ImageUploadController;
+use App\Http\Controllers\DashboardController;
 
 
 Route::get('/', function () {
@@ -31,9 +32,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

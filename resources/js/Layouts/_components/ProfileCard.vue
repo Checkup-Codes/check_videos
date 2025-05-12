@@ -1,6 +1,6 @@
 <template>
-  <div class="flex w-fit items-center gap-4 rounded-lg p-4">
-    <div class="avatar cursor-pointer" @contextmenu.prevent="downloadLogo" data-tooltip-id="logo-tooltip">
+  <div class="flex w-fit cursor-pointer items-center gap-4 rounded-lg p-4" @click="redirectToLogin">
+    <div class="avatar" @contextmenu.prevent="downloadLogo" data-tooltip-id="logo-tooltip">
       <div class="h-10 w-10 rounded-full bg-white ring ring-primary ring-offset-2 ring-offset-base-100">
         <img :src="imagePath" alt="Logo" />
       </div>
@@ -16,6 +16,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
   imagePath: {
@@ -26,13 +27,18 @@ const props = defineProps({
 
 const seoTitle = ref('');
 
-const downloadLogo = () => {
+const downloadLogo = (event) => {
+  event.stopPropagation(); // Prevent the click from triggering the redirectToLogin function
   const link = document.createElement('a');
   link.href = props.imagePath;
   link.download = 'checkup_codes_logo.png';
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+};
+
+const redirectToLogin = () => {
+  router.visit('/login');
 };
 
 onMounted(async () => {
