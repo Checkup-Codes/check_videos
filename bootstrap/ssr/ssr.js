@@ -1,7 +1,7 @@
 import axios from "axios";
-import { mergeProps, useSSRContext, ref, computed, onMounted, unref, withCtx, createVNode, createTextVNode, toDisplayString, onBeforeUnmount, createBlock, createCommentVNode, openBlock, watch, createSSRApp, h as h$1 } from "vue";
+import { mergeProps, useSSRContext, ref, onMounted, computed, onBeforeUnmount, unref, withCtx, createVNode, createBlock, createCommentVNode, toDisplayString, openBlock, watch, createTextVNode, createSSRApp, h as h$1 } from "vue";
 import { usePage, Link, router, createInertiaApp } from "@inertiajs/vue3";
-import { ssrRenderAttrs, ssrRenderComponent, ssrInterpolate, ssrRenderClass, ssrRenderSlot, ssrRenderAttr, ssrIncludeBooleanAttr, ssrLooseContain } from "vue/server-renderer";
+import { ssrRenderAttrs, ssrRenderAttr, ssrInterpolate, ssrRenderComponent, ssrRenderClass, ssrRenderSlot } from "vue/server-renderer";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { useStore, createStore } from "vuex";
 window.axios = axios;
@@ -376,213 +376,6 @@ _sfc_main$9.setup = (props, ctx) => {
 };
 const GoBackSvg = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["ssrRender", _sfc_ssrRender]]);
 const _sfc_main$8 = {
-  __name: "HeaderLayout",
-  __ssrInlineRender: true,
-  props: {
-    title: {
-      type: String,
-      default: "Header"
-    }
-  },
-  emits: ["toggleSidebar"],
-  setup(__props, { emit: __emit }) {
-    const seoTitle = ref("");
-    const isMenuOpen = ref(false);
-    const page = usePage();
-    const basePath = computed(() => {
-      const url = page.url;
-      const parts = url.split("/").filter((part) => part);
-      if (!parts.length) return null;
-      const pathMap = {
-        rendition: "rendition/words"
-        //  academy: 'academy/courses',
-      };
-      return pathMap[parts[0]] || parts[0];
-    });
-    const closeMenu = () => {
-      isMenuOpen.value = false;
-      document.body.style.overflow = "";
-    };
-    onMounted(async () => {
-      try {
-        const response = await axios.get("/api/seo/home");
-        if (response.data && response.data.title) {
-          seoTitle.value = response.data.title;
-        }
-      } catch (error) {
-        console.error("Error fetching SEO title:", error);
-      }
-      document.addEventListener("keydown", (e2) => {
-        if (e2.key === "Escape" && isMenuOpen.value) {
-          closeMenu();
-        }
-      });
-    });
-    return (_ctx, _push, _parent, _attrs) => {
-      _push(`<!--[--><header class="sticky top-0 z-40 flex h-12 items-center justify-between border-b border-base-200 bg-base-100 px-4 sm:px-5 lg:hidden" data-v-ab60f4f6>`);
-      if (basePath.value) {
-        _push(ssrRenderComponent(unref(Link), {
-          href: `/${basePath.value}`,
-          class: "btn btn-ghost btn-sm px-2"
-        }, {
-          default: withCtx((_, _push2, _parent2, _scopeId) => {
-            if (_push2) {
-              _push2(ssrRenderComponent(GoBackSvg, { class: "h-5 w-5" }, null, _parent2, _scopeId));
-            } else {
-              return [
-                createVNode(GoBackSvg, { class: "h-5 w-5" })
-              ];
-            }
-          }),
-          _: 1
-        }, _parent));
-      } else {
-        _push(`<div class="w-8" data-v-ab60f4f6></div>`);
-      }
-      _push(`<div class="bg-neutral px-3 py-1 font-bold uppercase text-neutral-content" data-v-ab60f4f6>`);
-      _push(ssrRenderComponent(unref(Link), { href: "/" }, {
-        default: withCtx((_, _push2, _parent2, _scopeId) => {
-          if (_push2) {
-            _push2(`${ssrInterpolate(seoTitle.value)}`);
-          } else {
-            return [
-              createTextVNode(toDisplayString(seoTitle.value), 1)
-            ];
-          }
-        }),
-        _: 1
-      }, _parent));
-      _push(`</div><button class="btn btn-ghost btn-sm px-2" data-v-ab60f4f6><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-v-ab60f4f6><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" data-v-ab60f4f6></path></svg></button></header>`);
-      if (isMenuOpen.value) {
-        _push(`<div class="fixed inset-0 z-50 bg-black/50 transition-opacity duration-300" data-v-ab60f4f6></div>`);
-      } else {
-        _push(`<!---->`);
-      }
-      _push(`<div class="${ssrRenderClass([isMenuOpen.value ? "translate-y-0" : "translate-y-full", "fixed inset-x-0 bottom-0 z-50 transform transition-transform duration-300 ease-in-out"])}" data-v-ab60f4f6><div class="rounded-t-xl border border-base-200 bg-base-100 pb-6 pt-4 shadow-lg" data-v-ab60f4f6><div class="mb-4 flex justify-center" data-v-ab60f4f6><div class="h-1 w-10 rounded-full bg-base-300" data-v-ab60f4f6></div></div><div class="px-6" data-v-ab60f4f6><h3 class="text-base-content/60 mb-3 text-center text-sm font-semibold uppercase" data-v-ab60f4f6>Menü</h3><div class="menu w-full" data-v-ab60f4f6>`);
-      ssrRenderSlot(_ctx.$slots, "menu-items", {}, () => {
-        var _a;
-        _push(`<ul data-v-ab60f4f6><li data-v-ab60f4f6>`);
-        _push(ssrRenderComponent(unref(Link), {
-          href: "/",
-          onClick: closeMenu,
-          class: "py-3"
-        }, {
-          default: withCtx((_, _push2, _parent2, _scopeId) => {
-            if (_push2) {
-              _push2(`Ana Sayfa`);
-            } else {
-              return [
-                createTextVNode("Ana Sayfa")
-              ];
-            }
-          }),
-          _: 1
-        }, _parent));
-        _push(`</li><li data-v-ab60f4f6>`);
-        _push(ssrRenderComponent(unref(Link), {
-          href: "/writes",
-          onClick: closeMenu,
-          class: "py-3"
-        }, {
-          default: withCtx((_, _push2, _parent2, _scopeId) => {
-            if (_push2) {
-              _push2(`Yazılar`);
-            } else {
-              return [
-                createTextVNode("Yazılar")
-              ];
-            }
-          }),
-          _: 1
-        }, _parent));
-        _push(`</li><li data-v-ab60f4f6>`);
-        _push(ssrRenderComponent(unref(Link), {
-          href: "/categories",
-          onClick: closeMenu,
-          class: "py-3"
-        }, {
-          default: withCtx((_, _push2, _parent2, _scopeId) => {
-            if (_push2) {
-              _push2(`Kategoriler`);
-            } else {
-              return [
-                createTextVNode("Kategoriler")
-              ];
-            }
-          }),
-          _: 1
-        }, _parent));
-        _push(`</li><li data-v-ab60f4f6>`);
-        _push(ssrRenderComponent(unref(Link), {
-          href: "/rendition/words",
-          onClick: closeMenu,
-          class: "py-3"
-        }, {
-          default: withCtx((_, _push2, _parent2, _scopeId) => {
-            if (_push2) {
-              _push2(`Kelimeler`);
-            } else {
-              return [
-                createTextVNode("Kelimeler")
-              ];
-            }
-          }),
-          _: 1
-        }, _parent));
-        _push(`</li><li data-v-ab60f4f6>`);
-        _push(ssrRenderComponent(unref(Link), {
-          href: "/versions",
-          onClick: closeMenu,
-          class: "py-3"
-        }, {
-          default: withCtx((_, _push2, _parent2, _scopeId) => {
-            if (_push2) {
-              _push2(`Versiyonlar`);
-            } else {
-              return [
-                createTextVNode("Versiyonlar")
-              ];
-            }
-          }),
-          _: 1
-        }, _parent));
-        _push(`</li>`);
-        if ((_a = _ctx.$page.props.auth) == null ? void 0 : _a.user) {
-          _push(`<li data-v-ab60f4f6>`);
-          _push(ssrRenderComponent(unref(Link), {
-            href: "/dashboard",
-            onClick: closeMenu,
-            class: "py-3"
-          }, {
-            default: withCtx((_, _push2, _parent2, _scopeId) => {
-              if (_push2) {
-                _push2(`Panel`);
-              } else {
-                return [
-                  createTextVNode("Panel")
-                ];
-              }
-            }),
-            _: 1
-          }, _parent));
-          _push(`</li>`);
-        } else {
-          _push(`<!---->`);
-        }
-        _push(`</ul>`);
-      }, _push, _parent);
-      _push(`</div></div></div></div><!--]-->`);
-    };
-  }
-};
-const _sfc_setup$8 = _sfc_main$8.setup;
-_sfc_main$8.setup = (props, ctx) => {
-  const ssrContext = useSSRContext();
-  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/MainLayout/HeaderLayout.vue");
-  return _sfc_setup$8 ? _sfc_setup$8(props, ctx) : void 0;
-};
-const HeaderLayout = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["__scopeId", "data-v-ab60f4f6"]]);
-const _sfc_main$7 = {
   __name: "ProfileCard",
   __ssrInlineRender: true,
   props: {
@@ -608,13 +401,13 @@ const _sfc_main$7 = {
     };
   }
 };
-const _sfc_setup$7 = _sfc_main$7.setup;
-_sfc_main$7.setup = (props, ctx) => {
+const _sfc_setup$8 = _sfc_main$8.setup;
+_sfc_main$8.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
-  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/_components/ProfileCard.vue");
-  return _sfc_setup$7 ? _sfc_setup$7(props, ctx) : void 0;
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/_composable/ProfileCard.vue");
+  return _sfc_setup$8 ? _sfc_setup$8(props, ctx) : void 0;
 };
-const _sfc_main$6 = {
+const _sfc_main$7 = {
   __name: "NavItem",
   __ssrInlineRender: true,
   props: {
@@ -653,18 +446,26 @@ const _sfc_main$6 = {
     return (_ctx, _push, _parent, _attrs) => {
       _push(ssrRenderComponent(unref(Link), mergeProps({
         href: __props.href,
-        class: ["flex w-full items-center justify-between px-4 py-2 transition-colors duration-150", { "border-l-4 border-primary bg-base-200": isActive.value }]
+        class: ["flex w-full items-center justify-between rounded-lg border px-3 py-1.5 backdrop-blur-md transition-all duration-200", {
+          // Aktif durumda: tema uyumlu ve zıt kontrast
+          "border-primary bg-primary text-primary-content shadow-md": isActive.value,
+          // Pasif durumda: yumuşak görünüm
+          "border-base-200 bg-base-200 text-base-content hover:bg-base-300": !isActive.value
+        }]
       }, _attrs), {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
             _push2(`<div class="flex items-center gap-3"${_scopeId}>`);
             _push2(ssrRenderComponent(unref(FontAwesomeIcon), {
               icon: dynamicIcon.value,
-              class: "h-5 w-5 text-base-content"
+              class: ["h-4 w-4 transition-colors duration-200", isActive.value ? "text-primary-content" : "text-base-content"]
             }, null, _parent2, _scopeId));
-            _push2(`<span class="text-sm font-medium text-base-content"${_scopeId}>${ssrInterpolate(__props.label)}</span></div>`);
+            _push2(`<span class="${ssrRenderClass([isActive.value ? "text-primary-content" : "text-base-content", "font-sans text-sm transition-colors duration-200"])}"${_scopeId}>${ssrInterpolate(__props.label)}</span></div>`);
             if (__props.shortcut) {
-              _push2(`<div class="badge text-xs"${_scopeId}>${ssrInterpolate(__props.shortcut)}</div>`);
+              _push2(`<div class="${ssrRenderClass([
+                isActive.value ? "bg-primary/20 border-primary text-primary-content" : "text-base-content/70 border-base-200 bg-base-100",
+                "rounded border px-2 py-0.5 text-xs transition-all"
+              ])}"${_scopeId}>${ssrInterpolate(__props.shortcut)}</div>`);
             } else {
               _push2(`<!---->`);
             }
@@ -673,14 +474,19 @@ const _sfc_main$6 = {
               createVNode("div", { class: "flex items-center gap-3" }, [
                 createVNode(unref(FontAwesomeIcon), {
                   icon: dynamicIcon.value,
-                  class: "h-5 w-5 text-base-content"
-                }, null, 8, ["icon"]),
-                createVNode("span", { class: "text-sm font-medium text-base-content" }, toDisplayString(__props.label), 1)
+                  class: ["h-4 w-4 transition-colors duration-200", isActive.value ? "text-primary-content" : "text-base-content"]
+                }, null, 8, ["icon", "class"]),
+                createVNode("span", {
+                  class: ["font-sans text-sm transition-colors duration-200", isActive.value ? "text-primary-content" : "text-base-content"]
+                }, toDisplayString(__props.label), 3)
               ]),
               __props.shortcut ? (openBlock(), createBlock("div", {
                 key: 0,
-                class: "badge text-xs"
-              }, toDisplayString(__props.shortcut), 1)) : createCommentVNode("", true)
+                class: [
+                  "rounded border px-2 py-0.5 text-xs transition-all",
+                  isActive.value ? "bg-primary/20 border-primary text-primary-content" : "text-base-content/70 border-base-200 bg-base-100"
+                ]
+              }, toDisplayString(__props.shortcut), 3)) : createCommentVNode("", true)
             ];
           }
         }),
@@ -689,43 +495,43 @@ const _sfc_main$6 = {
     };
   }
 };
-const _sfc_setup$6 = _sfc_main$6.setup;
-_sfc_main$6.setup = (props, ctx) => {
+const _sfc_setup$7 = _sfc_main$7.setup;
+_sfc_main$7.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
-  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Components/CekapUI/Buttons/NavItem.vue");
-  return _sfc_setup$6 ? _sfc_setup$6(props, ctx) : void 0;
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/_components/NavItem.vue");
+  return _sfc_setup$7 ? _sfc_setup$7(props, ctx) : void 0;
 };
-const _sfc_main$5 = {
+const _sfc_main$6 = {
   __name: "MainNavigation",
   __ssrInlineRender: true,
   setup(__props) {
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<nav${ssrRenderAttrs(mergeProps({ class: "w-full border-y-2 border-base-300 bg-base-200 p-2" }, _attrs))}>`);
-      _push(ssrRenderComponent(_sfc_main$6, {
+      _push(`<nav${ssrRenderAttrs(mergeProps({ class: "w-full space-y-1 bg-base-200 px-2" }, _attrs))}>`);
+      _push(ssrRenderComponent(_sfc_main$7, {
         href: "/",
         icon: "home",
         label: "Ana Sayfa",
         shortcut: "1"
       }, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$6, {
+      _push(ssrRenderComponent(_sfc_main$7, {
         href: "/writes",
         icon: "fa-solid fa-pencil",
         label: "Yazılar",
         shortcut: "2"
       }, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$6, {
+      _push(ssrRenderComponent(_sfc_main$7, {
         href: "/categories",
         icon: "fa-solid fa-book",
         label: "Kategoriler",
         shortcut: "3"
       }, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$6, {
+      _push(ssrRenderComponent(_sfc_main$7, {
         href: "/rendition/words",
         icon: "fa-solid fa-globe",
         label: "Kelimeler",
         shortcut: "4"
       }, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$6, {
+      _push(ssrRenderComponent(_sfc_main$7, {
         href: "/versions",
         icon: "fa-solid fa-sync",
         label: "Versiyonlar",
@@ -735,13 +541,13 @@ const _sfc_main$5 = {
     };
   }
 };
-const _sfc_setup$5 = _sfc_main$5.setup;
-_sfc_main$5.setup = (props, ctx) => {
+const _sfc_setup$6 = _sfc_main$6.setup;
+_sfc_main$6.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
-  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/_components/MainNavigation.vue");
-  return _sfc_setup$5 ? _sfc_setup$5(props, ctx) : void 0;
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/_composable/MainNavigation.vue");
+  return _sfc_setup$6 ? _sfc_setup$6(props, ctx) : void 0;
 };
-const _sfc_main$4 = {
+const _sfc_main$5 = {
   __name: "SocialLink",
   __ssrInlineRender: true,
   props: {
@@ -792,7 +598,10 @@ const _sfc_main$4 = {
         href: __props.href,
         target: "_blank",
         rel: "noopener noreferrer",
-        class: ["flex w-full items-center justify-between px-4 py-2 transition-colors duration-150", { "border-l-4 border-primary bg-base-200": isActive.value }],
+        class: ["flex w-full items-center justify-between rounded-lg border px-3 py-2 backdrop-blur-md transition-all duration-200", {
+          "border-primary bg-primary text-primary-content shadow-md": isActive.value,
+          "border-base-200 bg-base-200 text-base-content hover:bg-base-300": !isActive.value
+        }],
         title: __props.label
       }, _attrs))}><div class="flex items-center gap-3">`);
       _push(ssrRenderComponent(unref(FontAwesomeIcon), {
@@ -809,10 +618,56 @@ const _sfc_main$4 = {
     };
   }
 };
+const _sfc_setup$5 = _sfc_main$5.setup;
+_sfc_main$5.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/_components/SocialLink.vue");
+  return _sfc_setup$5 ? _sfc_setup$5(props, ctx) : void 0;
+};
+const _sfc_main$4 = {
+  __name: "SocialLinks",
+  __ssrInlineRender: true,
+  setup(__props) {
+    return (_ctx, _push, _parent, _attrs) => {
+      _push(`<nav${ssrRenderAttrs(mergeProps({ class: "w-full bg-base-200 px-2" }, _attrs))}><h3 class="border-t-2 border-base-300 px-3 py-3 text-xs">Hesaplar</h3>`);
+      _push(ssrRenderComponent(_sfc_main$5, {
+        href: "https://www.instagram.com/checkup_codes/",
+        icon: ["fab", "instagram"],
+        label: "Instagram"
+      }, null, _parent));
+      _push(ssrRenderComponent(_sfc_main$5, {
+        href: "https://www.youtube.com/@checkupcodes/",
+        icon: ["fab", "youtube"],
+        label: "YouTube"
+      }, null, _parent));
+      _push(ssrRenderComponent(_sfc_main$5, {
+        href: "https://github.com/cekapykp",
+        icon: ["fab", "github"],
+        label: "GitHub"
+      }, null, _parent));
+      _push(ssrRenderComponent(_sfc_main$5, {
+        href: "https://www.linkedin.com/in/cekap/",
+        icon: ["fab", "linkedin"],
+        label: "LinkedIn"
+      }, null, _parent));
+      _push(ssrRenderComponent(_sfc_main$5, {
+        href: "https://medium.com/@cekapykp",
+        icon: ["fab", "medium"],
+        label: "Medium"
+      }, null, _parent));
+      _push(ssrRenderComponent(_sfc_main$5, {
+        href: "https://x.com/checkupcodes",
+        icon: ["fab", "twitter"],
+        label: "Twitter"
+      }, null, _parent));
+      _push(`</nav>`);
+    };
+  }
+};
 const _sfc_setup$4 = _sfc_main$4.setup;
 _sfc_main$4.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
-  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Components/CekapUI/Buttons/SocialLink.vue");
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/_composable/SocialLinks.vue");
   return _sfc_setup$4 ? _sfc_setup$4(props, ctx) : void 0;
 };
 const _sfc_main$3 = {
@@ -820,73 +675,149 @@ const _sfc_main$3 = {
   __ssrInlineRender: true,
   setup(__props) {
     const store2 = useStore();
-    const isDarkTheme = computed(() => store2.getters["Theme/isDarkTheme"]);
-    const isDarkMode = computed({
-      get: () => isDarkTheme.value,
-      set: (value) => {
-        store2.dispatch("Theme/changeTheme", value ? "dark" : "light");
-      }
-    });
+    const currentTheme = computed(() => store2.getters["Theme/getCurrentTheme"]);
     store2.dispatch("Theme/initTheme");
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<div${ssrRenderAttrs(mergeProps({ class: "flex items-center justify-center" }, _attrs))}><label class="swap swap-rotate"><input type="checkbox"${ssrIncludeBooleanAttr(Array.isArray(isDarkMode.value) ? ssrLooseContain(isDarkMode.value, null) : isDarkMode.value) ? " checked" : ""} class="theme-controller hidden"><svg class="swap-on h-6 w-6 fill-current text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"></path></svg><svg class="swap-off h-6 w-6 fill-current text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"></path></svg></label></div>`);
+      _push(`<button${ssrRenderAttrs(mergeProps({ class: "btn btn-ghost" }, _attrs))}>`);
+      if (currentTheme.value === "light") {
+        _push(`<svg class="h-6 w-6 fill-current text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"></path></svg>`);
+      } else {
+        _push(`<svg class="h-6 w-6 fill-current text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"></path></svg>`);
+      }
+      _push(`</button>`);
     };
   }
 };
 const _sfc_setup$3 = _sfc_main$3.setup;
 _sfc_main$3.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
-  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Components/CekapUI/Buttons/ThemeSwitcher.vue");
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/_components/ThemeSwitcher.vue");
   return _sfc_setup$3 ? _sfc_setup$3(props, ctx) : void 0;
 };
 const _sfc_main$2 = {
-  __name: "SocialLinks",
+  __name: "HeaderLayout",
   __ssrInlineRender: true,
-  setup(__props) {
+  props: {
+    title: {
+      type: String,
+      default: "Header"
+    }
+  },
+  emits: ["toggleSidebar"],
+  setup(__props, { emit: __emit }) {
+    const seoTitle = ref("");
+    const isMenuOpen = ref(false);
+    const page = usePage();
+    const imagePath = ref("/images/checkup_codes_logo.png");
+    const auth = ref(null);
+    watch(
+      () => page.props.value,
+      (newProps) => {
+        var _a;
+        if (newProps && newProps.auth) {
+          auth.value = newProps.auth;
+          if ((_a = auth.value) == null ? void 0 : _a.user) {
+            imagePath.value = auth.value.user.imagePath || "/images/default.png";
+          }
+        }
+      },
+      { immediate: true }
+    );
+    watch(
+      () => page.url,
+      () => {
+        closeMenu();
+      }
+    );
+    const basePath = computed(() => {
+      const url = page.url;
+      const parts = url.split("/").filter((part) => part);
+      if (!parts.length) return null;
+      const pathMap = {
+        rendition: "rendition/words"
+        //  academy: 'academy/courses',
+      };
+      return pathMap[parts[0]] || parts[0];
+    });
+    const closeMenu = () => {
+      isMenuOpen.value = false;
+      document.body.style.overflow = "";
+      document.body.classList.remove("menu-open");
+    };
+    onMounted(async () => {
+      try {
+        const response = await axios.get("/api/seo/home");
+        if (response.data && response.data.title) {
+          seoTitle.value = response.data.title;
+        }
+      } catch (error) {
+        console.error("Error fetching SEO title:", error);
+      }
+      document.addEventListener("keydown", (e2) => {
+        if (e2.key === "Escape" && isMenuOpen.value) {
+          closeMenu();
+        }
+      });
+    });
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<nav${ssrRenderAttrs(mergeProps({ class: "w-full border-y-2 border-base-300 bg-base-200 p-2" }, _attrs))}><h3 class="mb-2 text-center text-xs opacity-70">Bizi Takip Edin</h3>`);
-      _push(ssrRenderComponent(_sfc_main$4, {
-        href: "https://www.instagram.com/checkup_codes/",
-        icon: ["fab", "instagram"],
-        label: "Instagram"
-      }, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$4, {
-        href: "https://www.youtube.com/@checkupcodes/",
-        icon: ["fab", "youtube"],
-        label: "YouTube"
-      }, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$4, {
-        href: "https://github.com/cekapykp",
-        icon: ["fab", "github"],
-        label: "GitHub"
-      }, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$4, {
-        href: "https://www.linkedin.com/in/cekap/",
-        icon: ["fab", "linkedin"],
-        label: "LinkedIn"
-      }, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$4, {
-        href: "https://medium.com/@cekapykp",
-        icon: ["fab", "medium"],
-        label: "Medium"
-      }, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$4, {
-        href: "https://x.com/checkupcodes",
-        icon: ["fab", "twitter"],
-        label: "Twitter"
-      }, null, _parent));
-      _push(`<div>`);
-      _push(ssrRenderComponent(_sfc_main$3, { class: "mx-auto mt-2" }, null, _parent));
-      _push(`</div></nav>`);
+      _push(`<!--[--><header class="sticky top-0 z-40 flex h-12 items-center justify-between border-b border-base-200 bg-base-100 px-4 sm:px-5 lg:hidden" data-v-3479f755>`);
+      if (basePath.value) {
+        _push(ssrRenderComponent(unref(Link), {
+          href: `/${basePath.value}`,
+          class: "btn btn-ghost btn-sm px-2"
+        }, {
+          default: withCtx((_, _push2, _parent2, _scopeId) => {
+            if (_push2) {
+              _push2(ssrRenderComponent(GoBackSvg, { class: "h-5 w-5" }, null, _parent2, _scopeId));
+            } else {
+              return [
+                createVNode(GoBackSvg, { class: "h-5 w-5" })
+              ];
+            }
+          }),
+          _: 1
+        }, _parent));
+      } else {
+        _push(`<div class="w-8" data-v-3479f755></div>`);
+      }
+      _push(`<div class="px-3 py-1 font-bold uppercase text-primary" data-v-3479f755>`);
+      _push(ssrRenderComponent(unref(Link), { href: "/" }, {
+        default: withCtx((_, _push2, _parent2, _scopeId) => {
+          if (_push2) {
+            _push2(`${ssrInterpolate(seoTitle.value)}`);
+          } else {
+            return [
+              createTextVNode(toDisplayString(seoTitle.value), 1)
+            ];
+          }
+        }),
+        _: 1
+      }, _parent));
+      _push(`</div><button class="btn btn-ghost btn-sm px-2" data-v-3479f755><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-v-3479f755><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" data-v-3479f755></path></svg></button></header>`);
+      if (isMenuOpen.value) {
+        _push(`<div class="${ssrRenderClass([isMenuOpen.value ? "opacity-100" : "opacity-0", "fixed inset-0 z-50 bg-black/50 transition-opacity duration-300"])}" data-v-3479f755></div>`);
+      } else {
+        _push(`<!---->`);
+      }
+      _push(`<div class="${ssrRenderClass([isMenuOpen.value ? "translate-y-0" : "translate-y-full", "drawer-content drawer-end fixed inset-x-0 bottom-0 z-50 transform transition-all duration-300 ease-in-out"])}" data-v-3479f755><div class="max-h-[90vh] overflow-y-auto rounded-t-xl border border-base-200 bg-base-100 pb-6 pt-4 shadow-lg" data-v-3479f755><div class="mb-4 flex justify-center" data-v-3479f755><div class="h-1 w-10 rounded-full bg-base-300" data-v-3479f755></div></div><div class="px-4" data-v-3479f755>`);
+      _push(ssrRenderComponent(_sfc_main$8, { imagePath: imagePath.value }, null, _parent));
+      _push(`<div class="mt-4" data-v-3479f755>`);
+      _push(ssrRenderComponent(_sfc_main$6, null, null, _parent));
+      _push(`</div><div class="mt-4" data-v-3479f755>`);
+      _push(ssrRenderComponent(_sfc_main$4, null, null, _parent));
+      _push(`</div><div class="mt-6 flex flex-col items-center" data-v-3479f755>`);
+      _push(ssrRenderComponent(_sfc_main$3, null, null, _parent));
+      _push(`<p class="text-base-content/60 mt-2 text-xs" data-v-3479f755>CheckupCodes - Tüm Hakları Saklıdır</p></div></div></div></div><!--]-->`);
     };
   }
 };
 const _sfc_setup$2 = _sfc_main$2.setup;
 _sfc_main$2.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
-  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/_components/SocialLinks.vue");
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/MainLayout/HeaderLayout.vue");
   return _sfc_setup$2 ? _sfc_setup$2(props, ctx) : void 0;
 };
+const HeaderLayout = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-3479f755"]]);
 const _sfc_main$1 = {
   __name: "SidebarLayout",
   __ssrInlineRender: true,
@@ -904,11 +835,13 @@ const _sfc_main$1 = {
       }
     );
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<aside${ssrRenderAttrs(mergeProps({ class: "border-r-2 border-base-300 bg-base-200" }, _attrs))}>`);
-      _push(ssrRenderComponent(_sfc_main$7, { imagePath: imagePath.value }, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$5, null, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$2, null, null, _parent));
-      _push(`</aside>`);
+      _push(`<aside${ssrRenderAttrs(mergeProps({ class: "flex h-screen flex-col justify-between border-r-2 border-base-300 bg-base-200 p-1 font-sans" }, _attrs))}><div>`);
+      _push(ssrRenderComponent(_sfc_main$8, { imagePath: imagePath.value }, null, _parent));
+      _push(ssrRenderComponent(_sfc_main$6, null, null, _parent));
+      _push(ssrRenderComponent(_sfc_main$4, null, null, _parent));
+      _push(`</div><div class="absolute inset-x-0 bottom-0 py-4 text-center">`);
+      _push(ssrRenderComponent(_sfc_main$3, { class: "mx-auto" }, null, _parent));
+      _push(`<p class="text-base-content/60 mt-2 text-xs">CheckupCodes - Tüm Hakları Saklıdır</p></div></aside>`);
     };
   }
 };
@@ -918,6 +851,8 @@ _sfc_main$1.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/MainLayout/SidebarLayout.vue");
   return _sfc_setup$1 ? _sfc_setup$1(props, ctx) : void 0;
 };
+const sidebarClass = "fixed inset-y-0 left-0 z-40 hidden overflow-hidden lg:block lg:w-64 xl:w-72";
+const contentWrapperClass = "lg:pl-64 xl:pl-72";
 const _sfc_main = {
   __name: "MainLayout",
   __ssrInlineRender: true,
@@ -927,18 +862,15 @@ const _sfc_main = {
       showSidebar.value = !showSidebar.value;
     };
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<div${ssrRenderAttrs(_attrs)}>`);
+      _push(`<!--[-->`);
       _push(ssrRenderComponent(_sfc_main$1, {
-        class: "fixed inset-y-0 left-0 z-40 hidden overflow-hidden lg:block lg:w-64 xl:w-72",
+        class: sidebarClass,
         onLinkClicked: toggleSidebar
       }, null, _parent));
-      _push(`<div class="lg:pl-64 xl:pl-72">`);
+      _push(`<div class="${ssrRenderClass(contentWrapperClass)}">`);
       _push(ssrRenderComponent(HeaderLayout, { onToggleSidebar: toggleSidebar }, null, _parent));
-      _push(`<div>`);
-      ssrRenderSlot(_ctx.$slots, "default", {}, () => {
-        _push(`Default Content`);
-      }, _push, _parent);
-      _push(`</div></div></div>`);
+      ssrRenderSlot(_ctx.$slots, "default", {}, null, _push, _parent);
+      _push(`</div><!--]-->`);
     };
   }
 };
@@ -1080,20 +1012,26 @@ const Theme = {
   namespaced: true,
   state: {
     // Default tema 'light' olarak ayarlanıyor
-    currentTheme: localStorage.getItem("theme") || "light"
+    currentTheme: localStorage.getItem("theme") || "light",
+    // Mevcut temalar
+    availableThemes: ["light", "dark", "nature", "ocean"]
   },
   mutations: {
     // Temayı değiştirme işlemi
     setTheme(state2, theme) {
+      console.log("Tema değiştiriliyor:", theme);
+      document.documentElement.classList.remove(state2.currentTheme);
       state2.currentTheme = theme;
       localStorage.setItem("theme", theme);
+      document.documentElement.setAttribute("data-theme", theme);
+      document.documentElement.classList.add(theme);
       if (theme === "dark") {
         document.documentElement.classList.add("dark");
-        document.documentElement.setAttribute("data-theme", "dark");
       } else {
         document.documentElement.classList.remove("dark");
-        document.documentElement.setAttribute("data-theme", "light");
       }
+      console.log("Tema değiştirildi:", document.documentElement.getAttribute("data-theme"));
+      console.log("HTML sınıfları:", document.documentElement.className);
     }
   },
   actions: {
@@ -1105,9 +1043,11 @@ const Theme = {
     initTheme({ commit, state: state2 }) {
       commit("setTheme", state2.currentTheme);
     },
-    // Temayı değiştirme (toggle) action'ı
+    // Temayı değiştirme (toggle) action'ı - artık sadece light/dark arası geçiş değil
     toggleTheme({ commit, state: state2 }) {
-      const newTheme = state2.currentTheme === "light" ? "dark" : "light";
+      const currentIndex = state2.availableThemes.indexOf(state2.currentTheme);
+      const nextIndex = (currentIndex + 1) % state2.availableThemes.length;
+      const newTheme = state2.availableThemes[nextIndex];
       commit("setTheme", newTheme);
     }
   },
@@ -1115,7 +1055,9 @@ const Theme = {
     // Mevcut temayı döndürür
     getCurrentTheme: (state2) => state2.currentTheme,
     // Mevcut temanın dark olup olmadığını kontrol eder
-    isDarkTheme: (state2) => state2.currentTheme === "dark"
+    isDarkTheme: (state2) => state2.currentTheme === "dark",
+    // Tüm temaları döndürür
+    getAvailableThemes: (state2) => state2.availableThemes
   }
 };
 const store = createStore({
@@ -1130,7 +1072,7 @@ const appName = "CheckupCodes";
 createInertiaApp({
   title: (title) => title ? `${title} - ${appName}` : appName,
   resolve: async (name) => {
-    const page = (await resolvePageComponent(`./Pages/${name}.vue`, /* @__PURE__ */ Object.assign({ "./Pages/Auth/ConfirmPassword.vue": () => import("./assets/ConfirmPassword-u5SAOlts.js"), "./Pages/Auth/ForgotPassword.vue": () => import("./assets/ForgotPassword-CPTEje_P.js"), "./Pages/Auth/Login.vue": () => import("./assets/Login-O1d__Tiu.js"), "./Pages/Auth/Register.vue": () => import("./assets/Register-os_aq1WA.js"), "./Pages/Auth/ResetPassword.vue": () => import("./assets/ResetPassword-f92RPq9n.js"), "./Pages/Auth/VerifyEmail.vue": () => import("./assets/VerifyEmail-g2cH248p.js"), "./Pages/Bookmarks/CreateBookmarks.vue": () => import("./assets/CreateBookmarks-BrXZpauu.js"), "./Pages/Bookmarks/EditBookmarks.vue": () => import("./assets/EditBookmarks-CfInRV_E.js"), "./Pages/Bookmarks/IndexBookmarks.vue": () => import("./assets/IndexBookmarks-BH0g04d3.js"), "./Pages/Bookmarks/ShowBookmarks.vue": () => import("./assets/ShowBookmarks-B_Ty2lxF.js"), "./Pages/Bookmarks/SidebarLayoutBookmarks.vue": () => import("./assets/SidebarLayoutBookmarks-B16ebHBN.js"), "./Pages/Category/TypescriptTutorial.vue": () => import("./assets/TypescriptTutorial-BJ9a_eFc.js"), "./Pages/Dashboard.vue": () => import("./assets/Dashboard-DYEW6WSK.js"), "./Pages/Equipments/Create/Screen.vue": () => import("./assets/Screen-D1PJcqvP.js"), "./Pages/Equipments/CreateEquipment.vue": () => import("./assets/CreateEquipment-CxmoL0yv.js"), "./Pages/Equipments/Edit/Screen.vue": () => import("./assets/Screen-Ca5kb9UJ.js"), "./Pages/Equipments/EditEquipment.vue": () => import("./assets/EditEquipment-D2FCZljd.js"), "./Pages/Equipments/Index/Screen.vue": () => import("./assets/Screen-0oDP1m6D.js"), "./Pages/Equipments/IndexEquipment.vue": () => import("./assets/IndexEquipment-B5M-6hUX.js"), "./Pages/Excalidraw.vue": () => import("./assets/Excalidraw-Douc406I.js"), "./Pages/FBVersions/Versions/Create/Screen.vue": () => import("./assets/Screen-CxwfJmix.js"), "./Pages/FBVersions/Versions/CreateVersion.vue": () => import("./assets/CreateVersion-bJLgjijR.js"), "./Pages/FBVersions/Versions/Edit/Screen.vue": () => import("./assets/Screen-TemrHlmU.js"), "./Pages/FBVersions/Versions/EditVersion.vue": () => import("./assets/EditVersion-BtDhHxx4.js"), "./Pages/FBVersions/Versions/Index/Screen.vue": () => import("./assets/Screen-Ql61lriv.js"), "./Pages/FBVersions/Versions/IndexVersion.vue": () => import("./assets/IndexVersion-DM_NFrR5.js"), "./Pages/FBVersions/Versions/Show/Screen.vue": () => import("./assets/Screen-BZaD1HiW.js"), "./Pages/FBVersions/Versions/ShowVersion.vue": () => import("./assets/ShowVersion-C4EZs_Q5.js"), "./Pages/FBVersions/_components/VersionList.vue": () => import("./assets/VersionList-CZGdxjgP.js"), "./Pages/FBVersions/_layouts/LayoutFBVersions.vue": () => import("./assets/LayoutFBVersions-DZlXHBDL.js"), "./Pages/FBVersions/_layouts/SidebarLayoutVersion.vue": () => import("./assets/SidebarLayoutVersion-D6XsNdfa.js"), "./Pages/Index/Factory.vue": () => import("./assets/Factory-BuB9jCv7.js"), "./Pages/Index/Index.vue": () => import("./assets/Index-UHbEMbz8.js"), "./Pages/Lessons/Create/Screen.vue": () => import("./assets/Screen-qPeOx-4-.js"), "./Pages/Lessons/CreateLesson.vue": () => import("./assets/CreateLesson-77Sjaoos.js"), "./Pages/Lessons/Edit/Screen.vue": () => import("./assets/Screen-LGxUmOgt.js"), "./Pages/Lessons/EditLesson.vue": () => import("./assets/EditLesson-Chuw5gCW.js"), "./Pages/Lessons/Index/Screen.vue": () => import("./assets/Screen-BTUZOZSo.js"), "./Pages/Lessons/IndexLesson.vue": () => import("./assets/IndexLesson-DKaGLuUy.js"), "./Pages/Lessons/Show/Screen.vue": () => import("./assets/Screen-sySY_Rsc.js"), "./Pages/Lessons/ShowLesson.vue": () => import("./assets/ShowLesson-D8ZtM3iQ.js"), "./Pages/Lessons/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-DfZzYfmn.js"), "./Pages/Lessons/_layouts/SidebarLayoutLesson.vue": () => import("./assets/SidebarLayoutLesson-jj_1q1DG.js"), "./Pages/Profile/Edit.vue": () => import("./assets/Edit-COWQt46U.js"), "./Pages/Profile/Partials/DeleteUserForm.vue": () => import("./assets/DeleteUserForm-C_PzGMEk.js"), "./Pages/Profile/Partials/UpdatePasswordForm.vue": () => import("./assets/UpdatePasswordForm-BuANwj67.js"), "./Pages/Profile/Partials/UpdateProfileInformationForm.vue": () => import("./assets/UpdateProfileInformationForm-aKeOKLgj.js"), "./Pages/Projects/Customers/Create/Screen.vue": () => import("./assets/Screen-CNl746Wu.js"), "./Pages/Projects/Customers/CreateCustomer.vue": () => import("./assets/CreateCustomer-CXaAcOvf.js"), "./Pages/Projects/Customers/Edit/Screen.vue": () => import("./assets/Screen-BJNhSpoc.js"), "./Pages/Projects/Customers/EditCustomer.vue": () => import("./assets/EditCustomer-llwE1w07.js"), "./Pages/Projects/Customers/Index/Screen.vue": () => import("./assets/Screen-B5M8dydy.js"), "./Pages/Projects/Customers/IndexCustomer.vue": () => import("./assets/IndexCustomer-CuMVqoo4.js"), "./Pages/Projects/Customers/Show/Screen.vue": () => import("./assets/Screen-CKUyiJ5u.js"), "./Pages/Projects/Customers/ShowCustomer.vue": () => import("./assets/ShowCustomer-CwpGEYcK.js"), "./Pages/Projects/Index/Screen.vue": () => import("./assets/Screen-CTRf1MPI.js"), "./Pages/Projects/Project/Create/Screen.vue": () => import("./assets/Screen-CMtpvVZl.js"), "./Pages/Projects/Project/CreateProject.vue": () => import("./assets/CreateProject-CzpnCHNa.js"), "./Pages/Projects/Project/Edit/Screen.vue": () => import("./assets/Screen-Cx3IPP_D.js"), "./Pages/Projects/Project/EditProject.vue": () => import("./assets/EditProject-CQt9vUH3.js"), "./Pages/Projects/Project/Index/Screen.vue": () => import("./assets/Screen-pFwPcQ7_.js"), "./Pages/Projects/Project/IndexProject.vue": () => import("./assets/IndexProject-c_J2Pnwa.js"), "./Pages/Projects/Project/Show/Screen.vue": () => import("./assets/Screen-Y3ssg_WO.js"), "./Pages/Projects/Project/ShowProject.vue": () => import("./assets/ShowProject-Dq-TjWxE.js"), "./Pages/Projects/Services/Create/Screen.vue": () => import("./assets/Screen-CpilEJWh.js"), "./Pages/Projects/Services/CreateService.vue": () => import("./assets/CreateService-AfvA6qLu.js"), "./Pages/Projects/Services/Edit/Screen.vue": () => import("./assets/Screen-CzOofyDp.js"), "./Pages/Projects/Services/EditService.vue": () => import("./assets/EditService-3QUU6FPL.js"), "./Pages/Projects/Services/Index/Screen.vue": () => import("./assets/Screen-C0VCyczG.js"), "./Pages/Projects/Services/Index/ServiceItem.vue": () => import("./assets/ServiceItem-DNzz3Oum.js"), "./Pages/Projects/Services/IndexService.vue": () => import("./assets/IndexService-Dg9Ut4i7.js"), "./Pages/Projects/Services/Show/Screen.vue": () => import("./assets/Screen-CkiAq9Qd.js"), "./Pages/Projects/Services/ShowService.vue": () => import("./assets/ShowService-Dq9q3-4u.js"), "./Pages/Projects/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-Dqf2xn13.js"), "./Pages/Projects/_layouts/LayoutProjects.vue": () => import("./assets/LayoutProjects-C59LB56z.js"), "./Pages/Projects/_layouts/SidebarLayoutProject.vue": () => import("./assets/SidebarLayoutProject-BYhkhK53.js"), "./Pages/Rendition/LanguagePacks/Create/Screen.vue": () => import("./assets/Screen-DXXJn5ec.js"), "./Pages/Rendition/LanguagePacks/CreateLanguagePacks.vue": () => import("./assets/CreateLanguagePacks-BSEqbExQ.js"), "./Pages/Rendition/LanguagePacks/Edit/Screen.vue": () => import("./assets/Screen-PYKbGGRx.js"), "./Pages/Rendition/LanguagePacks/EditLanguagePacks.vue": () => import("./assets/EditLanguagePacks-BAPKfhnw.js"), "./Pages/Rendition/LanguagePacks/Index/PacksTable.vue": () => import("./assets/PacksTable-BQ7BjUoI.js"), "./Pages/Rendition/LanguagePacks/Index/Screen.vue": () => import("./assets/Screen-mKNgQjUl.js"), "./Pages/Rendition/LanguagePacks/IndexLanguagePacks.vue": () => import("./assets/IndexLanguagePacks-CD3p8YfN.js"), "./Pages/Rendition/LanguagePacks/ShowLanguagePacks.vue": () => import("./assets/ShowLanguagePacks-DoD3r9cD.js"), "./Pages/Rendition/LanguagePacks/Words.vue": () => import("./assets/Words-DZFwWaNr.js"), "./Pages/Rendition/LanguagePacks/Words/Screen.vue": () => import("./assets/Screen-C1vjCW6f.js"), "./Pages/Rendition/Words/Create/Screen.vue": () => import("./assets/Screen-Byl3jd-s.js"), "./Pages/Rendition/Words/CreateWord.vue": () => import("./assets/CreateWord-Cd3PneBd.js"), "./Pages/Rendition/Words/Edit/Screen.vue": () => import("./assets/Screen-Cg8cxYvA.js"), "./Pages/Rendition/Words/EditWord.vue": () => import("./assets/EditWord-iQfQmz5S.js"), "./Pages/Rendition/Words/Index/Screen.vue": () => import("./assets/Screen-C77sMJgk.js"), "./Pages/Rendition/Words/Index/WordTable.vue": () => import("./assets/WordTable-5TYN-Est.js"), "./Pages/Rendition/Words/IndexWord.vue": () => import("./assets/IndexWord-CGFbwVC-.js"), "./Pages/Rendition/Words/Show/Screen.vue": () => import("./assets/Screen-XICMsLWc.js"), "./Pages/Rendition/Words/ShowWord.vue": () => import("./assets/ShowWord-D2w5mYDs.js"), "./Pages/Rendition/_components/MultipleChoice.vue": () => import("./assets/MultipleChoice-DJnv3jPA.js"), "./Pages/Rendition/_components/TranslateWord.vue": () => import("./assets/TranslateWord-B12m4bWX.js"), "./Pages/Rendition/_components/WordCompletion.vue": () => import("./assets/WordCompletion-CeNy4tRI.js"), "./Pages/Rendition/_components/WordsTable.vue": () => import("./assets/WordsTable-BqU-bMcA.js"), "./Pages/Rendition/_layouts/LayoutRendition.vue": () => import("./assets/LayoutRendition-3cwzYK3N.js"), "./Pages/Rendition/_layouts/SidebarPackGame.vue": () => import("./assets/SidebarPackGame-DUbuVJln.js"), "./Pages/Rendition/_layouts/SidebarRendition.vue": () => import("./assets/SidebarRendition-DKAy4Lg3.js"), "./Pages/SoftwareProducts/Create.vue": () => import("./assets/Create-B6qvhH56.js"), "./Pages/SoftwareProducts/Edit.vue": () => import("./assets/Edit-OmYhIBbw.js"), "./Pages/SoftwareProducts/Index.vue": () => import("./assets/Index-Bd_9DQpE.js"), "./Pages/SoftwareProducts/Show.vue": () => import("./assets/Show-CnnSgC4J.js"), "./Pages/SoftwareProducts/component/Box.vue": () => import("./assets/Box-CVbjvmlT.js"), "./Pages/SoftwareProducts/component/ConfirmModal.vue": () => import("./assets/ConfirmModal-8bTg5PxV.js"), "./Pages/SoftwareProducts/component/SPAddress.vue": () => import("./assets/SPAddress-C4B-URBw.js"), "./Pages/SoftwareProducts/component/SPPrice.vue": () => import("./assets/SPPrice-DDe_ZJN3.js"), "./Pages/SoftwareProducts/component/SPSpaces.vue": () => import("./assets/SPSpaces-C-9fwGUn.js"), "./Pages/Welcome.vue": () => import("./assets/Welcome-DBavpM4Q.js"), "./Pages/WritesCategories/Categories/Create/CategoriesCreateFrom.vue": () => import("./assets/CategoriesCreateFrom-kQrBvJAp.js"), "./Pages/WritesCategories/Categories/Create/Screen.vue": () => import("./assets/Screen-BUe-seYr.js"), "./Pages/WritesCategories/Categories/CreateCategory.vue": () => import("./assets/CreateCategory-BJFi3bn6.js"), "./Pages/WritesCategories/Categories/Edit/CategoriesEditFrom.vue": () => import("./assets/CategoriesEditFrom-DKzwSiRi.js"), "./Pages/WritesCategories/Categories/Edit/Screen.vue": () => import("./assets/Screen-B3XxBbTJ.js"), "./Pages/WritesCategories/Categories/EditCategory.vue": () => import("./assets/EditCategory-dHQjxxCT.js"), "./Pages/WritesCategories/Categories/Index/Screen.vue": () => import("./assets/Screen-DbQR93Z0.js"), "./Pages/WritesCategories/Categories/IndexCategory.vue": () => import("./assets/IndexCategory-DN2TszXT.js"), "./Pages/WritesCategories/Categories/Show/Screen.vue": () => import("./assets/Screen-CDSVnUwR.js"), "./Pages/WritesCategories/Categories/ShowCategory.vue": () => import("./assets/ShowCategory-COFafi1H.js"), "./Pages/WritesCategories/Categories/WriteByCategory.vue": () => import("./assets/WriteByCategory-DXoZz71e.js"), "./Pages/WritesCategories/Categories/WriteByCategory/Screen.vue": () => import("./assets/Screen-D5dBZZYO.js"), "./Pages/WritesCategories/Writes/Create/FormField.vue": () => import("./assets/FormField-B5B8BMWT.js"), "./Pages/WritesCategories/Writes/Create/Screen.vue": () => import("./assets/Screen-DHlE4XU-.js"), "./Pages/WritesCategories/Writes/Create/WriteCreateForm.vue": () => import("./assets/WriteCreateForm-BqlgkKsI.js"), "./Pages/WritesCategories/Writes/CreateWrite.vue": () => import("./assets/CreateWrite-DBKj3CmP.js"), "./Pages/WritesCategories/Writes/Edit/Screen.vue": () => import("./assets/Screen-C9CQPhts.js"), "./Pages/WritesCategories/Writes/Edit/WriteUpdateForm.vue": () => import("./assets/WriteUpdateForm-DrMsk9Mr.js"), "./Pages/WritesCategories/Writes/EditWrite.vue": () => import("./assets/EditWrite-D7vL-Jli.js"), "./Pages/WritesCategories/Writes/Index/Screen.vue": () => import("./assets/Screen-B9DvsXEL.js"), "./Pages/WritesCategories/Writes/IndexWrite.vue": () => import("./assets/IndexWrite-DfoGpa3K.js"), "./Pages/WritesCategories/Writes/Show/Screen.vue": () => import("./assets/Screen-BYsXeL_C.js"), "./Pages/WritesCategories/Writes/ShowWrite.vue": () => import("./assets/ShowWrite-CgktpxGP.js"), "./Pages/WritesCategories/_components/CategoryTree.vue": () => import("./assets/CategoryTree-JL8VdTcJ.js"), "./Pages/WritesCategories/_components/PerformanceMonitorButton.vue": () => import("./assets/PerformanceMonitorButton-D4ne0zEy.js"), "./Pages/WritesCategories/_components/WriteList.vue": () => import("./assets/WriteList-Cyr5_ivY.js"), "./Pages/WritesCategories/_layouts/LayoutWritesCategories.vue": () => import("./assets/LayoutWritesCategories-Dzyacyex.js"), "./Pages/WritesCategories/_layouts/SidebarLayoutCategory.vue": () => import("./assets/SidebarLayoutCategory-C7t0mOQX.js"), "./Pages/WritesCategories/_layouts/SidebarLayoutWrite.vue": () => import("./assets/SidebarLayoutWrite-B63NofaI.js") }))).default;
+    const page = (await resolvePageComponent(`./Pages/${name}.vue`, /* @__PURE__ */ Object.assign({ "./Pages/Auth/ConfirmPassword.vue": () => import("./assets/ConfirmPassword-u5SAOlts.js"), "./Pages/Auth/ForgotPassword.vue": () => import("./assets/ForgotPassword-CPTEje_P.js"), "./Pages/Auth/Login.vue": () => import("./assets/Login-O1d__Tiu.js"), "./Pages/Auth/Register.vue": () => import("./assets/Register-os_aq1WA.js"), "./Pages/Auth/ResetPassword.vue": () => import("./assets/ResetPassword-f92RPq9n.js"), "./Pages/Auth/VerifyEmail.vue": () => import("./assets/VerifyEmail-g2cH248p.js"), "./Pages/Bookmarks/CreateBookmarks.vue": () => import("./assets/CreateBookmarks-BrXZpauu.js"), "./Pages/Bookmarks/EditBookmarks.vue": () => import("./assets/EditBookmarks-CfInRV_E.js"), "./Pages/Bookmarks/IndexBookmarks.vue": () => import("./assets/IndexBookmarks-BH0g04d3.js"), "./Pages/Bookmarks/ShowBookmarks.vue": () => import("./assets/ShowBookmarks-B_Ty2lxF.js"), "./Pages/Bookmarks/SidebarLayoutBookmarks.vue": () => import("./assets/SidebarLayoutBookmarks-B16ebHBN.js"), "./Pages/Category/TypescriptTutorial.vue": () => import("./assets/TypescriptTutorial-BJ9a_eFc.js"), "./Pages/Dashboard.vue": () => import("./assets/Dashboard-DYEW6WSK.js"), "./Pages/Equipments/Create/Screen.vue": () => import("./assets/Screen-D1PJcqvP.js"), "./Pages/Equipments/CreateEquipment.vue": () => import("./assets/CreateEquipment-CxmoL0yv.js"), "./Pages/Equipments/Edit/Screen.vue": () => import("./assets/Screen-Ca5kb9UJ.js"), "./Pages/Equipments/EditEquipment.vue": () => import("./assets/EditEquipment-D2FCZljd.js"), "./Pages/Equipments/Index/Screen.vue": () => import("./assets/Screen-0oDP1m6D.js"), "./Pages/Equipments/IndexEquipment.vue": () => import("./assets/IndexEquipment-B5M-6hUX.js"), "./Pages/Excalidraw.vue": () => import("./assets/Excalidraw-Douc406I.js"), "./Pages/FBVersions/Versions/Create/Screen.vue": () => import("./assets/Screen-DOPMAHWX.js"), "./Pages/FBVersions/Versions/CreateVersion.vue": () => import("./assets/CreateVersion-C8lh_VKq.js"), "./Pages/FBVersions/Versions/Edit/Screen.vue": () => import("./assets/Screen-CCxEV934.js"), "./Pages/FBVersions/Versions/EditVersion.vue": () => import("./assets/EditVersion-C7tE2xJ8.js"), "./Pages/FBVersions/Versions/Index/Screen.vue": () => import("./assets/Screen-B7jJzkHP.js"), "./Pages/FBVersions/Versions/IndexVersion.vue": () => import("./assets/IndexVersion-BImvSHjq.js"), "./Pages/FBVersions/Versions/Show/Screen.vue": () => import("./assets/Screen-De49v-qL.js"), "./Pages/FBVersions/Versions/ShowVersion.vue": () => import("./assets/ShowVersion-BFeB8UwK.js"), "./Pages/FBVersions/_components/VersionList.vue": () => import("./assets/VersionList-CZGdxjgP.js"), "./Pages/FBVersions/_layouts/LayoutFBVersions.vue": () => import("./assets/LayoutFBVersions-DZlXHBDL.js"), "./Pages/FBVersions/_layouts/SidebarLayoutVersion.vue": () => import("./assets/SidebarLayoutVersion-D6XsNdfa.js"), "./Pages/Index/Factory.vue": () => import("./assets/Factory-BuB9jCv7.js"), "./Pages/Index/Index.vue": () => import("./assets/Index-DZCtivc7.js"), "./Pages/Lessons/Create/Screen.vue": () => import("./assets/Screen-ni_yP-Kb.js"), "./Pages/Lessons/CreateLesson.vue": () => import("./assets/CreateLesson-B8gwWx9L.js"), "./Pages/Lessons/Edit/Screen.vue": () => import("./assets/Screen-CRG4SbKP.js"), "./Pages/Lessons/EditLesson.vue": () => import("./assets/EditLesson-s6YKMxyT.js"), "./Pages/Lessons/Index/Screen.vue": () => import("./assets/Screen-ePv46u0V.js"), "./Pages/Lessons/IndexLesson.vue": () => import("./assets/IndexLesson-2qAvVYuA.js"), "./Pages/Lessons/Show/Screen.vue": () => import("./assets/Screen-BbwtzecP.js"), "./Pages/Lessons/ShowLesson.vue": () => import("./assets/ShowLesson-CaeNTu87.js"), "./Pages/Lessons/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-DfZzYfmn.js"), "./Pages/Lessons/_layouts/SidebarLayoutLesson.vue": () => import("./assets/SidebarLayoutLesson-jj_1q1DG.js"), "./Pages/Profile/Edit.vue": () => import("./assets/Edit-COWQt46U.js"), "./Pages/Profile/Partials/DeleteUserForm.vue": () => import("./assets/DeleteUserForm-C_PzGMEk.js"), "./Pages/Profile/Partials/UpdatePasswordForm.vue": () => import("./assets/UpdatePasswordForm-BuANwj67.js"), "./Pages/Profile/Partials/UpdateProfileInformationForm.vue": () => import("./assets/UpdateProfileInformationForm-aKeOKLgj.js"), "./Pages/Projects/Customers/Create/Screen.vue": () => import("./assets/Screen-CNl746Wu.js"), "./Pages/Projects/Customers/CreateCustomer.vue": () => import("./assets/CreateCustomer-CXaAcOvf.js"), "./Pages/Projects/Customers/Edit/Screen.vue": () => import("./assets/Screen-BJNhSpoc.js"), "./Pages/Projects/Customers/EditCustomer.vue": () => import("./assets/EditCustomer-llwE1w07.js"), "./Pages/Projects/Customers/Index/Screen.vue": () => import("./assets/Screen-CF08778J.js"), "./Pages/Projects/Customers/IndexCustomer.vue": () => import("./assets/IndexCustomer-BjUYmCZc.js"), "./Pages/Projects/Customers/Show/Screen.vue": () => import("./assets/Screen-CKUyiJ5u.js"), "./Pages/Projects/Customers/ShowCustomer.vue": () => import("./assets/ShowCustomer-CwpGEYcK.js"), "./Pages/Projects/Index/Screen.vue": () => import("./assets/Screen-BgY3djlG.js"), "./Pages/Projects/Project/Create/Screen.vue": () => import("./assets/Screen-CxtwuE8L.js"), "./Pages/Projects/Project/CreateProject.vue": () => import("./assets/CreateProject-DcD9t2J-.js"), "./Pages/Projects/Project/Edit/Screen.vue": () => import("./assets/Screen-BAeLU-Vh.js"), "./Pages/Projects/Project/EditProject.vue": () => import("./assets/EditProject-XSKoff9S.js"), "./Pages/Projects/Project/Index/Screen.vue": () => import("./assets/Screen-Cb6zggy0.js"), "./Pages/Projects/Project/IndexProject.vue": () => import("./assets/IndexProject-xSJ1NDCa.js"), "./Pages/Projects/Project/Show/Screen.vue": () => import("./assets/Screen-B_HhFuXK.js"), "./Pages/Projects/Project/ShowProject.vue": () => import("./assets/ShowProject-BjuAMdOj.js"), "./Pages/Projects/Services/Create/Screen.vue": () => import("./assets/Screen-DFLaI__Y.js"), "./Pages/Projects/Services/CreateService.vue": () => import("./assets/CreateService-D6j2McZz.js"), "./Pages/Projects/Services/Edit/Screen.vue": () => import("./assets/Screen-Bm09gZzi.js"), "./Pages/Projects/Services/EditService.vue": () => import("./assets/EditService-BKrmJz7m.js"), "./Pages/Projects/Services/Index/Screen.vue": () => import("./assets/Screen-D0ONIZ15.js"), "./Pages/Projects/Services/Index/ServiceItem.vue": () => import("./assets/ServiceItem-DNzz3Oum.js"), "./Pages/Projects/Services/IndexService.vue": () => import("./assets/IndexService-B0YxqN_h.js"), "./Pages/Projects/Services/Show/Screen.vue": () => import("./assets/Screen-CkiAq9Qd.js"), "./Pages/Projects/Services/ShowService.vue": () => import("./assets/ShowService-Dq9q3-4u.js"), "./Pages/Projects/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-Dqf2xn13.js"), "./Pages/Projects/_layouts/LayoutProjects.vue": () => import("./assets/LayoutProjects-C59LB56z.js"), "./Pages/Projects/_layouts/SidebarLayoutProject.vue": () => import("./assets/SidebarLayoutProject-BYhkhK53.js"), "./Pages/Rendition/LanguagePacks/Create/Screen.vue": () => import("./assets/Screen-Dr75zqzo.js"), "./Pages/Rendition/LanguagePacks/CreateLanguagePacks.vue": () => import("./assets/CreateLanguagePacks-D3Z9osrZ.js"), "./Pages/Rendition/LanguagePacks/Edit/Screen.vue": () => import("./assets/Screen-D1M2kfHe.js"), "./Pages/Rendition/LanguagePacks/EditLanguagePacks.vue": () => import("./assets/EditLanguagePacks-CBJiVhd3.js"), "./Pages/Rendition/LanguagePacks/Index/PacksTable.vue": () => import("./assets/PacksTable-Uj61Mv8L.js"), "./Pages/Rendition/LanguagePacks/Index/Screen.vue": () => import("./assets/Screen-COg7V709.js"), "./Pages/Rendition/LanguagePacks/IndexLanguagePacks.vue": () => import("./assets/IndexLanguagePacks-DIvpe6Vb.js"), "./Pages/Rendition/LanguagePacks/ShowLanguagePacks.vue": () => import("./assets/ShowLanguagePacks-Ds8llWRm.js"), "./Pages/Rendition/LanguagePacks/Words.vue": () => import("./assets/Words-pVtq8xL9.js"), "./Pages/Rendition/LanguagePacks/Words/Screen.vue": () => import("./assets/Screen-Dz4tjlAN.js"), "./Pages/Rendition/Words/Create/Screen.vue": () => import("./assets/Screen-VxDbEpHf.js"), "./Pages/Rendition/Words/CreateWord.vue": () => import("./assets/CreateWord-vvbe_MCB.js"), "./Pages/Rendition/Words/Edit/Screen.vue": () => import("./assets/Screen-Cq6BntpV.js"), "./Pages/Rendition/Words/EditWord.vue": () => import("./assets/EditWord-DZ3Oml_n.js"), "./Pages/Rendition/Words/Index/Screen.vue": () => import("./assets/Screen-CqSGMMRy.js"), "./Pages/Rendition/Words/Index/WordTable.vue": () => import("./assets/WordTable-5TYN-Est.js"), "./Pages/Rendition/Words/IndexWord.vue": () => import("./assets/IndexWord-Cb1z72_L.js"), "./Pages/Rendition/Words/Show/Screen.vue": () => import("./assets/Screen-wwobZ-Qv.js"), "./Pages/Rendition/Words/ShowWord.vue": () => import("./assets/ShowWord-aozsl078.js"), "./Pages/Rendition/_components/MultipleChoice.vue": () => import("./assets/MultipleChoice-DJnv3jPA.js"), "./Pages/Rendition/_components/TranslateWord.vue": () => import("./assets/TranslateWord-B12m4bWX.js"), "./Pages/Rendition/_components/WordCompletion.vue": () => import("./assets/WordCompletion-CeNy4tRI.js"), "./Pages/Rendition/_components/WordsTable.vue": () => import("./assets/WordsTable-BqU-bMcA.js"), "./Pages/Rendition/_layouts/LayoutRendition.vue": () => import("./assets/LayoutRendition-3cwzYK3N.js"), "./Pages/Rendition/_layouts/SidebarPackGame.vue": () => import("./assets/SidebarPackGame-DUbuVJln.js"), "./Pages/Rendition/_layouts/SidebarRendition.vue": () => import("./assets/SidebarRendition-DKAy4Lg3.js"), "./Pages/SoftwareProducts/Create.vue": () => import("./assets/Create-B6qvhH56.js"), "./Pages/SoftwareProducts/Edit.vue": () => import("./assets/Edit-OmYhIBbw.js"), "./Pages/SoftwareProducts/Index.vue": () => import("./assets/Index-Bd_9DQpE.js"), "./Pages/SoftwareProducts/Show.vue": () => import("./assets/Show-CnnSgC4J.js"), "./Pages/SoftwareProducts/component/Box.vue": () => import("./assets/Box-CVbjvmlT.js"), "./Pages/SoftwareProducts/component/ConfirmModal.vue": () => import("./assets/ConfirmModal-8bTg5PxV.js"), "./Pages/SoftwareProducts/component/SPAddress.vue": () => import("./assets/SPAddress-C4B-URBw.js"), "./Pages/SoftwareProducts/component/SPPrice.vue": () => import("./assets/SPPrice-DDe_ZJN3.js"), "./Pages/SoftwareProducts/component/SPSpaces.vue": () => import("./assets/SPSpaces-C-9fwGUn.js"), "./Pages/Welcome.vue": () => import("./assets/Welcome-DBavpM4Q.js"), "./Pages/WritesCategories/Categories/Create/CategoriesCreateFrom.vue": () => import("./assets/CategoriesCreateFrom-kQrBvJAp.js"), "./Pages/WritesCategories/Categories/Create/Screen.vue": () => import("./assets/Screen-BrJ3IKTG.js"), "./Pages/WritesCategories/Categories/CreateCategory.vue": () => import("./assets/CreateCategory-CbskJ9Fy.js"), "./Pages/WritesCategories/Categories/Edit/CategoriesEditFrom.vue": () => import("./assets/CategoriesEditFrom-DKzwSiRi.js"), "./Pages/WritesCategories/Categories/Edit/Screen.vue": () => import("./assets/Screen-Q4It_QrB.js"), "./Pages/WritesCategories/Categories/EditCategory.vue": () => import("./assets/EditCategory-SO5FeBus.js"), "./Pages/WritesCategories/Categories/Index/Screen.vue": () => import("./assets/Screen-DbQR93Z0.js"), "./Pages/WritesCategories/Categories/IndexCategory.vue": () => import("./assets/IndexCategory-B6-H3k0p.js"), "./Pages/WritesCategories/Categories/Show/Screen.vue": () => import("./assets/Screen-J242Kp2G.js"), "./Pages/WritesCategories/Categories/ShowCategory.vue": () => import("./assets/ShowCategory-PMUhiNKG.js"), "./Pages/WritesCategories/Categories/WriteByCategory.vue": () => import("./assets/WriteByCategory-ZKlmlfGF.js"), "./Pages/WritesCategories/Categories/WriteByCategory/Screen.vue": () => import("./assets/Screen-Dknsj83Q.js"), "./Pages/WritesCategories/Writes/Create/FormField.vue": () => import("./assets/FormField-B5B8BMWT.js"), "./Pages/WritesCategories/Writes/Create/Screen.vue": () => import("./assets/Screen-B9tWDJVQ.js"), "./Pages/WritesCategories/Writes/Create/WriteCreateForm.vue": () => import("./assets/WriteCreateForm-BqlgkKsI.js"), "./Pages/WritesCategories/Writes/CreateWrite.vue": () => import("./assets/CreateWrite-CKTNTLf5.js"), "./Pages/WritesCategories/Writes/Edit/Screen.vue": () => import("./assets/Screen-ngwOJ9ep.js"), "./Pages/WritesCategories/Writes/Edit/WriteUpdateForm.vue": () => import("./assets/WriteUpdateForm-DrMsk9Mr.js"), "./Pages/WritesCategories/Writes/EditWrite.vue": () => import("./assets/EditWrite-BKKqOVa9.js"), "./Pages/WritesCategories/Writes/Index/Screen.vue": () => import("./assets/Screen-h3oJJrTO.js"), "./Pages/WritesCategories/Writes/IndexWrite.vue": () => import("./assets/IndexWrite-C47O3YTD.js"), "./Pages/WritesCategories/Writes/Show/Screen.vue": () => import("./assets/Screen-Bh0hG28p.js"), "./Pages/WritesCategories/Writes/ShowWrite.vue": () => import("./assets/ShowWrite-D8ykUtFn.js"), "./Pages/WritesCategories/_composable/CategoryTree.vue": () => import("./assets/CategoryTree-rf0huwvq.js"), "./Pages/WritesCategories/_composable/PerformanceMonitorButton.vue": () => import("./assets/PerformanceMonitorButton-Co6U4sf0.js"), "./Pages/WritesCategories/_composable/WriteList.vue": () => import("./assets/WriteList-B98i3MP6.js"), "./Pages/WritesCategories/_layouts/LayoutWritesCategories.vue": () => import("./assets/LayoutWritesCategories-DaN4jc2P.js"), "./Pages/WritesCategories/_layouts/SidebarLayoutCategory.vue": () => import("./assets/SidebarLayoutCategory-VBuuKr-J.js"), "./Pages/WritesCategories/_layouts/SidebarLayoutWrite.vue": () => import("./assets/SidebarLayoutWrite-DfZovOKj.js") }))).default;
     page.layout = page.layout || _sfc_main;
     return page;
   },
