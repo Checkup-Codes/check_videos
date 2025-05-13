@@ -1,17 +1,39 @@
 <template>
   <Link
     :href="href"
-    class="flex w-full items-center justify-between px-4 py-2 transition-colors duration-150"
-    :class="{ 'border-l-4 border-primary bg-base-200': isActive }"
+    class="flex w-full items-center justify-between rounded-lg border px-3 py-1.5 backdrop-blur-md transition-all duration-200"
+    :class="{
+      // Aktif durumda: tema uyumlu ve zıt kontrast
+      'border-primary bg-primary text-primary-content shadow-md': isActive,
+      // Pasif durumda: yumuşak görünüm
+      'border-base-200 bg-base-200 text-base-content hover:bg-base-300': !isActive,
+    }"
   >
     <!-- Sol kısım: İkon + Label -->
     <div class="flex items-center gap-3">
-      <font-awesome-icon :icon="dynamicIcon" class="h-5 w-5 text-base-content" />
-      <span class="text-sm font-medium text-base-content">{{ label }}</span>
+      <font-awesome-icon
+        :icon="dynamicIcon"
+        class="h-4 w-4 transition-colors duration-200"
+        :class="isActive ? 'text-primary-content' : 'text-base-content'"
+      />
+      <span
+        class="font-sans text-sm transition-colors duration-200"
+        :class="isActive ? 'text-primary-content' : 'text-base-content'"
+      >
+        {{ label }}
+      </span>
     </div>
 
     <!-- Sağ kısım: Shortcut badge -->
-    <div v-if="shortcut" class="badge text-xs">
+    <div
+      v-if="shortcut"
+      class="rounded border px-2 py-0.5 text-xs transition-all"
+      :class="
+        isActive
+          ? 'bg-primary/20 border-primary text-primary-content'
+          : 'text-base-content/70 border-base-200 bg-base-100'
+      "
+    >
       {{ shortcut }}
     </div>
   </Link>

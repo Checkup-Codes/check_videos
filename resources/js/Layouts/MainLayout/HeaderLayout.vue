@@ -9,7 +9,7 @@
     <div v-else class="w-8"></div>
 
     <!-- Logo/Title -->
-    <div class="bg-neutral px-3 py-1 font-bold uppercase text-neutral-content">
+    <div class="px-3 py-1 font-bold uppercase text-primary">
       <Link href="/">{{ seoTitle }}</Link>
     </div>
 
@@ -21,51 +21,44 @@
     </button>
   </header>
 
-  <!-- Bottom Sheet Menu -->
+  <!-- Backdrop with DaisyUI transition -->
   <div
     v-if="isMenuOpen"
     class="fixed inset-0 z-50 bg-black/50 transition-opacity duration-300"
+    :class="isMenuOpen ? 'opacity-100' : 'opacity-0'"
     @click="closeMenu"
   ></div>
 
+  <!-- Bottom Sheet Menu with DaisyUI transition -->
   <div
-    class="fixed inset-x-0 bottom-0 z-50 transform transition-transform duration-300 ease-in-out"
+    class="drawer-content drawer-end fixed inset-x-0 bottom-0 z-50 transform transition-all duration-300 ease-in-out"
     :class="isMenuOpen ? 'translate-y-0' : 'translate-y-full'"
   >
-    <div class="rounded-t-xl border border-base-200 bg-base-100 pb-6 pt-4 shadow-lg">
+    <div class="max-h-[90vh] overflow-y-auto rounded-t-xl border border-base-200 bg-base-100 pb-6 pt-4 shadow-lg">
       <!-- Pull indicator -->
       <div class="mb-4 flex justify-center">
         <div class="h-1 w-10 rounded-full bg-base-300"></div>
       </div>
 
-      <!-- Menu Content -->
-      <div class="px-6">
-        <h3 class="text-base-content/60 mb-3 text-center text-sm font-semibold uppercase">Menü</h3>
+      <!-- Menu Content - Structured like SidebarLayout -->
+      <div class="px-4" @click="handleMenuItemClick">
+        <!-- ProfileCard -->
+        <ProfileCard :imagePath="imagePath" />
 
-        <div class="menu w-full">
-          <slot name="menu-items">
-            <ul>
-              <li>
-                <Link href="/" @click="closeMenu" class="py-3">Ana Sayfa</Link>
-              </li>
-              <li>
-                <Link href="/writes" @click="closeMenu" class="py-3">Yazılar</Link>
-              </li>
-              <li>
-                <Link href="/categories" @click="closeMenu" class="py-3">Kategoriler</Link>
-              </li>
-              <li>
-                <Link href="/rendition/words" @click="closeMenu" class="py-3">Kelimeler</Link>
-              </li>
-              <li>
-                <Link href="/versions" @click="closeMenu" class="py-3">Versiyonlar</Link>
-              </li>
-              <li v-if="$page.props.auth?.user">
-                <Link href="/dashboard" @click="closeMenu" class="py-3">Panel</Link>
-              </li>
-              <!-- Additional menu items can be added via slot -->
-            </ul>
-          </slot>
+        <!-- Navigation -->
+        <div class="mt-4">
+          <MainNavigation />
+        </div>
+
+        <!-- Social Links -->
+        <div class="mt-4">
+          <SocialLinks />
+        </div>
+
+        <!-- Theme Switcher and Copyright -->
+        <div class="mt-6 flex flex-col items-center">
+          <ThemeSwitcher />
+          <p class="text-base-content/60 mt-2 text-xs">CheckupCodes - Tüm Hakları Saklıdır</p>
         </div>
       </div>
     </div>
@@ -73,14 +66,44 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue';
-import { Link, usePage } from '@inertiajs/vue3';
+import { computed, ref, onMounted, watch } from 'vue';
+import { Link, usePage, router } from '@inertiajs/vue3';
 import GoBackSvg from '@/Shared/Svg/GoBack.vue';
 import axios from 'axios';
+
+// Import SidebarLayout components
+import ProfileCard from '@/Layouts/_composable/ProfileCard.vue';
+import MainNavigation from '@/Layouts/_composable/MainNavigation.vue';
+import SocialLinks from '@/Layouts/_composable/SocialLinks.vue';
+import ThemeSwitcher from '@/Layouts/_components/ThemeSwitcher.vue';
 
 const seoTitle = ref('');
 const isMenuOpen = ref(false);
 const page = usePage();
+const imagePath = ref('/images/checkup_codes_logo.png');
+const auth = ref(null);
+
+// Watch for page props changes to update auth data
+watch(
+  () => page.props.value,
+  (newProps) => {
+    if (newProps && newProps.auth) {
+      auth.value = newProps.auth;
+      if (auth.value?.user) {
+        imagePath.value = auth.value.user.imagePath || '/images/default.png';
+      }
+    }
+  },
+  { immediate: true }
+);
+
+// Watch for route changes to close menu
+watch(
+  () => page.url,
+  () => {
+    closeMenu();
+  }
+);
 
 const props = defineProps({
   title: {
@@ -113,8 +136,10 @@ const toggleMenu = () => {
   // When menu is open, prevent body scrolling
   if (isMenuOpen.value) {
     document.body.style.overflow = 'hidden';
+    document.body.classList.add('menu-open');
   } else {
     document.body.style.overflow = '';
+    document.body.classList.remove('menu-open');
   }
 };
 
@@ -122,6 +147,21 @@ const toggleMenu = () => {
 const closeMenu = () => {
   isMenuOpen.value = false;
   document.body.style.overflow = '';
+  document.body.classList.remove('menu-open');
+};
+
+// Handle clicks on menu items to close the menu
+const handleMenuItemClick = (event) => {
+  // Check if the clicked element is a link or inside a link
+  const isLink =
+    event.target.tagName === 'A' ||
+    event.target.closest('a') ||
+    event.target.closest('.link') ||
+    event.target.closest('[href]');
+
+  if (isLink) {
+    closeMenu();
+  }
 };
 
 onMounted(async () => {
@@ -144,6 +184,11 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* Animation for the drawer */
+.drawer-content {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 /* Prevent scrolling when menu is open */
 :deep(body.menu-open) {
   overflow: hidden;

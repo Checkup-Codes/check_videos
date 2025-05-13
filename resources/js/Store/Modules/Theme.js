@@ -5,24 +5,37 @@ export default {
   state: {
     // Default tema 'light' olarak ayarlanıyor
     currentTheme: localStorage.getItem('theme') || 'light',
+    // Mevcut temalar
+    availableThemes: ['light', 'dark', 'nature', 'ocean']
   },
   
   mutations: {
     // Temayı değiştirme işlemi
     setTheme(state, theme) {
+      console.log('Tema değiştiriliyor:', theme);
+      
+      // Mevcut temayı state'den kaldır
+      document.documentElement.classList.remove(state.currentTheme);
+      
+      // Yeni temayı ayarla
       state.currentTheme = theme;
       localStorage.setItem('theme', theme);
       
-      // HTML elementine tema sınıfını ekleme veya kaldırma
+      // DaisyUI tema desteği için data-theme özniteliğini güncelliyoruz
+      document.documentElement.setAttribute('data-theme', theme);
+      
+      // HTML'e tema sınıfını ekle (Özel CSS seçicileri için)
+      document.documentElement.classList.add(theme);
+      
+      // Dark mode özel işlemleri
       if (theme === 'dark') {
         document.documentElement.classList.add('dark');
-        // DaisyUI tema desteği için data-theme özniteliğini de güncelliyoruz
-        document.documentElement.setAttribute('data-theme', 'dark');
       } else {
         document.documentElement.classList.remove('dark');
-        // DaisyUI tema desteği için data-theme özniteliğini de güncelliyoruz
-        document.documentElement.setAttribute('data-theme', 'light');
       }
+      
+      console.log('Tema değiştirildi:', document.documentElement.getAttribute('data-theme'));
+      console.log('HTML sınıfları:', document.documentElement.className);
     },
   },
   
@@ -38,9 +51,11 @@ export default {
       commit('setTheme', state.currentTheme);
     },
     
-    // Temayı değiştirme (toggle) action'ı
+    // Temayı değiştirme (toggle) action'ı - artık sadece light/dark arası geçiş değil
     toggleTheme({ commit, state }) {
-      const newTheme = state.currentTheme === 'light' ? 'dark' : 'light';
+      const currentIndex = state.availableThemes.indexOf(state.currentTheme);
+      const nextIndex = (currentIndex + 1) % state.availableThemes.length;
+      const newTheme = state.availableThemes[nextIndex];
       commit('setTheme', newTheme);
     },
   },
@@ -51,5 +66,8 @@ export default {
     
     // Mevcut temanın dark olup olmadığını kontrol eder
     isDarkTheme: (state) => state.currentTheme === 'dark',
+    
+    // Tüm temaları döndürür
+    getAvailableThemes: (state) => state.availableThemes,
   },
 }; 

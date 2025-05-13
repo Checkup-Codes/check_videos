@@ -1,18 +1,20 @@
 <template>
-  <div ref="scrollContainer" class="h-full w-full space-y-1 overflow-y-auto p-1">
+  <div ref="scrollContainer" class="h-full w-full space-y-1 overflow-y-auto p-3 text-sm">
     <Link
       v-for="write in filteredWrites"
       :key="write.id"
       :href="route('writes.show', { write: write.slug })"
       :class="[
-        'block p-2 transition-colors duration-150',
-        activeWrite === `/writes/${write.slug}` ? 'border-l-4 border-primary bg-base-200' : 'hover:bg-base-100',
+        'block items-center justify-between rounded-lg border px-1 py-2 backdrop-blur-md transition-all duration-200',
+        activeWrite === `/writes/${write.slug}`
+          ? 'border-primary bg-primary text-primary-content shadow-md'
+          : 'border-base-200 bg-base-200 text-base-content hover:bg-base-300',
       ]"
       @click="saveScrollPosition"
     >
       <!-- Başlık + Kilit -->
-      <div class="mb-1 flex items-center gap-2 text-[15px] font-semibold text-base-content">
-        <span v-if="write.status === 'private'" class="text-base-content/60">
+      <div class="mb-1 flex items-center gap-2">
+        <span v-if="write.status === 'private'">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
             <path
               fill-rule="evenodd"
@@ -21,11 +23,11 @@
             />
           </svg>
         </span>
-        <span class="">{{ write.title }}</span>
+        <span>{{ write.title }}</span>
       </div>
 
       <!-- Tarih ve view bilgisi -->
-      <div class="text-base-content/60 flex justify-between text-sm">
+      <div class="text-base-content/70 flex justify-between text-xs">
         <span>{{ formatDate(write.created_at) }}</span>
         <span class="flex items-center gap-1">
           <svg
@@ -149,31 +151,3 @@ const formatDate = (date) => {
   return new Date(date).toLocaleDateString(undefined, options);
 };
 </script>
-
-<style scoped>
-.overflow-y-auto {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(128, 128, 128, 0.2) transparent;
-}
-
-.overflow-y-auto::-webkit-scrollbar {
-  width: 3px;
-}
-.overflow-y-auto::-webkit-scrollbar-track {
-  background: transparent;
-}
-.overflow-y-auto::-webkit-scrollbar-thumb {
-  background-color: rgba(128, 128, 128, 0.2);
-  border-radius: 4px;
-}
-
-@media (prefers-color-scheme: dark) {
-  .overflow-y-auto {
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-  }
-
-  .overflow-y-auto::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
-  }
-}
-</style>

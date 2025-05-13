@@ -52,7 +52,7 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
 import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
-import ThemeSwitcher from '@/Components/CekapUI/Buttons/ThemeSwitcher.vue';
+import ThemeSwitcher from '@/Layouts/_components/ThemeSwitcher.vue';
 
 // Props tanımı
 const props = defineProps({

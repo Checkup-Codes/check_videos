@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="light">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="utf-8">
@@ -9,17 +9,30 @@
 
     <title inertia>{{ config('app.name') }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" />
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Theme initialization script -->
     <script>
-        // Check if theme is saved in localStorage
-        const savedTheme = localStorage.getItem('theme');
-        // Or use system preference if no saved theme
-        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        // Apply theme
-        document.documentElement.setAttribute('data-theme', savedTheme || systemTheme);
+        // Mevcut tema ayarını localStorage'dan al veya varsayılan olarak 'light' kullan
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        
+        // Tema özniteliğini ayarla (DaisyUI için)
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        
+        // Tema sınıfını ekle (CSS seçicileri için)
+        document.documentElement.classList.add(savedTheme);
+        
+        // Dark tema için özel sınıf (Tailwind için)
+        if (savedTheme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        
+        console.log('Sayfa yüklenirken ayarlanan tema:', savedTheme);
+        console.log('HTML sınıfları:', document.documentElement.className);
     </script>
 
     @routes

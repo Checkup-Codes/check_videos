@@ -10,11 +10,7 @@
       class="border-base-200"
     >
       <template #actions>
-        <PerformanceMonitorButton
-          class="hidden lg:block"
-          v-if="shouldShowPerformanceMonitor"
-          :performance="performanceData"
-        />
+        <PerformanceMonitorButton v-if="shouldShowPerformanceMonitor" :performance="performanceData" />
       </template>
     </TopSubsidebar>
     <SubSidebarScreen>
@@ -35,8 +31,8 @@ import { usePage } from '@inertiajs/vue3';
 import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
 import ToggleSubSidebarButtonClose from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 import SubSidebarScreen from '@/Components/CekapUI/Slots/SubSidebarScreen.vue';
-import CategoryTree from '@/Pages/WritesCategories/_components/CategoryTree.vue';
-import PerformanceMonitorButton from '@/Pages/WritesCategories/_components/PerformanceMonitorButton.vue';
+import CategoryTree from '@/Pages/WritesCategories/_composable/CategoryTree.vue';
+import PerformanceMonitorButton from '@/Pages/WritesCategories/_composable/PerformanceMonitorButton.vue';
 import TopSubsidebar from '@/Components/CekapUI/Typography/TopSubsidebar.vue';
 
 // Component name definition for dev tools

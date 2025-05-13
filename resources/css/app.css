@@ -20,6 +20,44 @@
       color-scheme: light;
     }
   }
+
+  /* Tema geçişlerini yumuşat */
+  html {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* DaisyUI tema stillerini güçlendir */
+  html[data-theme="nature"] {
+    --p: 142 70% 49%; /* primary */
+    --pc: 0 0% 100%; /* primary content */
+    --s: 160 63% 42%; /* secondary */
+    --sc: 0 0% 100%; /* secondary content */
+    --a: 210 64% 53%; /* accent */
+    --ac: 0 0% 100%; /* accent content */
+    --n: 222 13% 12%; /* neutral */
+    --nc: 0 0% 100%; /* neutral content */
+    --b1: 120 16% 95%; /* base 100 */
+    --bc: 222 13% 12%; /* base content */
+    --animation-btn: 0;
+    --animation-input: 0;
+    --btn-focus-scale: 1;
+  }
+
+  html[data-theme="ocean"] {
+    --p: 168 70% 42%; /* primary */
+    --pc: 0 0% 100%; /* primary content */
+    --s: 210 64% 53%; /* secondary */
+    --sc: 0 0% 100%; /* secondary content */
+    --a: 279 56% 53%; /* accent */
+    --ac: 0 0% 100%; /* accent content */
+    --n: 210 31% 25%; /* neutral */
+    --nc: 0 0% 100%; /* neutral content */
+    --b1: 180 5% 94%; /* base 100 */
+    --bc: 210 31% 25%; /* base content */
+    --animation-btn: 0;
+    --animation-input: 0;
+    --btn-focus-scale: 1;
+  }
 }
 
 body {

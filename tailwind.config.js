@@ -18,7 +18,7 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Geist Sans', ...defaultTheme.fontFamily.sans],
             },
             gridTemplateColumns: {
                 'subsidebar': 'minmax(0, 380px) 1fr',
@@ -51,7 +51,34 @@ export default {
 
     plugins: [forms, daisyui],
     daisyui: {
-        themes: ["light", "dark"],
+        themes: [
+            "light", 
+            "dark",
+            {
+                nature: {
+                    primary: "#2ecc71",
+                    secondary: "#27ae60",
+                    accent: "#3498db",
+                    neutral: "#191D24",
+                    "base-100": "#f0f8f1",
+                    info: "#3ABFF8",
+                    success: "#36D399",
+                    warning: "#FBBD23",
+                    error: "#F87272",
+                },
+                ocean: {
+                    primary: "#1abc9c",
+                    secondary: "#3498db",
+                    accent: "#9b59b6",
+                    neutral: "#2c3e50",
+                    "base-100": "#ecf0f1",
+                    info: "#3ABFF8",
+                    success: "#36D399",
+                    warning: "#FBBD23",
+                    error: "#F87272",
+                }
+            }
+        ],
         darkTheme: "dark",
         base: true,
         styled: true,

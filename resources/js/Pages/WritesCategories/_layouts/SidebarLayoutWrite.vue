@@ -3,11 +3,7 @@
     <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="collapseSidebar" class="btn-ghost" />
     <TopSubsidebar title="YAZILAR" href="/writes/create" class="border-base-200">
       <template #actions>
-        <PerformanceMonitorButton
-          class="hidden lg:block"
-          v-if="shouldShowPerformanceMonitor"
-          :performance="performanceData"
-        />
+        <PerformanceMonitorButton v-if="shouldShowPerformanceMonitor" :performance="performanceData" />
       </template>
     </TopSubsidebar>
     <SubSidebarScreen>
@@ -18,8 +14,8 @@
 
 <script setup>
 import TopSubsidebar from '@/Components/CekapUI/Typography/TopSubsidebar.vue';
-import WriteList from '@/Pages/WritesCategories/_components/WriteList.vue';
-import PerformanceMonitorButton from '@/Pages/WritesCategories/_components/PerformanceMonitorButton.vue';
+import WriteList from '@/Pages/WritesCategories/_composable/WriteList.vue';
+import PerformanceMonitorButton from '@/Pages/WritesCategories/_composable/PerformanceMonitorButton.vue';
 import { ref, onMounted, onActivated, onBeforeUnmount, nextTick, computed, markRaw } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import ToggleSubSidebarButtonClose from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';

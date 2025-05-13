@@ -3,8 +3,11 @@
     :href="href"
     target="_blank"
     rel="noopener noreferrer"
-    class="flex w-full items-center justify-between px-4 py-2 transition-colors duration-150"
-    :class="{ 'border-l-4 border-primary bg-base-200': isActive }"
+    class="flex w-full items-center justify-between rounded-lg border px-3 py-2 backdrop-blur-md transition-all duration-200"
+    :class="{
+      'border-primary bg-primary text-primary-content shadow-md': isActive,
+      'border-base-200 bg-base-200 text-base-content hover:bg-base-300': !isActive,
+    }"
     :title="label"
   >
     <!-- Sol kısım: İkon + Label -->
