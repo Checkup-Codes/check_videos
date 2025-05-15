@@ -1,6 +1,6 @@
 <template>
   <CheckScreen>
-    <div ref="vantaRef" class="h-screen w-full">
+    <div ref="vantaRef" class="h-screen-minus-12 w-full overflow-hidden overscroll-none lg:h-screen-minus-1">
       <header class="relative z-10 flex h-full items-center justify-center text-gray-800">
         <div class="text-center">
           <img

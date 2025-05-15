@@ -1,6 +1,6 @@
 <template>
   <div :class="computedClass">
-    <div class="h-screen-minus-12 overflow-y-auto overscroll-contain lg:h-screen-minus-1">
+    <div class="h-screen-minus-12 overflow-y-auto overscroll-none lg:h-screen-minus-1">
       <div class="container mx-auto">
         <slot />
       </div>

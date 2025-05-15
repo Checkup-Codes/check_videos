@@ -15,6 +15,6 @@ const props = defineProps({
 });
 
 const computedClass = computed(() => {
-  return `${props.infoClass} bg-base-200  overflow-hidden`;
+  return `${props.infoClass} bg-base-200 overscroll-none `;
 });
 </script>
