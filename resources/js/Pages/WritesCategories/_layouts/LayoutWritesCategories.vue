@@ -1,9 +1,4 @@
 <template>
-  <Head>
-    <title>{{ pageTitle }}</title>
-    <meta v-if="pageMeta.description" name="description" :content="pageMeta.description" />
-    <meta v-if="pageMeta.keywords" name="keywords" :content="pageMeta.keywords" />
-  </Head>
   <FlashMessage :message="flashSuccess" />
   <ToggleSubSidebarButtonOpen v-if="!isSidebarCollapsed" :isCollapsed="true" :toggle="collapseSidebar" />
   <CheckLayout :isCollapsed="isSidebarCollapsed">
@@ -29,7 +24,7 @@ import SidebarLayoutWrite from '@/Pages/WritesCategories/_layouts/SidebarLayoutW
 import SidebarLayoutCategory from '@/Pages/WritesCategories/_layouts/SidebarLayoutCategory.vue';
 import FlashMessage from '@/Components/CekapUI/Notifications/FlashMessage.vue';
 import ToggleSubSidebarButtonOpen from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
-import { usePage, Head, router } from '@inertiajs/vue3';
+import { usePage, router } from '@inertiajs/vue3';
 import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue';
 
 // Component name definition for dev tools
@@ -42,56 +37,6 @@ const { props } = usePage();
 const isMobile = props.screen?.isMobileSidebar || false;
 const sidebarStyle = isMobile ? '' : 'hidden lg:block';
 const screenName = props.screen?.name || '';
-
-// Generate SEO-friendly title with site name
-const siteName = 'Yazı Platformu';
-const pageTitle = computed(() => {
-  if (props.write) {
-    // If we're viewing a specific write, use its title
-    return `${props.write.title} - ${siteName}`;
-  } else if (props.category) {
-    // If we're viewing a specific category
-    return `${props.category.name} - ${siteName}`;
-  } else {
-    // Default title based on screen name
-    return `${screenName.charAt(0).toUpperCase() + screenName.slice(1)} - ${siteName}`;
-  }
-});
-
-// Generate meta description and keywords
-const pageMeta = computed(() => {
-  const meta = {
-    description: '',
-    keywords: '',
-  };
-
-  if (props.write) {
-    // Use meta_description if available, otherwise fall back to summary or truncated content
-    meta.description =
-      props.write.meta_description ||
-      props.write.summary ||
-      truncateText(props.write.content?.replace(/<[^>]*>?/gm, '') || '', 160);
-    meta.keywords = props.write.seo_keywords || '';
-  } else if (props.category) {
-    // Use category description for meta description
-    meta.description = props.category.description || `${props.category.name} kategorisindeki yazılar`;
-  } else {
-    // Default description based on screen name
-    if (screenName === 'writes') {
-      meta.description = 'Yazı platformunda paylaşılan tüm içerikler';
-    } else if (screenName === 'categories') {
-      meta.description = 'Yazı platformundaki tüm kategoriler';
-    }
-  }
-
-  return meta;
-});
-
-// Helper function to truncate text to a specific length
-const truncateText = (text, maxLength) => {
-  if (!text) return '';
-  return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
-};
 
 const flashSuccess = ref(props.flash?.success || '');
 const isSidebarCollapsed = ref(true);

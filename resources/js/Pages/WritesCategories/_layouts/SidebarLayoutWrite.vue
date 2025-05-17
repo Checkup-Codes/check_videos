@@ -7,7 +7,7 @@
       </template>
     </TopSubsidebar>
     <SubSidebarScreen>
-      <MemoizedWriteList ref="writeListRef" :writes="memoizedWrites" :route="route" />
+      <WriteList ref="writeListRef" :writes="writes" :route="route" />
     </SubSidebarScreen>
   </CheckSubsidebar>
 </template>
@@ -16,14 +16,11 @@
 import TopSubsidebar from '@/Components/CekapUI/Typography/TopSubsidebar.vue';
 import WriteList from '@/Pages/WritesCategories/_composable/WriteList.vue';
 import PerformanceMonitorButton from '@/Pages/WritesCategories/_composable/PerformanceMonitorButton.vue';
-import { ref, onMounted, onActivated, onBeforeUnmount, nextTick, computed, markRaw } from 'vue';
+import { ref, onMounted, onActivated, onBeforeUnmount, nextTick, computed } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import ToggleSubSidebarButtonClose from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
 import SubSidebarScreen from '@/Components/CekapUI/Slots/SubSidebarScreen.vue';
-
-// Use WriteList component directly
-const MemoizedWriteList = WriteList;
 
 // Set component name for dev tools
 defineOptions({
@@ -31,10 +28,8 @@ defineOptions({
 });
 
 const { props } = usePage();
-// Use shallow reference to optimize rendering performance
+// Doğrudan props'tan gelen yazıları ref olarak tut
 const writes = ref(props.writes || []);
-// Create computed property to prevent unnecessary re-renders
-const memoizedWrites = computed(() => writes.value);
 const isCollapsed = ref(true);
 const emit = defineEmits(['update:isCollapsed']);
 const writeListRef = ref(null);
@@ -46,13 +41,6 @@ const shouldShowPerformanceMonitor = computed(() => {
 
 // Access performance data with safe fallback
 const performanceData = computed(() => props.performance || {});
-
-onMounted(() => {
-  // Mark route function as non-reactive to improve performance
-  if (typeof route !== 'undefined') {
-    markRaw(route);
-  }
-});
 
 onActivated(() => {
   // Restore scroll position when component is reactivated from KeepAlive

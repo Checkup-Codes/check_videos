@@ -61,6 +61,32 @@
             </div>
           </div>
 
+          <div>
+            <!-- TextField component implemented directly -->
+            <div class="form-control w-full">
+              <label class="label">
+                <span class="label-text">Yayınlama Tarihi</span>
+              </label>
+              <div class="flex space-x-2">
+                <input
+                  type="date"
+                  v-model="publishDateObj.date"
+                  class="input-bordered input w-full"
+                  :class="{ 'input-error': errors.published_at || form.errors.published_at }"
+                />
+                <input
+                  type="time"
+                  v-model="publishDateObj.time"
+                  class="input-bordered input w-full"
+                  :class="{ 'input-error': errors.published_at || form.errors.published_at }"
+                />
+              </div>
+              <label v-if="errors.published_at || form.errors.published_at" class="label">
+                <span class="label-text-alt text-error">{{ errors.published_at || form.errors.published_at }}</span>
+              </label>
+            </div>
+          </div>
+
           <div class="md:col-span-2">
             <!-- TextField component (textarea) implemented directly -->
             <div class="form-control w-full">
@@ -339,14 +365,48 @@ const errors = ref({
   tags: '',
 });
 
+// Tarih ve zaman parçaları için ayrı bir obje
+const publishDateObj = ref({
+  date: '',
+  time: '',
+});
+
+// Form verilerini başlatırken, eğer published_at değeri varsa parçalara ayır
+onMounted(() => {
+  if (form.published_at) {
+    const dateObj = new Date(form.published_at);
+    if (!isNaN(dateObj.getTime())) {
+      publishDateObj.value.date = dateObj.toISOString().split('T')[0];
+      publishDateObj.value.time = dateObj.toTimeString().substring(0, 5);
+    }
+  }
+});
+
+// publishDateObj değiştiğinde form.published_at'i güncelle
+watch(
+  publishDateObj.value,
+  () => {
+    if (publishDateObj.value.date && publishDateObj.value.time) {
+      form.published_at = `${publishDateObj.value.date}T${publishDateObj.value.time}:00`;
+    }
+  },
+  { deep: true }
+);
+
 // Client-side form validation
 const validateForm = () => {
   errors.value.title = form.title ? '' : 'Başlık zorunludur.';
   errors.value.slug = form.slug ? '' : 'Slug zorunludur.';
   errors.value.content = form.content ? '' : 'İçerik zorunludur.';
-  errors.value.published_at = form.published_at ? '' : 'Yayınlama tarihi zorunludur.';
+  errors.value.published_at =
+    publishDateObj.value.date && publishDateObj.value.time ? '' : 'Yayınlama tarihi zorunludur.';
   errors.value.summary = form.summary ? '' : 'Özet zorunludur.';
   errors.value.category_id = form.category_id ? '' : 'Kategori seçilmelidir.';
+
+  // Tüm doğrulamalar geçtiyse published_at formatını düzelt
+  if (!errors.value.published_at) {
+    form.published_at = `${publishDateObj.value.date}T${publishDateObj.value.time}:00`;
+  }
 };
 
 // Submit form and update write
@@ -355,10 +415,19 @@ const updateWrite = () => {
 
   // Only submit if there are no validation errors
   if (!Object.values(errors.value).some((error) => error !== '')) {
-    form.put(route('writes.update', { write: writeData.value.slug }), {
-      onSuccess: () => {
-        router.visit(route('writes.show', { write: form.slug }));
-      },
+    // Get a fresh CSRF token
+    axios.get('/sanctum/csrf-cookie').then(() => {
+      form.put(route('writes.update', { write: writeData.value.slug }), {
+        onSuccess: () => {
+          router.visit(route('writes.show', { write: form.slug }));
+        },
+        onError: (errors) => {
+          // If still getting a 419 error, try to refresh the page and resubmit
+          if (errors.hasOwnProperty('token') || errors.message === 'CSRF token mismatch') {
+            window.location.reload();
+          }
+        },
+      });
     });
   }
 };
@@ -489,10 +558,19 @@ const imageHandler = () => {
       const formData = new FormData();
       formData.append('image', file);
 
+      // Ensure we have the latest CSRF token
+      const csrf = document.head.querySelector('meta[name="csrf-token"]');
+      const headers = {
+        'Content-Type': 'multipart/form-data',
+      };
+
+      if (csrf) {
+        headers['X-CSRF-TOKEN'] = csrf.getAttribute('content');
+      }
+
       const response = await axios.post('/image-upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers,
+        withCredentials: true,
       });
 
       // Resim başarıyla yüklendiyse

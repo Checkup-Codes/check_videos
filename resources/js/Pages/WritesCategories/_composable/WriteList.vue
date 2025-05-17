@@ -1,5 +1,5 @@
 <template>
-  <div ref="scrollContainer" class="h-full w-full space-y-1 overflow-y-auto p-3 text-sm">
+  <div ref="scrollContainer" class="space-y-1 p-3">
     <Link
       v-for="write in filteredWrites"
       :key="write.id"

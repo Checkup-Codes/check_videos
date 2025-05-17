@@ -141,6 +141,7 @@ import { ref, onMounted } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
+import axios from 'axios';
 
 const { props } = usePage();
 
@@ -160,7 +161,19 @@ const form = useForm({
   system_requirements: '',
 });
 
-const create = () => form.post(route('software-products.store'));
+const create = () => {
+  // Get a fresh CSRF token before submitting
+  axios.get('/sanctum/csrf-cookie').then(() => {
+    form.post(route('software-products.store'), {
+      onError: (errors) => {
+        // If still getting a 419 error, try to refresh the page and resubmit
+        if (errors.hasOwnProperty('token') || errors.message === 'CSRF token mismatch') {
+          window.location.reload();
+        }
+      },
+    });
+  });
+};
 
 const flashSuccess = ref(props.flash);
 

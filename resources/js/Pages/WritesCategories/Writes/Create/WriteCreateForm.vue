@@ -18,7 +18,7 @@
         </div>
       </div>
 
-      <form @submit.prevent="createWrite" class="space-y-6">
+      <form @submit.prevent="submitForm" class="space-y-6">
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div class="md:col-span-2">
             <!-- TextField component implemented directly -->
@@ -70,11 +70,16 @@
               <label class="label">
                 <span class="label-text">Yayınlama Tarihi</span>
               </label>
-              <div class="relative">
+              <div class="flex space-x-2">
                 <input
-                  type="datetime-local"
-                  :value="form.published_at"
-                  @input="form.published_at = $event.target.value"
+                  type="date"
+                  v-model="publishDateObj.date"
+                  class="input-bordered input w-full"
+                  :class="{ 'input-error': errors.published_at || form.errors.published_at }"
+                />
+                <input
+                  type="time"
+                  v-model="publishDateObj.time"
                   class="input-bordered input w-full"
                   :class="{ 'input-error': errors.published_at || form.errors.published_at }"
                 />
@@ -375,29 +380,60 @@ const errors = ref({
   tags: '',
 });
 
+// Tarih ve zaman parçaları için ayrı bir obje
+const publishDateObj = ref({
+  date: '',
+  time: '',
+});
+
+// publishDateObj değiştiğinde form.published_at'i güncelle
+watch(
+  publishDateObj.value,
+  () => {
+    if (publishDateObj.value.date && publishDateObj.value.time) {
+      form.published_at = `${publishDateObj.value.date}T${publishDateObj.value.time}:00`;
+    }
+  },
+  { deep: true }
+);
+
 // Client-side form validation
 const validateForm = () => {
   errors.value.title = form.title ? '' : 'Başlık zorunludur.';
   errors.value.slug = form.slug ? '' : 'Slug zorunludur.';
   errors.value.content = form.content ? '' : 'İçerik zorunludur.';
-  errors.value.published_at = form.published_at ? '' : 'Yayınlama tarihi zorunludur.';
+  errors.value.published_at =
+    publishDateObj.value.date && publishDateObj.value.time ? '' : 'Yayınlama tarihi zorunludur.';
   errors.value.summary = form.summary ? '' : 'Özet zorunludur.';
   errors.value.category_id = form.category_id ? '' : 'Kategori seçilmelidir.';
+
+  // Tüm doğrulamalar geçtiyse published_at formatını düzelt
+  if (!errors.value.published_at) {
+    form.published_at = `${publishDateObj.value.date}T${publishDateObj.value.time}:00`;
+  }
 };
 
-// Submit form and create new write
-const createWrite = () => {
+// Submit form handler
+const submitForm = () => {
   validateForm();
 
   // Only submit if there are no validation errors
   if (!Object.values(errors.value).some((error) => error !== '')) {
-    form.post(route('writes.store'), {
-      onSuccess: () => {
-        router.visit(route('dashboard'));
-      },
-      onError: (errors) => {
-        console.error('Form submission errors:', errors);
-      },
+    // Get a fresh CSRF token before submitting
+    axios.get('/sanctum/csrf-cookie').then(() => {
+      form.post(route('writes.store'), {
+        onSuccess: () => {
+          router.visit(route('dashboard'));
+        },
+        onError: (errors) => {
+          // If still getting a 419 error, try to refresh the page and resubmit
+          if (errors.hasOwnProperty('token') || errors.message === 'CSRF token mismatch') {
+            window.location.reload();
+          } else {
+            console.error('Form submission errors:', errors);
+          }
+        },
+      });
     });
   }
 };
@@ -512,10 +548,19 @@ const imageHandler = () => {
       const formData = new FormData();
       formData.append('image', file);
 
+      // Ensure we have the latest CSRF token
+      const csrf = document.head.querySelector('meta[name="csrf-token"]');
+      const headers = {
+        'Content-Type': 'multipart/form-data',
+      };
+
+      if (csrf) {
+        headers['X-CSRF-TOKEN'] = csrf.getAttribute('content');
+      }
+
       const response = await axios.post('/image-upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers,
+        withCredentials: true,
       });
 
       // Handle successful upload
