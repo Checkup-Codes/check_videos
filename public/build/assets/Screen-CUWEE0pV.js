@@ -1,0 +1,1 @@
+import{_ as e}from"./CheckScreen-V9HKAjkd.js";import r from"./WriteCreateForm-DdGbDCvq.js";import{c as t,o as a,w as o,a as c}from"./app-4OUUbtt_.js";import"./quill.snow-DwNKvRx9.js";/* empty css            */const u=Object.assign({name:"CreateWriteScreen"},{__name:"Screen",setup(s){return(_,m)=>(a(),t(e,null,{default:o(()=>[c(r)]),_:1}))}});export{u as default};
