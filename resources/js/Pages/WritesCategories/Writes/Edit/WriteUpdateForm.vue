@@ -121,28 +121,10 @@
                   :class="{ 'border-error': errors.content || form.errors.content }"
                   style="height: 400px"
                 ></div>
-
-                <!-- Yükleme göstergesi -->
-                <div
-                  v-if="editorLoading"
-                  class="upload-loading-overlay bg-base-100/50 absolute inset-0 z-20 flex items-center justify-center"
-                >
-                  <div class="flex flex-col items-center gap-2">
-                    <span class="loading loading-spinner loading-lg text-primary"></span>
-                    <span class="text-sm">Resim yükleniyor...</span>
-                  </div>
-                </div>
               </div>
               <label v-if="errors.content || form.errors.content" class="label">
                 <span class="label-text-alt text-error">{{ errors.content || form.errors.content }}</span>
               </label>
-
-              <!-- Toast bildirim komponenti -->
-              <div class="toast toast-end z-50" v-if="showToast">
-                <div :class="`alert ${toastType}`">
-                  <span>{{ toastMessage }}</span>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -181,27 +163,6 @@
             <label v-if="errors.status || form.errors.status" class="label">
               <span class="label-text-alt text-error">{{ errors.status || form.errors.status }}</span>
             </label>
-          </div>
-
-          <div>
-            <!-- TextField component implemented directly -->
-            <div class="form-control w-full">
-              <label class="label">
-                <span class="label-text">Kapak Resmi URL</span>
-              </label>
-              <div class="relative">
-                <input
-                  type="text"
-                  v-model="form.cover_image"
-                  placeholder="https://example.com/image.jpg"
-                  class="input-bordered input w-full"
-                  :class="{ 'input-error': errors.cover_image || form.errors.cover_image }"
-                />
-              </div>
-              <label v-if="errors.cover_image || form.errors.cover_image" class="label">
-                <span class="label-text-alt text-error">{{ errors.cover_image || form.errors.cover_image }}</span>
-              </label>
-            </div>
           </div>
 
           <div>
@@ -320,8 +281,6 @@ import { useForm, usePage, router } from '@inertiajs/vue3';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import '@/Shared/Css/quill-custom-styles.css';
-import axios from 'axios';
-import { debounce } from 'lodash';
 
 // Component name definition for dev tools
 defineOptions({
@@ -342,7 +301,6 @@ const form = useForm({
   summary: writeData.value.summary || '',
   status: writeData.value.status || 'draft',
   category_id: writeData.value.category_id || '',
-  cover_image: writeData.value.cover_image || '',
   seo_keywords: writeData.value.seo_keywords || '',
   meta_description: writeData.value.meta_description || '',
   tags: writeData.value.tags || '',
@@ -359,7 +317,6 @@ const errors = ref({
   summary: '',
   status: '',
   category_id: '',
-  cover_image: '',
   seo_keywords: '',
   meta_description: '',
   tags: '',
@@ -415,19 +372,15 @@ const updateWrite = () => {
 
   // Only submit if there are no validation errors
   if (!Object.values(errors.value).some((error) => error !== '')) {
-    // Get a fresh CSRF token
-    axios.get('/sanctum/csrf-cookie').then(() => {
-      form.put(route('writes.update', { write: writeData.value.slug }), {
-        onSuccess: () => {
-          router.visit(route('writes.show', { write: form.slug }));
-        },
-        onError: (errors) => {
-          // If still getting a 419 error, try to refresh the page and resubmit
-          if (errors.hasOwnProperty('token') || errors.message === 'CSRF token mismatch') {
-            window.location.reload();
-          }
-        },
-      });
+    form.put(route('writes.update', { write: writeData.value.slug }), {
+      preserveScroll: true,
+      onSuccess: () => {
+        router.visit(route('writes.show', { write: form.slug }));
+      },
+      onError: (errors) => {
+        // Handle errors if needed
+        console.error('Update failed:', errors);
+      },
     });
   }
 };
@@ -474,175 +427,28 @@ watch(
 const quillEditor = ref(null);
 let quill;
 let isInitialContentSet = false;
-const editorLoading = ref(false);
-const errorMessage = ref('');
-const showToast = ref(false);
-const toastMessage = ref('');
-const toastType = ref('alert-info');
-
-// DaisyUI ile uyumlu renkleri tanımlayalım
-const daisyColors = [
-  '#570DF8', // primary
-  '#F000B8', // secondary
-  '#37CDBE', // accent
-  '#3ABFF8', // info
-  '#36D399', // success
-  '#FBBD23', // warning
-  '#F87272', // error
-  '#1f2937', // neutral
-  '#2A303C', // base-100
-  '#ffffff', // white
-  '#000000', // black
-];
-
-// Toast gösterme fonksiyonu
-const showToastMessage = (message, type = 'alert-info') => {
-  toastMessage.value = message;
-  toastType.value = type;
-  showToast.value = true;
-
-  // Toast'ı 3 saniye sonra kapat
-  setTimeout(() => {
-    showToast.value = false;
-  }, 3000);
-};
-
-// Resim yükleme için handler oluşturalım
-const imageHandler = () => {
-  const input = document.createElement('input');
-  input.setAttribute('type', 'file');
-  input.setAttribute('accept', 'image/*');
-  input.click();
-
-  // Dosya seçildiğinde
-  input.onchange = async () => {
-    const file = input.files[0];
-    if (!file) return;
-
-    // Dosya kontrolü
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
-    if (!allowedTypes.includes(file.type)) {
-      showToastMessage('Sadece JPEG, PNG veya GIF formatları desteklenmektedir.', 'alert-error');
-      return;
-    }
-
-    // Dosya boyutu kontrolü (10MB maksimum)
-    if (file.size > 10 * 1024 * 1024) {
-      showToastMessage("Resim boyutu 10MB'dan küçük olmalıdır.", 'alert-error');
-      return;
-    }
-
-    editorLoading.value = true;
-    errorMessage.value = '';
-
-    try {
-      // Önce bir placeholder skeleton ekle
-      const range = quill.getSelection();
-      // Benzersiz bir ID oluştur
-      const placeholderId = 'img-loading-' + Date.now();
-
-      // Özel bir div oluştur ve içine skeleton ekle (HTML olarak)
-      const placeholderHtml = `
-        <div id="${placeholderId}" class="skeleton-placeholder w-full my-4">
-          <div class="skeleton h-32 w-full rounded-lg"></div>
-          <div class="flex justify-center mt-2">
-            <span class="loading loading-dots loading-md"></span>
-          </div>
-        </div>
-      `;
-
-      // HTML olarak placeholder ekle
-      quill.clipboard.dangerouslyPasteHTML(range.index, placeholderHtml);
-
-      // Resmi yükleme endpoint'ine gönder
-      const formData = new FormData();
-      formData.append('image', file);
-
-      // Ensure we have the latest CSRF token
-      const csrf = document.head.querySelector('meta[name="csrf-token"]');
-      const headers = {
-        'Content-Type': 'multipart/form-data',
-      };
-
-      if (csrf) {
-        headers['X-CSRF-TOKEN'] = csrf.getAttribute('content');
-      }
-
-      const response = await axios.post('/image-upload', formData, {
-        headers,
-        withCredentials: true,
-      });
-
-      // Resim başarıyla yüklendiyse
-      if (response.data.success && response.data.url) {
-        // Placeholder'ı bul ve kaldır
-        const placeholderElement = document.getElementById(placeholderId);
-        if (placeholderElement) {
-          const placeholderIndex = quill.getIndex(quill.scroll.descendant(Node, placeholderElement)[0][0]);
-          quill.deleteText(placeholderIndex, placeholderElement.outerHTML.length);
-
-          // Editöre resmi URL olarak ekle
-          quill.insertEmbed(placeholderIndex, 'image', response.data.url);
-        } else {
-          // Placeholder bulunamazsa, mevcut konuma ekle
-          quill.insertEmbed(range.index, 'image', response.data.url);
-        }
-        showToastMessage('Resim başarıyla yüklendi', 'alert-success');
-      } else {
-        // Yükleme başarısız olursa placeholder'ı kaldır
-        const placeholderElement = document.getElementById(placeholderId);
-        if (placeholderElement) {
-          const placeholderIndex = quill.getIndex(quill.scroll.descendant(Node, placeholderElement)[0][0]);
-          quill.deleteText(placeholderIndex, placeholderElement.outerHTML.length);
-        }
-        console.error('Resim yüklenemedi');
-        showToastMessage('Resim yüklenirken bir hata oluştu.', 'alert-error');
-      }
-    } catch (error) {
-      console.error('Resim yükleme hatası:', error);
-      showToastMessage(
-        'Resim yüklenirken bir hata oluştu: ' + (error.response?.data?.message || error.message),
-        'alert-error'
-      );
-    } finally {
-      editorLoading.value = false;
-    }
-  };
-};
 
 onMounted(() => {
-  // Editörü özelleştirilmiş yapılandırmayla başlat
+  // Initialize Quill editor with custom configuration
   quill = new Quill(quillEditor.value, {
     theme: 'snow',
     modules: {
-      toolbar: {
-        container: [
-          [{ header: [1, 2, 3, 4, 5, 6, false] }],
-          ['bold', 'italic', 'underline', 'strike'],
-          ['blockquote', 'code-block'],
-          [{ list: 'ordered' }, { list: 'bullet' }],
-          [{ color: daisyColors }, { background: daisyColors }],
-          [{ font: [] }],
-          [{ align: [] }],
-          ['link', 'image'],
-          ['clean'],
-        ],
-        handlers: {
-          // Özel resim yükleme handler'ı
-          image: imageHandler,
-        },
-      },
+      toolbar: [
+        [{ header: [1, 2, 3, 4, 5, 6, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        ['blockquote', 'code-block'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        [{ align: [] }],
+        ['clean'],
+      ],
     },
     placeholder: 'İçeriği buraya yazın...',
     bounds: quillEditor.value,
-    // Daha büyük içerikler için sınırlamaları kaldır
-    maxLength: Infinity,
   });
 
-  // İçerik değiştiğinde emit
+  // Update form content when editor changes
   quill.on('text-change', () => {
     try {
-      // İçeriği güncelle
       const content = quill.root.innerHTML;
       form.content = content;
     } catch (error) {
@@ -650,7 +456,7 @@ onMounted(() => {
     }
   });
 
-  // İlk içeriği yükle - timeout kullanarak daha güvenli yükle
+  // Load initial content with slight delay for stability
   setTimeout(() => {
     if (form.content && !isInitialContentSet) {
       try {
@@ -662,35 +468,25 @@ onMounted(() => {
     }
   }, 100);
 
-  // Editörün yüksekliğini ayarla
+  // Set editor height
   quillEditor.value.style.height = '400px';
-
-  // Stil ayarlamalarını sonradan ekleyelim
-  if (quillEditor.value) {
-    quillEditor.value.classList.add('daisy-quill-editor');
-  }
 });
 
-// form.content değiştiğinde editörü güncelle - debounce ekle
-let debounceTimer = null;
+// Update editor when form.content changes
 watch(
   () => form.content,
   (newValue) => {
-    if (debounceTimer) clearTimeout(debounceTimer);
-
-    debounceTimer = setTimeout(() => {
-      if (quill && newValue !== quill.root.innerHTML) {
-        try {
-          quill.root.innerHTML = newValue || '';
-        } catch (error) {
-          console.error('Content update error in watcher:', error);
-        }
+    if (quill && newValue !== quill.root.innerHTML) {
+      try {
+        quill.root.innerHTML = newValue || '';
+      } catch (error) {
+        console.error('Content update error in watcher:', error);
       }
-    }, 300);
+    }
   }
 );
 
-// Bellekten temizlik
+// Cleanup
 onUnmounted(() => {
   if (quill) {
     quill = null;

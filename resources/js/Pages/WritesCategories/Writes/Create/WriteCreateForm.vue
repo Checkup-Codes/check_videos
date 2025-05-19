@@ -118,7 +118,6 @@
               <label class="label">
                 <span class="label-text">İçerik</span>
               </label>
-
               <div class="relative">
                 <div
                   ref="quillEditor"
@@ -126,29 +125,10 @@
                   :class="{ 'border-error': errors.content || form.errors.content }"
                   style="height: 400px"
                 ></div>
-
-                <!-- Yükleme göstergesi -->
-                <div
-                  v-if="editorLoading"
-                  class="upload-loading-overlay bg-base-100/50 absolute inset-0 z-20 flex items-center justify-center"
-                >
-                  <div class="flex flex-col items-center gap-2">
-                    <span class="loading loading-spinner loading-lg text-primary"></span>
-                    <span class="text-sm">Resim yükleniyor...</span>
-                  </div>
-                </div>
               </div>
-
               <label v-if="errors.content || form.errors.content" class="label">
                 <span class="label-text-alt text-error">{{ errors.content || form.errors.content }}</span>
               </label>
-
-              <!-- Toast bildirim komponenti -->
-              <div class="toast toast-end z-50" v-if="showToast">
-                <div :class="`alert ${toastType}`">
-                  <span>{{ toastMessage }}</span>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -187,28 +167,6 @@
             <label v-if="errors.category_id || form.errors.category_id" class="label">
               <span class="label-text-alt text-error">{{ errors.category_id || form.errors.category_id }}</span>
             </label>
-          </div>
-
-          <div>
-            <!-- TextField component implemented directly -->
-            <div class="form-control w-full">
-              <label class="label">
-                <span class="label-text">Kapak Resmi URL</span>
-              </label>
-              <div class="relative">
-                <input
-                  type="text"
-                  :value="form.cover_image"
-                  @input="form.cover_image = $event.target.value"
-                  placeholder="https://example.com/image.jpg"
-                  class="input-bordered input w-full"
-                  :class="{ 'input-error': errors.cover_image || form.errors.cover_image }"
-                />
-              </div>
-              <label v-if="errors.cover_image || form.errors.cover_image" class="label">
-                <span class="label-text-alt text-error">{{ errors.cover_image || form.errors.cover_image }}</span>
-              </label>
-            </div>
           </div>
 
           <div>
@@ -336,8 +294,6 @@ import { useForm, usePage, router } from '@inertiajs/vue3';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import '@/Shared/Css/quill-custom-styles.css';
-import axios from 'axios';
-import { debounce } from 'lodash';
 
 // Component name definition for dev tools
 defineOptions({
@@ -357,7 +313,6 @@ const form = useForm({
   summary: '',
   status: 'draft',
   category_id: '',
-  cover_image: '',
   seo_keywords: '',
   meta_description: '',
   tags: '',
@@ -374,7 +329,6 @@ const errors = ref({
   summary: '',
   status: '',
   category_id: '',
-  cover_image: '',
   seo_keywords: '',
   meta_description: '',
   tags: '',
@@ -419,21 +373,10 @@ const submitForm = () => {
 
   // Only submit if there are no validation errors
   if (!Object.values(errors.value).some((error) => error !== '')) {
-    // Get a fresh CSRF token before submitting
-    axios.get('/sanctum/csrf-cookie').then(() => {
-      form.post(route('writes.store'), {
-        onSuccess: () => {
-          router.visit(route('dashboard'));
-        },
-        onError: (errors) => {
-          // If still getting a 419 error, try to refresh the page and resubmit
-          if (errors.hasOwnProperty('token') || errors.message === 'CSRF token mismatch') {
-            window.location.reload();
-          } else {
-            console.error('Form submission errors:', errors);
-          }
-        },
-      });
+    form.post(route('writes.store'), {
+      onSuccess: () => {
+        router.visit(route('dashboard'));
+      },
     });
   }
 };
@@ -457,173 +400,23 @@ watch(
 const quillEditor = ref(null);
 let quill;
 let isInitialContentSet = false;
-const editorLoading = ref(false);
-const errorMessage = ref('');
-const showToast = ref(false);
-const toastMessage = ref('');
-const toastType = ref('alert-info');
-
-// Define colors compatible with DaisyUI theme
-const daisyColors = [
-  '#570DF8', // primary
-  '#F000B8', // secondary
-  '#37CDBE', // accent
-  '#3ABFF8', // info
-  '#36D399', // success
-  '#FBBD23', // warning
-  '#F87272', // error
-  '#1f2937', // neutral
-  '#2A303C', // base-100
-  '#ffffff', // white
-  '#000000', // black
-];
-
-/**
- * Display toast notification with auto-dismiss
- *
- * @param {string} message - Message to display
- * @param {string} type - Alert type (alert-info, alert-success, etc.)
- */
-const showToastMessage = (message, type = 'alert-info') => {
-  toastMessage.value = message;
-  toastType.value = type;
-  showToast.value = true;
-
-  // Auto-dismiss toast after 3 seconds
-  setTimeout(() => {
-    showToast.value = false;
-  }, 3000);
-};
-
-/**
- * Custom image handler for Quill editor
- * Opens file selector and uploads selected image
- */
-const imageHandler = () => {
-  const input = document.createElement('input');
-  input.setAttribute('type', 'file');
-  input.setAttribute('accept', 'image/*');
-  input.click();
-
-  // Handle file selection
-  input.onchange = async () => {
-    const file = input.files[0];
-    if (!file) return;
-
-    // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
-    if (!allowedTypes.includes(file.type)) {
-      showToastMessage('Only JPEG, PNG or GIF formats are supported.', 'alert-error');
-      return;
-    }
-
-    // Validate file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      showToastMessage('Image size must be less than 10MB.', 'alert-error');
-      return;
-    }
-
-    editorLoading.value = true;
-    errorMessage.value = '';
-
-    try {
-      // Insert a placeholder skeleton while image uploads
-      const range = quill.getSelection();
-      const placeholderId = 'img-loading-' + Date.now();
-
-      // Create placeholder with loading animation
-      const placeholderHtml = `
-        <div id="${placeholderId}" class="skeleton-placeholder w-full my-4">
-          <div class="skeleton h-32 w-full rounded-lg"></div>
-          <div class="flex justify-center mt-2">
-            <span class="loading loading-dots loading-md"></span>
-          </div>
-        </div>
-      `;
-
-      // Insert placeholder HTML at cursor position
-      quill.clipboard.dangerouslyPasteHTML(range.index, placeholderHtml);
-
-      // Prepare and send upload request
-      const formData = new FormData();
-      formData.append('image', file);
-
-      // Ensure we have the latest CSRF token
-      const csrf = document.head.querySelector('meta[name="csrf-token"]');
-      const headers = {
-        'Content-Type': 'multipart/form-data',
-      };
-
-      if (csrf) {
-        headers['X-CSRF-TOKEN'] = csrf.getAttribute('content');
-      }
-
-      const response = await axios.post('/image-upload', formData, {
-        headers,
-        withCredentials: true,
-      });
-
-      // Handle successful upload
-      if (response.data.success && response.data.url) {
-        // Find and remove placeholder
-        const placeholderElement = document.getElementById(placeholderId);
-        if (placeholderElement) {
-          const placeholderIndex = quill.getIndex(quill.scroll.descendant(Node, placeholderElement)[0][0]);
-          quill.deleteText(placeholderIndex, placeholderElement.outerHTML.length);
-
-          // Insert actual image at placeholder position
-          quill.insertEmbed(placeholderIndex, 'image', response.data.url);
-        } else {
-          // If placeholder not found, insert at current cursor position
-          quill.insertEmbed(range.index, 'image', response.data.url);
-        }
-        showToastMessage('Image uploaded successfully', 'alert-success');
-      } else {
-        // Handle failed upload
-        const placeholderElement = document.getElementById(placeholderId);
-        if (placeholderElement) {
-          const placeholderIndex = quill.getIndex(quill.scroll.descendant(Node, placeholderElement)[0][0]);
-          quill.deleteText(placeholderIndex, placeholderElement.outerHTML.length);
-        }
-        console.error('Image upload failed');
-        showToastMessage('Error uploading image.', 'alert-error');
-      }
-    } catch (error) {
-      console.error('Image upload error:', error);
-      showToastMessage('Error uploading image: ' + (error.response?.data?.message || error.message), 'alert-error');
-    } finally {
-      editorLoading.value = false;
-    }
-  };
-};
 
 onMounted(() => {
   // Initialize Quill editor with custom configuration
   quill = new Quill(quillEditor.value, {
     theme: 'snow',
     modules: {
-      toolbar: {
-        container: [
-          [{ header: [1, 2, 3, 4, 5, 6, false] }],
-          ['bold', 'italic', 'underline', 'strike'],
-          ['blockquote', 'code-block'],
-          [{ list: 'ordered' }, { list: 'bullet' }],
-          [{ color: daisyColors }, { background: daisyColors }],
-          [{ font: [] }],
-          [{ align: [] }],
-          ['link', 'image'],
-          ['clean'],
-        ],
-        handlers: {
-          // Custom image upload handler
-          image: imageHandler,
-        },
-      },
+      toolbar: [
+        [{ header: [1, 2, 3, 4, 5, 6, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        ['blockquote', 'code-block'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        [{ align: [] }],
+        ['clean'],
+      ],
     },
     placeholder: 'Write content here...',
     bounds: quillEditor.value,
-    // Remove limits for larger content
-    maxLength: Infinity,
   });
 
   // Update form content when editor changes
@@ -650,33 +443,23 @@ onMounted(() => {
 
   // Set editor height
   quillEditor.value.style.height = '400px';
-
-  // Apply additional styles
-  if (quillEditor.value) {
-    quillEditor.value.classList.add('daisy-quill-editor');
-  }
 });
 
-// Update editor when form.content changes (with debounce)
-let debounceTimer = null;
+// Update editor when form.content changes
 watch(
   () => form.content,
   (newValue) => {
-    if (debounceTimer) clearTimeout(debounceTimer);
-
-    debounceTimer = setTimeout(() => {
-      if (quill && newValue !== quill.root.innerHTML) {
-        try {
-          quill.root.innerHTML = newValue || '';
-        } catch (error) {
-          console.error('Content update error in watcher:', error);
-        }
+    if (quill && newValue !== quill.root.innerHTML) {
+      try {
+        quill.root.innerHTML = newValue || '';
+      } catch (error) {
+        console.error('Content update error in watcher:', error);
       }
-    }, 300);
+    }
   }
 );
 
-// Bellekten temizlik
+// Cleanup
 onUnmounted(() => {
   if (quill) {
     quill = null;
