@@ -66,6 +66,7 @@ class WriteService
         // If admin, bypass cache for fresh data
         if ($isAdmin) {
             $writes = Write::select('id', 'views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
+                ->where('status', '!=', 'link_only')
                 ->orderByDesc('published_at')
                 ->get();
         } else {
@@ -73,6 +74,7 @@ class WriteService
             $writes = Cache::remember('content_writes', self::CACHE_TTL, function () {
                 return Write::select('id', 'views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
                     ->where('status', 'published')
+                    ->where('status', '!=', 'link_only')
                     ->orderByDesc('published_at')
                     ->get();
             });
@@ -100,6 +102,7 @@ class WriteService
         // If admin, bypass cache for fresh data
         if ($isAdmin) {
             $writes = Write::select('id', 'views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
+                ->where('status', '!=', 'link_only')
                 ->orderByDesc('published_at')
                 ->get();
         } else {
@@ -107,6 +110,7 @@ class WriteService
             $writes = Cache::remember('content_writes_all', self::CACHE_TTL, function () {
                 return Write::select('id', 'views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
                     ->where('status', 'published')
+                    ->where('status', '!=', 'link_only')
                     ->orderByDesc('published_at')
                     ->get();
             });
@@ -137,6 +141,7 @@ class WriteService
             ->when(!$isAdmin, function ($query) {
                 $query->where('status', 'published');
             })
+            ->where('status', '!=', 'link_only')
             ->select(
                 'id',
                 'title',
@@ -161,6 +166,7 @@ class WriteService
             ->when(!$isAdmin, function ($query) {
                 $query->where('status', 'published');
             })
+            ->where('status', '!=', 'link_only')
             ->select(
                 'id',
                 'title',
@@ -207,6 +213,7 @@ class WriteService
             ->when(!$isAdmin, function ($query) {
                 $query->where('status', 'published');
             })
+            ->where('status', '!=', 'link_only')
             ->select(
                 'id',
                 'title',

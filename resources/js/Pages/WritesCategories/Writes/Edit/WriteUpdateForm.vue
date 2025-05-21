@@ -159,6 +159,7 @@
               <option value="draft">Şablon</option>
               <option value="published">Yayında</option>
               <option value="private">Gizli</option>
+              <option value="link_only">Sadece Link</option>
             </select>
             <label v-if="errors.status || form.errors.status" class="label">
               <span class="label-text-alt text-error">{{ errors.status || form.errors.status }}</span>

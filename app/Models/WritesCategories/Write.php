@@ -29,7 +29,25 @@ class Write extends Model
         'hasDraw',
     ];
 
+    const STATUS_DRAFT = 'draft';
+    const STATUS_PUBLISHED = 'published';
+    const STATUS_PRIVATE = 'private';
+    const STATUS_LINK_ONLY = 'link_only';
 
+    public static function getValidStatuses()
+    {
+        return [
+            self::STATUS_DRAFT,
+            self::STATUS_PUBLISHED,
+            self::STATUS_PRIVATE,
+            self::STATUS_LINK_ONLY,
+        ];
+    }
+
+    public function isLinkOnly()
+    {
+        return $this->status === self::STATUS_LINK_ONLY;
+    }
 
     public $incrementing = false;
     protected $keyType = 'string';
