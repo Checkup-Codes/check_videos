@@ -17,45 +17,12 @@
               <span class="badge badge-outline ml-2">{{ category.writes_count || writes.length }} yazı</span>
             </h1>
           </div>
-          <div class="flex gap-2">
-            <button
-              @click="toggleView"
-              class="btn btn-ghost btn-sm"
-              :title="isGridView ? 'Liste Görünümü' : 'Kart Görünümü'"
-            >
-              <svg
-                v-if="isGridView"
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-              <svg
-                v-else
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 6h16M4 10h16M4 14h16M4 18h16"
-                />
-              </svg>
-            </button>
-          </div>
         </div>
 
         <div class="divider my-2"></div>
 
         <!-- Grid View -->
-        <div v-if="isGridView" class="grid gap-4 sm:grid-cols-1 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div class="grid gap-4 sm:grid-cols-1 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
           <div
             v-for="write in writes"
             :key="write.id"
@@ -88,35 +55,6 @@
           </div>
         </div>
 
-        <!-- List View -->
-        <div v-else class="space-y-3 sm:space-y-4">
-          <div
-            v-for="write in writes"
-            :key="write.id"
-            class="card border border-base-200 bg-base-100 p-3 shadow-sm transition-all hover:shadow-md sm:p-4"
-          >
-            <div class="card-body p-0">
-              <h2 class="card-title text-base sm:text-lg">
-                <Link
-                  :href="
-                    route('categories.showByCategory', {
-                      category: category.slug,
-                      slug: write.slug,
-                    })
-                  "
-                  class="hover:text-primary"
-                >
-                  {{ write.title }}
-                </Link>
-              </h2>
-              <p class="mt-1 text-xs opacity-70 sm:text-sm">{{ truncateSummary(write.meta_description) }}</p>
-              <div class="card-actions mt-2 justify-end">
-                <div class="badge badge-outline badge-sm">{{ formatDate(write.published_at) }}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div v-if="writes.length === 0" class="alert alert-info mt-6">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -140,7 +78,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { usePage, router, Link } from '@inertiajs/vue3';
+import { usePage, Link, router } from '@inertiajs/vue3';
 import GoBackButton from '@/Components/GoBackButton.vue';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 
@@ -158,8 +96,6 @@ const { props } = usePage();
 const category = ref(props.category || {});
 const writes = ref(props.writes || []);
 const auth = props.auth;
-
-const isGridView = ref(false);
 const flashSuccess = ref(props.flash?.success);
 
 /**
@@ -192,11 +128,6 @@ const editCategory = () => {
   router.visit(route('categories.edit', { category: category.value.id }));
 };
 
-const toggleView = () => {
-  isGridView.value = !isGridView.value;
-  localStorage.setItem('categoryViewMode', isGridView.value ? 'grid' : 'list');
-};
-
 const truncateSummary = (summary) => {
   if (!summary) return 'Açıklama bulunmamaktadır.';
 
@@ -218,12 +149,6 @@ const truncateSummary = (summary) => {
 };
 
 onMounted(() => {
-  // Restore view preference from localStorage
-  const savedViewMode = localStorage.getItem('categoryViewMode');
-  if (savedViewMode) {
-    isGridView.value = savedViewMode === 'grid';
-  }
-
   if (flashSuccess.value) {
     setTimeout(() => {
       flashSuccess.value = null;
