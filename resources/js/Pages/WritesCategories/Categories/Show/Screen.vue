@@ -24,7 +24,7 @@
         <!-- Grid View -->
         <div class="grid gap-4 sm:grid-cols-1 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
           <div
-            v-for="write in writes"
+            v-for="write in filteredWrites"
             :key="write.id"
             class="card border border-base-200 bg-base-100 shadow-sm transition-all hover:shadow-md"
           >
@@ -45,7 +45,27 @@
                 "
                 class="hover:text-primary"
               >
-                <h2 class="card-title text-base sm:text-lg">{{ write.title }}</h2>
+                <div class="flex items-center gap-2">
+                  <span v-if="write.status === 'link_only'" class="text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path
+                        fill-rule="evenodd"
+                        d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </span>
+                  <span v-if="write.status === 'private'" class="text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path
+                        fill-rule="evenodd"
+                        d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </span>
+                  <h2 class="card-title text-base sm:text-lg">{{ write.title }}</h2>
+                </div>
                 <p class="mt-2 text-xs opacity-70 sm:text-sm">{{ truncateSummary(write.meta_description) }}</p>
                 <div class="card-actions mt-3 justify-end">
                   <div class="badge badge-outline badge-sm">{{ formatDate(write.published_at) }}</div>
@@ -97,6 +117,19 @@ const category = ref(props.category || {});
 const writes = ref(props.writes || []);
 const auth = props.auth;
 const flashSuccess = ref(props.flash?.success);
+
+/**
+ * Filter writes based on user role and status
+ */
+const filteredWrites = computed(() => {
+  if (auth.user) {
+    // Admin can see all writes
+    return writes.value;
+  } else {
+    // Regular users can only see published writes
+    return writes.value.filter((write) => write.status === 'published');
+  }
+});
 
 /**
  * Format date for display

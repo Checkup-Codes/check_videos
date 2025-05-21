@@ -101,7 +101,6 @@ class CategoryService
                 ->when(!$isAdmin, function ($query) {
                     $query->where('content_writes.status', 'published');
                 })
-                ->where('content_writes.status', '!=', 'link_only')
                 ->pluck('content_category_write.write_id')
                 ->toArray();
 
@@ -110,7 +109,6 @@ class CategoryService
                 ->when(!$isAdmin, function ($query) {
                     $query->where('status', 'published');
                 })
-                ->where('status', '!=', 'link_only')
                 ->pluck('id')
                 ->toArray();
 
@@ -170,7 +168,6 @@ class CategoryService
                 ->when(!$isAdmin, function ($query) {
                     $query->where('content_writes.status', 'published');
                 })
-                ->where('content_writes.status', '!=', 'link_only')
                 ->pluck('content_category_write.write_id')
                 ->toArray();
 
@@ -179,7 +176,6 @@ class CategoryService
                 ->when(!$isAdmin, function ($query) {
                     $query->where('status', 'published');
                 })
-                ->where('status', '!=', 'link_only')
                 ->pluck('id')
                 ->toArray();
 
