@@ -277,7 +277,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, onUnmounted } from 'vue';
+import { ref, onMounted, watch, onUnmounted, computed } from 'vue';
 import { useForm, usePage, router } from '@inertiajs/vue3';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
@@ -374,13 +374,8 @@ const updateWrite = () => {
   // Only submit if there are no validation errors
   if (!Object.values(errors.value).some((error) => error !== '')) {
     form.put(route('writes.update', { write: writeData.value.slug }), {
-      preserveScroll: true,
       onSuccess: () => {
         router.visit(route('writes.show', { write: form.slug }));
-      },
-      onError: (errors) => {
-        // Handle errors if needed
-        console.error('Update failed:', errors);
       },
     });
   }

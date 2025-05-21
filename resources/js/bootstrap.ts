@@ -4,7 +4,7 @@ window.axios = axios;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 window.axios.defaults.withCredentials = true;
 
-// CSRF token ekle
+// Add CSRF token to all requests
 const token = document.head.querySelector('meta[name="csrf-token"]');
 if (token) {
   window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.getAttribute('content');
@@ -13,21 +13,33 @@ if (token) {
 // Add a response interceptor to handle 419 errors globally
 axios.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     // If we get a 419 CSRF token mismatch error
     if (error.response && error.response.status === 419) {
-      // Get a fresh CSRF token and retry the request
-      return axios.get('/sanctum/csrf-cookie').then(() => {
+      try {
+        // Get a fresh CSRF token
+        await axios.get('/sanctum/csrf-cookie');
+
         // Update the token in the headers
         const newToken = document.head.querySelector('meta[name="csrf-token"]');
         if (newToken) {
           window.axios.defaults.headers.common['X-CSRF-TOKEN'] = newToken.getAttribute('content');
         }
 
-        // Create a new request with the same config
+        // Create a new request with the same config but updated CSRF token
         const config = error.config;
+        config.headers = {
+          ...config.headers,
+          'X-CSRF-TOKEN': newToken?.getAttribute('content'),
+          'X-Requested-With': 'XMLHttpRequest',
+        };
+
+        // Retry the original request with the new token
         return axios(config);
-      });
+      } catch (refreshError) {
+        console.error('Failed to refresh CSRF token:', refreshError);
+        return Promise.reject(refreshError);
+      }
     }
 
     // For other errors, just reject the promise

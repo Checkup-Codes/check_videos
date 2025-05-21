@@ -269,15 +269,7 @@ const clearParentCategory = () => {
  * Submit form to update category
  */
 const updateCategory = () => {
-  form.put(route('categories.update', { category: currentCategory.value.id }), {
-    preserveScroll: true,
-    onSuccess: () => {
-      console.log('Category updated successfully');
-    },
-    onError: (errors) => {
-      console.error('Error updating category:', errors);
-    },
-  });
+  form.put(route('categories.update', { category: currentCategory.value.id }));
 };
 
 /**

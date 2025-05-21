@@ -209,7 +209,8 @@ class WritesController extends Controller
             ? Write::findOrFail($writeId)
             : Write::where('slug', $writeId)->firstOrFail();
 
-        $request->validate([
+        // Validate request
+        $validated = $request->validate([
             'title'        => 'required|string|max:255',
             'slug'         => 'required|string|max:255|unique:content_writes,slug,' . $write->id,
             'content'      => 'required|string',
@@ -222,17 +223,26 @@ class WritesController extends Controller
             'hasDraw'      => 'required|boolean',
         ]);
 
-        $result = $this->writeService->updateWrite($write, $request->all());
+        try {
+            $result = $this->writeService->updateWrite($write, $validated);
 
-        Log::info('Write updated', [
-            'id' => $write->id,
-            'execution_time' => $result['execution_time']['value'],
-            'is_slow' => $result['execution_time']['is_slow']
-        ]);
+            Log::info('Write updated', [
+                'id' => $write->id,
+                'execution_time' => $result['execution_time']['value'],
+                'is_slow' => $result['execution_time']['is_slow']
+            ]);
 
-        return redirect()
-            ->route('writes.index')
-            ->with('success', 'Yazıyı modifiye ettik.');
+            return redirect()
+                ->route('writes.index')
+                ->with('success', 'Yazıyı modifiye ettik.');
+        } catch (\Exception $e) {
+            Log::error('Write update failed', [
+                'id' => $write->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->withErrors(['error' => 'Güncelleme sırasında bir hata oluştu.']);
+        }
     }
 
     /**
