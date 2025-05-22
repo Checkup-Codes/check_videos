@@ -35,7 +35,7 @@
                 {{ wordsMap[response.word_id]?.word || 'Unknown' }}
               </span>
               <span class="text-xs text-gray-500">
-                {{ wordsMap[response.word_id]?.meaning || '' }}
+                {{ getPrimaryMeaning(wordsMap[response.word_id]) }}
               </span>
             </div>
             <span :class="response.correct ? 'text-lg text-green-600' : 'text-lg text-red-600'">
@@ -129,14 +129,12 @@
             class="w-full rounded-lg border border-gray-200 p-3 text-left text-base text-gray-900 transition hover:bg-gray-50 disabled:cursor-not-allowed"
             :class="{
               'border-green-500 bg-green-50':
-                gameState.showAnswer && option.meaning === gameState.currentQuestion.meaning,
+                gameState.showAnswer && isCorrectAnswer(option, gameState.currentQuestion),
               'border-red-500 bg-red-50':
-                gameState.showAnswer &&
-                option.meaning !== gameState.currentQuestion.meaning &&
-                gameState.selectedAnswer?.meaning === option.meaning,
+                gameState.showAnswer && !isCorrectAnswer(option, gameState.currentQuestion) && isSelectedAnswer(option),
             }"
           >
-            {{ option.meaning }}
+            {{ option.meaningText }}
           </button>
         </div>
       </div>
@@ -187,6 +185,24 @@ const gameState = ref({
 const words = ref([]);
 const wordsMap = computed(() => Object.fromEntries(words.value.map((word) => [word.id, word])));
 
+// Go to the next question
+const nextQuestion = () => {
+  gameState.value.currentIndex++;
+  gameState.value.progress = Math.round((gameState.value.currentIndex / gameState.value.totalQuestions) * 100);
+
+  if (gameState.value.currentIndex < gameState.value.totalQuestions) {
+    gameState.value.selectedAnswer = null;
+    gameState.value.showAnswer = false;
+    gameState.value.currentOptions = [];
+    gameState.value.hintShown = false;
+    gameState.value.currentHintIndex = 0;
+    gameState.value.currentQuestion = words.value[gameState.value.currentIndex];
+  } else {
+    // Game over
+    gameState.value.isPlaying = false;
+  }
+};
+
 // Oyunu başlat
 const startGameWithConfig = async () => {
   if (!props.words || props.words.length < 2) {
@@ -198,33 +214,44 @@ const startGameWithConfig = async () => {
 
   // Kelimeleri karıştır
   let gameWords = [...props.words];
-  gameWords.sort(() => Math.random() - 0.5);
 
-  // Kelimeleri yükle
-  await new Promise((resolve) => {
-    words.value = gameWords;
-    gameState.value.totalQuestions = words.value.length;
-    gameState.value.currentIndex = 0;
-    gameState.value.userResponses = [];
-    resolve();
-  });
+  // Öğrenilmemiş kelimelere öncelik ver
+  if (props.gameConfig.prioritizeUnlearned) {
+    // Öğrenilmiş, öğreniliyor ve öğrenilmemiş olarak ayır
+    const unlearned = gameWords.filter((w) => w.learning_status === 0);
+    const learning = gameWords.filter((w) => w.learning_status === 1);
+    const learned = gameWords.filter((w) => w.learning_status === 2);
 
-  gameState.value.isLoading = false;
-  gameState.value.isPlaying = true;
-  loadNextQuestion();
-};
-
-// Sonraki soruyu yükle
-const loadNextQuestion = () => {
-  if (gameState.value.currentIndex >= words.value.length) {
-    endGame();
-    return;
+    // Önce öğrenilmemiş, sonra öğreniliyor, sonra öğrenilmiş kelimelerden soru oluştur
+    gameWords = [...unlearned, ...learning, ...learned];
+  } else {
+    // Rastgele karıştır
+    gameWords = gameWords.sort(() => 0.5 - Math.random());
   }
 
-  gameState.value.currentQuestion = words.value[gameState.value.currentIndex];
-  gameState.value.selectedAnswer = null;
-  gameState.value.hintShown = false;
-  gameState.value.currentHintIndex = 0;
+  // Soru sayısını sınırla
+  const questionCount = Math.min(props.gameConfig.questionCount, gameWords.length);
+  gameWords = gameWords.slice(0, questionCount);
+
+  // Oyun durumunu başlat
+  gameState.value = {
+    isLoading: false,
+    isPlaying: true,
+    currentQuestion: gameWords[0],
+    currentOptions: [],
+    selectedAnswer: null,
+    showAnswer: false,
+    isCorrect: false,
+    progress: 0,
+    currentIndex: 0,
+    totalQuestions: gameWords.length,
+    userResponses: [],
+    hintShown: false,
+    currentHintIndex: 0,
+  };
+
+  // Kelimeleri kaydet
+  words.value = gameWords;
 };
 
 // Puan hesapla
@@ -259,45 +286,42 @@ const incorrectCount = computed(() => {
   return gameState.value.userResponses.filter((response) => !response.correct).length;
 });
 
-// Rastgele seçenekleri karıştır
+// Karıştırılmış seçenekler
 const shuffledOptions = computed(() => {
   if (!gameState.value.currentQuestion) return [];
-  let options = words.value.filter((word) => word.id !== gameState.value.currentQuestion.id);
-  options = options.sort(() => Math.random() - 0.5).slice(0, 4); // 4 yanlış seçenek
-  options.push(gameState.value.currentQuestion); // Doğru cevabı ekle
-  return options.sort(() => Math.random() - 0.5); // Tüm seçenekleri karıştır
+
+  if (gameState.value.currentOptions.length === 0) {
+    gameState.value.currentOptions = generateOptions(gameState.value.currentQuestion, words.value);
+  }
+
+  return gameState.value.currentOptions;
 });
 
-// Cevap seç
-const selectAnswer = (answer) => {
-  if (gameState.value.showAnswer) return;
+// Cevap seçimi
+const selectAnswer = (option) => {
+  gameState.value.selectedAnswer = option;
+  gameState.value.showAnswer = true;
+  gameState.value.isCorrect = isCorrectAnswer(option, gameState.value.currentQuestion);
 
-  gameState.value.selectedAnswer = answer;
-  gameState.value.isCorrect = answer.meaning === gameState.value.currentQuestion.meaning;
-
-  // Kullanıcı yanıtını kaydet
+  // Cevabı kaydet
   gameState.value.userResponses.push({
     word_id: gameState.value.currentQuestion.id,
+    selected_option: option.meaningText,
     correct: gameState.value.isCorrect,
   });
 
-  // Cevabı göster
-  gameState.value.showAnswer = true;
+  // Doğru ya da yanlış cevapların sayısını güncelle
+  if (gameState.value.isCorrect) {
+    // Nada
+  } else {
+    // Yanlış sayısını artır
+    incrementIncorrectCount(gameState.value.currentQuestion.id);
+  }
 
-  // Progress bar'ı başlat
-  gameState.value.progress = 0;
-  const interval = setInterval(() => {
-    gameState.value.progress += 1;
-    if (gameState.value.progress >= 100) {
-      clearInterval(interval);
-      // Sonraki soruya geç
-      gameState.value.currentIndex++;
-      gameState.value.selectedAnswer = null;
-      gameState.value.showAnswer = false;
-      gameState.value.progress = 0;
-      loadNextQuestion();
-    }
-  }, 20); // 2 saniyede 100'e ulaşmak için 20ms aralıklarla artır
+  // 1.5 saniye sonra bir sonraki soruya geç
+  setTimeout(() => {
+    nextQuestion();
+  }, 1500);
 };
 
 // Oyunu bitir
@@ -365,6 +389,62 @@ const showHint = () => {
     gameState.value.currentHintIndex =
       (gameState.value.currentHintIndex + 1) % gameState.value.currentQuestion.example_sentences.length;
   }
+};
+
+// Helper functions for multiple meanings
+const getPrimaryMeaning = (word) => {
+  if (!word) return '';
+
+  if (word.meanings && word.meanings.length > 0) {
+    // Find the primary meaning
+    const primaryMeaning = word.meanings.find((m) => m.is_primary);
+    // If a primary meaning exists, return it, otherwise return the first meaning
+    if (primaryMeaning) {
+      return primaryMeaning.meaning;
+    }
+    return word.meanings[0].meaning;
+  }
+
+  // Fallback to the old way (for backward compatibility)
+  return word.meaning || '';
+};
+
+const isCorrectAnswer = (option, question) => {
+  if (!option || !question) return false;
+  return option.wordId === question.id;
+};
+
+const isSelectedAnswer = (option) => {
+  return gameState.value.selectedAnswer?.wordId === option.wordId;
+};
+
+// Generate answer options
+const generateOptions = (currentQuestion, allWords, count = 4) => {
+  // Create the correct option
+  const correctOption = {
+    wordId: currentQuestion.id,
+    meaningText: getPrimaryMeaning(currentQuestion),
+    isCorrect: true,
+  };
+
+  // Filter out words that have the same meaning as the correct answer
+  const filteredWords = allWords.filter(
+    (w) => w.id !== currentQuestion.id && getPrimaryMeaning(w) !== getPrimaryMeaning(currentQuestion)
+  );
+
+  // Shuffle and take the required number of words
+  const shuffledWords = [...filteredWords].sort(() => 0.5 - Math.random());
+  const selectedWords = shuffledWords.slice(0, count - 1);
+
+  // Create incorrect options
+  const incorrectOptions = selectedWords.map((word) => ({
+    wordId: word.id,
+    meaningText: getPrimaryMeaning(word),
+    isCorrect: false,
+  }));
+
+  // Combine and shuffle the options
+  return [...incorrectOptions, correctOption].sort(() => 0.5 - Math.random());
 };
 
 // Oyunu başlat

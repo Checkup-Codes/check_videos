@@ -105,7 +105,7 @@
                 <td>
                   <div class="font-medium">{{ word.word }}</div>
                 </td>
-                <td>{{ truncateText(word.meaning, 50) }}</td>
+                <td>{{ getPrimaryMeaning(word) }}</td>
                 <td>
                   <div class="badge badge-sm">{{ word.type }}</div>
                 </td>
@@ -287,4 +287,18 @@ onMounted(() => {
     isLoading.value = false;
   }, 300);
 });
+
+const getPrimaryMeaning = (word) => {
+  if (word.meanings && word.meanings.length > 0) {
+    // Find the primary meaning
+    const primaryMeaning = word.meanings.find((m) => m.is_primary);
+    // If a primary meaning exists, return it, otherwise return the first meaning
+    if (primaryMeaning) {
+      return truncateText(primaryMeaning.meaning, 50);
+    }
+    return truncateText(word.meanings[0].meaning, 50);
+  }
+  // Fallback to the old way (for backward compatibility)
+  return word.meaning ? truncateText(word.meaning, 50) : '';
+};
 </script>

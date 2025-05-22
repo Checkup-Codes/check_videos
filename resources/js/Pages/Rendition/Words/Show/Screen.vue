@@ -182,7 +182,7 @@
                   </tr>
                   <tr v-for="word in displayedWords" :key="word.id">
                     <td class="font-medium">{{ word.word }}</td>
-                    <td>{{ truncateText(word.meaning, 50) }}</td>
+                    <td>{{ getPrimaryMeaning(word) }}</td>
                     <td>
                       <div class="badge">{{ word.type }}</div>
                     </td>
@@ -504,6 +504,21 @@ onMounted(() => {
     startGame(gameParam);
   }
 });
+
+// Helper function to get the primary meaning from the word's meanings array
+const getPrimaryMeaning = (word) => {
+  if (word.meanings && word.meanings.length > 0) {
+    // Find the primary meaning
+    const primaryMeaning = word.meanings.find((m) => m.is_primary);
+    // If a primary meaning exists, return it, otherwise return the first meaning
+    if (primaryMeaning) {
+      return truncateText(primaryMeaning.meaning, 50);
+    }
+    return truncateText(word.meanings[0].meaning, 50);
+  }
+  // Fallback to the old way (for backward compatibility)
+  return word.meaning ? truncateText(word.meaning, 50) : '';
+};
 </script>
 
 <style scoped>

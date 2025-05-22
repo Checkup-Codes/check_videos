@@ -28,7 +28,6 @@ class Word extends Model
 
     protected $fillable = [
         'word',
-        'meaning',
         'type',
         'language',
         'learning_status',
@@ -58,8 +57,32 @@ class Word extends Model
         return $this->hasMany(Synonym::class);
     }
 
+    public function meanings()
+    {
+        return $this->hasMany(WordMeaning::class);
+    }
+
+    public function primaryMeaning()
+    {
+        return $this->hasOne(WordMeaning::class)->where('is_primary', true);
+    }
+
     public function languagePacks()
     {
         return $this->belongsToMany(LanguagePack::class, 'lang_word_pack_relations', 'word_id', 'pack_id');
+    }
+
+    // Accessor for backward compatibility
+    public function getMeaningAttribute()
+    {
+        $primaryMeaning = $this->meanings()->where('is_primary', true)->first();
+
+        if ($primaryMeaning) {
+            return $primaryMeaning->meaning;
+        }
+
+        // If no primary meaning, return the first meaning or empty string
+        $firstMeaning = $this->meanings()->first();
+        return $firstMeaning ? $firstMeaning->meaning : '';
     }
 }

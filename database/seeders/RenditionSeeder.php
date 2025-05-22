@@ -33,7 +33,10 @@ class RenditionSeeder extends Seeder
         ];
 
         foreach ($languagePacks as $pack) {
-            LanguagePack::create($pack);
+            LanguagePack::firstOrCreate(
+                ['slug' => $pack['slug']],
+                $pack
+            );
         }
 
         // Create 150 demo words
@@ -197,12 +200,24 @@ class RenditionSeeder extends Seeder
 
         foreach ($words as $wordData) {
             $baseWordData = [
+                'word' => $wordData['word'],
+                'type' => $wordData['type'],
+                'language' => $wordData['language'],
+                'learning_status' => $wordData['learning_status'],
+                'difficulty_level' => $wordData['difficulty_level'],
                 'flag' => false,
                 'incorrect_count' => 0,
                 'review_count' => 0,
             ];
 
-            $word = Word::create(array_merge($wordData, $baseWordData));
+            $word = Word::create($baseWordData);
+
+            // Create the primary meaning
+            $word->meanings()->create([
+                'meaning' => $wordData['meaning'],
+                'is_primary' => true,
+                'display_order' => 0,
+            ]);
 
             // Create example sentences
             ExampleSentence::factory()->count(2)->create([
@@ -219,7 +234,7 @@ class RenditionSeeder extends Seeder
             }
 
             // Add word to demo pack
-            WordPackRelation::create([
+            WordPackRelation::firstOrCreate([
                 'word_id' => $word->id,
                 'pack_id' => $demoPack->id,
             ]);
@@ -253,32 +268,41 @@ class RenditionSeeder extends Seeder
         foreach ($quickStartWords as $word) {
             $wordData = [
                 'word' => $word,
-                'meaning' => $this->generateQuickStartMeaning($word),
                 'type' => $this->getRandomType(),
                 'language' => 'en',
                 'learning_status' => 0,
                 'difficulty_level' => 1,
+                'flag' => false,
+                'incorrect_count' => 0,
+                'review_count' => 0,
             ];
 
-            $word = Word::create(array_merge($wordData, $baseWordData));
+            $wordObj = Word::create($wordData);
+
+            // Create the primary meaning
+            $wordObj->meanings()->create([
+                'meaning' => $this->generateQuickStartMeaning($word),
+                'is_primary' => true,
+                'display_order' => 0,
+            ]);
 
             // Create example sentences
             ExampleSentence::factory()->count(2)->create([
-                'word_id' => $word->id,
-                'language' => $word->language,
+                'word_id' => $wordObj->id,
+                'language' => $wordObj->language,
             ]);
 
             // Create synonyms for English words
-            if ($word->language === 'en') {
+            if ($wordObj->language === 'en') {
                 Synonym::factory()->count(2)->create([
-                    'word_id' => $word->id,
-                    'language' => $word->language,
+                    'word_id' => $wordObj->id,
+                    'language' => $wordObj->language,
                 ]);
             }
 
             // Add word to quick start pack
-            WordPackRelation::create([
-                'word_id' => $word->id,
+            WordPackRelation::firstOrCreate([
+                'word_id' => $wordObj->id,
                 'pack_id' => $quickStartPack->id,
             ]);
         }

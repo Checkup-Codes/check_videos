@@ -20,14 +20,49 @@
               </label>
             </div>
 
-            <!-- Anlam -->
-            <div class="form-control w-full">
+            <!-- Anlamlar -->
+            <div class="form-control w-full md:col-span-2">
               <label class="label">
-                <span class="label-text">Anlam</span>
+                <span class="label-text">Anlamlar</span>
+                <button type="button" @click="addMeaning" class="btn btn-outline btn-xs">Anlam Ekle</button>
               </label>
-              <input type="text" v-model="form.meaning" class="input-bordered input w-full" required />
-              <label v-if="errors.meaning" class="label">
-                <span class="label-text-alt text-error">{{ errors.meaning }}</span>
+
+              <div class="space-y-4">
+                <div v-for="(meaning, index) in form.meanings" :key="index" class="flex items-center gap-2">
+                  <input
+                    type="text"
+                    v-model="meaning.meaning"
+                    class="input-bordered input w-full"
+                    :placeholder="`${index + 1}. anlam`"
+                    required
+                  />
+                  <div class="form-control">
+                    <label class="label cursor-pointer gap-2">
+                      <span class="label-text">Birincil</span>
+                      <input
+                        type="radio"
+                        name="primaryMeaning"
+                        :checked="meaning.is_primary"
+                        @change="setPrimaryMeaning(index)"
+                        class="radio radio-sm"
+                      />
+                    </label>
+                  </div>
+                  <button
+                    v-if="form.meanings.length > 1"
+                    type="button"
+                    @click="removeMeaning(index)"
+                    class="btn btn-error btn-outline btn-sm btn-circle"
+                  >
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <label v-if="errors.meanings" class="label">
+                <span class="label-text-alt text-error">{{ errors.meanings }}</span>
               </label>
             </div>
 
@@ -249,7 +284,7 @@ const newSynonym = ref('');
 
 const form = useForm({
   word: '',
-  meaning: '',
+  meanings: [{ meaning: '', is_primary: true }],
   type: '',
   language: '',
   difficulty_level: '',
@@ -280,6 +315,20 @@ const addSynonym = () => {
 
 const removeSynonym = (index) => {
   form.synonyms.splice(index, 1);
+};
+
+const addMeaning = () => {
+  form.meanings.push({ meaning: '', is_primary: false });
+};
+
+const removeMeaning = (index) => {
+  form.meanings.splice(index, 1);
+};
+
+const setPrimaryMeaning = (index) => {
+  form.meanings.forEach((meaning, i) => {
+    meaning.is_primary = i === index;
+  });
 };
 
 const submitForm = () => {

@@ -46,9 +46,27 @@ class WordController extends Controller
             }
 
             // Execute query with pagination
-            $words = $query->with(['exampleSentences', 'synonyms'])
+            $words = $query->with(['exampleSentences', 'synonyms', 'meanings'])
                 ->orderBy('word')
                 ->paginate($perPage);
+
+            // Add meaning property for backward compatibility
+            $words->through(function ($word) {
+                if (!property_exists($word, 'meaning') || !$word->meaning) {
+                    $primaryMeaning = $word->meanings->first(function ($meaning) {
+                        return $meaning->is_primary;
+                    });
+
+                    if ($primaryMeaning) {
+                        $word->meaning = $primaryMeaning->meaning;
+                    } else if ($word->meanings->count() > 0) {
+                        $word->meaning = $word->meanings->first()->meaning;
+                    } else {
+                        $word->meaning = '';
+                    }
+                }
+                return $word;
+            });
 
             // Get language packs for the sidebar
             $languagePacks = DB::table('lang_language_packs')->select([
@@ -134,12 +152,31 @@ class WordController extends Controller
             // Slug'a göre istenen paket ve kelimeleri getir
             $languagePack = LanguagePack::with([
                 'words' => function ($query) {
-                    $query->with(['exampleSentences', 'synonyms'])
+                    $query->with(['exampleSentences', 'synonyms', 'meanings'])
                         ->orderBy('word');
                 }
             ])
                 ->where('slug', $slug)
                 ->firstOrFail();
+
+            // Add meaning property for backward compatibility
+            if ($languagePack->words) {
+                foreach ($languagePack->words as $word) {
+                    if (!property_exists($word, 'meaning') || !$word->meaning) {
+                        $primaryMeaning = $word->meanings->first(function ($meaning) {
+                            return $meaning->is_primary;
+                        });
+
+                        if ($primaryMeaning) {
+                            $word->meaning = $primaryMeaning->meaning;
+                        } else if ($word->meanings->count() > 0) {
+                            $word->meaning = $word->meanings->first()->meaning;
+                        } else {
+                            $word->meaning = '';
+                        }
+                    }
+                }
+            }
 
             // Kelimelerin yüklendiğini kontrol et
             if (!$languagePack->words || $languagePack->words->isEmpty()) {
@@ -225,7 +262,9 @@ class WordController extends Controller
                         }
                     }
                 ],
-                'meaning' => 'required|string',
+                'meanings' => 'required|array|min:1',
+                'meanings.*.meaning' => 'required|string',
+                'meanings.*.is_primary' => 'boolean',
                 'type' => 'required|string',
                 'language' => 'required|string|size:2',
                 'difficulty_level' => 'required|integer|min:1|max:4',
@@ -238,9 +277,10 @@ class WordController extends Controller
                 'synonyms' => 'nullable|array',
             ]);
 
+            DB::beginTransaction();
+
             $word = Word::create([
                 'word' => $request->word,
-                'meaning' => $request->meaning,
                 'type' => $request->type,
                 'language' => $request->language,
                 'learning_status' => $request->learning_status ?? 0,
@@ -249,6 +289,25 @@ class WordController extends Controller
                 'incorrect_count' => 0,
                 'review_count' => 0,
             ]);
+
+            // Save word meanings
+            $hasPrimary = false;
+            foreach ($request->meanings as $index => $meaningData) {
+                // If this is the first meaning and no primary is set, make it primary
+                $isPrimary = isset($meaningData['is_primary']) ? $meaningData['is_primary'] : false;
+
+                // If it's explicitly set to primary or no primary exists yet and it's the first item
+                if ($isPrimary || (!$hasPrimary && $index === 0)) {
+                    $isPrimary = true;
+                    $hasPrimary = true;
+                }
+
+                $word->meanings()->create([
+                    'meaning' => $meaningData['meaning'],
+                    'is_primary' => $isPrimary,
+                    'display_order' => $index,
+                ]);
+            }
 
             // İlişkili dil paketlerini ekle
             $word->languagePacks()->attach($request->language_pack_ids);
@@ -278,9 +337,12 @@ class WordController extends Controller
                 }
             }
 
+            DB::commit();
+
             return Redirect::route('rendition.words.index')
                 ->with('success', 'Kelime başarıyla eklendi.');
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Word creation error: ' . $e->getMessage());
             Log::error($e->getTraceAsString());
 
@@ -292,7 +354,7 @@ class WordController extends Controller
 
     public function edit($id)
     {
-        $word = Word::with(['exampleSentences', 'synonyms', 'languagePacks'])->findOrFail($id);
+        $word = Word::with(['exampleSentences', 'synonyms', 'languagePacks', 'meanings'])->findOrFail($id);
 
         $languagePacks = DB::table('lang_language_packs')->select([
             'lang_language_packs.id',
@@ -337,7 +399,9 @@ class WordController extends Controller
                         }
                     }
                 ],
-                'meaning' => 'required|string',
+                'meanings' => 'required|array|min:1',
+                'meanings.*.meaning' => 'required|string',
+                'meanings.*.is_primary' => 'boolean',
                 'type' => 'required|string',
                 'language' => 'required|string|size:2',
                 'difficulty_level' => 'required|integer|min:1|max:4',
@@ -353,7 +417,6 @@ class WordController extends Controller
             $word = Word::findOrFail($id);
             $word->update([
                 'word' => $request->word,
-                'meaning' => $request->meaning,
                 'type' => $request->type,
                 'language' => $request->language,
                 'learning_status' => $request->learning_status,
@@ -389,6 +452,16 @@ class WordController extends Controller
                         ]);
                     }
                 }
+            }
+
+            // Save word meanings
+            $word->meanings()->delete();
+            foreach ($request->meanings as $index => $meaningData) {
+                $word->meanings()->create([
+                    'meaning' => $meaningData['meaning'],
+                    'is_primary' => isset($meaningData['is_primary']) ? $meaningData['is_primary'] : false,
+                    'display_order' => $index,
+                ]);
             }
 
             return Redirect::route('rendition.words.index')
