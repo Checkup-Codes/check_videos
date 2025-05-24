@@ -1,11 +1,11 @@
 <template>
   <CheckSubsidebar>
     <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="collapseSidebar" class="btn-ghost" />
-    <TopSubsidebar title="YAZILAR" href="/writes/create" class="border-base-200">
-      <template #actions>
-        <PerformanceMonitorButton v-if="shouldShowPerformanceMonitor" :performance="performanceData" />
-      </template>
-    </TopSubsidebar>
+    <TopSubsidebar title="YAZILAR" href="/writes/create" class="border-base-200" />
+    <template #actions>
+      <PerformanceMonitorButton v-if="shouldShowPerformanceMonitor" :performance="performanceData" />
+    </template>
+
     <SubSidebarScreen>
       <WriteList ref="writeListRef" :writes="writes" :route="route" />
     </SubSidebarScreen>
@@ -62,9 +62,3 @@ const collapseSidebar = () => {
   emit('update:isCollapsed', isCollapsed.value);
 };
 </script>
-
-<style scoped>
-:deep(.border-color-one) {
-  border-color: var(--b2) !important;
-}
-</style>

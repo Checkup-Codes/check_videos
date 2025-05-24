@@ -45,19 +45,31 @@
         </ul>
       </div>
 
-      <div class="flex gap-2">
+      <div class="space-y-2">
+        <!-- İstatistik Güncelleme Butonu -->
         <button
-          @click="emit('game-completed')"
-          class="flex-1 rounded-lg bg-black px-4 py-2 text-center text-sm font-medium text-white transition hover:bg-gray-700"
+          v-if="hasUser"
+          @click="updateWordStats"
+          class="w-full rounded-lg bg-blue-600 px-4 py-2 text-center text-sm font-medium text-white transition hover:bg-blue-700"
+          :disabled="isUpdating"
         >
-          Pakete Dön
+          {{ isUpdating ? 'Güncelleniyor...' : 'Kelime İstatistiklerini Güncelle' }}
         </button>
-        <button
-          @click="restartGame"
-          class="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
-        >
-          Tekrar Başla
-        </button>
+
+        <div class="flex gap-2">
+          <button
+            @click="emit('game-completed')"
+            class="flex-1 rounded-lg bg-black px-4 py-2 text-center text-sm font-medium text-white transition hover:bg-gray-700"
+          >
+            Pakete Dön
+          </button>
+          <button
+            @click="restartGame"
+            class="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
+          >
+            Tekrar Başla
+          </button>
+        </div>
       </div>
     </div>
 
@@ -72,8 +84,12 @@
       }"
     >
       <!-- Progress Bar -->
-      <div class="mb-4 h-1 w-full overflow-hidden rounded-full bg-gray-200">
-        <div class="duration-2000 h-full bg-black transition-all" :style="{ width: `${gameState.progress}%` }"></div>
+      <div class="relative mb-4 h-1 w-full overflow-hidden rounded-full bg-gray-200">
+        <div ref="progressBar" class="h-full w-0 bg-black"></div>
+        <div
+          ref="progressBarGlow"
+          class="absolute left-0 top-0 h-full w-[50px] bg-gradient-to-r from-transparent via-white/30 to-transparent"
+        ></div>
       </div>
 
       <!-- Soru Sayacı -->
@@ -82,7 +98,7 @@
       </div>
 
       <!-- Soru -->
-      <div v-if="gameState.currentQuestion" class="space-y-4">
+      <div v-if="gameState.currentQuestion" class="space-y-4" ref="questionContainer">
         <div>
           <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold text-gray-900">Eksik harfleri tamamlayın:</h2>
@@ -91,59 +107,30 @@
         </div>
 
         <!-- Kelime Gösterimi -->
-        <div class="flex justify-center space-x-2">
+        <div class="flex justify-center space-x-2" ref="selectedLettersContainer">
           <div
-            v-for="(char, index) in gameState.currentQuestion.word"
-            :key="index"
-            class="flex h-12 w-12 items-center justify-center rounded-lg border-2 text-xl font-bold"
-            :class="{
-              'border-gray-200 bg-gray-50': gameState.maskedIndices.includes(index),
-              'border-gray-300 bg-white': !gameState.maskedIndices.includes(index),
-              'text-red-600':
-                gameState.showAnswer &&
-                !gameState.isCorrect &&
-                gameState.maskedIndices.includes(index) &&
-                gameState.selectedLetters[gameState.maskedIndices.indexOf(index)]?.toLowerCase() !== char.toLowerCase(),
-              'text-green-600':
-                gameState.showAnswer &&
-                gameState.maskedIndices.includes(index) &&
-                gameState.selectedLetters[gameState.maskedIndices.indexOf(index)]?.toLowerCase() === char.toLowerCase(),
-            }"
+            v-for="(index, letterIndex) in gameState.maskedIndices"
+            :key="letterIndex"
+            class="flex h-12 w-12 items-center justify-center rounded-lg border border-gray-300 text-xl font-semibold"
           >
-            <template v-if="gameState.maskedIndices.includes(index)">
-              <span v-if="gameState.selectedLetters[gameState.maskedIndices.indexOf(index)]">
-                {{ gameState.selectedLetters[gameState.maskedIndices.indexOf(index)] }}
-              </span>
-              <span v-else>_</span>
-            </template>
-            <span v-else>{{ char }}</span>
+            {{ gameState.selectedLetters[letterIndex] || '' }}
           </div>
         </div>
 
-        <!-- Doğru Cevap Gösterimi -->
-        <div v-if="gameState.showAnswer && !gameState.isCorrect" class="mt-4 rounded-lg bg-yellow-50 p-4">
-          <p class="text-sm text-yellow-800">
-            Doğru cevap: <span class="font-bold">{{ gameState.currentQuestion.word }}</span>
-          </p>
-        </div>
-
         <!-- Harf Seçimi -->
-        <div class="grid grid-cols-7 gap-2">
+        <div class="grid grid-cols-7 gap-2" ref="letterButtons">
           <button
-            v-for="char in getAlphabet()"
-            :key="char"
-            @click="selectLetter(char)"
-            :disabled="gameState.showAnswer || gameState.selectedLetters.includes(char)"
-            class="h-10 w-10 rounded-lg border border-gray-200 text-center text-lg font-medium transition hover:bg-gray-50 disabled:opacity-50"
+            v-for="letter in 'ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ'.split('')"
+            :key="letter"
+            @click="selectLetter(letter, $event)"
+            :disabled="
+              gameState.showAnswer ||
+              gameState.selectedLetters.includes(letter) ||
+              gameState.selectedLetters.length >= gameState.maskedIndices.length
+            "
+            class="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-300 text-lg font-medium transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {{ char }}
-          </button>
-          <button
-            @click="selectLetter(' ')"
-            :disabled="gameState.showAnswer || gameState.selectedLetters.includes(' ')"
-            class="h-10 w-10 rounded-lg border border-gray-200 text-center text-lg font-medium transition hover:bg-gray-50 disabled:opacity-50"
-          >
-            ␣
+            {{ letter }}
           </button>
         </div>
 
@@ -169,8 +156,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, nextTick } from 'vue';
 import { usePage, router, Link } from '@inertiajs/vue3';
+import gsap from 'gsap';
 
 const props = defineProps({
   gameType: String,
@@ -183,6 +171,7 @@ const emit = defineEmits(['game-completed']);
 
 const page = usePage();
 const allPacks = page.props.languagePacks || [];
+const hasUser = computed(() => !!page.props.auth?.user);
 
 // Find the pack using the slug
 const currentPack = computed(() => {
@@ -215,6 +204,9 @@ const wordsMap = computed(() => Object.fromEntries(words.value.map((word) => [wo
 const isAnswerComplete = computed(() => {
   return gameState.value.maskedIndices.length === gameState.value.selectedLetters.length;
 });
+
+// İstatistik güncelleme durumu
+const isUpdating = ref(false);
 
 // Oyunu başlat
 const startGameWithConfig = async () => {
@@ -313,12 +305,153 @@ const createMaskedIndices = () => {
   gameState.value.maskedIndices = Array.from(indices).sort((a, b) => a - b);
 };
 
-// Harf seç
-const selectLetter = (letter) => {
+// Animasyonlar için ref'ler
+const letterButtons = ref(null);
+const progressBar = ref(null);
+const progressBarGlow = ref(null);
+const questionContainer = ref(null);
+const selectedLettersContainer = ref(null);
+
+// Soru animasyonu
+const animateNewQuestion = () => {
+  gsap.fromTo(questionContainer.value, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' });
+
+  gsap.fromTo(
+    letterButtons.value.children,
+    { opacity: 0, scale: 0.8 },
+    {
+      opacity: 1,
+      scale: 1,
+      duration: 0.3,
+      stagger: 0.05,
+      ease: 'back.out(1.7)',
+    }
+  );
+};
+
+// Harf seçme animasyonu
+const animateLetterSelection = (letter, target) => {
+  const clone = target.cloneNode(true);
+  clone.style.position = 'absolute';
+  clone.style.zIndex = '1000';
+  clone.style.left = `${target.offsetLeft}px`;
+  clone.style.top = `${target.offsetTop}px`;
+  document.body.appendChild(clone);
+
+  const destinationElement = selectedLettersContainer.value.children[gameState.value.selectedLetters.length - 1];
+  const destinationRect = destinationElement.getBoundingClientRect();
+  const startRect = target.getBoundingClientRect();
+
+  gsap.to(clone, {
+    x: destinationRect.left - startRect.left,
+    y: destinationRect.top - startRect.top,
+    scale: 0.9,
+    duration: 0.3,
+    ease: 'power2.out',
+    onComplete: () => {
+      clone.remove();
+      gsap.from(destinationElement, {
+        scale: 1.2,
+        duration: 0.2,
+        ease: 'power2.out',
+      });
+    },
+  });
+};
+
+// Doğru cevap animasyonu
+const animateCorrectAnswer = () => {
+  gsap
+    .timeline()
+    .to(selectedLettersContainer.value.children, {
+      scale: 1.1,
+      backgroundColor: '#ecfdf5',
+      borderColor: '#34d399',
+      duration: 0.2,
+      stagger: 0.05,
+      ease: 'power2.out',
+    })
+    .to(selectedLettersContainer.value.children, {
+      scale: 1,
+      duration: 0.2,
+      stagger: 0.05,
+    });
+};
+
+// Yanlış cevap animasyonu
+const animateWrongAnswer = () => {
+  gsap
+    .timeline()
+    .to(selectedLettersContainer.value.children, {
+      scale: 1.1,
+      backgroundColor: '#fef2f2',
+      borderColor: '#f87171',
+      duration: 0.2,
+      stagger: 0.05,
+      ease: 'power2.out',
+    })
+    .to(selectedLettersContainer.value, {
+      x: -10,
+      duration: 0.1,
+    })
+    .to(selectedLettersContainer.value, {
+      x: 10,
+      duration: 0.1,
+    })
+    .to(selectedLettersContainer.value, {
+      x: -5,
+      duration: 0.1,
+    })
+    .to(selectedLettersContainer.value, {
+      x: 5,
+      duration: 0.1,
+    })
+    .to(selectedLettersContainer.value, {
+      x: 0,
+      duration: 0.1,
+    })
+    .to(selectedLettersContainer.value.children, {
+      scale: 1,
+      duration: 0.2,
+      stagger: 0.05,
+    });
+};
+
+// Progress bar animasyonu
+const animateProgress = (progress) => {
+  // Ana progress bar animasyonu
+  gsap.to(progressBar.value, {
+    width: `${progress}%`,
+    duration: 0.5,
+    ease: 'power2.out',
+  });
+
+  // Parlama efekti animasyonu
+  gsap.fromTo(
+    progressBarGlow.value,
+    { x: '-100%' },
+    {
+      x: '100%',
+      duration: 1,
+      ease: 'none',
+      repeat: -1,
+    }
+  );
+
+  // Progress değiştiğinde parlama efektini yeniden başlat
+  gsap.to(progressBarGlow.value, {
+    opacity: progress === 100 ? 0 : 0.5,
+    duration: 0.3,
+  });
+};
+
+// Harf seçme fonksiyonunu güncelle
+const selectLetter = (letter, event) => {
   if (gameState.value.showAnswer) return;
   if (gameState.value.selectedLetters.length >= gameState.value.maskedIndices.length) return;
 
   gameState.value.selectedLetters.push(letter);
+  animateLetterSelection(letter, event.target);
 
   if (gameState.value.selectedLetters.length === gameState.value.maskedIndices.length) {
     // Otomatik kontrol et
@@ -332,7 +465,7 @@ const clearSelectedLetters = () => {
   gameState.value.selectedLetters = [];
 };
 
-// Cevabı kontrol et
+// Cevap kontrol fonksiyonunu güncelle
 const checkAnswer = () => {
   if (gameState.value.showAnswer) return;
   if (!isAnswerComplete.value) return;
@@ -358,30 +491,49 @@ const checkAnswer = () => {
     correct: isCorrect,
   });
 
-  // Cevabı göster
+  // Cevabı göster ve animasyonu başlat
   gameState.value.showAnswer = true;
+  if (isCorrect) {
+    animateCorrectAnswer();
+  } else {
+    animateWrongAnswer();
+  }
 
-  // Progress bar'ı başlat
-  gameState.value.progress = 0;
-  const interval = setInterval(() => {
-    gameState.value.progress += 1;
-    if (gameState.value.progress >= 100) {
-      clearInterval(interval);
-      // Sonraki soruya geç
-      gameState.value.currentIndex++;
-      gameState.value.selectedLetters = [];
-      gameState.value.showAnswer = false;
-      gameState.value.progress = 0;
-      loadNextQuestion();
+  // Progress bar animasyonu
+  const newProgress = Math.round(((gameState.value.currentIndex + 1) / gameState.value.totalQuestions) * 100);
+  animateProgress(newProgress);
+
+  // Sonraki soruya geç
+  setTimeout(() => {
+    // Harflerin stillerini sıfırla
+    const letterElements = selectedLettersContainer.value.children;
+    for (let letter of letterElements) {
+      gsap.set(letter, {
+        clearProps: 'all',
+      });
+      letter.style.backgroundColor = '';
+      letter.style.borderColor = '';
     }
-  }, 20); // 2 saniyede 100'e ulaşmak için 20ms aralıklarla artır
+
+    gameState.value.currentIndex++;
+    gameState.value.selectedLetters = [];
+    gameState.value.showAnswer = false;
+    gameState.value.progress = 0;
+    loadNextQuestion();
+  }, 1500);
 };
 
 // Oyunu bitir
 const endGame = () => {
   gameState.value.isPlaying = false;
-  updateWordStats();
-  // Display summary screen without emitting the event
+
+  // DOM güncellemesinden sonra istatistikleri güncelle
+  nextTick(() => {
+    if (hasUser.value && gameState.value.userResponses.length > 0) {
+      console.log('İstatistikler güncelleniyor...');
+      updateWordStats();
+    }
+  });
 };
 
 // Oyunu yeniden başlat
@@ -406,8 +558,9 @@ const restartGame = () => {
 
 // Kelime istatistiklerini güncelle
 const updateWordStats = () => {
-  if (!gameState.value.userResponses.length) return;
+  if (!hasUser.value || !gameState.value.userResponses.length || isUpdating.value) return;
 
+  isUpdating.value = true;
   const updateData = gameState.value.userResponses.map((response) => ({
     word_id: response.word_id,
     review_count: 1,
@@ -419,8 +572,16 @@ const updateWordStats = () => {
     { words: updateData },
     {
       preserveState: true,
-      onSuccess: () => console.log('Words updated successfully'),
-      onError: (error) => console.error('Failed to update word stats', error),
+      onSuccess: () => {
+        console.log('İstatistikler başarıyla güncellendi');
+        isUpdating.value = false;
+        // İstatistikler güncellendikten sonra pakete dön
+        emit('game-completed');
+      },
+      onError: (error) => {
+        console.error('İstatistik güncelleme hatası:', error);
+        isUpdating.value = false;
+      },
     }
   );
 };
@@ -430,3 +591,9 @@ onMounted(() => {
   startGameWithConfig();
 });
 </script>
+
+<style scoped>
+.progress-glow {
+  filter: blur(4px);
+}
+</style>

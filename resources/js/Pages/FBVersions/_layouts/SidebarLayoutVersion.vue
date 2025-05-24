@@ -1,7 +1,7 @@
 <template>
   <CheckSubsidebar>
     <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="collapseSidebar" />
-    <TopSubsidebar title="VERSİYONLAR" :addButton="true" addButtonHref="/versions/create/" />
+    <TopSubsidebar title="VERSİYONLAR" href="/versions/create/" class="border-base-200" />
     <SubSidebarScreen>
       <VersionsList :versions="versions" :currentUrl="url" />
     </SubSidebarScreen>

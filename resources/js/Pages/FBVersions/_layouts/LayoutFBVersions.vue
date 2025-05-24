@@ -29,7 +29,7 @@ const sidebarStyle = computed(() => (props.value.isMobileSidebar ? '' : 'hidden 
 const screenName = computed(() => props.value.name);
 const titleName = computed(() => {
   const name = screenName.value;
-  return name ? name.charAt(0).toUpperCase() + name.slice(1) + ' - ' : '';
+  return name ? name.charAt(0).toUpperCase() + name.slice(1) + '  ' : '';
 });
 const isMobile = computed(() => props.value.isMobile || false);
 const isSidebarCollapsed = ref(true);
