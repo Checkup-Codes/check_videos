@@ -1,5 +1,5 @@
 <template>
-  <div ref="scrollContainer" class="space-y-1 p-3">
+  <div ref="scrollContainer" class="write-list-container h-full space-y-1 overflow-y-auto p-3">
     <Link
       v-for="write in filteredWrites"
       :key="write.id"
@@ -10,7 +10,7 @@
           ? 'border-primary bg-primary text-primary-content shadow-md'
           : 'border-base-200 bg-base-200 text-base-content hover:bg-base-300',
       ]"
-      @click="saveScrollPosition"
+      @click="handleWriteClick(write)"
     >
       <!-- Başlık + Kilit -->
       <div class="mb-1 flex items-center gap-2">
@@ -68,8 +68,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed, nextTick, watch, onActivated, onDeactivated } from 'vue';
-import { Link, usePage } from '@inertiajs/vue3';
+import { ref, onMounted, onUnmounted, computed, watch, onActivated, onDeactivated } from 'vue';
+import { Link, usePage, router } from '@inertiajs/vue3';
+import { useScrollManager } from '@/Pages/WritesCategories/_utils/useScrollManager';
 
 defineOptions({ name: 'WriteList' });
 
@@ -85,81 +86,181 @@ const STORAGE_KEY = 'writeList_scrollPosition';
 let isActive = false;
 const activeWrite = ref('');
 
+// Initialize scroll manager
+const { saveScrollPosition, getSavedScrollPosition, cleanup } = useScrollManager(STORAGE_KEY);
+
 const filteredWrites = computed(() => {
   return isAdmin ? props.writes : props.writes.filter((write) => write.status !== 'private');
 });
 
 defineExpose({ filteredWrites, scrollContainer });
 
-const saveScrollPosition = () => {
-  if (scrollContainer.value) {
-    localStorage.setItem(STORAGE_KEY, scrollContainer.value.scrollTop.toString());
+/**
+ * Handle write click event
+ */
+const handleWriteClick = (write) => {
+  const currentScroll = scrollContainer.value?.scrollTop || 0;
+  if (currentScroll > 0) {
+    saveScrollPosition(currentScroll, true); // Save immediately
   }
 };
 
+/**
+ * Restore scroll position from storage
+ */
 const restoreScrollPosition = () => {
   if (!scrollContainer.value) return;
-  const saved = parseInt(localStorage.getItem(STORAGE_KEY));
-  if (!isNaN(saved)) scrollContainer.value.scrollTop = saved;
+
+  const savedPosition = getSavedScrollPosition();
+  if (savedPosition > 0) {
+    scrollContainer.value.scrollTop = savedPosition;
+
+    // Ensure the active write is visible without animation
+    const activeWriteElement = document.querySelector('.border-primary');
+    if (activeWriteElement) {
+      const containerRect = scrollContainer.value.getBoundingClientRect();
+      const elementRect = activeWriteElement.getBoundingClientRect();
+
+      if (elementRect.top < containerRect.top || elementRect.bottom > containerRect.bottom) {
+        activeWriteElement.scrollIntoView({ block: 'center', behavior: 'instant' });
+      }
+    }
+  }
 };
 
+/**
+ * Handle component activation (from KeepAlive)
+ */
 onActivated(() => {
   isActive = true;
-  nextTick(() => {
-    restoreScrollPosition();
-    updateActiveWrite();
-  });
+  restoreScrollPosition();
+  updateActiveWrite();
 });
 
+/**
+ * Handle component deactivation (from KeepAlive)
+ */
 onDeactivated(() => {
   isActive = false;
-  saveScrollPosition();
+  const currentScroll = scrollContainer.value?.scrollTop || 0;
+  if (currentScroll > 0) {
+    saveScrollPosition(currentScroll, true);
+  }
 });
 
+/**
+ * Watch for changes in the writes array
+ */
 watch(
   () => props.writes,
   (newVal, oldVal) => {
     if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-      nextTick(restoreScrollPosition);
+      restoreScrollPosition();
     }
   },
   { deep: true }
 );
 
+/**
+ * Update active write based on current URL
+ */
 const updateActiveWrite = () => {
   activeWrite.value = window.location.pathname;
 };
 
+/**
+ * Handle component mount
+ */
 onMounted(() => {
   isActive = true;
   updateActiveWrite();
-  nextTick(restoreScrollPosition);
+  restoreScrollPosition();
 
-  scrollContainer.value?.addEventListener('scroll', saveScrollPosition);
-
-  const handlePopState = () => {
-    if (isActive) {
-      nextTick(() => {
-        restoreScrollPosition();
-        updateActiveWrite();
-      });
+  // Add scroll event listener with passive option for better performance
+  const handleScroll = () => {
+    if (isActive && scrollContainer.value) {
+      saveScrollPosition(scrollContainer.value.scrollTop);
     }
   };
 
-  window.addEventListener('popstate', handlePopState);
-  window.addEventListener('inertia:success', updateActiveWrite);
+  scrollContainer.value?.addEventListener('scroll', handleScroll, { passive: true });
 
+  // Handle browser navigation
+  const handlePopState = () => {
+    if (isActive) {
+      restoreScrollPosition();
+      updateActiveWrite();
+    }
+  };
+
+  // Handle Inertia navigation
+  const handleNavigationStart = () => {
+    if (isActive && scrollContainer.value) {
+      const currentScroll = scrollContainer.value.scrollTop;
+      if (currentScroll > 0) {
+        saveScrollPosition(currentScroll, true);
+      }
+    }
+  };
+
+  const handleNavigationEnd = () => {
+    if (isActive) {
+      restoreScrollPosition();
+      updateActiveWrite();
+    }
+  };
+
+  // Add event listeners
+  window.addEventListener('popstate', handlePopState);
+  window.addEventListener('inertia:start', handleNavigationStart);
+  window.addEventListener('inertia:finish', handleNavigationEnd);
+
+  // Cleanup on unmount
   onUnmounted(() => {
     isActive = false;
-    scrollContainer.value?.removeEventListener('scroll', saveScrollPosition);
+    cleanup();
+    scrollContainer.value?.removeEventListener('scroll', handleScroll);
     window.removeEventListener('popstate', handlePopState);
-    window.removeEventListener('inertia:success', updateActiveWrite);
-    saveScrollPosition();
+    window.removeEventListener('inertia:start', handleNavigationStart);
+    window.removeEventListener('inertia:finish', handleNavigationEnd);
   });
 });
 
+/**
+ * Format date for display
+ */
 const formatDate = (date) => {
   const options = { year: 'numeric', month: 'short', day: 'numeric' };
   return new Date(date).toLocaleDateString(undefined, options);
 };
 </script>
+
+<style scoped>
+.write-list-container {
+  height: calc(100vh - 4rem);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  /* Remove smooth scroll behavior */
+  /* scroll-behavior: smooth; */
+}
+
+/* Custom scrollbar styling */
+.write-list-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.write-list-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.write-list-container::-webkit-scrollbar-thumb {
+  background-color: rgba(var(--color-base-300), 0.5);
+  border-radius: 3px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .write-list-container::-webkit-scrollbar-thumb {
+    background-color: rgba(var(--color-base-100), 0.5);
+  }
+}
+</style>

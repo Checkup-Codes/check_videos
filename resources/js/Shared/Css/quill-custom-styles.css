@@ -393,3 +393,51 @@
 .img-skeleton {
   min-height: 200px;
 }
+
+/* Renkli metin ve arka plan stilleri */
+.ql-editor .ql-color-picker .ql-picker-options [data-value]:hover {
+  border-color: hsl(var(--p)) !important;
+}
+
+.ql-editor .ql-color-picker .ql-picker-options [data-selected="true"] {
+  border-color: hsl(var(--p)) !important;
+}
+
+.ql-editor [style*="color:"] {
+  color: inherit; /* Inline stil tarafından geçersiz kılınacak */
+}
+
+.ql-editor [style*="background-color:"] {
+  padding: 0.1em 0.3em;
+  border-radius: 0.25em;
+}
+
+/* Toolbar renk butonları için özel stiller */
+.ql-snow .ql-color-picker .ql-picker-label,
+.ql-snow .ql-background .ql-picker-label {
+  padding: 0 4px;
+  border: 1px solid transparent;
+}
+
+.ql-snow .ql-color-picker .ql-picker-label:hover,
+.ql-snow .ql-background .ql-picker-label:hover {
+  border-color: hsl(var(--bc) / 0.2);
+}
+
+.ql-snow .ql-color-picker .ql-picker-options,
+.ql-snow .ql-background .ql-picker-options {
+  background-color: hsl(var(--b1));
+  border: 1px solid hsl(var(--bc) / 0.2);
+  box-shadow: 0 2px 8px hsl(var(--bc) / 0.1);
+}
+
+/* Renk seçici hover efektleri */
+.ql-snow .ql-picker.ql-color-picker:hover .ql-picker-label,
+.ql-snow .ql-picker.ql-background:hover .ql-picker-label {
+  color: hsl(var(--bc));
+}
+
+.ql-snow .ql-picker.ql-color-picker .ql-picker-label:hover,
+.ql-snow .ql-picker.ql-background .ql-picker-label:hover {
+  border-color: hsl(var(--bc) / 0.2);
+}

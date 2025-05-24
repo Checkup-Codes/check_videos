@@ -157,6 +157,8 @@ import ExcalidrawComponent from '@/Components/ExcalidrawComponent.vue';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 import '@/Shared/Css/quill-custom-styles.css';
 import GoBackButton from '@/Components/GoBackButton.vue';
+import { useGsapFadeIn } from '@/Pages/WritesCategories/_utils/useGsapAnimation.js';
+import { useProcessedQuillContent } from '@/Pages/WritesCategories/_utils/useProcessedQuillContent.js';
 
 /**
  * Component name definition
@@ -176,197 +178,12 @@ const auth = props.auth || {};
 const showDraw = ref(false);
 
 /**
- * Process content for display with proper safety measures
+ * Use the centralized Quill content processor
  */
-const processedContent = computed(() => {
-  if (!write.value.content) return '';
-
-  // DOM parser oluştur
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(write.value.content, 'text/html');
-
-  // Tüm img elementlerini bul
-  const images = doc.querySelectorAll('img');
-
-  // Her resme lazy loading ve skeleton wrapper ekle
-  images.forEach((img, index) => {
-    // Resme benzersiz id ver
-    const imageId = `content-img-${index}`;
-    img.id = imageId;
-
-    // Lazy loading ve öncelikli yükleme ekle
-    img.setAttribute('loading', 'lazy');
-    img.setAttribute('decoding', 'async'); // Asenkron dekodlama
-    img.setAttribute('importance', 'low'); // Düşük öncelik
-
-    // Eğer genişlik ve yükseklik yoksa tahmini değerler ekle
-    if (!img.hasAttribute('width') && !img.hasAttribute('height')) {
-      img.setAttribute('width', '800');
-      img.setAttribute('height', '600');
-    }
-
-    // Skeleton container oluştur
-    const skeletonWrapper = doc.createElement('div');
-    skeletonWrapper.className = 'img-skeleton-wrapper relative';
-    skeletonWrapper.style.width = '100%';
-    skeletonWrapper.style.marginBottom = '1rem';
-    skeletonWrapper.style.marginTop = '1rem';
-
-    // Skeleton oluştur
-    const skeleton = doc.createElement('div');
-    skeleton.className = 'skeleton img-skeleton absolute inset-0 h-full w-full rounded-lg';
-    skeleton.id = `skeleton-${imageId}`;
-
-    // Resmin özgün wrapper'ını koru
-    const imgParent = img.parentNode;
-
-    // DOM yapısını güvenli bir şekilde değiştir
-    if (imgParent) {
-      const imgWrapper = doc.createElement('div');
-      imgWrapper.className = 'img-wrapper relative';
-      imgWrapper.style.width = '100%';
-
-      // Dom elementlerini düzenle
-      img.style.opacity = '0';
-      img.style.transition = 'opacity 0.3s ease-in-out';
-
-      // Resim yükleme olayını ekle
-      img.setAttribute(
-        'onload',
-        `
-        this.style.opacity = '1';
-        const skeleton = document.getElementById('skeleton-${imageId}');
-        if (skeleton) skeleton.style.display = 'none';
-      `
-      );
-
-      // Hata durumunu da işle (görsel yüklenemezse)
-      img.setAttribute(
-        'onerror',
-        `
-        const skeleton = document.getElementById('skeleton-${imageId}');
-        if (skeleton) {
-          skeleton.style.display = 'none';
-          skeleton.insertAdjacentHTML('afterend', '<div class="text-error text-sm py-2">Görsel yüklenemedi</div>');
-        }
-        this.style.display = 'none';
-      `
-      );
-
-      // Klon oluştur (orijinal elemanın bağlantılarını koparmak için)
-      const imgClone = img.cloneNode(true);
-
-      // Elementleri ağaca ekle
-      imgWrapper.appendChild(imgClone);
-      skeletonWrapper.appendChild(skeleton);
-      skeletonWrapper.appendChild(imgWrapper);
-
-      // Orijinal resmi skeletonWrapper ile değiştir
-      try {
-        imgParent.insertBefore(skeletonWrapper, img);
-        imgParent.removeChild(img);
-      } catch (error) {
-        console.error('DOM manipülasyon hatası:', error);
-      }
-    }
-  });
-
-  // Listelerin doğru şekilde işlenmesini sağla
-  const listItems = doc.querySelectorAll('li');
-  listItems.forEach((item) => {
-    // data-list özelliği yoksa varsayılan olarak bullet ekle
-    if (!item.hasAttribute('data-list')) {
-      if (item.parentElement && item.parentElement.tagName === 'OL') {
-        item.setAttribute('data-list', 'ordered');
-      } else {
-        item.setAttribute('data-list', 'bullet');
-      }
-    }
-
-    // Varsa span.ql-ui elementine contenteditable="false" ekle
-    const qlUi = item.querySelector('.ql-ui');
-    if (qlUi) {
-      qlUi.setAttribute('contenteditable', 'false');
-    }
-  });
-
-  // Boş paragrafları kontrol et ve düzelt
-  const paragraphs = doc.querySelectorAll('p');
-  paragraphs.forEach((p) => {
-    // Sadece içi boş olan paragraflar için işlem yapın
-    if (p.innerHTML.trim() === '<br>' || p.innerHTML.trim() === '' || !p.innerHTML.trim()) {
-      p.innerHTML = '&nbsp;'; // Boş paragrafları görünür kıl
-      p.style.marginBottom = '1rem';
-      p.style.height = '1.5rem';
-    }
-  });
-
-  // DOĞRUDAN CODE BLOCK İŞLEME - DaisyUI mockup-code stilleri
-  const codeBlocks = doc.querySelectorAll('.ql-code-block-container');
-  codeBlocks.forEach((container) => {
-    // Orijinal kod container üzerine doğrudan DaisyUI mockup-code stilleri uygula
-    container.setAttribute('class', 'mockup-code w-full');
-    
-    // İçerik elementi stil özelliklerini ayarla
-    const contentBlock = container.querySelector('.ql-code-block');
-    
-    if (contentBlock) {
-      // İçeriği al ve mockup-code formatına dönüştür
-      const codeContent = contentBlock.textContent || contentBlock.innerText;
-      container.innerHTML = ''; // İçeriği temizle
-      
-      // Tüm içeriği tek bir pre elementinde göster
-      const pre = doc.createElement('pre');
-      const code = doc.createElement('code');
-      
-      // İçeriği temiz şekilde ekle
-      code.textContent = codeContent;
-      pre.appendChild(code);
-      
-      // Stillerini ayarla
-      pre.style.fontFamily = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace';
-      pre.style.margin = '0';
-      pre.style.padding = '0.75rem';
-      pre.style.whiteSpace = 'pre-wrap';
-      pre.style.wordBreak = 'break-word';
-      pre.setAttribute('data-prefix', '$');
-      
-      code.style.fontFamily = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace';
-      code.style.color = 'inherit';
-      code.style.background = 'transparent';
-      code.style.padding = '0';
-      code.style.margin = '0';
-      code.style.border = 'none';
-      
-      // mockup-code özelliklerini ekleyin
-      container.style.backgroundColor = 'hsl(var(--n))';
-      container.style.color = 'hsl(var(--nc))';
-      container.style.borderRadius = '0.5rem';
-      container.style.margin = '1.5rem 0';
-      container.style.padding = '1rem';
-      container.style.width = '100%';
-      container.style.position = 'relative';
-      container.style.overflow = 'hidden';
-      
-      // Tamamlanmış pre elementini ekle
-      container.appendChild(pre);
-    }
-  });
-
-  // Renk ve arkaplan renkli elemanlara ek sınıflar ekle
-  const styledElements = doc.querySelectorAll('[style*="color"], [style*="background-color"]');
-  styledElements.forEach((el) => {
-    if (el.style.color) {
-      el.classList.add('quill-colored-text');
-    }
-    if (el.style.backgroundColor) {
-      el.classList.add('quill-colored-background');
-    }
-  });
-
-  // Düzenlenmiş HTML'i döndür
-  return doc.body.innerHTML;
-});
+const processedContent = useProcessedQuillContent(
+  contentRef,
+  computed(() => write.value.content)
+);
 
 /**
  * Format date for display
@@ -437,6 +254,9 @@ onMounted(() => {
       imgElements.forEach((img) => observer.observe(img));
     });
   }
+
+  // Animate Quill content with fade-in effect on mount
+  useGsapFadeIn(contentRef);
 });
 
 /**
@@ -516,7 +336,7 @@ const deleteWrite = (id) => {
 }
 
 /* Improved quill-specific elements */
-.article-content li[data-list="ordered"] {
+.article-content li[data-list='ordered'] {
   list-style-type: none !important;
   list-style-position: outside !important;
   display: block !important;
@@ -524,15 +344,15 @@ const deleteWrite = (id) => {
   padding-left: 0.5rem !important;
 }
 
-.article-content li[data-list="ordered"]::before {
-  content: counter(list-0) ".";
+.article-content li[data-list='ordered']::before {
+  content: counter(list-0) '.';
   position: absolute;
   left: -1.8em;
   width: 1.8em;
   text-align: right;
 }
 
-.article-content li[data-list="bullet"] {
+.article-content li[data-list='bullet'] {
   list-style-type: none !important;
   list-style-position: outside !important;
   display: block !important;
@@ -540,8 +360,8 @@ const deleteWrite = (id) => {
   padding-left: 0.5rem !important;
 }
 
-.article-content li[data-list="bullet"]::before {
-  content: "•";
+.article-content li[data-list='bullet']::before {
+  content: '•';
   position: absolute;
   left: -1.5em;
   width: 1.5em;
@@ -628,15 +448,15 @@ const deleteWrite = (id) => {
   width: 100%;
 }
 
-.article-content p[class*="ql-align-"] {
+.article-content p[class*='ql-align-'] {
   margin: 1rem 0;
 }
 
-.article-content span[style*="color"] {
+.article-content span[style*='color'] {
   display: inline-block; /* Ensures color styling works properly */
 }
 
-.article-content span[style*="background-color"] {
+.article-content span[style*='background-color'] {
   padding: 0.1rem 0.3rem;
   border-radius: 0.25rem;
 }

@@ -109,23 +109,14 @@
           </div>
 
           <div class="md:col-span-2">
-            <!-- RichTextEditor component implemented directly -->
-            <div class="form-control w-full">
-              <label class="label">
-                <span class="label-text">İçerik</span>
-              </label>
-              <div class="relative">
-                <div
-                  ref="quillEditor"
-                  class="min-h-[300px] rounded border border-base-300 bg-base-100 p-3"
-                  :class="{ 'border-error': errors.content || form.errors.content }"
-                  style="height: 400px"
-                ></div>
-              </div>
-              <label v-if="errors.content || form.errors.content" class="label">
-                <span class="label-text-alt text-error">{{ errors.content || form.errors.content }}</span>
-              </label>
-            </div>
+            <!-- RichTextEditor component merkezi olarak kullanılıyor -->
+            <RichTextEditor
+              v-model="form.content"
+              label="İçerik"
+              :error="errors.content || form.errors.content"
+              placeholder="İçeriği buraya yazın..."
+              height="400px"
+            />
           </div>
 
           <div>
@@ -279,9 +270,7 @@
 <script setup>
 import { ref, onMounted, watch, onUnmounted, computed } from 'vue';
 import { useForm, usePage, router } from '@inertiajs/vue3';
-import Quill from 'quill';
-import 'quill/dist/quill.snow.css';
-import '@/Shared/Css/quill-custom-styles.css';
+import RichTextEditor from '@/Pages/WritesCategories/_components/RichTextEditor.vue';
 
 // Component name definition for dev tools
 defineOptions({
@@ -418,76 +407,6 @@ watch(
     }
   }
 );
-
-// RichTextEditor implementation
-const quillEditor = ref(null);
-let quill;
-let isInitialContentSet = false;
-
-onMounted(() => {
-  // Initialize Quill editor with custom configuration
-  quill = new Quill(quillEditor.value, {
-    theme: 'snow',
-    modules: {
-      toolbar: [
-        [{ header: [1, 2, 3, 4, 5, 6, false] }],
-        ['bold', 'italic', 'underline', 'strike'],
-        ['blockquote', 'code-block'],
-        [{ list: 'ordered' }, { list: 'bullet' }],
-        [{ align: [] }],
-        ['clean'],
-      ],
-    },
-    placeholder: 'İçeriği buraya yazın...',
-    bounds: quillEditor.value,
-  });
-
-  // Update form content when editor changes
-  quill.on('text-change', () => {
-    try {
-      const content = quill.root.innerHTML;
-      form.content = content;
-    } catch (error) {
-      console.error('Content update error:', error);
-    }
-  });
-
-  // Load initial content with slight delay for stability
-  setTimeout(() => {
-    if (form.content && !isInitialContentSet) {
-      try {
-        quill.root.innerHTML = form.content;
-        isInitialContentSet = true;
-      } catch (error) {
-        console.error('Initial content load error:', error);
-      }
-    }
-  }, 100);
-
-  // Set editor height
-  quillEditor.value.style.height = '400px';
-});
-
-// Update editor when form.content changes
-watch(
-  () => form.content,
-  (newValue) => {
-    if (quill && newValue !== quill.root.innerHTML) {
-      try {
-        quill.root.innerHTML = newValue || '';
-      } catch (error) {
-        console.error('Content update error in watcher:', error);
-      }
-    }
-  }
-);
-
-// Cleanup
-onUnmounted(() => {
-  if (quill) {
-    quill = null;
-  }
-});
 </script>
 
 <style>
