@@ -1,1 +1,0 @@
-import{i as c,g as o,o as n,t as a}from"./app-DQVzeCX6.js";/* empty css            */const u={__name:"SPPrice",props:{price:[Number,String]},setup(e){const r=e,t=c(()=>Number(r.price).toLocaleString("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0}));return(i,s)=>(n(),o("span",null,a(t.value),1))}};export{u as default};
