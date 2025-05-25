@@ -8,6 +8,7 @@ use App\Models\WritesCategories\Write;
 use App\Models\WritesCategories\Category;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -73,11 +74,17 @@ class DashboardController extends Controller
         }
         ksort($monthlyStats);
 
+        // Tüm yazıları getir
+        $allWrites = Write::select('id', 'title')
+            ->orderBy('title')
+            ->get();
+
         return Inertia::render('Dashboard', [
             'stats' => $stats,
             'recentWrites' => $recentWrites,
             'popularCategories' => $popularCategories,
             'monthlyStats' => $monthlyStats,
+            'allWrites' => $allWrites,
         ]);
     }
 }

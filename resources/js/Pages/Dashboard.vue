@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref, onMounted } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import Sortable from 'sortablejs';
+import axios from 'axios';
 
 interface Write {
-  id: number;
+  id: string; // UUID olduğu için string
   title: string;
   excerpt: string | null;
   status: string;
@@ -30,6 +31,7 @@ interface Props {
   recentWrites: Write[];
   popularCategories: Category[];
   monthlyStats: Record<string, number>;
+  allWrites: Write[];
 }
 
 // Define props for the data passed from the controller
@@ -219,8 +221,8 @@ function formatDate(dateString: string): string {
 
         <div class="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
           <!-- Recent Articles -->
-          <div class="overflow-hidden rounded-lg bg-white shadow lg:col-span-2 dark:bg-gray-800">
-            <div class="border-b border-gray-200 px-4 py-5 sm:px-6 dark:border-gray-700">
+          <div class="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-800 lg:col-span-2">
+            <div class="border-b border-gray-200 px-4 py-5 dark:border-gray-700 sm:px-6">
               <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">Son Yazılarınız</h3>
             </div>
             <div class="bg-white dark:bg-gray-800">
@@ -228,7 +230,7 @@ function formatDate(dateString: string): string {
                 <li
                   v-for="write in recentWrites"
                   :key="write.id"
-                  class="px-4 py-4 hover:bg-gray-50 sm:px-6 dark:hover:bg-gray-700"
+                  class="px-4 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 sm:px-6"
                 >
                   <Link :href="route('writes.show', write.id)" class="flex flex-col space-y-2">
                     <div class="flex items-center justify-between">
@@ -258,7 +260,7 @@ function formatDate(dateString: string): string {
                     </div>
                   </Link>
                 </li>
-                <li v-if="recentWrites.length === 0" class="px-4 py-4 text-gray-500 sm:px-6 dark:text-gray-400">
+                <li v-if="recentWrites.length === 0" class="px-4 py-4 text-gray-500 dark:text-gray-400 sm:px-6">
                   Henüz yazı eklenmemiş.
                 </li>
               </ul>
@@ -275,7 +277,7 @@ function formatDate(dateString: string): string {
 
           <!-- Popular Categories -->
           <div class="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-800">
-            <div class="border-b border-gray-200 px-4 py-5 sm:px-6 dark:border-gray-700">
+            <div class="border-b border-gray-200 px-4 py-5 dark:border-gray-700 sm:px-6">
               <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">Popüler Kategorileriniz</h3>
             </div>
             <div class="bg-white dark:bg-gray-800">
@@ -283,7 +285,7 @@ function formatDate(dateString: string): string {
                 <li
                   v-for="category in popularCategories"
                   :key="category.id"
-                  class="px-4 py-4 hover:bg-gray-50 sm:px-6 dark:hover:bg-gray-700"
+                  class="px-4 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 sm:px-6"
                 >
                   <Link :href="route('categories.show', category.id)" class="flex items-center justify-between">
                     <p class="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -298,7 +300,7 @@ function formatDate(dateString: string): string {
                     </div>
                   </Link>
                 </li>
-                <li v-if="popularCategories.length === 0" class="px-4 py-4 text-gray-500 sm:px-6 dark:text-gray-400">
+                <li v-if="popularCategories.length === 0" class="px-4 py-4 text-gray-500 dark:text-gray-400 sm:px-6">
                   Henüz kategori eklenmemiş.
                 </li>
               </ul>

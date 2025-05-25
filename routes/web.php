@@ -21,6 +21,10 @@ use App\Http\Controllers\Rendition\LanguagePackController;
 use App\Http\Middleware\CheckWriteAccess;
 use App\Http\Controllers\WritesCategories\ImageUploadController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\WritesCategories\WriteController;
+use App\Http\Controllers\WritesCategories\CategoryController;
+use App\Http\Controllers\WriteImageController;
+use App\Http\Controllers\MediaController;
 
 
 Route::get('/', function () {
@@ -123,3 +127,15 @@ Route::post('/update-words', [\App\Http\Controllers\Rendition\WordController::cl
 Route::post('/image-upload', [\App\Http\Controllers\WritesCategories\ImageUploadController::class, 'upload'])
     ->middleware(['auth'])
     ->name('image.upload');
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    // ... existing routes ...
+
+    // Media Management Routes
+    Route::get('/media', [MediaController::class, 'index'])->name('media.index');
+
+    // Write Image Routes
+    Route::post('/write-images', [WriteImageController::class, 'store'])->name('write-images.store');
+    Route::post('/write-images/order', [WriteImageController::class, 'updateOrder'])->name('write-images.updateOrder');
+    Route::delete('/write-images/{writeImage}', [WriteImageController::class, 'destroy'])->name('write-images.destroy');
+});

@@ -77,4 +77,9 @@ class Write extends Model
     {
         return $this->hasMany(WriteDraw::class, 'write_id');
     }
+
+    public function images()
+    {
+        return $this->hasMany(WriteImage::class)->orderBy('order');
+    }
 }
