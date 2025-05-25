@@ -25,7 +25,7 @@ export function useProcessedQuillContent(contentRef, content) {
     return processed.replace(regex, (match, url, index) => {
       const imageId = `content-img-${index}`;
       return `
-        <div class="relative my-1">
+        <div class="relative">
           <!-- Skeleton -->
           <div id="skeleton-${imageId}" class="absolute inset-0 animate-pulse bg-base-300 rounded-lg"></div>
           <!-- Image -->
@@ -65,7 +65,7 @@ export function useProcessedQuillContent(contentRef, content) {
     // Style code blocks with DaisyUI mockup-code
     const codeBlocks = doc.querySelectorAll('.ql-code-block-container');
     codeBlocks.forEach((container) => {
-      container.className = 'mockup-code bg-base-200 my-2 p-4 rounded-lg';
+      container.className = 'mockup-code bg-base-200 p-2 rounded-lg';
       const pre = doc.createElement('pre');
       const code = doc.createElement('code');
       const content = Array.from(container.querySelectorAll('.ql-code-block'))
