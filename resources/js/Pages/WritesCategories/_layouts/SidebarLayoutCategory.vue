@@ -1,6 +1,6 @@
 <template>
   <CheckSubsidebar>
-    <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="toggleSidebar" class="btn-ghost" />
+    <!-- <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="toggleSidebar" class="btn-ghost" /> -->
     <TopSubsidebar
       title="KATEGORİLER"
       href="/categories/create"

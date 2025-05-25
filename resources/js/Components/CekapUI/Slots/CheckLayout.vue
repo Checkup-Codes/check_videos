@@ -9,10 +9,20 @@
 const props = defineProps({
   infoClass: {
     type: String,
-    default: 'grid grid-cols-1 lg:grid-cols-subsidebar overscroll-none',
+    default: 'grid grid-cols-1 lg:grid-cols-subsidebar h-screen-minus-1 overflow-y-auto overscroll-none scrollbar-hide',
   },
   isCollapsed: {
     type: Boolean,
   },
 });
 </script>
+
+<style>
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+</style>

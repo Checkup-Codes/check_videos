@@ -37,11 +37,12 @@ export default {
             },
             height: {
                 'screen-minus': 'calc(100vh)',
-                'screen-minus-1': 'calc(100vh - 0.25rem)',
+                'screen-minus-1': 'calc(100vh - 0.02rem)',
                 'screen-minus-4': 'calc(100vh - 1rem)',
                 'screen-minus-10': 'calc(100vh - 2.5rem)',
                 'screen-minus-12': 'calc(100vh - 3rem)',
                 'screen-minus-16': 'calc(100vh - 4rem)',
+                'screen-minus-17': 'calc(100vh - 4.01rem)',
                 'screen-minus-18': 'calc(100vh - 4.5rem)',
                 'screen-minus-20': 'calc(100vh - 5rem)',
                 'screen-minus-28': 'calc(100vh - 7rem)',

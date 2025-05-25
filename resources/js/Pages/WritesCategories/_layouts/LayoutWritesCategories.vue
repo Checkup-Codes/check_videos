@@ -1,7 +1,7 @@
 <template>
   <FlashMessage :message="flashMessage" />
   <ToggleSubSidebarButtonOpen v-if="!isCollapsed" :isCollapsed="true" :toggle="toggleSidebar" />
-  <CheckLayout :isCollapsed="isCollapsed">
+  <CheckLayout :isCollapsed="true">
     <template #sidebar>
       <KeepAlive :max="5" :include="['SidebarLayoutWrite', 'SidebarLayoutCategory']">
         <component :is="sidebarComponent" :key="screenName" :class="sidebarStyle" />

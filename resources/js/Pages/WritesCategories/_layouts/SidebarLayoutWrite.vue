@@ -1,6 +1,6 @@
 <template>
   <CheckSubsidebar>
-    <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="toggleSidebar" class="btn-ghost" />
+    <!-- <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="collapseSidebar" /> -->
     <TopSubsidebar title="YAZILAR" href="/writes/create" class="border-base-200">
       <template #actions>
         <PerformanceMonitorButton v-if="shouldShowPerformanceMonitor" :performance="performanceData" />
