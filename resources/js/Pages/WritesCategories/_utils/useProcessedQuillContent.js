@@ -33,7 +33,7 @@ export function useProcessedQuillContent(contentRef, content) {
             id="${imageId}"
             src="${url}" 
             alt="Resim" 
-            class="relative w-full h-auto rounded-lg shadow-lg opacity-0 transition-opacity duration-300"
+            class="relative w-full p-5 h-auto rounded-lg shadow-lg opacity-0 transition-opacity duration-300"
             style="min-height: 200px"
             loading="lazy"
             onload="this.style.opacity = '1'; document.getElementById('skeleton-${imageId}').style.display = 'none';"
@@ -65,7 +65,7 @@ export function useProcessedQuillContent(contentRef, content) {
     // Style code blocks with DaisyUI mockup-code
     const codeBlocks = doc.querySelectorAll('.ql-code-block-container');
     codeBlocks.forEach((container) => {
-      container.className = 'mockup-code bg-base-200 p-2 rounded-lg';
+      container.className = 'mockup-code bg-base-200 p-4 my-2 rounded-lg';
       const pre = doc.createElement('pre');
       const code = doc.createElement('code');
       const content = Array.from(container.querySelectorAll('.ql-code-block'))
