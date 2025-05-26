@@ -1,9 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://checkupcodes.com/sitemap.xml
-
-# Disallow admin and private routes
-Disallow: /admin/
-Disallow: /private/
-Disallow: /api/

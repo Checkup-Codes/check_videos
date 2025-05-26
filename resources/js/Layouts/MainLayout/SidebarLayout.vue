@@ -8,23 +8,25 @@
 
     <div class="absolute inset-x-0 bottom-0 py-4 text-center">
       <ThemeSwitcher class="mx-auto" />
-      <p class="text-base-content/60 mt-2 text-xs">{{ appName }} - asdas Hakları Saklıdır</p>
+      <p class="text-base-content/60 mt-2 text-xs">{{ seoTitle || appName }} - Tüm Hakları Saklıdır</p>
     </div>
   </aside>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import ProfileCard from '@/Layouts/_composable/ProfileCard.vue';
 import MainNavigation from '@/Layouts/_composable/MainNavigation.vue';
 import SocialLinks from '@/Layouts/_composable/SocialLinks.vue';
 import ThemeSwitcher from '@/Layouts/_components/ThemeSwitcher.vue';
+import axios from 'axios';
 
 const { props } = usePage();
-const imagePath = ref('/images/checkup_codes_logo.png');
+const imagePath = ref('');
 const auth = ref(props.auth);
 const appName = ref(props.app.name);
+const seoTitle = ref('');
 
 watch(
   () => usePage().props.value,
@@ -35,4 +37,15 @@ watch(
     }
   }
 );
+
+onMounted(async () => {
+  try {
+    const response = await axios.get('/api/seo/home');
+    if (response.data && response.data.title) {
+      seoTitle.value = response.data.title;
+    }
+  } catch (error) {
+    console.error('Error fetching SEO title:', error);
+  }
+});
 </script>

@@ -87,7 +87,7 @@ const props = defineProps({
 const seoTitle = ref('');
 const isMenuOpen = ref(false);
 const page = usePage();
-const imagePath = ref('/images/checkup_codes_logo.png');
+const imagePath = ref('');
 const auth = ref(null);
 const appName = computed(() => usePage().props.app.name);
 

@@ -92,5 +92,9 @@ class DatabaseSeeder extends Seeder
         $this->command->info('Yazı-kategori ilişkileri güncelleniyor...');
         Artisan::call('writes:update-relations');
         $this->command->info('İlişkiler güncellendi.');
+
+        $this->call([
+            DefaultSeoSeeder::class,
+        ]);
     }
 }

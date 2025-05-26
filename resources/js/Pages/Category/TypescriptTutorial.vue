@@ -34,8 +34,7 @@
             Son
             <br /><br />
             ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️ <br />
-            💙💙💙Check-up Codes <br />
-            📸 Instagram: / checkup_codes <br />
+            💙💙💙<br />
             ⭐ Discord: / discord <br />
             📝LinkedIn: / cekap 🌎 Website:
             <br />

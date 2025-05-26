@@ -32,6 +32,7 @@ class WriteImage extends Model
     const CATEGORY_PROJECTS = 'projects';
     const CATEGORY_PRODUCTS = 'products';
     const CATEGORY_AWARDS = 'awards';
+    const CATEGORY_LOGO = 'logo';
 
     public static function getCategories()
     {
@@ -41,6 +42,7 @@ class WriteImage extends Model
             self::CATEGORY_PROJECTS => 'Projeler',
             self::CATEGORY_PRODUCTS => 'Ürünler',
             self::CATEGORY_AWARDS => 'Ödüller',
+            self::CATEGORY_LOGO => 'Logo',
         ];
     }
 

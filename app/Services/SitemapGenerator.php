@@ -10,6 +10,13 @@ use Spatie\Sitemap\Tags\Url as SitemapUrl;
 
 class SitemapGenerator
 {
+    private string $baseUrl;
+
+    public function __construct()
+    {
+        $this->baseUrl = rtrim(config('app.url'), '/');
+    }
+
     public function generate(): void
     {
         $sitemap = Sitemap::create();
@@ -17,7 +24,7 @@ class SitemapGenerator
 
         // Ana sayfa
         $sitemap->add(
-            SitemapUrl::create('https://checkupcodes.com')
+            SitemapUrl::create($this->baseUrl)
                 ->setLastModificationDate($now)
                 ->setChangeFrequency('daily')
                 ->setPriority(1.0)
@@ -25,14 +32,14 @@ class SitemapGenerator
 
         // Ana başlıklar
         $mainPages = [
-            '/content_writes' => 0.9,
-            '/content_categories' => 0.9,
+            '/writes' => 0.9,
+            '/categories' => 0.9,
             '/versions' => 0.9,
         ];
 
         foreach ($mainPages as $page => $priority) {
             $sitemap->add(
-                SitemapUrl::create('https://checkupcodes.com' . $page)
+                SitemapUrl::create($this->baseUrl . $page)
                     ->setLastModificationDate($now)
                     ->setChangeFrequency('daily')
                     ->setPriority($priority)
@@ -43,7 +50,7 @@ class SitemapGenerator
         Category::with('writes')->chunk(100, function ($categories) use ($sitemap, $now) {
             foreach ($categories as $category) {
                 $sitemap->add(
-                    SitemapUrl::create('https://checkupcodes.com/content_categories/' . $category->slug)
+                    SitemapUrl::create($this->baseUrl . '/categories/' . $category->slug)
                         ->setLastModificationDate($category->updated_at ?? $now)
                         ->setChangeFrequency('weekly')
                         ->setPriority(0.8)
@@ -52,7 +59,7 @@ class SitemapGenerator
                 // Her kategorinin yazıları
                 foreach ($category->writes as $write) {
                     $sitemap->add(
-                        SitemapUrl::create('https://checkupcodes.com/content_writes/' . $write->slug)
+                        SitemapUrl::create($this->baseUrl . '/writes/' . $write->slug)
                             ->setLastModificationDate($write->updated_at ?? $now)
                             ->setChangeFrequency('monthly')
                             ->setPriority(0.6)

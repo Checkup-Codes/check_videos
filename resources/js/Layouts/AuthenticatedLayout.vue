@@ -31,6 +31,10 @@ const showingNavigationDropdown = ref(false);
                 <NavLink :href="route('media.index')" :active="route().current('media.index')">
                   Medya Yönetimi
                 </NavLink>
+                <NavLink :href="route('social-media.index')" :active="route().current('social-media.index')">
+                  Sosyal Medya Yönetimi
+                </NavLink>
+                <NavLink :href="route('seo.index')" :active="route().current('seo.index')"> SEO Yönetimi </NavLink>
               </div>
             </div>
 
@@ -114,6 +118,15 @@ const showingNavigationDropdown = ref(false);
           <div class="space-y-1 pb-3 pt-2">
             <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
               Dashboard
+            </ResponsiveNavLink>
+            <ResponsiveNavLink :href="route('media.index')" :active="route().current('media.index')">
+              Medya Yönetimi
+            </ResponsiveNavLink>
+            <ResponsiveNavLink :href="route('social-media.index')" :active="route().current('social-media.index')">
+              Sosyal Medya Yönetimi
+            </ResponsiveNavLink>
+            <ResponsiveNavLink :href="route('seo.index')" :active="route().current('seo.index')">
+              SEO Yönetimi
             </ResponsiveNavLink>
           </div>
 

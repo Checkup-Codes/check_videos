@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class Seo extends Model
 {
+    use HasFactory;
+
     protected $table = 'util_seos';
     public $incrementing = false;
     protected $keyType = 'string';

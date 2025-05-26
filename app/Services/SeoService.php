@@ -19,7 +19,7 @@ class SeoService
             $seo = Seo::where('route', $route)->first();
 
             if (!$seo) {
-                return $this->getDefaultSeoData($route, $parameters);
+                return [];
             }
 
             return [
@@ -38,6 +38,10 @@ class SeoService
 
     public function createOrUpdateSeo(string $route, array $data): Seo
     {
+        if ($route !== 'home') {
+            throw new \Exception('Sadece home route\'u için SEO verisi düzenlenebilir.');
+        }
+
         $seo = Seo::updateOrCreate(
             ['route' => $route],
             [
@@ -59,6 +63,10 @@ class SeoService
 
     public function deleteSeo(string $route): bool
     {
+        if ($route === 'home') {
+            throw new \Exception('Home route\'u silinemez.');
+        }
+
         $deleted = Seo::where('route', $route)->delete();
         if ($deleted) {
             $this->clearCache();
@@ -89,31 +97,6 @@ class SeoService
         });
     }
 
-    private function getDefaultSeoData(string $route, array $parameters = []): array
-    {
-        $defaultTitle = 'Checkup Codes';
-        $defaultDescription = 'Yazılım dünyasında size yardımcı olacak içerikler';
-
-        // Generate a more specific title based on the route if possible
-        if (isset($parameters['title'])) {
-            $defaultTitle = $parameters['title'] . ' - Checkup Codes';
-        } elseif (isset($parameters['name'])) {
-            $defaultTitle = $parameters['name'] . ' - Checkup Codes';
-        }
-
-        return [
-            'title' => $defaultTitle,
-            'description' => $defaultDescription,
-            'keywords' => 'yazılım, programlama, web geliştirme',
-            'og_title' => $defaultTitle,
-            'og_description' => $defaultDescription,
-            'og_image' => asset('images/og-default.jpg'),
-            'canonical_url' => url()->current(),
-            'robots' => 'index, follow',
-            'schema_org' => null,
-        ];
-    }
-
     private function replacePlaceholders(string $text, array $parameters): string
     {
         foreach ($parameters as $key => $value) {
@@ -124,8 +107,15 @@ class SeoService
 
     public function clearCache(): void
     {
+        // Tüm SEO cache'lerini temizle
         Cache::forget(self::CACHE_PREFIX . 'all');
-        // Clear all SEO-related cache entries
-        Cache::tags([self::CACHE_PREFIX])->flush();
+
+        // Home route için cache'i temizle
+        Cache::forget(self::CACHE_PREFIX . md5('home'));
+
+        // Diğer potansiyel cache'leri temizle
+        foreach (Cache::get(self::CACHE_PREFIX . 'keys', []) as $key) {
+            Cache::forget($key);
+        }
     }
 }

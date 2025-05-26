@@ -299,6 +299,7 @@ import { Head } from '@inertiajs/vue3';
 import { ref, onMounted, computed } from 'vue';
 import Sortable from 'sortablejs';
 import axios from 'axios';
+import { useForm } from '@inertiajs/vue3';
 
 interface Write {
   id: string;
