@@ -6,7 +6,6 @@ use App\Models\UserSocialMedia;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 
 class SocialMediaController extends Controller
@@ -14,8 +13,7 @@ class SocialMediaController extends Controller
     public function index()
     {
         return Inertia::render('SocialMedia/Index', [
-            'socialMedia' => UserSocialMedia::where('user_id', Auth::id())
-                ->orderBy('order')
+            'socialMedia' => UserSocialMedia::orderBy('order')
                 ->get()
         ]);
     }
@@ -47,7 +45,6 @@ class SocialMediaController extends Controller
             ]);
 
             $validated['platform'] = Str::ucfirst(strtolower($validated['platform']));
-            $validated['user_id'] = Auth::id();
 
             $socialMedia = UserSocialMedia::create($validated);
 
@@ -76,17 +73,6 @@ class SocialMediaController extends Controller
     public function update(Request $request, UserSocialMedia $socialMedia)
     {
         try {
-            if ($socialMedia->user_id !== Auth::id()) {
-                if ($request->wantsJson()) {
-                    return response()->json([
-                        'message' => 'Bu sosyal medya linkini düzenleme yetkiniz yok.'
-                    ], 403);
-                }
-
-                return redirect()->back()
-                    ->with('error', 'Bu sosyal medya linkini düzenleme yetkiniz yok.');
-            }
-
             $validated = $request->validate([
                 'platform' => 'required|string|max:255',
                 'url' => 'required|url|max:255',
@@ -123,17 +109,6 @@ class SocialMediaController extends Controller
     public function destroy(Request $request, UserSocialMedia $socialMedia)
     {
         try {
-            if ($socialMedia->user_id !== Auth::id()) {
-                if ($request->wantsJson()) {
-                    return response()->json([
-                        'message' => 'Bu sosyal medya linkini silme yetkiniz yok.'
-                    ], 403);
-                }
-
-                return redirect()->back()
-                    ->with('error', 'Bu sosyal medya linkini silme yetkiniz yok.');
-            }
-
             $socialMedia->delete();
 
             if ($request->wantsJson()) {
