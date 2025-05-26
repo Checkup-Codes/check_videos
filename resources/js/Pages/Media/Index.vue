@@ -86,25 +86,60 @@
               </div>
 
               <!-- Önizleme Resimleri -->
-              <div
-                v-if="previewImages.length > 0"
-                class="preview-container grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4"
-              >
+              <div v-if="previewImages.length > 0" class="preview-container space-y-4">
                 <div
                   v-for="(image, index) in previewImages"
                   :key="index"
-                  class="relative aspect-square overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700"
+                  class="relative rounded-lg border border-gray-200 p-4 dark:border-gray-700"
                 >
-                  <img :src="image.preview" class="h-full w-full object-cover" :alt="`Preview ${index + 1}`" />
-                  <button
-                    type="button"
-                    @click="removePreviewImage(index)"
-                    class="absolute right-2 top-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
-                  >
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
+                  <div class="flex gap-4">
+                    <!-- Resim Önizleme -->
+                    <div class="relative h-32 w-32">
+                      <img
+                        :src="image.preview"
+                        class="h-full w-full rounded-lg object-cover"
+                        :alt="`Preview ${index + 1}`"
+                      />
+                      <button
+                        type="button"
+                        @click="removePreviewImage(index)"
+                        class="absolute right-2 top-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
+                      >
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+
+                    <!-- Başlık ve Alt Text Alanları -->
+                    <div class="flex-1 space-y-4">
+                      <div>
+                        <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"> Başlık </label>
+                        <input
+                          v-model="image.title"
+                          type="text"
+                          class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300"
+                          placeholder="Resim başlığı"
+                        />
+                      </div>
+                      <div>
+                        <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                          Alt Text
+                        </label>
+                        <input
+                          v-model="image.alt_text"
+                          type="text"
+                          class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300"
+                          placeholder="Resim açıklaması"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -160,37 +195,72 @@
               <div
                 v-for="image in filteredImages"
                 :key="image.id"
-                class="relative aspect-square overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700"
+                class="group relative aspect-square overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700"
               >
                 <img :src="image.image_path" class="h-full w-full object-cover" :alt="image.alt_text" />
-                <div class="absolute inset-x-0 bottom-0 bg-black bg-opacity-50 p-2">
+
+                <!-- Normal Görünüm -->
+                <div
+                  class="absolute inset-x-0 bottom-0 bg-black bg-opacity-50 p-2 transition-all group-hover:translate-y-full"
+                >
                   <p class="truncate text-sm text-white">{{ image.title }}</p>
                   <p class="mt-1 text-xs text-gray-300">{{ categories[image.category] }}</p>
                 </div>
-                <div class="absolute right-2 top-2 flex space-x-2">
-                  <!-- Copy Button -->
-                  <button
-                    @click="copyImagePath(image.full_url)"
-                    class="rounded-full bg-blue-500 p-1 text-white hover:bg-blue-600"
-                    title="Resim URL'sini kopyala"
-                  >
-                    <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
-                      <path
-                        d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"
+
+                <!-- Düzenleme Görünümü -->
+                <div
+                  class="absolute inset-0 flex flex-col bg-black bg-opacity-75 p-3 opacity-0 transition-all group-hover:opacity-100"
+                >
+                  <div class="flex-1 space-y-2">
+                    <div>
+                      <label class="block text-xs font-medium text-gray-300">Başlık</label>
+                      <input
+                        v-model="image.title"
+                        type="text"
+                        class="mt-1 block w-full rounded border-gray-600 bg-gray-700 text-sm text-white placeholder-gray-400"
+                        @change="updateImage(image)"
                       />
-                    </svg>
-                  </button>
-                  <!-- Delete Button -->
-                  <button
-                    @click="deleteImage(image.id)"
-                    class="rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
-                    title="Resmi sil"
-                  >
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
+                    </div>
+                    <div>
+                      <label class="block text-xs font-medium text-gray-300">Alt Text</label>
+                      <input
+                        v-model="image.alt_text"
+                        type="text"
+                        class="mt-1 block w-full rounded border-gray-600 bg-gray-700 text-sm text-white placeholder-gray-400"
+                        @change="updateImage(image)"
+                      />
+                    </div>
+                  </div>
+                  <div class="flex justify-end space-x-2 pt-2">
+                    <!-- Copy Button -->
+                    <button
+                      @click="copyImagePath(image.full_url)"
+                      class="rounded-full bg-blue-500 p-1 text-white hover:bg-blue-600"
+                      title="Resim URL'sini kopyala"
+                    >
+                      <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+                        <path
+                          d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z"
+                        />
+                      </svg>
+                    </button>
+                    <!-- Delete Button -->
+                    <button
+                      @click="deleteImage(image.id)"
+                      class="rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
+                      title="Resmi sil"
+                    >
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -246,22 +316,36 @@ interface WriteImage {
   title: string;
 }
 
+interface PreviewImage {
+  file: File;
+  preview: string;
+  title: string;
+  alt_text: string;
+}
+
 interface Props {
   writes: Write[];
   uploadedImages: WriteImage[];
   categories: Record<string, string>;
 }
 
+interface FormData {
+  category: string;
+  related_id: string | null;
+  images: File[];
+  processing: boolean;
+}
+
 const props = defineProps<Props>();
 
-const form = {
-  category: 'base' as string,
-  related_id: '' as string | null,
-  images: [] as File[],
+const form = ref<FormData>({
+  category: 'base',
+  related_id: null,
+  images: [],
   processing: false,
-};
+});
 
-const previewImages = ref<{ file: File; preview: string }[]>([]);
+const previewImages = ref<PreviewImage[]>([]);
 const imageUploadError = ref<string | null>(null);
 const uploadSuccess = ref(false);
 const uploadedImages = ref<WriteImage[]>(props.uploadedImages);
@@ -280,56 +364,42 @@ const filteredImages = computed(() => {
 // Resim önizleme ve yükleme işlemleri
 const handleImageUpload = (event: Event) => {
   const input = event.target as HTMLInputElement;
-  if (!input.files?.length) return;
-
-  const files = Array.from(input.files);
-
-  // Dosya kontrolü
-  for (const file of files) {
-    if (!file.type.startsWith('image/')) {
-      imageUploadError.value = 'Lütfen sadece resim dosyaları yükleyin.';
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      // 5MB limit
-      imageUploadError.value = "Resim boyutu 5MB'dan küçük olmalıdır.";
-      return;
-    }
-  }
-
-  imageUploadError.value = null;
-
-  // Resimleri önizleme için hazırla
-  files.forEach((file) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      if (e.target?.result) {
+  if (input.files) {
+    Array.from(input.files).forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
         previewImages.value.push({
           file,
-          preview: e.target.result as string,
+          preview: e.target?.result as string,
+          title: file.name,
+          alt_text: file.name,
         });
-      }
-    };
-    reader.readAsDataURL(file);
-  });
-
-  form.images = [...form.images, ...files];
+        form.value.images.push(file);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  input.value = '';
 };
 
 // Resimleri yükle
 const submitImages = async () => {
-  if (form.category === 'writes' && !form.related_id) {
-    form.related_id = null; // Yazı seçilmediyse null olarak ayarla
+  if (form.value.category === 'writes' && !form.value.related_id) {
+    form.value.related_id = null;
   }
 
-  form.processing = true;
+  form.value.processing = true;
   const formData = new FormData();
-  formData.append('category', form.category);
-  if (form.related_id) {
-    formData.append('related_id', form.related_id);
+  formData.append('category', form.value.category);
+  if (form.value.related_id) {
+    formData.append('related_id', form.value.related_id);
   }
-  form.images.forEach((file, index) => {
+
+  // Resimleri ve ilgili bilgileri ekle
+  form.value.images.forEach((file, index) => {
     formData.append(`images[${index}]`, file);
+    formData.append(`titles[${index}]`, previewImages.value[index].title);
+    formData.append(`alt_texts[${index}]`, previewImages.value[index].alt_text);
   });
 
   try {
@@ -340,12 +410,10 @@ const submitImages = async () => {
       },
     });
 
-    // Yeni resimleri listeye ekle
     uploadedImages.value = [...uploadedImages.value, ...response.data.images];
-
     previewImages.value = [];
-    form.images = [];
-    form.related_id = null;
+    form.value.images = [];
+    form.value.related_id = null;
     uploadSuccess.value = true;
     setTimeout(() => {
       uploadSuccess.value = false;
@@ -354,7 +422,7 @@ const submitImages = async () => {
     const message = error.response?.data?.message || 'Resimler yüklenirken bir hata oluştu.';
     imageUploadError.value = message;
   } finally {
-    form.processing = false;
+    form.value.processing = false;
   }
 };
 
@@ -372,7 +440,7 @@ const deleteImage = async (imageId: string) => {
 // Önizleme resmini kaldır
 const removePreviewImage = (index: number) => {
   previewImages.value.splice(index, 1);
-  form.images.splice(index, 1);
+  form.value.images.splice(index, 1);
 };
 
 // Önizleme resimlerini sıralama
@@ -390,7 +458,7 @@ onMounted(() => {
           previewImages.value = items;
 
           // Form'daki resimleri de güncelle
-          form.images = previewImages.value.map((item) => item.file);
+          form.value.images = previewImages.value.map((item) => item.file);
         }
       },
     });
@@ -413,6 +481,28 @@ const copyImagePath = async (url: string) => {
     showToastMessage("Resim URL'si kopyalandı!");
   } catch (err) {
     showToastMessage("Resim URL'si kopyalanırken bir hata oluştu.");
+  }
+};
+
+// Resim bilgilerini güncelle
+const updateImage = async (image: WriteImage) => {
+  try {
+    const response = await axios.put(route('write-images.update', image.id), {
+      title: image.title,
+      alt_text: image.alt_text,
+    });
+
+    // Başarılı güncelleme mesajı göster
+    showToastMessage('Resim bilgileri güncellendi');
+
+    // Resmi listede güncelle
+    const index = uploadedImages.value.findIndex((img) => img.id === image.id);
+    if (index !== -1) {
+      uploadedImages.value[index] = response.data.image;
+    }
+  } catch (error: any) {
+    const message = error.response?.data?.message || 'Resim bilgileri güncellenirken bir hata oluştu.';
+    showToastMessage(message);
   }
 };
 </script>

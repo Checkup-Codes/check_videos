@@ -17,6 +17,10 @@ class WriteImageController extends Controller
                 'related_id' => 'nullable|uuid',
                 'images' => 'required|array',
                 'images.*' => 'required|image|max:5120', // 5MB limit
+                'titles' => 'array',
+                'titles.*' => 'nullable|string|max:255',
+                'alt_texts' => 'array',
+                'alt_texts.*' => 'nullable|string|max:255',
             ]);
 
             $images = [];
@@ -36,8 +40,8 @@ class WriteImageController extends Controller
                             'related_id' => $request->related_id,
                             'image_path' => Storage::url($path),
                             'order' => $index,
-                            'alt_text' => $image->getClientOriginalName(),
-                            'title' => $image->getClientOriginalName(),
+                            'alt_text' => $request->alt_texts[$index] ?? $image->getClientOriginalName(),
+                            'title' => $request->titles[$index] ?? $image->getClientOriginalName(),
                         ]);
 
                         $images[] = $writeImage;
@@ -108,6 +112,31 @@ class WriteImageController extends Controller
             Log::error('Write image delete failed: ' . $e->getMessage());
             return response()->json([
                 'message' => 'Resim silinirken bir hata oluştu'
+            ], 500);
+        }
+    }
+
+    public function update(Request $request, WriteImage $writeImage)
+    {
+        try {
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'alt_text' => 'required|string|max:255',
+            ]);
+
+            $writeImage->update([
+                'title' => $request->title,
+                'alt_text' => $request->alt_text,
+            ]);
+
+            return response()->json([
+                'message' => 'Resim bilgileri güncellendi',
+                'image' => $writeImage
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Write image update failed: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Resim bilgileri güncellenirken bir hata oluştu'
             ], 500);
         }
     }

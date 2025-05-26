@@ -138,4 +138,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/write-images', [WriteImageController::class, 'store'])->name('write-images.store');
     Route::post('/write-images/order', [WriteImageController::class, 'updateOrder'])->name('write-images.updateOrder');
     Route::delete('/write-images/{writeImage}', [WriteImageController::class, 'destroy'])->name('write-images.destroy');
+    Route::put('/write-images/{writeImage}', [WriteImageController::class, 'update'])->name('write-images.update');
 });
