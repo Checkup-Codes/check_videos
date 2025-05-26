@@ -1,1 +1,0 @@
-import{i as r,g as t,o as n,r as l,n as c}from"./app-B5myTRx5.js";const i={__name:"CheckSubsidebar",props:{infoClass:{type:String,default:""}},setup(s){const e=s,o=r(()=>`${e.infoClass} bg-base-200 overscroll-none `);return(a,p)=>(n(),t("div",{class:c(o.value)},[l(a.$slots,"default")],2))}};export{i as _};
