@@ -22,7 +22,7 @@ export function useProcessedQuillContent(contentRef, contentString) {
     // Process text nodes to find and convert URLs to images
     const findAndReplaceImageUrls = (node) => {
       if (node.nodeType === Node.TEXT_NODE) {
-        const urlRegex = /(http:\/\/127\.0\.0\.1:8000\/storage\/[^\s]+\.(png|jpg|jpeg|gif))/gi;
+        const urlRegex = /(https?:\/\/[^\/]+\/storage\/[^\s]+\.(png|jpg|jpeg|gif))/gi;
         const matches = node.textContent.match(urlRegex);
         
         if (matches) {
