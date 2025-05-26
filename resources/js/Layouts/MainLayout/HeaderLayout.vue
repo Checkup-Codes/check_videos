@@ -58,7 +58,7 @@
         <!-- Theme Switcher and Copyright -->
         <div class="mt-6 flex flex-col items-center">
           <ThemeSwitcher />
-          <p class="text-base-content/60 mt-2 text-xs">CheckupCodes - Tüm Hakları Saklıdır</p>
+          <p class="text-base-content/60 mt-2 text-xs">{{ appName }} - Tüm Hakları Saklıdır</p>
         </div>
       </div>
     </div>
@@ -77,11 +77,19 @@ import MainNavigation from '@/Layouts/_composable/MainNavigation.vue';
 import SocialLinks from '@/Layouts/_composable/SocialLinks.vue';
 import ThemeSwitcher from '@/Layouts/_components/ThemeSwitcher.vue';
 
+const props = defineProps({
+  title: {
+    type: String,
+    default: 'Header',
+  },
+});
+
 const seoTitle = ref('');
 const isMenuOpen = ref(false);
 const page = usePage();
 const imagePath = ref('/images/checkup_codes_logo.png');
 const auth = ref(null);
+const appName = computed(() => usePage().props.app.name);
 
 // Watch for page props changes to update auth data
 watch(
@@ -104,13 +112,6 @@ watch(
     closeMenu();
   }
 );
-
-const props = defineProps({
-  title: {
-    type: String,
-    default: 'Header',
-  },
-});
 
 const emit = defineEmits(['toggleSidebar']);
 

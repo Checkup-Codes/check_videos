@@ -8,7 +8,7 @@
 
     <div class="absolute inset-x-0 bottom-0 py-4 text-center">
       <ThemeSwitcher class="mx-auto" />
-      <p class="text-base-content/60 mt-2 text-xs">CheckupCodes - Tüm Hakları Saklıdır</p>
+      <p class="text-base-content/60 mt-2 text-xs">{{ appName }} - asdas Hakları Saklıdır</p>
     </div>
   </aside>
 </template>
@@ -24,6 +24,7 @@ import ThemeSwitcher from '@/Layouts/_components/ThemeSwitcher.vue';
 const { props } = usePage();
 const imagePath = ref('/images/checkup_codes_logo.png');
 const auth = ref(props.auth);
+const appName = ref(props.app.name);
 
 watch(
   () => usePage().props.value,

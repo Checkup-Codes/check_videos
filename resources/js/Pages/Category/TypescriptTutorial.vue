@@ -28,7 +28,6 @@
             <br /><br />
             ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️ <br />
             Laravel Oynatma Listemiz : • Laravel Bootcamp Ekranda yazdığım kodların kaynak dosyası :
-            https://github.com/checkupcodes/Workb...
             <br /><br />
             ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️ <br />
             ⭐️ Timestamps ⭐️ 00:00 | İntro 00:03 | Neden kullanırız 01:10 | Konuya Giriş 05:40 | Örnek verelim 09:30 |
@@ -38,9 +37,8 @@
             💙💙💙Check-up Codes <br />
             📸 Instagram: / checkup_codes <br />
             ⭐ Discord: / discord <br />
-            📝LinkedIn: / cekap 🌎 Website: http://checkupcodes.com/
+            📝LinkedIn: / cekap 🌎 Website:
             <br />
-            📂 GitHub: https://github.com/checkupcodes <br /><br />
 
             💙💙💙 Cekap <br />
             📸 Instagram : / cekapykp <br />
