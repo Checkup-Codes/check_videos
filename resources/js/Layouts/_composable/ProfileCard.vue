@@ -4,16 +4,10 @@
       <div class="h-10 w-10 rounded-full bg-white ring ring-primary ring-offset-2 ring-offset-base-100">
         <template v-if="!isLoading">
           <img
-            v-if="currentLogo !== '/images/checkup_codes_logo.png'"
             :src="currentLogo"
             :alt="logoAlt"
             class="h-full w-full rounded-full object-cover"
-          />
-          <img
-            v-else
-            src="/images/checkup_codes_logo.png"
-            alt="Default Logo"
-            class="h-full w-full rounded-full object-cover"
+            @error="handleImageError"
           />
         </template>
         <!-- Skeleton Loading -->
@@ -40,9 +34,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import axios from 'axios';
-import { router } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 
 const props = defineProps({
   imagePath: {
@@ -51,11 +45,50 @@ const props = defineProps({
   },
 });
 
+const page = usePage();
 const seoTitle = ref('');
 const seoDescription = ref('');
 const currentLogo = ref(props.imagePath);
 const logoAlt = ref('Logo');
 const isLoading = ref(true);
+
+// Kullanıcının login durumunu kontrol et
+const isLoggedIn = computed(() => !!page.props.auth?.user);
+
+// Props değişikliklerini izle
+watch(
+  () => props.imagePath,
+  (newPath) => {
+    if (newPath && newPath !== '/images/checkup_codes_logo.png') {
+      currentLogo.value = newPath;
+    }
+  },
+  { immediate: true }
+);
+
+// Login durumu değişikliklerini izle
+watch(isLoggedIn, async (newLoginStatus) => {
+  if (!newLoginStatus) {
+    // Kullanıcı logout olduğunda default logo'ya dön
+    try {
+      const logoResponse = await axios.get('/api/logo');
+      if (logoResponse.data?.image_path) {
+        currentLogo.value = logoResponse.data.image_path;
+        logoAlt.value = logoResponse.data.alt_text;
+      } else {
+        currentLogo.value = '/images/checkup_codes_logo.png';
+        logoAlt.value = 'Default Logo';
+      }
+    } catch (error) {
+      currentLogo.value = '/images/checkup_codes_logo.png';
+      logoAlt.value = 'Default Logo';
+    }
+  } else if (props.imagePath && props.imagePath !== '/images/checkup_codes_logo.png') {
+    // Kullanıcı login olduğunda ve özel resmi varsa onu kullan
+    currentLogo.value = props.imagePath;
+    logoAlt.value = 'User Profile Image';
+  }
+});
 
 const downloadLogo = (event) => {
   event.stopPropagation();
@@ -65,6 +98,12 @@ const downloadLogo = (event) => {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+};
+
+const handleImageError = () => {
+  // Resim yüklenemezse default logo'ya geç
+  currentLogo.value = '/images/checkup_codes_logo.png';
+  logoAlt.value = 'Default Logo';
 };
 
 const redirectToLogin = () => {
@@ -80,18 +119,35 @@ onMounted(async () => {
       seoDescription.value = seoResponse.data.description;
     }
 
-    // Fetch logo data
-    const logoResponse = await axios.get('/api/logo');
-    if (logoResponse.data?.image_path) {
-      currentLogo.value = logoResponse.data.image_path;
-      logoAlt.value = logoResponse.data.alt_text;
+    // Eğer kullanıcı login ise ve props'tan gelen imagePath varsa onu kullan
+    if (isLoggedIn.value && props.imagePath && props.imagePath !== '/images/checkup_codes_logo.png') {
+      currentLogo.value = props.imagePath;
+      logoAlt.value = 'User Profile Image';
+    } else {
+      // Kullanıcı login değilse veya özel resim yoksa, API'den logo bilgisini çek
+      try {
+        const logoResponse = await axios.get('/api/logo');
+        if (logoResponse.data?.image_path) {
+          currentLogo.value = logoResponse.data.image_path;
+          logoAlt.value = logoResponse.data.alt_text;
+        } else {
+          // API'den logo gelmezse default logo kullan
+          currentLogo.value = '/images/checkup_codes_logo.png';
+          logoAlt.value = 'Default Logo';
+        }
+      } catch (logoError) {
+        console.error('Error fetching logo:', logoError);
+        // Logo API'si başarısız olursa default logo kullan
+        currentLogo.value = '/images/checkup_codes_logo.png';
+        logoAlt.value = 'Default Logo';
+      }
     }
   } catch (error) {
     console.error('Error fetching data:', error);
     // Fallback values
     seoTitle.value = 'Checkup Codes';
     seoDescription.value = 'Your daily dose of live dev';
-    currentLogo.value = props.imagePath;
+    currentLogo.value = '/images/checkup_codes_logo.png';
     logoAlt.value = 'Default Logo';
   } finally {
     // Kısa bir gecikme ekleyerek skeleton'un görünmesini sağlayalım
