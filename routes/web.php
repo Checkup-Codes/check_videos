@@ -146,14 +146,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/social-media', [SocialMediaController::class, 'store'])->name('social-media.store');
     Route::put('/social-media/{socialMedia}', [SocialMediaController::class, 'update'])->name('social-media.update');
     Route::delete('/social-media/{socialMedia}', [SocialMediaController::class, 'destroy'])->name('social-media.destroy');
-    Route::get('/api/social-media', [SocialMediaController::class, 'getAll'])->name('social-media.all');
 
     // SEO Routes
     Route::get('/seo', [App\Http\Controllers\SeoController::class, 'index'])->name('seo.index');
     Route::put('/seo/{seo}', [App\Http\Controllers\SeoController::class, 'update'])->name('seo.update');
-    Route::get('/api/seo/home', [App\Http\Controllers\SeoController::class, 'getHomeSeo'])->name('api.seo.home');
-    Route::get('/api/logo', [App\Http\Controllers\MediaController::class, 'getLogo'])->name('api.logo');
 });
+
+// Public API Routes (logout olan kullanıcılar da erişebilir)
+Route::get('/api/social-media', [SocialMediaController::class, 'getAll'])->name('social-media.all');
+Route::get('/api/seo/home', [App\Http\Controllers\SeoController::class, 'getHomeSeo'])->name('api.seo.home');
+Route::get('/api/logo', [App\Http\Controllers\MediaController::class, 'getLogo'])->name('api.logo');
 
 // Robots.txt and Sitemap routes
 Route::get('/robots.txt', [App\Http\Controllers\RobotsController::class, 'generate']);
