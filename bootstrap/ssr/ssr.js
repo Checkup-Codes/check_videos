@@ -1,5 +1,5 @@
 import axios from "axios";
-import { mergeProps, useSSRContext, ref, onMounted, computed, onBeforeUnmount, unref, withCtx, createVNode, createBlock, createCommentVNode, toDisplayString, openBlock, watch, createTextVNode, createSSRApp, h as h$1 } from "vue";
+import { mergeProps, useSSRContext, ref, computed, watch, onMounted, onBeforeUnmount, unref, withCtx, createVNode, createBlock, createCommentVNode, toDisplayString, openBlock, createTextVNode, createSSRApp, h as h$1 } from "vue";
 import { usePage, Link, router, createInertiaApp } from "@inertiajs/vue3";
 import { ssrRenderAttrs, ssrRenderAttr, ssrInterpolate, ssrRenderComponent, ssrRenderClass, ssrRenderList, ssrRenderSlot } from "vue/server-renderer";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -412,11 +412,46 @@ const _sfc_main$8 = {
   },
   setup(__props) {
     const props = __props;
+    const page = usePage();
     const seoTitle = ref("");
     const seoDescription = ref("");
     const currentLogo = ref(props.imagePath);
     const logoAlt = ref("Logo");
     const isLoading = ref(true);
+    const isLoggedIn = computed(() => {
+      var _a;
+      return !!((_a = page.props.auth) == null ? void 0 : _a.user);
+    });
+    watch(
+      () => props.imagePath,
+      (newPath) => {
+        if (newPath && newPath !== "/images/checkup_codes_logo.png") {
+          currentLogo.value = newPath;
+        }
+      },
+      { immediate: true }
+    );
+    watch(isLoggedIn, async (newLoginStatus) => {
+      var _a;
+      if (!newLoginStatus) {
+        try {
+          const logoResponse = await axios.get("/api/logo");
+          if ((_a = logoResponse.data) == null ? void 0 : _a.image_path) {
+            currentLogo.value = logoResponse.data.image_path;
+            logoAlt.value = logoResponse.data.alt_text;
+          } else {
+            currentLogo.value = "/images/checkup_codes_logo.png";
+            logoAlt.value = "Default Logo";
+          }
+        } catch (error) {
+          currentLogo.value = "/images/checkup_codes_logo.png";
+          logoAlt.value = "Default Logo";
+        }
+      } else if (props.imagePath && props.imagePath !== "/images/checkup_codes_logo.png") {
+        currentLogo.value = props.imagePath;
+        logoAlt.value = "User Profile Image";
+      }
+    });
     onMounted(async () => {
       var _a;
       try {
@@ -425,16 +460,30 @@ const _sfc_main$8 = {
           seoTitle.value = seoResponse.data.title;
           seoDescription.value = seoResponse.data.description;
         }
-        const logoResponse = await axios.get("/api/logo");
-        if ((_a = logoResponse.data) == null ? void 0 : _a.image_path) {
-          currentLogo.value = logoResponse.data.image_path;
-          logoAlt.value = logoResponse.data.alt_text;
+        if (isLoggedIn.value && props.imagePath && props.imagePath !== "/images/checkup_codes_logo.png") {
+          currentLogo.value = props.imagePath;
+          logoAlt.value = "User Profile Image";
+        } else {
+          try {
+            const logoResponse = await axios.get("/api/logo");
+            if ((_a = logoResponse.data) == null ? void 0 : _a.image_path) {
+              currentLogo.value = logoResponse.data.image_path;
+              logoAlt.value = logoResponse.data.alt_text;
+            } else {
+              currentLogo.value = "/images/checkup_codes_logo.png";
+              logoAlt.value = "Default Logo";
+            }
+          } catch (logoError) {
+            console.error("Error fetching logo:", logoError);
+            currentLogo.value = "/images/checkup_codes_logo.png";
+            logoAlt.value = "Default Logo";
+          }
         }
       } catch (error) {
         console.error("Error fetching data:", error);
         seoTitle.value = "Checkup Codes";
         seoDescription.value = "Your daily dose of live dev";
-        currentLogo.value = props.imagePath;
+        currentLogo.value = "/images/checkup_codes_logo.png";
         logoAlt.value = "Default Logo";
       } finally {
         setTimeout(() => {
@@ -443,23 +492,17 @@ const _sfc_main$8 = {
       }
     });
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<div${ssrRenderAttrs(mergeProps({ class: "flex w-fit cursor-pointer items-center gap-4 rounded-lg p-4" }, _attrs))} data-v-a0844d30><div class="avatar" data-tooltip-id="logo-tooltip" data-v-a0844d30><div class="h-10 w-10 rounded-full bg-white ring ring-primary ring-offset-2 ring-offset-base-100" data-v-a0844d30>`);
+      _push(`<div${ssrRenderAttrs(mergeProps({ class: "flex w-fit cursor-pointer items-center gap-4 rounded-lg p-4" }, _attrs))} data-v-c08f0558><div class="avatar" data-tooltip-id="logo-tooltip" data-v-c08f0558><div class="h-10 w-10 rounded-full bg-white ring ring-primary ring-offset-2 ring-offset-base-100" data-v-c08f0558>`);
       if (!isLoading.value) {
-        _push(`<!--[-->`);
-        if (currentLogo.value !== "/images/checkup_codes_logo.png") {
-          _push(`<img${ssrRenderAttr("src", currentLogo.value)}${ssrRenderAttr("alt", logoAlt.value)} class="h-full w-full rounded-full object-cover" data-v-a0844d30>`);
-        } else {
-          _push(`<img src="/images/checkup_codes_logo.png" alt="Default Logo" class="h-full w-full rounded-full object-cover" data-v-a0844d30>`);
-        }
-        _push(`<!--]-->`);
+        _push(`<img${ssrRenderAttr("src", currentLogo.value)}${ssrRenderAttr("alt", logoAlt.value)} class="h-full w-full rounded-full object-cover" data-v-c08f0558>`);
       } else {
-        _push(`<div class="h-full w-full rounded-full bg-base-200" data-v-a0844d30><div class="animate-shimmer h-full w-full rounded-full bg-gradient-to-r from-base-200 via-base-100 to-base-200" data-v-a0844d30></div></div>`);
+        _push(`<div class="h-full w-full rounded-full bg-base-200" data-v-c08f0558><div class="animate-shimmer h-full w-full rounded-full bg-gradient-to-r from-base-200 via-base-100 to-base-200" data-v-c08f0558></div></div>`);
       }
-      _push(`</div></div><div class="flex flex-col" data-v-a0844d30>`);
+      _push(`</div></div><div class="flex flex-col" data-v-c08f0558>`);
       if (!isLoading.value) {
-        _push(`<!--[--><div class="font-semibold text-base-content" data-v-a0844d30>${ssrInterpolate(seoTitle.value)}</div><div class="text-sm font-thin text-base-content" data-v-a0844d30>${ssrInterpolate(seoDescription.value)}</div><!--]-->`);
+        _push(`<!--[--><div class="font-semibold text-base-content" data-v-c08f0558>${ssrInterpolate(seoTitle.value)}</div><div class="text-sm font-thin text-base-content" data-v-c08f0558>${ssrInterpolate(seoDescription.value)}</div><!--]-->`);
       } else {
-        _push(`<div class="space-y-2" data-v-a0844d30><div class="h-5 w-32 animate-pulse rounded bg-base-200" data-v-a0844d30></div><div class="h-4 w-40 animate-pulse rounded bg-base-200" data-v-a0844d30></div></div>`);
+        _push(`<div class="space-y-2" data-v-c08f0558><div class="h-5 w-32 animate-pulse rounded bg-base-200" data-v-c08f0558></div><div class="h-4 w-40 animate-pulse rounded bg-base-200" data-v-c08f0558></div></div>`);
       }
       _push(`</div></div>`);
     };
@@ -471,7 +514,7 @@ _sfc_main$8.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/_composable/ProfileCard.vue");
   return _sfc_setup$8 ? _sfc_setup$8(props, ctx) : void 0;
 };
-const ProfileCard = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["__scopeId", "data-v-a0844d30"]]);
+const ProfileCard = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["__scopeId", "data-v-c08f0558"]]);
 const _sfc_main$7 = {
   __name: "NavItem",
   __ssrInlineRender: true,
