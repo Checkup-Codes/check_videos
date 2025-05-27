@@ -1,1 +1,0 @@
-import o from"./CheckLayout-BzTD68x_.js";import r from"./Screen-DzblLpTp.js";import{c as e,o as t,w as a,a as s}from"./app-CqkBD9RN.js";import"./SidebarLayoutLesson-CFxrmxFJ.js";/* empty css            */import"./CheckScreen-CmpB0Nni.js";const x={__name:"IndexLesson",setup(c){return(m,_)=>(t(),e(o,null,{screen:a(()=>[s(r)]),_:1}))}};export{x as default};
