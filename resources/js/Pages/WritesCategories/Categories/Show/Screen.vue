@@ -1,146 +1,120 @@
 <template>
   <CheckScreen>
-    <div class="card border border-base-200 bg-base-100 shadow-md transition-all duration-200">
-      <div class="card-body p-4 sm:p-6">
-        <!-- Kategori Başlığı ve Admin Kontrolleri -->
-        <div class="mb-6 flex items-center justify-between">
-          <div class="flex-1">
-            <h1 class="text-xl font-bold sm:text-2xl">
-              {{ category.name }}
-              <span class="badge badge-outline ml-2">{{ category.writes_count || writes.length }} yazı</span>
-              <span v-if="category.status === 'private'" class="badge badge-warning ml-2">Gizli</span>
-            </h1>
-            <p v-if="category.description" class="mt-2 text-sm text-gray-600">{{ category.description }}</p>
-          </div>
-
-          <!-- Admin Kontrolleri -->
-          <div v-if="auth.user" class="flex gap-2">
-            <button @click="editCategory" class="btn btn-outline btn-sm" title="Kategoriyi Düzenle">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                />
-              </svg>
-              Düzenle
-            </button>
-            <Link :href="route('writes.create', { category: category.id })" class="btn btn-primary btn-sm">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
-              Yeni Yazı
-            </Link>
-          </div>
+    <div class="p-4 sm:p-6">
+      <!-- Kategori Başlığı ve Admin Kontrolleri -->
+      <div class="mb-6 flex items-center justify-between">
+        <div class="flex-1">
+          <h1 class="text-xl font-bold sm:text-2xl">
+            {{ category.name }}
+            <span class="badge badge-outline ml-2">{{ category.writes_count || writes.length }} yazı</span>
+            <span v-if="category.status === 'private'" class="badge badge-warning ml-2">Gizli</span>
+          </h1>
+          <p v-if="category.description" class="mt-2 text-sm text-gray-600">{{ category.description }}</p>
         </div>
 
-        <div class="divider my-2"></div>
+        <!-- Admin Kontrolleri -->
+        <div v-if="auth.user" class="flex gap-2">
+          <button @click="editCategory" class="btn btn-outline btn-sm" title="Kategoriyi Düzenle">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              />
+            </svg>
+            Düzenle
+          </button>
+          <Link :href="route('writes.create', { category: category.id })" class="btn btn-primary btn-sm">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Yeni Yazı
+          </Link>
+        </div>
+      </div>
 
-        <!-- Liste Görünümü -->
-        <div class="space-y-4">
-          <div
-            v-for="write in filteredWrites"
-            :key="write.id"
-            class="card border border-base-200 bg-base-100 shadow-sm transition-all hover:shadow-md"
-          >
-            <div class="card-body p-4">
-              <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
-                <!-- Kapak Resmi -->
-                <div v-if="write.cover_image" class="flex-shrink-0">
-                  <img
-                    :src="write.cover_image"
-                    alt="Kapak Resmi"
-                    class="h-20 w-20 rounded-lg object-cover sm:h-16 sm:w-24"
-                  />
-                </div>
+      <div class="divider my-2"></div>
 
-                <!-- İçerik -->
-                <div class="min-w-0 flex-1">
-                  <div class="flex items-start justify-between">
-                    <div class="min-w-0 flex-1">
-                      <Link
-                        :href="
-                          route('categories.showByCategory', {
-                            category: category.slug,
-                            slug: write.slug,
-                          })
-                        "
-                        class="hover:text-primary"
-                      >
-                        <div class="mb-2 flex items-center gap-2">
-                          <!-- Durum İkonları -->
-                          <span v-if="write.status === 'link_only'" class="text-primary" title="Dış Bağlantı">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              class="h-4 w-4"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fill-rule="evenodd"
-                                d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
-                                clip-rule="evenodd"
-                              />
-                            </svg>
-                          </span>
-                          <span v-if="write.status === 'private'" class="text-warning" title="Gizli Yazı">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              class="h-4 w-4"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fill-rule="evenodd"
-                                d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                                clip-rule="evenodd"
-                              />
-                            </svg>
-                          </span>
-                          <span v-if="write.status === 'draft'" class="text-gray-500" title="Taslak">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              class="h-4 w-4"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                              />
-                            </svg>
-                          </span>
+      <!-- Liste Görünümü -->
+      <div class="space-y-4">
+        <div
+          v-for="write in paginatedWrites"
+          :key="write.id"
+          class="card border border-base-200 bg-base-100 shadow-sm transition-all hover:shadow-md"
+        >
+          <div class="card-body p-4">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <!-- Kapak Resmi -->
+              <div v-if="write.cover_image" class="flex-shrink-0">
+                <img
+                  :src="write.cover_image"
+                  alt="Kapak Resmi"
+                  class="h-20 w-20 rounded-lg object-cover sm:h-16 sm:w-24"
+                  loading="lazy"
+                  :srcset="`${write.cover_image} 1x, ${write.cover_image} 2x`"
+                />
+              </div>
 
-                          <h3 class="truncate text-lg font-semibold">{{ write.title }}</h3>
-                        </div>
-
-                        <p class="mb-2 line-clamp-2 text-sm text-gray-600">
-                          {{ truncateSummary(write.meta_description || write.summary) }}
-                        </p>
-                      </Link>
-
-                      <!-- Meta Bilgiler -->
-                      <div class="flex flex-wrap items-center gap-3 text-xs text-gray-500">
-                        <span class="flex items-center gap-1">
+              <!-- İçerik -->
+              <div class="min-w-0 flex-1">
+                <div class="flex items-start justify-between">
+                  <div class="min-w-0 flex-1">
+                    <Link
+                      :href="
+                        route('categories.showByCategory', {
+                          category: category.slug,
+                          slug: write.slug,
+                        })
+                      "
+                      class="hover:text-primary"
+                    >
+                      <div class="mb-2 flex items-center gap-2">
+                        <!-- Durum İkonları -->
+                        <span v-if="write.status === 'link_only'" class="text-primary" title="Dış Bağlantı">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            class="h-3 w-3"
+                            class="h-4 w-4"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
+                              clip-rule="evenodd"
+                            />
+                          </svg>
+                        </span>
+                        <span v-if="write.status === 'private'" class="text-warning" title="Gizli Yazı">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-4 w-4"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                              clip-rule="evenodd"
+                            />
+                          </svg>
+                        </span>
+                        <span v-if="write.status === 'draft'" class="text-gray-500" title="Taslak">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-4 w-4"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -149,39 +123,22 @@
                               stroke-linecap="round"
                               stroke-linejoin="round"
                               stroke-width="2"
-                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
                             />
                           </svg>
-                          {{ formatDate(write.published_at || write.created_at) }}
                         </span>
 
-                        <span v-if="write.reading_time" class="flex items-center gap-1">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-3 w-3"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                          </svg>
-                          {{ write.reading_time }} dk okuma
-                        </span>
-
-                        <span class="badge badge-outline badge-xs">
-                          {{ getStatusText(write.status) }}
-                        </span>
+                        <h3 class="truncate text-lg font-semibold">{{ write.title }}</h3>
                       </div>
-                    </div>
 
-                    <!-- Admin Yazı Kontrolleri -->
-                    <div v-if="auth.user" class="ml-4 flex flex-col gap-1">
-                      <Link :href="route('writes.edit', write.id)" class="btn btn-ghost btn-xs" title="Yazıyı Düzenle">
+                      <p class="mb-2 line-clamp-2 text-sm text-gray-600">
+                        {{ truncateSummary(write.meta_description || write.summary) }}
+                      </p>
+                    </Link>
+
+                    <!-- Meta Bilgiler -->
+                    <div class="flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                      <span class="flex items-center gap-1">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           class="h-3 w-3"
@@ -193,11 +150,13 @@
                             stroke-linecap="round"
                             stroke-linejoin="round"
                             stroke-width="2"
-                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                           />
                         </svg>
-                      </Link>
-                      <button @click="deleteWrite(write)" class="btn btn-ghost btn-xs text-error" title="Yazıyı Sil">
+                        {{ formatDate(write.published_at || write.created_at) }}
+                      </span>
+
+                      <span v-if="write.reading_time" class="flex items-center gap-1">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           class="h-3 w-3"
@@ -209,35 +168,85 @@
                             stroke-linecap="round"
                             stroke-linejoin="round"
                             stroke-width="2"
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                           />
                         </svg>
-                      </button>
+                        {{ write.reading_time }} dk okuma
+                      </span>
+
+                      <span class="badge badge-outline badge-xs">
+                        {{ getStatusText(write.status) }}
+                      </span>
                     </div>
+                  </div>
+
+                  <!-- Admin Yazı Kontrolleri -->
+                  <div v-if="auth.user" class="ml-4 flex flex-col gap-1">
+                    <Link :href="route('writes.edit', write.id)" class="btn btn-ghost btn-xs" title="Yazıyı Düzenle">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-3 w-3"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                        />
+                      </svg>
+                    </Link>
+                    <button @click="deleteWrite(write)" class="btn btn-ghost btn-xs text-error" title="Yazıyı Sil">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-3 w-3"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Boş Durum -->
-        <div v-if="filteredWrites.length === 0" class="alert alert-info mt-6">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            class="h-6 w-6 shrink-0 stroke-current"
+      <!-- Pagination -->
+      <div v-if="totalPages > 1" class="mt-6 flex justify-center">
+        <div class="join">
+          <button
+            v-for="page in totalPages"
+            :key="page"
+            @click="currentPage = page"
+            :class="['btn btn-sm join-item', currentPage === page ? 'btn-primary' : 'btn-outline']"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            ></path>
-          </svg>
-          <span>Bu kategoriye ait {{ auth.user ? 'yazı' : 'yayınlanmış yazı' }} bulunmamaktadır.</span>
+            {{ page }}
+          </button>
         </div>
+      </div>
+
+      <!-- Boş Durum -->
+      <div v-if="filteredWrites.length === 0" class="alert alert-info mt-6">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          ></path>
+        </svg>
+        <span>Bu kategoriye ait {{ auth.user ? 'yazı' : 'yayınlanmış yazı' }} bulunmamaktadır.</span>
       </div>
     </div>
   </CheckScreen>
@@ -265,6 +274,10 @@ const writes = ref(props.writes || []);
 const auth = props.auth;
 const flashSuccess = ref(props.flash?.success);
 
+// Pagination
+const itemsPerPage = 10;
+const currentPage = ref(1);
+
 /**
  * Filter writes based on user role and status
  */
@@ -276,6 +289,22 @@ const filteredWrites = computed(() => {
     // Regular users can only see published writes
     return writes.value.filter((write) => write.status === 'published');
   }
+});
+
+/**
+ * Paginated writes
+ */
+const paginatedWrites = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return filteredWrites.value.slice(start, end);
+});
+
+/**
+ * Total number of pages
+ */
+const totalPages = computed(() => {
+  return Math.ceil(filteredWrites.value.length / itemsPerPage);
 });
 
 /**

@@ -211,18 +211,13 @@ class WriteService
                 'id',
                 'title',
                 'slug',
-                'author_id',
-                'category_id',
-                'published_at',
-                'summary',
                 'status',
-                'views_count',
-                'seo_keywords',
-                'tags',
-                'meta_description',
-                'cover_image',
+                'published_at',
                 'created_at',
-                'updated_at'
+                'updated_at',
+                'meta_description',
+                'summary',
+                'cover_image'
             )
             ->orderByDesc('published_at')
             ->get();
