@@ -31,23 +31,6 @@
                 </select>
               </div>
 
-              <!-- İlişkili İçerik Seçimi (Yazı seçimi kategori 'writes' olduğunda görünür) -->
-              <div v-if="form.category === 'writes'">
-                <label for="related_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Yazı Seçin
-                </label>
-                <select
-                  id="related_id"
-                  v-model="form.related_id"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300"
-                >
-                  <option value="">Yazı Seçin (Opsiyonel)</option>
-                  <option v-for="write in writes" :key="write.id" :value="write.id">
-                    {{ write.title }}
-                  </option>
-                </select>
-              </div>
-
               <!-- Resim Yükleme Alanı -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300"> Resimler </label>
