@@ -1,42 +1,44 @@
 <template>
-  <CheckScreen>
-    <div ref="vantaRef" class="h-screen-minus-12 w-full overflow-hidden overscroll-none lg:h-screen-minus-1">
-      <header class="relative z-10 flex h-full items-center justify-center text-gray-800">
-        <div class="text-center">
-          <div class="relative mx-auto h-96 w-96">
-            <template v-if="!isLoading">
-              <img
-                v-if="logoPath !== '/images/checkup_codes_logo.png'"
-                :src="logoPath"
-                :alt="logoAlt"
-                class="h-full w-full rounded-full object-cover"
-              />
-              <img
-                v-else
-                src="/images/checkup_codes_logo.png"
-                alt="Default Logo"
-                class="h-full w-full rounded-full object-cover"
-              />
-            </template>
-            <!-- Skeleton Loading -->
-            <div v-else class="animate-pulse">
-              <div class="h-96 w-96 rounded-full bg-base-200">
-                <div
-                  class="animate-shimmer h-full w-full rounded-full bg-gradient-to-r from-base-200 via-base-100 to-base-200"
-                ></div>
+  <div class="h-[calc(100h)] overflow-hidden">
+    <div class="h-screen-minus-12 overflow-y-auto overscroll-none lg:h-screen-minus">
+      <div ref="vantaRef" class="h-screen-minus-12 w-full overflow-hidden overscroll-none lg:h-screen-minus-1">
+        <header class="relative z-10 flex h-full items-center justify-center text-gray-800">
+          <div class="text-center">
+            <div class="relative mx-auto h-96 w-96">
+              <template v-if="!isLoading">
+                <img
+                  v-if="logoPath !== '/images/checkup_codes_logo.png'"
+                  :src="logoPath"
+                  :alt="logoAlt"
+                  class="h-full w-full rounded-full object-cover"
+                />
+                <img
+                  v-else
+                  src="/images/checkup_codes_logo.png"
+                  alt="Default Logo"
+                  class="h-full w-full rounded-full object-cover"
+                />
+              </template>
+              <!-- Skeleton Loading -->
+              <div v-else class="animate-pulse">
+                <div class="h-96 w-96 rounded-full bg-base-200">
+                  <div
+                    class="animate-shimmer h-full w-full rounded-full bg-gradient-to-r from-base-200 via-base-100 to-base-200"
+                  ></div>
+                </div>
+                <!-- Skeleton for title -->
+                <div class="mx-auto mt-4 h-8 w-64 rounded bg-base-200"></div>
+                <!-- Skeleton for description -->
+                <div class="mx-auto mt-2 h-4 w-48 rounded bg-base-200"></div>
               </div>
-              <!-- Skeleton for title -->
-              <div class="mx-auto mt-4 h-8 w-64 rounded bg-base-200"></div>
-              <!-- Skeleton for description -->
-              <div class="mx-auto mt-2 h-4 w-48 rounded bg-base-200"></div>
             </div>
+            <h2 v-if="!isLoading" class="animate__animated animate__fadeInDown text-4xl font-bold">{{ seoTitle }}</h2>
+            <p v-if="!isLoading" class="animate__animated animate__fadeInUp text-lg">{{ seoDescription }}</p>
           </div>
-          <h2 v-if="!isLoading" class="animate__animated animate__fadeInDown text-4xl font-bold">{{ seoTitle }}</h2>
-          <p v-if="!isLoading" class="animate__animated animate__fadeInUp text-lg">{{ seoDescription }}</p>
-        </div>
-      </header>
+        </header>
+      </div>
     </div>
-  </CheckScreen>
+  </div>
 </template>
 
 <script setup>
