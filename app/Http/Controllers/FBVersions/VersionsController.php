@@ -11,13 +11,21 @@ use Carbon\Carbon;
 
 class VersionsController extends Controller
 {
+
+    private array $screenDefault = [
+        'isMobileSidebar' => false,
+        'name' => 'versions'
+    ];
+
     public function index()
     {
         $versions = $this->getAllVersionsWithDetails();
 
         return inertia('FBVersions/Versions/IndexVersion', [
-            'isMobileSidebar' => true,
-            'name' => 'versions',
+            'screen'     => [
+                'isMobileSidebar' => true,
+                'name'            => 'versions'
+            ],
             'versions' => $versions
         ]);
     }
@@ -28,10 +36,9 @@ class VersionsController extends Controller
         $versions = $this->getAllVersionsWithDetails();
 
         return inertia('FBVersions/Versions/ShowVersion', [
-            'isMobileSidebar' => false,
             'versions' => $versions,
             'version' => $version,
-            'name' => 'versions'
+            'screen' => $this->screenDefault,
         ]);
     }
 
@@ -41,10 +48,9 @@ class VersionsController extends Controller
         $version = $this->getVersionById($id);
 
         return inertia('FBVersions/Versions/EditVersion', [
-            'name' => 'versions',
-            'isMobileSidebar' => false,
             'versions' => $versions,
-            'version' => $version
+            'version' => $version,
+            'screen' => $this->screenDefault,
         ]);
     }
 
@@ -53,9 +59,8 @@ class VersionsController extends Controller
         $versions = $this->getAllVersionsWithDetails();
 
         return inertia('FBVersions/Versions/CreateVersion', [
-            'name' => 'versions',
-            'isMobileSidebar' => true,
             'versions' => $versions,
+            'screen' => $this->screenDefault,
         ]);
     }
 

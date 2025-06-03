@@ -23,11 +23,15 @@ class CheckWriteAccess
 
             // Admin değilse ve yazı private ise 404 hatası ver
             if (!Auth::check()) {
-                $isPrivate = Write::where('slug', $slug)
-                    ->where('status', 'private')
-                    ->exists();
+                $write = Write::where('slug', $slug)->first();
 
-                if ($isPrivate) {
+                // If write is link_only, allow access
+                if ($write && $write->status === Write::STATUS_LINK_ONLY) {
+                    return $next($request);
+                }
+
+                // If write is private, deny access
+                if ($write && $write->status === Write::STATUS_PRIVATE) {
                     abort(404); // Sayfa bulunamadı hatası ver
                 }
             }

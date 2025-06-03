@@ -2,13 +2,13 @@
   <Head :title="titleName" />
   <FlashMessage :message="flashSuccess" />
   <ToggleSubSidebarButtonOpen v-if="!isSidebarCollapsed" :isCollapsed="true" :toggle="collapseSidebar" />
-  <CheckLayout :isCollapsed="isSidebarCollapsed">
+  <CheckLayout :isCollapsed="true">
     <SidebarLayoutVersion
       v-if="isSidebarCollapsed && screenName === 'versions'"
       @update:isCollapsed="handleSidebarCollapse"
       :class="sidebarStyle"
     />
-    <div :class="isMobile ? 'hidden' : 'block'" class="w-full">
+    <div :class="isMobile ? 'hidden lg:block' : 'block'">
       <slot name="screen"></slot>
     </div>
   </CheckLayout>
@@ -25,13 +25,14 @@ import { ref, computed } from 'vue';
 const page = usePage();
 const props = computed(() => page.props);
 const flashSuccess = computed(() => props.value.flash?.message);
-const sidebarStyle = computed(() => (props.value.isMobileSidebar ? '' : 'hidden lg:block'));
-const screenName = computed(() => props.value.name);
+console.log(props.value);
+const sidebarStyle = computed(() => (props.value.screen.isMobileSidebar ? '' : 'hidden lg:block'));
+const screenName = props.value.screen?.name || '';
 const titleName = computed(() => {
   const name = screenName.value;
   return name ? name.charAt(0).toUpperCase() + name.slice(1) + '  ' : '';
 });
-const isMobile = computed(() => props.value.isMobile || false);
+const isMobile = computed(() => props.screen?.isMobileSidebar || false);
 const isSidebarCollapsed = ref(true);
 
 const collapseSidebar = () => {

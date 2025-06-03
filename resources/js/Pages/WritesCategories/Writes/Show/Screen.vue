@@ -4,12 +4,20 @@
       <div class="card-body p-4 sm:p-6">
         <!-- Title and category section -->
         <div class="mb-2 sm:mb-4">
-          <h1 class="break-words text-xl font-bold sm:text-2xl">{{ write.title }}</h1>
-          <div class="mt-2">
-            <span v-if="write.category" class="badge badge-outline text-xs">
-              {{ write.category.name }}
-            </span>
+          <div v-if="isLoading" class="skeleton-wrapper">
+            <div class="skeleton h-8 w-3/4 rounded-lg"></div>
+            <div class="mt-2">
+              <div class="skeleton h-4 w-24 rounded-lg"></div>
+            </div>
           </div>
+          <template v-else>
+            <h1 class="break-words text-xl font-bold sm:text-2xl">{{ write.title }}</h1>
+            <div class="mt-2">
+              <span v-if="write.category" class="badge badge-outline text-xs">
+                {{ write.category.name }}
+              </span>
+            </div>
+          </template>
         </div>
 
         <!-- Mobile action buttons (fixed at bottom on mobile) -->
@@ -17,6 +25,7 @@
           <div class="flex items-center justify-between">
             <!-- Left side: Toggle content button -->
             <button
+              v-if="!isLoading"
               @click="toggleContent"
               class="btn btn-sm grow-0 sm:grow-0"
               :class="showDraw ? 'btn-primary' : 'btn-outline'"
@@ -46,7 +55,7 @@
             </button>
 
             <!-- Right side: Admin actions -->
-            <div v-if="auth.user" class="flex gap-2">
+            <div v-if="auth.user && !isLoading" class="flex gap-2">
               <Link :href="route('writes.edit', write.id)" class="btn btn-ghost btn-sm text-xs">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -87,32 +96,46 @@
         <div class="divider my-1"></div>
 
         <!-- Main content area -->
-        <div v-if="showDraw" class="min-h-[500px]">
-          <ExcalidrawComponent :write="write" />
+        <div v-if="isLoading" class="skeleton-wrapper space-y-4">
+          <div class="skeleton h-4 w-full rounded-lg"></div>
+          <div class="skeleton h-4 w-5/6 rounded-lg"></div>
+          <div class="skeleton h-4 w-4/6 rounded-lg"></div>
+          <div class="skeleton h-4 w-full rounded-lg"></div>
+          <div class="skeleton h-4 w-3/4 rounded-lg"></div>
+          <div class="skeleton h-4 w-5/6 rounded-lg"></div>
+          <div class="skeleton h-32 w-full rounded-lg"></div>
+          <div class="skeleton h-4 w-2/3 rounded-lg"></div>
+          <div class="skeleton h-4 w-full rounded-lg"></div>
         </div>
-        <div v-else class="content-container">
-          <div v-if="write.summary" class="alert alert-info mb-4 px-3 py-2 text-sm sm:mb-6 sm:p-4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              class="h-5 w-5 shrink-0 stroke-current"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              ></path>
-            </svg>
-            <span>{{ write.summary }}</span>
+        <div v-else>
+          <div v-if="showDraw" class="min-h-[500px]">
+            <ExcalidrawComponent :write="write" />
           </div>
+          <div v-else class="content-container">
+            <div v-if="write.summary" class="alert alert-info mb-4 px-3 py-2 text-sm sm:mb-6 sm:p-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                class="h-5 w-5 shrink-0 stroke-current"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+              <span>{{ write.summary }}</span>
+            </div>
 
-          <div class="article-content ql-editor" ref="contentRef" v-html="processedContent"></div>
+            <div class="article-content ql-editor" ref="contentRef" v-html="processedContent"></div>
+          </div>
         </div>
 
         <!-- Footer metadata -->
         <div
+          v-if="!isLoading"
           class="text-base-content/70 mt-4 flex flex-col space-y-2 p-2 text-xs sm:mt-6 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 sm:p-3 sm:text-sm"
         >
           <div>Oluşturma: {{ formatDate(write.created_at) }}</div>
@@ -158,6 +181,7 @@ import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 import '@/Shared/Css/quill-custom-styles.css';
 import { useGsapFadeIn } from '@/Pages/WritesCategories/_utils/useGsapAnimation.js';
 import { useProcessedQuillContent } from '@/Pages/WritesCategories/_utils/useProcessedQuillContent.js';
+import gsap from 'gsap';
 
 /**
  * Component name definition
@@ -174,6 +198,7 @@ const write = ref(props.write || {});
 const auth = props.auth;
 const contentRef = ref(null);
 const showDraw = ref(false);
+const isLoading = ref(true);
 
 /**
  * Use the centralized Quill content processor
@@ -222,10 +247,32 @@ const deleteWrite = async (id) => {
 };
 
 /**
+ * Animate skeleton loading
+ */
+const animateSkeleton = () => {
+  const skeletons = document.querySelectorAll('.skeleton');
+  gsap.to(skeletons, {
+    opacity: 0.5,
+    duration: 0.8,
+    stagger: 0.1,
+    repeat: -1,
+    yoyo: true,
+    ease: 'power1.inOut',
+  });
+};
+
+/**
  * Apply GSAP animation on mount and restore write list scroll position
  */
 onMounted(() => {
-  useGsapFadeIn(contentRef);
+  // Start skeleton animation
+  animateSkeleton();
+
+  // Simulate loading delay
+  setTimeout(() => {
+    isLoading.value = false;
+    useGsapFadeIn(contentRef);
+  }, 800);
 
   // Restore write list scroll position after a short delay
   // to ensure the list component is fully mounted
@@ -250,3 +297,25 @@ router.on('before', () => {
   }
 });
 </script>
+
+<style scoped>
+.skeleton {
+  @apply bg-base-300;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-wrapper {
+  @apply animate-pulse;
+}
+</style>

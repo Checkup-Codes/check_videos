@@ -1,262 +1,175 @@
 <template>
   <CheckScreen>
-    <div class="p-4 sm:p-6">
-      <!-- Kategori Başlığı ve Admin Kontrolleri -->
-      <div class="mb-6 flex items-center justify-between">
-        <div class="flex-1">
-          <h1 class="text-xl font-bold sm:text-2xl">
-            {{ category.name }}
-            <span class="badge badge-outline ml-2">{{ category.writes_count || writes.length }} yazı</span>
-            <span v-if="category.status === 'private'" class="badge badge-warning ml-2">Gizli</span>
-          </h1>
-          <p v-if="category.description" class="mt-2 text-sm text-gray-600">{{ category.description }}</p>
+    <div class="card border border-base-200 bg-base-100 shadow-md transition-all duration-200">
+      <div class="card-body p-4 sm:p-6">
+        <!-- Title and category section -->
+        <div class="mb-2 sm:mb-4">
+          <div v-if="isLoading" class="skeleton-wrapper">
+            <div class="skeleton h-8 w-3/4 rounded-lg"></div>
+            <div class="mt-2">
+              <div class="skeleton h-4 w-24 rounded-lg"></div>
+            </div>
+          </div>
+          <template v-else>
+            <h1 class="line-clamp-2 break-words text-xl font-bold sm:text-2xl">{{ category.name }}</h1>
+            <div class="mt-2">
+              <span v-if="category.description" class="badge badge-outline line-clamp-1 text-xs">
+                {{ category.description }}
+              </span>
+            </div>
+          </template>
         </div>
 
-        <!-- Admin Kontrolleri -->
-        <div v-if="auth.user" class="flex gap-2">
-          <button @click="editCategory" class="btn btn-outline btn-sm" title="Kategoriyi Düzenle">
+        <!-- Admin controls -->
+        <div v-if="auth.user && !isLoading" class="mb-4 flex justify-end gap-2">
+          <Link :href="route('categories.edit', category.id)" class="btn btn-ghost btn-sm text-xs">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
+              stroke-width="1.5"
               stroke="currentColor"
+              class="mr-1 h-4 w-4"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+              />
+            </svg>
+            Düzenle
+          </Link>
+
+          <button @click="deleteCategory(category.id)" class="btn btn-ghost btn-sm text-xs text-error">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="mr-1 h-4 w-4"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+              />
+            </svg>
+            Sil
+          </button>
+        </div>
+
+        <!-- List view of writes -->
+        <div v-if="isLoading" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div v-for="i in 3" :key="i" class="card h-[200px] border border-base-200 bg-base-100 shadow-md">
+            <div class="card-body p-4">
+              <div class="skeleton h-4 w-3/4 rounded-lg"></div>
+              <div class="mt-2 space-y-2">
+                <div class="skeleton h-4 w-full rounded-lg"></div>
+                <div class="skeleton h-4 w-5/6 rounded-lg"></div>
+              </div>
+              <div class="mt-4 flex gap-2">
+                <div class="skeleton h-4 w-16 rounded-lg"></div>
+                <div class="skeleton h-4 w-16 rounded-lg"></div>
+                <div class="skeleton h-4 w-16 rounded-lg"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-else>
+          <div v-if="writes.length > 0" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div
+              v-for="write in filteredWrites"
+              :key="write.id"
+              class="card h-[200px] border border-base-200 bg-base-100 shadow-md"
+            >
+              <div class="card-body p-4">
+                <h2 class="card-title line-clamp-2 text-base">
+                  <Link :href="route('writes.show', write.slug)" class="hover:text-primary">
+                    {{ write.title }}
+                  </Link>
+                </h2>
+                <p class="text-base-content/70 mt-2 line-clamp-2 text-sm">{{ write.summary }}</p>
+                <div class="text-base-content/70 mt-4 flex flex-wrap items-center gap-2 text-xs">
+                  <span class="flex items-center gap-1">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      class="h-3.5 w-3.5"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      />
+                    </svg>
+                    {{ write.views_count }}
+                  </span>
+                  <span class="whitespace-nowrap">{{ formatDate(write.created_at) }}</span>
+                  <span v-if="write.updated_at !== write.created_at" class="whitespace-nowrap">
+                    Son güncelleme: {{ formatDate(write.updated_at) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div v-else class="alert alert-info">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              class="h-5 w-5 shrink-0 stroke-current"
             >
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-              />
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
             </svg>
-            Düzenle
-          </button>
-          <Link :href="route('writes.create', { category: category.id })" class="btn btn-primary btn-sm">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            Yeni Yazı
-          </Link>
-        </div>
-      </div>
+            <span>Bu kategoride henüz yazı bulunmuyor.</span>
+          </div>
 
-      <div class="divider my-2"></div>
-
-      <!-- Liste Görünümü -->
-      <div class="space-y-4">
-        <div
-          v-for="write in paginatedWrites"
-          :key="write.id"
-          class="card border border-base-200 bg-base-100 shadow-sm transition-all hover:shadow-md"
-        >
-          <div class="card-body p-4">
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <!-- Kapak Resmi -->
-              <div v-if="write.cover_image" class="flex-shrink-0">
-                <img
-                  :src="write.cover_image"
-                  alt="Kapak Resmi"
-                  class="h-20 w-20 rounded-lg object-cover sm:h-16 sm:w-24"
-                  loading="lazy"
-                  :srcset="`${write.cover_image} 1x, ${write.cover_image} 2x`"
-                />
-              </div>
-
-              <!-- İçerik -->
-              <div class="min-w-0 flex-1">
-                <div class="flex items-start justify-between">
-                  <div class="min-w-0 flex-1">
-                    <Link
-                      :href="
-                        route('categories.showByCategory', {
-                          category: category.slug,
-                          slug: write.slug,
-                        })
-                      "
-                      class="hover:text-primary"
-                    >
-                      <div class="mb-2 flex items-center gap-2">
-                        <!-- Durum İkonları -->
-                        <span v-if="write.status === 'link_only'" class="text-primary" title="Dış Bağlantı">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-4 w-4"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
-                              clip-rule="evenodd"
-                            />
-                          </svg>
-                        </span>
-                        <span v-if="write.status === 'private'" class="text-warning" title="Gizli Yazı">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-4 w-4"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                              clip-rule="evenodd"
-                            />
-                          </svg>
-                        </span>
-                        <span v-if="write.status === 'draft'" class="text-gray-500" title="Taslak">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-4 w-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                            />
-                          </svg>
-                        </span>
-
-                        <h3 class="truncate text-lg font-semibold">{{ write.title }}</h3>
-                      </div>
-
-                      <p class="mb-2 line-clamp-2 text-sm text-gray-600">
-                        {{ truncateSummary(write.meta_description || write.summary) }}
-                      </p>
-                    </Link>
-
-                    <!-- Meta Bilgiler -->
-                    <div class="flex flex-wrap items-center gap-3 text-xs text-gray-500">
-                      <span class="flex items-center gap-1">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-3 w-3"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                          />
-                        </svg>
-                        {{ formatDate(write.published_at || write.created_at) }}
-                      </span>
-
-                      <span v-if="write.reading_time" class="flex items-center gap-1">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-3 w-3"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                        {{ write.reading_time }} dk okuma
-                      </span>
-
-                      <span class="badge badge-outline badge-xs">
-                        {{ getStatusText(write.status) }}
-                      </span>
-                    </div>
-                  </div>
-
-                  <!-- Admin Yazı Kontrolleri -->
-                  <div v-if="auth.user" class="ml-4 flex flex-col gap-1">
-                    <Link :href="route('writes.edit', write.id)" class="btn btn-ghost btn-xs" title="Yazıyı Düzenle">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-3 w-3"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                        />
-                      </svg>
-                    </Link>
-                    <button @click="deleteWrite(write)" class="btn btn-ghost btn-xs text-error" title="Yazıyı Sil">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-3 w-3"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
-                      </svg>
-                    </button>
-                  </div>
+          <!-- Loading more indicator -->
+          <div v-if="isLoadingMore" class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div v-for="i in 3" :key="i" class="card h-[200px] border border-base-200 bg-base-100 shadow-md">
+              <div class="card-body p-4">
+                <div class="skeleton h-4 w-3/4 rounded-lg"></div>
+                <div class="mt-2 space-y-2">
+                  <div class="skeleton h-4 w-full rounded-lg"></div>
+                  <div class="skeleton h-4 w-5/6 rounded-lg"></div>
+                </div>
+                <div class="mt-4 flex gap-2">
+                  <div class="skeleton h-4 w-16 rounded-lg"></div>
+                  <div class="skeleton h-4 w-16 rounded-lg"></div>
+                  <div class="skeleton h-4 w-16 rounded-lg"></div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Pagination -->
-      <div v-if="totalPages > 1" class="mt-6 flex justify-center">
-        <div class="join">
-          <button
-            v-for="page in totalPages"
-            :key="page"
-            @click="currentPage = page"
-            :class="['btn btn-sm join-item', currentPage === page ? 'btn-primary' : 'btn-outline']"
-          >
-            {{ page }}
-          </button>
+          <!-- Infinite scroll observer target -->
+          <div v-if="hasMore" ref="observerTarget" class="h-4 w-full"></div>
         </div>
-      </div>
-
-      <!-- Boş Durum -->
-      <div v-if="filteredWrites.length === 0" class="alert alert-info mt-6">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          ></path>
-        </svg>
-        <span>Bu kategoriye ait {{ auth.user ? 'yazı' : 'yayınlanmış yazı' }} bulunmamaktadır.</span>
       </div>
     </div>
   </CheckScreen>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, nextTick } from 'vue';
 import { usePage, Link, router } from '@inertiajs/vue3';
-import GoBackButton from '@/Components/GoBackButton.vue';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import gsap from 'gsap';
 
 /**
  * Component name definition
@@ -274,9 +187,12 @@ const writes = ref(props.writes || []);
 const auth = props.auth;
 const flashSuccess = ref(props.flash?.success);
 
-// Pagination
-const itemsPerPage = 10;
-const currentPage = ref(1);
+// Infinite scroll states
+const isLoading = ref(true);
+const isLoadingMore = ref(false);
+const page = ref(1);
+const hasMore = ref(true);
+const observerTarget = ref(null);
 
 /**
  * Filter writes based on user role and status
@@ -292,20 +208,61 @@ const filteredWrites = computed(() => {
 });
 
 /**
- * Paginated writes
+ * Load more writes when scrolling
  */
-const paginatedWrites = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage;
-  const end = start + itemsPerPage;
-  return filteredWrites.value.slice(start, end);
-});
+const loadMore = async () => {
+  if (isLoadingMore.value || !hasMore.value) return;
+
+  isLoadingMore.value = true;
+  page.value++;
+
+  try {
+    const response = await fetch(
+      route('api.categories.writes', {
+        category: category.value.id,
+        page: page.value,
+      })
+    );
+    const data = await response.json();
+
+    if (data.writes.length === 0) {
+      hasMore.value = false;
+    } else {
+      writes.value.push(...data.writes);
+    }
+  } catch (error) {
+    console.error('Error loading more writes:', error);
+  } finally {
+    isLoadingMore.value = false;
+  }
+};
 
 /**
- * Total number of pages
+ * Setup intersection observer for infinite scroll
  */
-const totalPages = computed(() => {
-  return Math.ceil(filteredWrites.value.length / itemsPerPage);
-});
+const setupInfiniteScroll = () => {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (entries[0].isIntersecting && !isLoadingMore.value && hasMore.value) {
+        loadMore();
+      }
+    },
+    {
+      rootMargin: '100px',
+      threshold: 0.1,
+    }
+  );
+
+  if (observerTarget.value) {
+    observer.observe(observerTarget.value);
+  }
+
+  return () => {
+    if (observerTarget.value) {
+      observer.unobserve(observerTarget.value);
+    }
+  };
+};
 
 /**
  * Format date for display
@@ -322,13 +279,6 @@ const formatDate = (dateString) => {
     day: 'numeric',
   });
 };
-
-/**
- * Compute category status for display
- */
-const categoryStatus = computed(() => {
-  return category.value.status === 'public' ? 'Açık' : 'Gizli';
-});
 
 /**
  * Navigate to edit page
@@ -395,7 +345,33 @@ const truncateSummary = (summary) => {
   return summary.length > 100 ? summary.slice(0, 100) + '...' : summary;
 };
 
+/**
+ * Animate skeleton loading
+ */
+const animateSkeleton = () => {
+  const skeletons = document.querySelectorAll('.skeleton');
+  gsap.to(skeletons, {
+    opacity: 0.5,
+    duration: 0.8,
+    stagger: 0.1,
+    repeat: -1,
+    yoyo: true,
+    ease: 'power1.inOut',
+  });
+};
+
 onMounted(() => {
+  // Start skeleton animation
+  animateSkeleton();
+
+  // Simulate initial loading delay
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 800);
+
+  // Setup infinite scroll
+  setupInfiniteScroll();
+
   if (flashSuccess.value) {
     setTimeout(() => {
       flashSuccess.value = null;
@@ -405,7 +381,34 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Line clamp utility for text truncation */
+.skeleton {
+  @apply bg-base-300;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-wrapper {
+  @apply animate-pulse;
+}
+
+/* Prevent text overflow */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -413,73 +416,38 @@ onMounted(() => {
   overflow: hidden;
 }
 
-/* Responsive styling */
-@media (max-width: 640px) {
-  .card-title {
-    font-size: 1rem;
-    line-height: 1.3;
-  }
-
-  .badge {
-    font-size: 0.65rem;
-  }
-
-  /* Stack admin controls vertically on mobile */
-  .admin-controls {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
+/* Ensure consistent card heights */
+.card {
+  display: flex;
+  flex-direction: column;
 }
 
-/* Hover effects */
-.card:hover {
-  transform: translateY(-1px);
+.card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Admin button styling */
-.btn-xs {
-  min-height: 1.5rem;
-  height: 1.5rem;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  font-size: 0.75rem;
+.card-title {
+  margin-bottom: 0.5rem;
 }
 
-/* Status icon styling */
-.status-icon {
-  flex-shrink: 0;
-}
-
-/* Truncate text utility */
-.truncate {
+/* Ensure links don't overflow */
+.card-title a {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  word-break: break-word;
 }
 
-/* Quill specific styles for truncated content */
-:deep(.ql-align-right) {
-  text-align: right;
+/* Add smooth transition for loading more content */
+.card {
+  transition: all 0.3s ease-in-out;
 }
 
-:deep(.ql-align-center) {
-  text-align: center;
-}
-
-:deep(.ql-align-justify) {
-  text-align: justify;
-}
-
-:deep(.ql-font-monospace) {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-}
-
-:deep([style*='color:']) {
-  /* Colors are handled by inline styles */
-}
-
-:deep([style*='background-color:']) {
-  padding: 0.1rem 0.2rem;
-  border-radius: 0.2rem;
+/* Ensure skeleton animations are smooth */
+.skeleton {
+  transition: opacity 0.3s ease-in-out;
 }
 </style>

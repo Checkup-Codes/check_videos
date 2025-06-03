@@ -246,9 +246,12 @@ class WriteService
             $query->orderBy('version', 'desc')->latest();
         }])->where('slug', $slug);
 
-        // Admin can view all writes, non-admin can only see published
+        // Admin can view all writes, non-admin can only see published or link_only
         if (!$isAdmin) {
-            $query->where('status', 'published');
+            $query->where(function ($q) {
+                $q->where('status', 'published')
+                    ->orWhere('status', Write::STATUS_LINK_ONLY);
+            });
         }
 
         $write = $query->firstOrFail();
