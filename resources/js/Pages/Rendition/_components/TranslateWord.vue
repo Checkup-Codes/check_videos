@@ -356,7 +356,44 @@ const startGameWithConfig = async () => {
 
   // Kelimeleri karıştır
   let gameWords = [...props.words];
-  gameWords.sort(() => Math.random() - 0.5);
+
+  // Öğrenilmemiş kelimelere öncelik ver
+  if (props.gameConfig.prioritizeUnlearned) {
+    const unlearned = gameWords.filter((w) => w.learning_status === 0);
+    const learning = gameWords.filter((w) => w.learning_status === 1);
+    const learned = gameWords.filter((w) => w.learning_status === 2);
+    gameWords = [...unlearned, ...learning, ...learned];
+  }
+
+  // Son öğrenilenlere öncelik ver
+  if (props.gameConfig.prioritizeRecentlyLearned) {
+    gameWords.sort((a, b) => {
+      const aDate = new Date(a.last_reviewed_at || 0);
+      const bDate = new Date(b.last_reviewed_at || 0);
+      return bDate - aDate;
+    });
+  }
+
+  // İşaretlenenlere öncelik ver
+  if (props.gameConfig.prioritizeFlagged) {
+    gameWords.sort((a, b) => {
+      if (a.is_flagged && !b.is_flagged) return -1;
+      if (!a.is_flagged && b.is_flagged) return 1;
+      return 0;
+    });
+  }
+
+  // En çok yanlış yapılanlara öncelik ver
+  if (props.gameConfig.prioritizeMostIncorrect) {
+    gameWords.sort((a, b) => {
+      const aIncorrect = a.incorrect_count || 0;
+      const bIncorrect = b.incorrect_count || 0;
+      return bIncorrect - aIncorrect;
+    });
+  }
+
+  // Son olarak rastgele karıştır
+  gameWords = gameWords.sort(() => Math.random() - 0.5);
 
   // Kelimeleri yükle
   await new Promise((resolve) => {

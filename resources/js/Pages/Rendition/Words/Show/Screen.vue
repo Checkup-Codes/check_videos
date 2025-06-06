@@ -31,10 +31,10 @@
               type="text"
               v-model="searchQuery"
               placeholder="Kelime ara..."
-              class="input-bordered input input-sm w-full"
+              class="input-bordered input input-sm w-52"
               @keyup.enter="filterWords"
             />
-            <button class="btn btn-sm btn-square" @click="filterWords">
+            <button class="btn btn-sm btn-square mx-5" @click="filterWords">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-4 w-4"
@@ -53,7 +53,7 @@
           </div>
         </div>
 
-        <!-- Tür Filtresi -->
+        <!-- Tür Filtresi
         <select
           v-model="filterType"
           class="select-bordered select select-sm min-w-[150px] flex-1"
@@ -64,9 +64,9 @@
           <option value="verb">Fiil</option>
           <option value="adjective">Sıfat</option>
           <option value="adverb">Zarf</option>
-        </select>
+        </select> -->
 
-        <!-- Durum Filtresi -->
+        <!-- Durum Filtresi 
         <select
           v-model="filterStatus"
           class="select-bordered select select-sm min-w-[150px] flex-1"
@@ -76,7 +76,7 @@
           <option value="0">Öğrenilmedi</option>
           <option value="1">Öğreniliyor</option>
           <option value="2">Öğrenildi</option>
-        </select>
+        </select>-->
       </div>
 
       <!-- Oyun Komponentleri -->
@@ -114,41 +114,254 @@
 
         <!-- Kelimeler Görünümü -->
         <div v-else key="wordList">
-          <!-- Oyun Seçenekleri ve Ayarları -->
-          <div v-if="hasEnoughWords" class="mb-6 rounded-lg border border-base-300 bg-base-100 p-4">
-            <div class="flex flex-wrap items-center gap-4">
-              <div class="form-control">
-                <label class="label cursor-pointer gap-2">
-                  <span class="label-text">Soru Sayısı: {{ gameConfig.questionCount }}</span>
-                  <input
-                    type="range"
-                    min="5"
-                    max="20"
-                    v-model="gameConfig.questionCount"
-                    class="range range-primary range-xs"
-                  />
-                </label>
-              </div>
-
-              <div class="form-control">
-                <label class="label cursor-pointer">
-                  <span class="label-text mr-2">Öğrenilmemiş Kelimelere Öncelik Ver</span>
-                  <input type="checkbox" class="toggle toggle-sm" v-model="prioritizeUnlearned" />
-                </label>
-              </div>
-
-              <div class="divider divider-horizontal"></div>
-
-              <div class="grid grid-cols-3 gap-2">
-                <button
-                  v-for="game in games"
-                  :key="game.route"
-                  @click="startGame(game.route)"
-                  class="btn btn-sm"
-                  :class="{ 'btn-primary': currentGame === game.route, 'btn-outline': currentGame !== game.route }"
+          <!-- Oyun Ayarları -->
+          <div class="mb-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+            <!-- Oyun Butonları -->
+            <div class="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <button
+                @click="startGame('multiple-choice')"
+                class="group relative flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-all hover:border-blue-500 hover:shadow-md"
+                :disabled="!hasEnoughWords"
+              >
+                <div
+                  class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-500 transition-all group-hover:bg-blue-100"
                 >
-                  {{ game.name }}
-                </button>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                    />
+                  </svg>
+                </div>
+                <div class="text-left">
+                  <h3 class="font-medium text-gray-900">Çoktan Seçmeli</h3>
+                  <p class="text-sm text-gray-500">Doğru cevabı seçin</p>
+                </div>
+              </button>
+
+              <button
+                @click="startGame('fill-in-the-blank')"
+                class="group relative flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-all hover:border-green-500 hover:shadow-md"
+                :disabled="!hasEnoughWords"
+              >
+                <div
+                  class="flex h-12 w-12 items-center justify-center rounded-full bg-green-50 text-green-500 transition-all group-hover:bg-green-100"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                    />
+                  </svg>
+                </div>
+                <div class="text-left">
+                  <h3 class="font-medium text-gray-900">Boşluk Doldurma</h3>
+                  <p class="text-sm text-gray-500">Eksik kelimeyi yazın</p>
+                </div>
+              </button>
+
+              <button
+                @click="startGame('word-completion')"
+                class="group relative flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-all hover:border-purple-500 hover:shadow-md"
+                :disabled="!hasEnoughWords"
+              >
+                <div
+                  class="flex h-12 w-12 items-center justify-center rounded-full bg-purple-50 text-purple-500 transition-all group-hover:bg-purple-100"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+                    />
+                  </svg>
+                </div>
+                <div class="text-left">
+                  <h3 class="font-medium text-gray-900">Kelime Tamamlama</h3>
+                  <p class="text-sm text-gray-500">Eksik harfleri tamamlayın</p>
+                </div>
+              </button>
+            </div>
+
+            <div v-if="isLoggedIn" class="collapse">
+              <input type="checkbox" class="peer" />
+              <div class="collapse-title text-sm font-medium text-gray-700">
+                Oyun Ayarları ve Filtreler
+                <span class="ml-2 text-xs text-gray-500">(Varsayılan: Rastgele)</span>
+              </div>
+              <div class="collapse-content">
+                <div class="space-y-4">
+                  <!-- Sıfırlama Butonu -->
+                  <div class="flex justify-end">
+                    <button @click="resetGameConfig" class="btn btn-ghost btn-sm">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="mr-1 h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        />
+                      </svg>
+                      Ayarları Sıfırla
+                    </button>
+                  </div>
+
+                  <!-- Kelime Türü Filtresi -->
+                  <div class="form-control">
+                    <label class="label">
+                      <span class="label-text font-medium">Kelime Türü</span>
+                    </label>
+                    <div class="flex flex-wrap gap-2">
+                      <label
+                        v-for="(count, type) in wordCounts.types"
+                        :key="type"
+                        class="btn btn-sm"
+                        :class="{
+                          'btn-primary': gameConfig.wordType === type,
+                          'cursor-not-allowed opacity-50': !hasEnoughWords(count),
+                        }"
+                      >
+                        <input
+                          type="radio"
+                          v-model="gameConfig.wordType"
+                          :value="type"
+                          class="hidden"
+                          :disabled="!hasEnoughWords(count)"
+                        />
+                        {{ getWordTypeLabel(type) }} ({{ count }})
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Öğrenme Durumu Filtresi -->
+                  <div class="form-control">
+                    <label class="label">
+                      <span class="label-text font-medium">Öğrenme Durumu</span>
+                    </label>
+                    <div class="flex flex-wrap gap-2">
+                      <label
+                        v-for="(count, status) in wordCounts.status"
+                        :key="status"
+                        class="btn btn-sm"
+                        :class="{
+                          'btn-primary': gameConfig.learningStatus === status.toString(),
+                          'cursor-not-allowed opacity-50': !hasEnoughWords(count),
+                        }"
+                      >
+                        <input
+                          type="radio"
+                          v-model="gameConfig.learningStatus"
+                          :value="status.toString()"
+                          class="hidden"
+                          :disabled="!hasEnoughWords(count)"
+                        />
+                        {{ getLearningStatusLabel(status) }} ({{ count }})
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Zorluk Seviyesi Filtresi -->
+                  <div class="form-control">
+                    <label class="label">
+                      <span class="label-text font-medium">Zorluk Seviyesi</span>
+                    </label>
+                    <div class="flex flex-wrap gap-2">
+                      <label
+                        v-for="(count, level) in wordCounts.difficulty"
+                        :key="level"
+                        class="btn btn-sm"
+                        :class="{
+                          'btn-primary': gameConfig.difficultyLevel === level,
+                          'cursor-not-allowed opacity-50': !hasEnoughWords(count),
+                        }"
+                      >
+                        <input
+                          type="radio"
+                          v-model="gameConfig.difficultyLevel"
+                          :value="level"
+                          class="hidden"
+                          :disabled="!hasEnoughWords(count)"
+                        />
+                        {{ getDifficultyLabel(level) }} ({{ count }})
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Öncelik Filtreleri -->
+                  <div class="divider text-xs text-gray-500">Öncelik Filtreleri</div>
+
+                  <div class="grid grid-cols-2 gap-2">
+                    <label
+                      class="flex cursor-pointer items-center justify-between rounded-lg border p-3 hover:bg-gray-50"
+                    >
+                      <span class="text-sm">Son Öğrenilenler</span>
+                      <input type="checkbox" class="toggle toggle-sm" v-model="gameConfig.prioritizeRecentlyLearned" />
+                    </label>
+
+                    <label
+                      class="flex cursor-pointer items-center justify-between rounded-lg border p-3 hover:bg-gray-50"
+                    >
+                      <span class="text-sm">İşaretlenenler</span>
+                      <input type="checkbox" class="toggle toggle-sm" v-model="gameConfig.prioritizeFlagged" />
+                    </label>
+
+                    <label
+                      class="flex cursor-pointer items-center justify-between rounded-lg border p-3 hover:bg-gray-50"
+                    >
+                      <span class="text-sm">En Çok Yanlış Yapılanlar</span>
+                      <input type="checkbox" class="toggle toggle-sm" v-model="gameConfig.prioritizeMostIncorrect" />
+                    </label>
+
+                    <label
+                      class="flex cursor-pointer items-center justify-between rounded-lg border p-3 hover:bg-gray-50"
+                    >
+                      <span class="text-sm">En Eski Güncellenenler</span>
+                      <input type="checkbox" class="toggle toggle-sm" v-model="gameConfig.prioritizeOldestUpdated" />
+                    </label>
+
+                    <label
+                      class="flex cursor-pointer items-center justify-between rounded-lg border p-3 hover:bg-gray-50"
+                    >
+                      <span class="text-sm">Soru Sayısı</span>
+                      <select v-model="gameConfig.questionCount" class="select-bordered select select-sm w-24">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="25">25</option>
+                      </select>
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -160,9 +373,105 @@
                 <tr>
                   <th>Kelime</th>
                   <th>Anlam</th>
-                  <th>Tür</th>
+                  <th>
+                    <div class="flex items-center gap-2">
+                      Tür
+                      <button
+                        class="btn btn-ghost btn-xs"
+                        @click="sortTable('type')"
+                        :class="{
+                          'text-primary': sortState.type !== 'none',
+                          'opacity-50': sortState.type === 'none',
+                        }"
+                      >
+                        <svg
+                          v-if="sortState.type === 'none'"
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+                          />
+                        </svg>
+                        <svg
+                          v-else-if="sortState.type === 'asc'"
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                        </svg>
+                        <svg
+                          v-else
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                    </div>
+                  </th>
                   <th>Durum</th>
-                  <th>Zorluk</th>
+                  <th>
+                    <div class="flex items-center gap-2">
+                      Başarı
+                      <button
+                        class="btn btn-ghost btn-xs"
+                        @click="sortTable('success')"
+                        :class="{
+                          'text-primary': sortState.success !== 'none',
+                          'opacity-50': sortState.success === 'none',
+                        }"
+                      >
+                        <svg
+                          v-if="sortState.success === 'none'"
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+                          />
+                        </svg>
+                        <svg
+                          v-else-if="sortState.success === 'asc'"
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                        </svg>
+                        <svg
+                          v-else
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                    </div>
+                  </th>
                   <th v-if="isLoggedIn"></th>
                 </tr>
               </thead>
@@ -187,8 +496,8 @@
                     </div>
                   </td>
                   <td>
-                    <div class="badge badge-sm" :class="getDifficultyBadgeClass(word.difficulty_level)">
-                      {{ getDifficultyLabel(word.difficulty_level) }}
+                    <div class="badge badge-sm" :class="getSuccessRateBadgeClass(calculateSuccessRate(word).rate)">
+                      {{ calculateSuccessRate(word).label }}
                     </div>
                   </td>
                   <td v-if="isLoggedIn">
@@ -200,7 +509,7 @@
           </div>
 
           <!-- Pagination -->
-          <div v-if="filteredWordList.length > perPage" class="mt-4 flex justify-between">
+          <div v-if="sortedWords.length > perPage" class="mt-4 flex justify-between">
             <div>
               <span class="text-sm opacity-70">
                 {{ paginationInfo }}
@@ -305,9 +614,17 @@ const games = [
   { name: 'Kelime Tamamlama', route: 'word-completion' },
 ];
 
-// Basitleştirilmiş oyun ayarları
+// Oyun ayarları
 const gameConfig = ref({
   questionCount: 10,
+  prioritizeUnlearned: false,
+  prioritizeRecentlyLearned: false,
+  prioritizeFlagged: false,
+  prioritizeMostIncorrect: false,
+  prioritizeOldestUpdated: false,
+  wordType: '',
+  learningStatus: '',
+  difficultyLevel: '',
 });
 
 // Kelimeleri filtrele
@@ -341,19 +658,19 @@ const filteredWordList = computed(() => {
 // Pagination'a göre kelime listesi
 const displayedWords = computed(() => {
   const startIndex = (currentPage.value - 1) * perPage.value;
-  return filteredWordList.value.slice(startIndex, startIndex + perPage.value);
+  return sortedWords.value.slice(startIndex, startIndex + perPage.value);
 });
 
 // Toplam sayfa sayısı
 const totalPages = computed(() => {
-  return Math.ceil(filteredWordList.value.length / perPage.value);
+  return Math.ceil(sortedWords.value.length / perPage.value);
 });
 
 // Pagination bilgisi
 const paginationInfo = computed(() => {
   const start = (currentPage.value - 1) * perPage.value + 1;
-  const end = Math.min(start + perPage.value - 1, filteredWordList.value.length);
-  return `${start}-${end} / ${filteredWordList.value.length}`;
+  const end = Math.min(start + perPage.value - 1, sortedWords.value.length);
+  return `${start}-${end} / ${sortedWords.value.length}`;
 });
 
 // Sayfa değiştirme
@@ -376,25 +693,131 @@ const filterWords = () => {
 // Filtered words for game
 const filteredWords = computed(() => {
   if (!props.words) return [];
-
   let wordsToUse = [...props.words];
 
-  // Prioritize unlearned words if selected
+  // Kelime türüne göre filtrele
+  if (gameConfig.value.wordType) {
+    wordsToUse = wordsToUse.filter((word) => word.type === gameConfig.value.wordType);
+  }
+
+  // Öğrenme durumuna göre filtrele
+  if (gameConfig.value.learningStatus !== '') {
+    wordsToUse = wordsToUse.filter((word) => word.learning_status === parseInt(gameConfig.value.learningStatus));
+  }
+
+  // Zorluk seviyesine göre filtrele
+  if (gameConfig.value.difficultyLevel) {
+    wordsToUse = wordsToUse.filter((word) => word.difficulty_level === gameConfig.value.difficultyLevel);
+  }
+
+  // Öncelik filtrelerini uygula
+  if (gameConfig.value.prioritizeRecentlyLearned) {
+    wordsToUse.sort((a, b) => {
+      const aDate = new Date(a.last_reviewed_at || 0);
+      const bDate = new Date(b.last_reviewed_at || 0);
+      return bDate - aDate;
+    });
+  }
+
+  if (gameConfig.value.prioritizeFlagged) {
+    wordsToUse.sort((a, b) => {
+      if (a.is_flagged && !b.is_flagged) return -1;
+      if (!a.is_flagged && b.is_flagged) return 1;
+      return 0;
+    });
+  }
+
+  if (gameConfig.value.prioritizeMostIncorrect) {
+    wordsToUse.sort((a, b) => {
+      const aIncorrect = a.incorrect_count || 0;
+      const bIncorrect = b.incorrect_count || 0;
+      return bIncorrect - aIncorrect;
+    });
+  }
+
+  if (gameConfig.value.prioritizeOldestUpdated) {
+    wordsToUse.sort((a, b) => {
+      // Hiç sorulmamış kelimeleri (review_count = 0 veya last_reviewed_at = null) en başa al
+      const aNeverReviewed = !a.review_count || a.review_count === 0 || !a.last_reviewed_at;
+      const bNeverReviewed = !b.review_count || b.review_count === 0 || !b.last_reviewed_at;
+
+      if (aNeverReviewed && bNeverReviewed) return 0;
+      if (aNeverReviewed) return -1;
+      if (bNeverReviewed) return 1;
+
+      // Sorulmuş kelimeleri last_reviewed_at'e göre sırala
+      const aDate = new Date(a.last_reviewed_at);
+      const bDate = new Date(b.last_reviewed_at);
+      return aDate - bDate; // En eski tarihli olanlar önce
+    });
+  }
+
+  // Öğrenilmemiş kelimelere öncelik ver
   if (prioritizeUnlearned.value) {
     wordsToUse.sort((a, b) => {
       return (a.learning_status || 0) - (b.learning_status || 0);
     });
   }
 
-  // Limit to questionCount words
-  return wordsToUse.slice(0, gameConfig.value.questionCount);
+  // Son olarak rastgele karıştır
+  wordsToUse = wordsToUse.sort(() => Math.random() - 0.5);
+
+  // Seçilen soru sayısı kadar kelime döndür
+  return wordsToUse.slice(0, parseInt(gameConfig.value.questionCount));
 });
 
-const hasEnoughWords = computed(() => props.words && props.words.length >= 5);
+// Kelime sayılarını hesapla
+const wordCounts = computed(() => {
+  if (!props.words) return { types: {}, status: {}, difficulty: {} };
+
+  const counts = {
+    types: {},
+    status: {},
+    difficulty: {},
+  };
+
+  props.words.forEach((word) => {
+    // Kelime türü sayıları
+    counts.types[word.type] = (counts.types[word.type] || 0) + 1;
+
+    // Öğrenme durumu sayıları
+    counts.status[word.learning_status] = (counts.status[word.learning_status] || 0) + 1;
+
+    // Zorluk seviyesi sayıları
+    counts.difficulty[word.difficulty_level] = (counts.difficulty[word.difficulty_level] || 0) + 1;
+  });
+
+  return counts;
+});
+
+// Yeterli kelime var mı kontrol et
+const hasEnoughWords = (count) => {
+  return count >= 5;
+};
 
 // Oyunu başlat
 const startGame = (gameType) => {
-  if (!hasEnoughWords.value) return;
+  // Seçili filtreye göre kelime sayısını kontrol et
+  let filteredCount = props.words?.length || 0;
+
+  if (gameConfig.value.wordType) {
+    filteredCount = props.words?.filter((word) => word.type === gameConfig.value.wordType).length || 0;
+  }
+
+  if (gameConfig.value.learningStatus !== '') {
+    filteredCount =
+      props.words?.filter((word) => word.learning_status === parseInt(gameConfig.value.learningStatus)).length || 0;
+  }
+
+  if (gameConfig.value.difficultyLevel) {
+    filteredCount =
+      props.words?.filter((word) => word.difficulty_level === gameConfig.value.difficultyLevel).length || 0;
+  }
+
+  if (!hasEnoughWords(filteredCount)) {
+    alert('Seçili kategoride yeterli kelime bulunmamaktadır. En az 5 kelime gereklidir.');
+    return;
+  }
 
   loadingGame.value = true;
   currentGame.value = gameType;
@@ -484,6 +907,29 @@ const getLearningStatusLabel = (status) => {
   }
 };
 
+// Başarı yüzdesini hesapla
+const calculateSuccessRate = (word) => {
+  const totalShows = word.review_count || 0;
+  const incorrectCount = word.incorrect_count || 0;
+
+  if (totalShows === 0) return { rate: 0, label: 'Hiç' };
+
+  const successRate = ((totalShows - incorrectCount) / totalShows) * 100;
+  return {
+    rate: Math.round(successRate),
+    label: `%${Math.round(successRate)}`,
+  };
+};
+
+// Başarı yüzdesine göre renk sınıfını belirle
+const getSuccessRateBadgeClass = (rate) => {
+  if (rate === 0) return 'badge-ghost';
+  if (rate >= 80) return 'badge-success';
+  if (rate >= 60) return 'badge-info';
+  if (rate >= 40) return 'badge-warning';
+  return 'badge-error';
+};
+
 // Filtrelerdeki değişiklikleri izle
 watch([searchQuery, filterType, filterStatus], () => {
   if (searchQuery.value.length > 2 || searchQuery.value.length === 0) {
@@ -494,7 +940,7 @@ watch([searchQuery, filterType, filterStatus], () => {
 // Sayfa yüklendiğinde, URL'deki oyun parametresini kontrol et
 onMounted(() => {
   const gameParam = queryParams.value.game;
-  if (gameParam && hasEnoughWords.value) {
+  if (gameParam) {
     startGame(gameParam);
   }
 });
@@ -512,6 +958,80 @@ const getPrimaryMeaning = (word) => {
   }
   // Fallback to the old way (for backward compatibility)
   return word.meaning ? truncateText(word.meaning, 50) : '';
+};
+
+// Sıralama durumu
+const sortState = ref({
+  type: 'none', // 'none', 'asc', 'desc'
+  success: 'none',
+});
+
+// Sıralama fonksiyonu
+const sortTable = (column) => {
+  if (sortState.value[column] === 'none') {
+    sortState.value[column] = 'asc';
+  } else if (sortState.value[column] === 'asc') {
+    sortState.value[column] = 'desc';
+  } else {
+    sortState.value[column] = 'none';
+  }
+
+  // Diğer sütunun sıralamasını sıfırla
+  const otherColumn = column === 'type' ? 'success' : 'type';
+  sortState.value[otherColumn] = 'none';
+};
+
+// Sıralanmış kelimeler
+const sortedWords = computed(() => {
+  let result = [...filteredWordList.value];
+
+  if (sortState.value.type !== 'none') {
+    result.sort((a, b) => {
+      const comparison = a.type.localeCompare(b.type);
+      return sortState.value.type === 'asc' ? comparison : -comparison;
+    });
+  }
+
+  if (sortState.value.success !== 'none') {
+    result.sort((a, b) => {
+      const aRate = calculateSuccessRate(a).rate;
+      const bRate = calculateSuccessRate(b).rate;
+      return sortState.value.success === 'asc' ? aRate - bRate : bRate - aRate;
+    });
+  }
+
+  return result;
+});
+
+// Kelime türlerini Türkçe'ye çevir
+const getWordTypeLabel = (type) => {
+  switch (type) {
+    case 'noun':
+      return 'İsim';
+    case 'verb':
+      return 'Fiil';
+    case 'adjective':
+      return 'Sıfat';
+    case 'adverb':
+      return 'Zarf';
+    default:
+      return type;
+  }
+};
+
+// Ayarları sıfırla
+const resetGameConfig = () => {
+  gameConfig.value = {
+    questionCount: 10,
+    prioritizeUnlearned: false,
+    prioritizeRecentlyLearned: false,
+    prioritizeFlagged: false,
+    prioritizeMostIncorrect: false,
+    prioritizeOldestUpdated: false,
+    wordType: '',
+    learningStatus: '',
+    difficultyLevel: '',
+  };
 };
 </script>
 

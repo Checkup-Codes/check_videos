@@ -346,10 +346,37 @@ const startGameWithConfig = async () => {
 
     // Önce öğrenilmemiş, sonra öğreniliyor, sonra öğrenilmiş kelimelerden soru oluştur
     gameWords = [...unlearned, ...learning, ...learned];
-  } else {
-    // Rastgele karıştır
-    gameWords = gameWords.sort(() => 0.5 - Math.random());
   }
+
+  // Son öğrenilenlere öncelik ver
+  if (props.gameConfig.prioritizeRecentlyLearned) {
+    gameWords.sort((a, b) => {
+      const aDate = new Date(a.last_reviewed_at || 0);
+      const bDate = new Date(b.last_reviewed_at || 0);
+      return bDate - aDate;
+    });
+  }
+
+  // İşaretlenenlere öncelik ver
+  if (props.gameConfig.prioritizeFlagged) {
+    gameWords.sort((a, b) => {
+      if (a.is_flagged && !b.is_flagged) return -1;
+      if (!a.is_flagged && b.is_flagged) return 1;
+      return 0;
+    });
+  }
+
+  // En çok yanlış yapılanlara öncelik ver
+  if (props.gameConfig.prioritizeMostIncorrect) {
+    gameWords.sort((a, b) => {
+      const aIncorrect = a.incorrect_count || 0;
+      const bIncorrect = b.incorrect_count || 0;
+      return bIncorrect - aIncorrect;
+    });
+  }
+
+  // Son olarak rastgele karıştır
+  gameWords = gameWords.sort(() => Math.random() - 0.5);
 
   // Soru sayısını sınırla
   const questionCount = Math.min(props.gameConfig.questionCount, gameWords.length);
