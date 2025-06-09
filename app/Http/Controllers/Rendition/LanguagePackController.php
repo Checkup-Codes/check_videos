@@ -14,9 +14,11 @@ class LanguagePackController extends Controller
 {
     public function index(Request $request)
     {
-        $languagePacks = LanguagePack::with('words')->get();
+        $languagePacks = LanguagePack::with(['words' => function ($query) {
+            $query->with(['meanings', 'exampleSentences', 'synonyms']);
+        }])->get();
 
-        // her paketin relation'dan toplam kelime sayısını al ve dd et
+        // her paketin relation'dan toplam kelime sayısını al
         foreach ($languagePacks as $languagePack) {
             $languagePack->word_count = $languagePack->words()->count();
         }
@@ -71,48 +73,90 @@ class LanguagePackController extends Controller
 
             if (isset($jsonData['words']) && is_array($jsonData['words'])) {
                 $now = now();
-                $wordIds = [];
+                $newWordIds = [];
+                $existingWordIds = [];
 
                 foreach ($jsonData['words'] as $wordData) {
-                    $word = Word::create([
-                        'word' => $wordData['word'],
-                        'meaning' => $wordData['meaning'],
-                        'type' => $wordData['type'],
-                        'language' => $wordData['language'],
-                        'learning_status' => $wordData['learning_status'] ?? 0,
-                        'flag' => $wordData['flag'] ?? false,
-                        'difficulty_level' => $wordData['difficulty_level'],
-                        'incorrect_count' => 0,
-                        'review_count' => 0,
-                        'last_review_date' => $now,
-                    ]);
+                    // Kelime ve türüne göre var mı kontrol et
+                    $existingWord = Word::where('word', $wordData['word'])
+                        ->where('type', $wordData['type'])
+                        ->where('language', $wordData['language'])
+                        ->first();
 
-                    // Örnek cümleleri ekle
-                    if (isset($wordData['example_sentences']) && is_array($wordData['example_sentences'])) {
-                        foreach ($wordData['example_sentences'] as $sentence) {
-                            $word->exampleSentences()->create([
-                                'sentence' => $sentence['sentence'],
-                                'translation' => $sentence['translation'],
-                                'language' => $sentence['language'],
-                            ]);
+                    if ($existingWord) {
+                        // Kelime zaten varsa, ID'sini kaydet
+                        $existingWordIds[] = $existingWord->id;
+                    } else {
+                        // Yeni kelime oluştur
+                        $word = Word::create([
+                            'word' => $wordData['word'],
+                            'type' => $wordData['type'],
+                            'language' => $wordData['language'],
+                            'learning_status' => $wordData['learning_status'] ?? 0,
+                            'flag' => $wordData['flag'] ?? false,
+                            'difficulty_level' => $wordData['difficulty_level'],
+                            'incorrect_count' => 0,
+                            'review_count' => 0,
+                            'last_review_date' => $now,
+                        ]);
+
+                        // Anlamları ekle
+                        if (isset($wordData['meanings']) && is_array($wordData['meanings'])) {
+                            foreach ($wordData['meanings'] as $index => $meaningData) {
+                                $word->meanings()->create([
+                                    'meaning' => $meaningData['meaning'],
+                                    'is_primary' => $meaningData['is_primary'] ?? ($index === 0),
+                                    'display_order' => $meaningData['display_order'] ?? $index,
+                                ]);
+                            }
                         }
-                    }
 
-                    // Eş anlamlıları ekle
-                    if (isset($wordData['synonyms']) && is_array($wordData['synonyms'])) {
-                        foreach ($wordData['synonyms'] as $synonym) {
-                            $word->synonyms()->create([
-                                'synonym' => $synonym['synonym'],
-                                'language' => $synonym['language'],
-                            ]);
+                        // Örnek cümleleri ekle
+                        if (isset($wordData['example_sentences']) && is_array($wordData['example_sentences'])) {
+                            foreach ($wordData['example_sentences'] as $sentence) {
+                                $word->exampleSentences()->create([
+                                    'sentence' => $sentence['sentence'],
+                                    'translation' => $sentence['translation'],
+                                    'language' => $sentence['language'],
+                                ]);
+                            }
                         }
-                    }
 
-                    $wordIds[] = $word->id;
+                        // Eş anlamlıları ekle
+                        if (isset($wordData['synonyms']) && is_array($wordData['synonyms'])) {
+                            foreach ($wordData['synonyms'] as $synonym) {
+                                $word->synonyms()->create([
+                                    'synonym' => $synonym['synonym'],
+                                    'language' => $synonym['language'],
+                                ]);
+                            }
+                        }
+
+                        $newWordIds[] = $word->id;
+                    }
                 }
 
-                // Kelimeleri dil paketine ekle
-                $languagePack->words()->attach($wordIds);
+                // Yeni kelimeleri pakete ekle
+                if (!empty($newWordIds)) {
+                    $languagePack->words()->attach($newWordIds);
+                }
+
+                // Var olan kelimeleri pakete ekle
+                if (!empty($existingWordIds)) {
+                    $languagePack->words()->attach($existingWordIds);
+                }
+
+                // Başarı mesajını güncelle
+                $message = 'Dil paketi başarıyla oluşturuldu.';
+                if (!empty($existingWordIds)) {
+                    $message .= ' ' . count($existingWordIds) . ' kelime zaten mevcuttu ve pakete eklendi.';
+                }
+                if (!empty($newWordIds)) {
+                    $message .= ' ' . count($newWordIds) . ' yeni kelime eklendi.';
+                }
+
+                return Redirect::route('rendition.language-packs.index')
+                    ->with('success', $message);
             }
         }
 
@@ -195,7 +239,7 @@ class LanguagePackController extends Controller
 
     public function export($id)
     {
-        $languagePack = LanguagePack::with(['words.exampleSentences', 'words.synonyms'])->findOrFail($id);
+        $languagePack = LanguagePack::with(['words.exampleSentences', 'words.synonyms', 'words.meanings'])->findOrFail($id);
         $now = now();
 
         $exportData = [
@@ -207,7 +251,6 @@ class LanguagePackController extends Controller
                 return [
                     'id' => $word->id,
                     'word' => $word->word,
-                    'meaning' => $word->meaning,
                     'type' => $word->type,
                     'language' => $word->language,
                     'learning_status' => $word->learning_status,
@@ -218,6 +261,13 @@ class LanguagePackController extends Controller
                     'last_review_date' => $now->toDateTimeString(),
                     'created_at' => $now->toDateTimeString(),
                     'updated_at' => $now->toDateTimeString(),
+                    'meanings' => $word->meanings->map(function ($meaning) {
+                        return [
+                            'meaning' => $meaning->meaning,
+                            'is_primary' => $meaning->is_primary,
+                            'display_order' => $meaning->display_order
+                        ];
+                    }),
                     'example_sentences' => $word->exampleSentences->map(function ($sentence) {
                         return [
                             'sentence' => $sentence->sentence,
@@ -237,8 +287,9 @@ class LanguagePackController extends Controller
 
         $filename = "{$languagePack->slug}-export-{$now->format('Y-m-d')}.json";
 
-        return response()->json($exportData)
-            ->header('Content-Disposition', "attachment; filename={$filename}")
-            ->header('Content-Type', 'application/json');
+        return Response::json($exportData, 200, [
+            'Content-Type' => 'application/json',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\""
+        ]);
     }
 }

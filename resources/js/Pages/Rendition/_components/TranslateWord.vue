@@ -151,8 +151,39 @@
             :disabled="!gameState.userInput.trim() || gameState.showAnswer"
             class="w-full rounded-lg bg-black px-4 py-3 text-center text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Cevapla
+            {{ gameState.showAnswer ? 'Sonraki Soru' : 'Cevapla' }}
           </button>
+        </div>
+
+        <!-- Cevap gösterimi -->
+        <div
+          v-if="gameState.showAnswer"
+          class="mt-4 rounded-lg p-4"
+          :class="{
+            'bg-red-50': !gameState.isCorrect,
+            'bg-green-50': gameState.isCorrect,
+          }"
+        >
+          <p
+            class="text-sm font-medium"
+            :class="{
+              'text-red-600': !gameState.isCorrect,
+              'text-green-600': gameState.isCorrect,
+            }"
+          >
+            Doğru Cevap:
+          </p>
+          <p class="mt-1 text-gray-700">{{ gameState.currentQuestion.meaning }}</p>
+
+          <!-- Tüm anlamlar -->
+          <div v-if="gameState.currentQuestion.meanings && gameState.currentQuestion.meanings.length > 1" class="mt-3">
+            <p class="text-sm font-medium text-gray-600">Diğer Anlamlar:</p>
+            <ul class="mt-1 list-inside list-disc space-y-1 text-sm text-gray-700">
+              <li v-for="(meaning, index) in gameState.currentQuestion.meanings" :key="index">
+                {{ meaning.meaning }}
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -449,12 +480,15 @@ const loadNextQuestion = () => {
 
 // Cevabı kontrol et
 const checkAnswer = () => {
-  if (!gameState.value.userInput.trim() || gameState.value.showAnswer) return;
+  if (!gameState.value.userInput.trim()) return;
 
   const userAnswer = gameState.value.userInput.trim().toLowerCase();
-  const correctAnswer = gameState.value.currentQuestion.meaning.toLowerCase();
 
-  gameState.value.isCorrect = userAnswer === correctAnswer;
+  // Tüm anlamları kontrol et
+  const meanings = gameState.value.currentQuestion.meanings || [{ meaning: gameState.value.currentQuestion.meaning }];
+  const isCorrect = meanings.some((meaning) => meaning.meaning.toLowerCase() === userAnswer);
+
+  gameState.value.isCorrect = isCorrect;
 
   // Kullanıcı yanıtını kaydet
   gameState.value.userResponses.push({
@@ -474,7 +508,7 @@ const checkAnswer = () => {
   const newProgress = Math.round(((gameState.value.currentIndex + 1) / gameState.value.totalQuestions) * 100);
   animateProgress(newProgress);
 
-  // Sonraki soruya geç
+  // 2 saniye sonra sonraki soruya geç
   setTimeout(() => {
     // Input alanının stillerini sıfırla
     gsap.set(answerInput.value, {
@@ -488,7 +522,7 @@ const checkAnswer = () => {
     gameState.value.showAnswer = false;
     gameState.value.progress = 0;
     loadNextQuestion();
-  }, 1500);
+  }, 2000);
 };
 
 // Puan hesapla
@@ -517,14 +551,6 @@ const getWordType = (type) => {
 // Oyunu bitir
 const endGame = () => {
   gameState.value.isPlaying = false;
-
-  // DOM güncellemesinden sonra istatistikleri güncelle
-  nextTick(() => {
-    if (hasUser.value && gameState.value.userResponses.length > 0) {
-      console.log('İstatistikler güncelleniyor...');
-      updateWordStats();
-    }
-  });
 };
 
 // Kelime istatistiklerini güncelle
@@ -547,7 +573,9 @@ const updateWordStats = () => {
         console.log('İstatistikler başarıyla güncellendi');
         isUpdating.value = false;
         // İstatistikler güncellendikten sonra pakete dön
-        emit('game-completed');
+        setTimeout(() => {
+          emit('game-completed');
+        }, 1000);
       },
       onError: (error) => {
         console.error('İstatistik güncelleme hatası:', error);

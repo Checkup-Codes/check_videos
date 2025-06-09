@@ -179,6 +179,88 @@
           Kontrol Et
         </button>
       </div>
+
+      <!-- Sanal Klavye -->
+      <div v-if="showVirtualKeyboard" class="mt-4">
+        <div class="flex flex-col gap-1 rounded-lg border border-gray-200 bg-gray-100 p-2">
+          <!-- Üst Sıra -->
+          <div class="flex gap-1">
+            <button
+              v-for="letter in ['q', 'w', 'e', 'r', 't', 'y', 'u', 'ı', 'o', 'p', 'ğ', 'ü']"
+              :key="letter"
+              @click="selectLetter(letter)"
+              class="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 active:bg-gray-100"
+            >
+              {{ letter }}
+            </button>
+          </div>
+          <!-- Orta Sıra -->
+          <div class="flex gap-1">
+            <button
+              v-for="letter in ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ş', 'i']"
+              :key="letter"
+              @click="selectLetter(letter)"
+              class="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 active:bg-gray-100"
+            >
+              {{ letter }}
+            </button>
+          </div>
+          <!-- Alt Sıra -->
+          <div class="flex gap-1">
+            <button
+              v-for="letter in ['z', 'x', 'c', 'v', 'b', 'n', 'm', 'ö', 'ç']"
+              :key="letter"
+              @click="selectLetter(letter)"
+              class="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 active:bg-gray-100"
+            >
+              {{ letter }}
+            </button>
+          </div>
+          <!-- Alt Kontrol Sırası -->
+          <div class="flex gap-1">
+            <button
+              @click="handleBackspace"
+              class="flex h-10 flex-1 items-center justify-center rounded-lg bg-white text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 active:bg-gray-100"
+            >
+              ←
+            </button>
+            <button
+              @click="handleHint"
+              class="flex h-10 flex-1 items-center justify-center rounded-lg bg-blue-100 text-sm font-medium text-blue-700 shadow-sm transition hover:bg-blue-200 active:bg-blue-300"
+            >
+              İpucu
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Klavye Açma/Kapama Butonu -->
+      <button
+        v-if="!showVirtualKeyboard"
+        @click="toggleVirtualKeyboard"
+        class="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12zm-1-5a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zm0-4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z"
+          />
+        </svg>
+        Klavyeyi Aç
+      </button>
+      <button
+        v-else
+        @click="toggleVirtualKeyboard"
+        class="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fill-rule="evenodd"
+            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        Klavyeyi Kapat
+      </button>
     </div>
   </div>
 </template>
@@ -241,6 +323,89 @@ const isAnswerComplete = computed(() => {
 
 // İstatistik güncelleme durumu
 const isUpdating = ref(false);
+
+// Sanal klavye durumu
+const showVirtualKeyboard = ref(false);
+
+// Klavyeyi aç/kapat
+const toggleVirtualKeyboard = () => {
+  showVirtualKeyboard.value = !showVirtualKeyboard.value;
+};
+
+// Backspace işlemi
+const handleBackspace = () => {
+  const lastFilledIndex = [...gameState.value.selectedLetters].reverse().findIndex((letter, index) => {
+    const actualIndex = gameState.value.selectedLetters.length - 1 - index;
+    return letter && !gameState.value.hintLetterIndices.includes(actualIndex);
+  });
+
+  if (lastFilledIndex !== -1) {
+    const actualIndex = gameState.value.selectedLetters.length - 1 - lastFilledIndex;
+    gameState.value.selectedLetters[actualIndex] = '';
+  }
+};
+
+// İpucu işlemi
+const handleHint = () => {
+  // Shift tuşu mantığını buraya taşıyoruz
+  if (gameState.value.showAnswer) return;
+  if (gameState.value.isHintAnimating) return;
+
+  // Maksimum ipucu sayısını kontrol et
+  const maxHints = getMaxHints(gameState.value.currentQuestion.word.length);
+  if (gameState.value.hintsUsed >= maxHints) {
+    console.log('Maksimum ipucu sayısına ulaşıldı');
+    return;
+  }
+
+  // Rastgele bir boş harfi doğru harfle doldur
+  const emptyIndices = gameState.value.maskedIndices.filter((_, index) => !gameState.value.selectedLetters[index]);
+
+  if (emptyIndices.length > 0) {
+    const randomIndex = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+    const correctLetter = gameState.value.currentQuestion.word[randomIndex].toLowerCase();
+
+    gameState.value.isHintAnimating = true;
+
+    // Önce boş kutuya animasyon ekle
+    const letterBox = selectedLettersContainer.value.children[randomIndex];
+
+    // Slot machine efekti için harfleri oluştur
+    const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    let currentIndex = 0;
+    let speed = 50;
+    let iterations = 0;
+    const maxIterations = 20;
+
+    const letterInterval = setInterval(() => {
+      letterBox.textContent = letters[Math.floor(Math.random() * letters.length)];
+
+      if (iterations > maxIterations * 0.7) {
+        speed += 10;
+      }
+
+      iterations++;
+
+      if (iterations >= maxIterations) {
+        clearInterval(letterInterval);
+        letterBox.textContent = correctLetter;
+        gameState.value.selectedLetters[randomIndex] = correctLetter;
+        gameState.value.hintsUsed++;
+        gameState.value.hintLetterIndices.push(randomIndex);
+
+        gsap.to(letterBox, {
+          scale: 1.1,
+          duration: 0.2,
+          yoyo: true,
+          repeat: 1,
+          onComplete: () => {
+            gameState.value.isHintAnimating = false;
+          },
+        });
+      }
+    }, speed);
+  }
+};
 
 // Oyunu başlat
 const startGameWithConfig = async () => {
@@ -455,7 +620,10 @@ const selectedLettersContainer = ref(null);
 
 // Harf seçme animasyonu
 const animateLetterSelection = (letter) => {
-  const destinationElement = selectedLettersContainer.value.children[gameState.value.selectedLetters.length - 1];
+  const emptyIndex = gameState.value.selectedLetters.findIndex((l) => !l);
+  if (emptyIndex === -1) return;
+
+  const destinationElement = selectedLettersContainer.value.children[emptyIndex];
   gsap.from(destinationElement, {
     scale: 1.2,
     duration: 0.2,
@@ -466,15 +634,28 @@ const animateLetterSelection = (letter) => {
 // Harf seçme fonksiyonunu güncelle
 const selectLetter = (letter) => {
   if (gameState.value.showAnswer) return;
-  if (gameState.value.selectedLetters.length >= gameState.value.maskedIndices.length) return;
 
-  gameState.value.selectedLetters.push(letter.toLowerCase());
-  animateLetterSelection(letter);
+  // Boş olan ilk indeksi bul
+  const emptyIndex = gameState.value.selectedLetters.findIndex((l) => !l);
+
+  // Eğer boş yer varsa harfi ekle
+  if (emptyIndex !== -1) {
+    gameState.value.selectedLetters[emptyIndex] = letter.toLowerCase();
+    animateLetterSelection(letter);
+  }
 };
 
 // Boş olan ilk indeksi bul
 const getNextEmptyIndex = () => {
   return gameState.value.selectedLetters.findIndex((letter) => !letter);
+};
+
+// Kelime uzunluğuna göre maksimum ipucu sayısını hesapla
+const getMaxHints = (wordLength) => {
+  if (wordLength <= 3) return 1;
+  if (wordLength <= 4) return 2;
+  if (wordLength <= 5) return 3;
+  return 4; // 6 ve üzeri harfler için
 };
 
 // Handle keyboard input
@@ -491,6 +672,13 @@ const handleKeyPress = (event) => {
     });
     // Eğer animasyon devam ediyorsa yeni hint isteğini engelle
     if (gameState.value.isHintAnimating) return;
+
+    // Maksimum ipucu sayısını kontrol et
+    const maxHints = getMaxHints(gameState.value.currentQuestion.word.length);
+    if (gameState.value.hintsUsed >= maxHints) {
+      console.log('Maksimum ipucu sayısına ulaşıldı');
+      return;
+    }
 
     // Rastgele bir boş harfi doğru harfle doldur
     const emptyIndices = gameState.value.maskedIndices.filter((_, index) => !gameState.value.selectedLetters[index]);
@@ -767,5 +955,49 @@ onUnmounted(() => {
 /* Hint harfleri için özel stil */
 .border-blue-500 {
   box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
+/* Mobil cihazlar için özel stiller */
+@media (max-width: 640px) {
+  .w-10 {
+    width: 3.5rem;
+  }
+  .h-10 {
+    height: 3.5rem;
+  }
+  .text-sm {
+    font-size: 1.25rem;
+  }
+  .gap-1 {
+    gap: 0.2rem;
+  }
+  .p-2 {
+    padding: 0.2rem;
+  }
+  /* Tuşlar arası boşluğu kaldır ve kenarları birleştir */
+  .flex > button {
+    border-radius: 0;
+    margin: 0;
+  }
+  /* Sıralar arası boşluğu azalt */
+  .flex-col > .flex {
+    margin-bottom: 0.25rem;
+  }
+  /* İlk tuşun sol üst köşesini yuvarla */
+  .flex-col > .flex:first-child > button:first-child {
+    border-top-left-radius: 0.5rem;
+  }
+  /* Son tuşun sağ üst köşesini yuvarla */
+  .flex-col > .flex:first-child > button:last-child {
+    border-top-right-radius: 0.5rem;
+  }
+  /* Alt sıradaki ilk tuşun sol alt köşesini yuvarla */
+  .flex-col > .flex:last-child > button:first-child {
+    border-bottom-left-radius: 0.5rem;
+  }
+  /* Alt sıradaki son tuşun sağ alt köşesini yuvarla */
+  .flex-col > .flex:last-child > button:last-child {
+    border-bottom-right-radius: 0.5rem;
+  }
 }
 </style>

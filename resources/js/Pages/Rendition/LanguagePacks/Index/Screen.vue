@@ -6,6 +6,7 @@
           <h1 class="text-2xl font-bold">Dil Paketleri</h1>
         </div>
         <div class="flex gap-2">
+          <button @click="exportAllPacks" class="btn btn-success btn-sm">Tümünü Dışa Aktar</button>
           <Link :href="route('rendition.language-packs.create')" class="btn btn-primary btn-sm"> Yeni Paket </Link>
         </div>
       </div>
@@ -25,9 +26,12 @@
             </div>
             <p class="text-sm opacity-80">{{ truncateDescription(pack.description) }}</p>
             <div class="card-actions mt-3 justify-between">
-              <Link :href="route('rendition.words.show', { word: pack.slug })" class="btn btn-outline btn-sm">
-                Kelimeleri Göster
-              </Link>
+              <div class="flex gap-2">
+                <Link :href="route('rendition.words.show', { word: pack.slug })" class="btn btn-outline btn-sm">
+                  Kelimeleri Göster
+                </Link>
+                <button @click="exportPack(pack)" class="btn btn-success btn-sm">Dışa Aktar</button>
+              </div>
               <div class="badge badge-lg">{{ pack.word_count || 0 }} kelime</div>
             </div>
           </div>
@@ -63,6 +67,95 @@ const props = defineProps({
 const truncateDescription = (description) => {
   if (!description) return 'Açıklama bulunmamaktadır.';
   return description.length > 100 ? description.slice(0, 100) + '...' : description;
+};
+
+// Export functions
+const exportPack = (pack) => {
+  const data = {
+    name: pack.name,
+    slug: pack.slug,
+    description: pack.description,
+    language: pack.language,
+    words: pack.words.map((word) => ({
+      id: word.id,
+      word: word.word,
+      type: word.type,
+      language: word.language,
+      learning_status: word.learning_status,
+      flag: word.flag,
+      difficulty_level: word.difficulty_level,
+      incorrect_count: word.incorrect_count,
+      review_count: word.review_count,
+      last_review_date: word.last_review_date,
+      created_at: word.created_at,
+      updated_at: word.updated_at,
+      meanings: word.meanings.map((meaning) => ({
+        meaning: meaning.meaning,
+        is_primary: meaning.is_primary,
+        display_order: meaning.display_order,
+      })),
+      example_sentences: word.example_sentences.map((sentence) => ({
+        sentence: sentence.sentence,
+        translation: sentence.translation,
+        language: sentence.language,
+      })),
+      synonyms: word.synonyms,
+    })),
+  };
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${pack.name.toLowerCase().replace(/\s+/g, '-')}-${pack.language}.json`;
+  document.body.appendChild(a);
+  a.click();
+  window.URL.revokeObjectURL(url);
+  document.body.removeChild(a);
+};
+
+const exportAllPacks = () => {
+  const data = props.languagePacks.map((pack) => ({
+    name: pack.name,
+    slug: pack.slug,
+    description: pack.description,
+    language: pack.language,
+    words: pack.words.map((word) => ({
+      id: word.id,
+      word: word.word,
+      type: word.type,
+      language: word.language,
+      learning_status: word.learning_status,
+      flag: word.flag,
+      difficulty_level: word.difficulty_level,
+      incorrect_count: word.incorrect_count,
+      review_count: word.review_count,
+      last_review_date: word.last_review_date,
+      created_at: word.created_at,
+      updated_at: word.updated_at,
+      meanings: word.meanings.map((meaning) => ({
+        meaning: meaning.meaning,
+        is_primary: meaning.is_primary,
+        display_order: meaning.display_order,
+      })),
+      example_sentences: word.example_sentences.map((sentence) => ({
+        sentence: sentence.sentence,
+        translation: sentence.translation,
+        language: sentence.language,
+      })),
+      synonyms: word.synonyms,
+    })),
+  }));
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'all-language-packs.json';
+  document.body.appendChild(a);
+  a.click();
+  window.URL.revokeObjectURL(url);
+  document.body.removeChild(a);
 };
 
 // URL'deki query parametrelerini al
