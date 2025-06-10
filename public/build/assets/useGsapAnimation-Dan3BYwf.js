@@ -1,0 +1,1 @@
+import{g as t}from"./index-D3jsOSc0.js";import{l as i}from"./app-B_j7vl9D.js";function u(o,a={}){i(()=>{o.value&&t.fromTo(o.value,{opacity:0,y:24},{opacity:1,y:0,duration:.7,ease:"power2.out",...a})})}export{u};
