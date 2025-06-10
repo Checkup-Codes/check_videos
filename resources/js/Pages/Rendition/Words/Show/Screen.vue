@@ -353,7 +353,7 @@
                     >
                       <span class="text-sm">Soru Sayısı</span>
                       <select v-model="gameConfig.questionCount" class="select-bordered select select-sm w-24">
-                        <option v-if="props.words?.length < 50" :value="props.words?.length">
+                        <option v-if="props.words?.length < 60" :value="props.words?.length">
                           Tüm Paket ({{ props.words?.length }})
                         </option>
                         <option value="5">5</option>
