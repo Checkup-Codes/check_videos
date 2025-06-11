@@ -11,13 +11,23 @@ $uri = urldecode(
     parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
 );
 
-// Eklenen kod: /storage/ URL'lerini doğru dizine yönlendirme
-if (strpos($uri, '/storage/') === 0) {
-    $filePath = __DIR__ . '/storage/app/public' . str_replace('/storage', '', $uri);
+// Get the current host and remove www. prefix
+$host = $_SERVER['HTTP_HOST'] ?? '';
+$host = preg_replace('/^www\./', '', $host);
 
-    if (file_exists($filePath)) {
-        header('Content-Type: ' . mime_content_type($filePath));
-        readfile($filePath);
+// Eklenen kod: /storage/ URL'lerini domain bazlı dizine yönlendirme
+if (strpos($uri, '/storage/') === 0) {
+    // Domain bazlı storage path oluştur
+    $storagePath = __DIR__ . '/storage/multi/' . $host . '/app/public' . str_replace('/storage', '', $uri);
+
+    // Eğer domain'e özel dosya yoksa, varsayılan storage'ı dene
+    if (!file_exists($storagePath)) {
+        $storagePath = __DIR__ . '/storage/app/public' . str_replace('/storage', '', $uri);
+    }
+
+    if (file_exists($storagePath)) {
+        header('Content-Type: ' . mime_content_type($storagePath));
+        readfile($storagePath);
         exit;
     }
 }
