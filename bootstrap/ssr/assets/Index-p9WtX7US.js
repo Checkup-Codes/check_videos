@@ -3,8 +3,8 @@ import { ssrRenderAttrs, ssrRenderAttr, ssrInterpolate } from "vue/server-render
 import "./CheckScreen-G62taWZ6.js";
 import * as THREE from "three";
 import NET from "vanta/dist/vanta.net.min.js";
-import axios from "axios";
 import { _ as _export_sfc } from "../ssr.js";
+import "axios";
 import "@inertiajs/vue3";
 import "@fortawesome/vue-fontawesome";
 import "vuex";
@@ -20,16 +20,7 @@ const _sfc_main = {
     const vantaRef = ref(null);
     let vantaEffect = null;
     onMounted(async () => {
-      var _a, _b, _c;
       try {
-        const seoResponse = await axios.get("/api/seo/home");
-        if ((_a = seoResponse.data) == null ? void 0 : _a.title) seoTitle.value = seoResponse.data.title;
-        if ((_b = seoResponse.data) == null ? void 0 : _b.description) seoDescription.value = seoResponse.data.description;
-        const logoResponse = await axios.get("/api/logo");
-        if ((_c = logoResponse.data) == null ? void 0 : _c.image_path) {
-          logoPath.value = logoResponse.data.image_path;
-          logoAlt.value = logoResponse.data.alt_text;
-        }
       } catch (err) {
         console.error("Data fetch error:", err);
       } finally {
@@ -59,26 +50,26 @@ const _sfc_main = {
       if (vantaEffect) vantaEffect.destroy();
     });
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<div${ssrRenderAttrs(mergeProps({ class: "h-[calc(100h)] overflow-hidden" }, _attrs))} data-v-0cc8870c><div class="h-screen-minus-12 overflow-y-auto overscroll-none lg:h-screen-minus" data-v-0cc8870c><div class="h-screen-minus-12 w-full overflow-hidden overscroll-none lg:h-screen-minus-1" data-v-0cc8870c><header class="relative z-10 flex h-full items-center justify-center text-gray-800" data-v-0cc8870c><div class="text-center" data-v-0cc8870c><div class="relative mx-auto h-96 w-96" data-v-0cc8870c>`);
+      _push(`<div${ssrRenderAttrs(mergeProps({ class: "h-[calc(100h)] overflow-hidden" }, _attrs))} data-v-55725992><div class="h-screen-minus-12 overflow-y-auto overscroll-none lg:h-screen-minus" data-v-55725992><div class="h-screen-minus-12 w-full overflow-hidden overscroll-none lg:h-screen-minus-1" data-v-55725992><header class="relative z-10 flex h-full items-center justify-center text-gray-800" data-v-55725992><div class="text-center" data-v-55725992><div class="relative mx-auto h-96 w-96" data-v-55725992>`);
       if (!isLoading.value) {
         _push(`<!--[-->`);
         if (logoPath.value !== "/images/checkup_codes_logo.png") {
-          _push(`<img${ssrRenderAttr("src", logoPath.value)}${ssrRenderAttr("alt", logoAlt.value)} class="h-full w-full rounded-full object-cover" data-v-0cc8870c>`);
+          _push(`<img${ssrRenderAttr("src", logoPath.value)}${ssrRenderAttr("alt", logoAlt.value)} class="h-full w-full rounded-full object-cover" data-v-55725992>`);
         } else {
-          _push(`<img src="/images/checkup_codes_logo.png" alt="Default Logo" class="h-full w-full rounded-full object-cover" data-v-0cc8870c>`);
+          _push(`<img src="/images/checkup_codes_logo.png" alt="Default Logo" class="h-full w-full rounded-full object-cover" data-v-55725992>`);
         }
         _push(`<!--]-->`);
       } else {
-        _push(`<div class="animate-pulse" data-v-0cc8870c><div class="h-96 w-96 rounded-full bg-base-200" data-v-0cc8870c><div class="animate-shimmer h-full w-full rounded-full bg-gradient-to-r from-base-200 via-base-100 to-base-200" data-v-0cc8870c></div></div><div class="mx-auto mt-4 h-8 w-64 rounded bg-base-200" data-v-0cc8870c></div><div class="mx-auto mt-2 h-4 w-48 rounded bg-base-200" data-v-0cc8870c></div></div>`);
+        _push(`<div class="animate-pulse" data-v-55725992><div class="h-96 w-96 rounded-full bg-base-200" data-v-55725992><div class="animate-shimmer h-full w-full rounded-full bg-gradient-to-r from-base-200 via-base-100 to-base-200" data-v-55725992></div></div><div class="mx-auto mt-4 h-8 w-64 rounded bg-base-200" data-v-55725992></div><div class="mx-auto mt-2 h-4 w-48 rounded bg-base-200" data-v-55725992></div></div>`);
       }
       _push(`</div>`);
       if (!isLoading.value) {
-        _push(`<h2 class="animate__animated animate__fadeInDown text-4xl font-bold" data-v-0cc8870c>${ssrInterpolate(seoTitle.value)}</h2>`);
+        _push(`<h2 class="animate__animated animate__fadeInDown text-4xl font-bold" data-v-55725992>${ssrInterpolate(seoTitle.value)}</h2>`);
       } else {
         _push(`<!---->`);
       }
       if (!isLoading.value) {
-        _push(`<p class="animate__animated animate__fadeInUp text-lg" data-v-0cc8870c>${ssrInterpolate(seoDescription.value)}</p>`);
+        _push(`<p class="animate__animated animate__fadeInUp text-lg" data-v-55725992>${ssrInterpolate(seoDescription.value)}</p>`);
       } else {
         _push(`<!---->`);
       }
@@ -92,7 +83,7 @@ _sfc_main.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/Index/Index.vue");
   return _sfc_setup ? _sfc_setup(props, ctx) : void 0;
 };
-const Index = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-0cc8870c"]]);
+const Index = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-55725992"]]);
 export {
   Index as default
 };
