@@ -27,6 +27,7 @@ if (strpos($uri, '/storage/') === 0) {
 
     if (file_exists($storagePath)) {
         header('Content-Type: ' . mime_content_type($storagePath));
+        header('Cache-Control: public, max-age=31536000'); // 1 yıl cache
         readfile($storagePath);
         exit;
     }
