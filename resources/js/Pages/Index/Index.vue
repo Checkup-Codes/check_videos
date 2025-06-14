@@ -58,17 +58,6 @@ let vantaEffect = null;
 
 onMounted(async () => {
   try {
-    // SEO verilerini çek
-    const seoResponse = await axios.get('/api/seo/home');
-    if (seoResponse.data?.title) seoTitle.value = seoResponse.data.title;
-    if (seoResponse.data?.description) seoDescription.value = seoResponse.data.description;
-
-    // Logo verilerini çek
-    const logoResponse = await axios.get('/api/logo');
-    if (logoResponse.data?.image_path) {
-      logoPath.value = logoResponse.data.image_path;
-      logoAlt.value = logoResponse.data.alt_text;
-    }
   } catch (err) {
     console.error('Data fetch error:', err);
   } finally {
