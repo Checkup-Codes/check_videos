@@ -15,31 +15,39 @@ $uri = urldecode(
 $host = $_SERVER['HTTP_HOST'] ?? '';
 $host = preg_replace('/^www\./', '', $host);
 
+// Get port information
+$port = $_SERVER['SERVER_PORT'] ?? '8000';
+
 // Eklenen kod: /storage/ URL'lerini domain bazlı dizine yönlendirme
 if (strpos($uri, '/storage/') === 0) {
-    // Domain bazlı storage path oluştur
-    $storagePath = __DIR__ . '/storage/multi/' . $host . '/public' . str_replace('/storage', '', $uri);
+    // Eğer localhost ise eski mantığı kullan
+    if (strpos($host, 'localhost') === 0) {
+        $storagePath = __DIR__ . '/storage/app/public' . str_replace('/storage', '', $uri);
+    } else {
+        // Domain bazlı storage path oluştur
+        $storagePath = __DIR__ . '/storage/multi/' . $host . '/public' . str_replace('/storage', '', $uri);
 
-    // Debug log
-    error_log("Requested URI: " . $uri);
-    error_log("Host: " . $host);
-    error_log("Looking for file at: " . $storagePath);
-
-    // Eğer domain'e özel dosya yoksa, eski storage'ı dene
-    if (!file_exists($storagePath)) {
-        $oldPath = __DIR__ . '/storage/app/public' . str_replace('/storage', '', $uri);
-        error_log("File not found in domain storage, trying old path: " . $oldPath);
-        $storagePath = $oldPath;
+        // Eğer domain'e özel dosya yoksa, eski storage'ı dene
+        if (!file_exists($storagePath)) {
+            $oldPath = __DIR__ . '/storage/app/public' . str_replace('/storage', '', $uri);
+            error_log(":{$port} [storage] File not found in domain storage, trying old path: " . $oldPath);
+            $storagePath = $oldPath;
+        }
     }
 
+    // Debug log with port information
+    error_log(":{$port} [storage] Requested URI: " . $uri);
+    error_log(":{$port} [storage] Host: " . $host);
+    error_log(":{$port} [storage] Looking for file at: " . $storagePath);
+
     if (file_exists($storagePath)) {
-        error_log("File found at: " . $storagePath);
+        error_log(":{$port} [storage] File found at: " . $storagePath);
         header('Content-Type: ' . mime_content_type($storagePath));
         header('Cache-Control: public, max-age=31536000'); // 1 yıl cache
         readfile($storagePath);
         exit;
     } else {
-        error_log("File not found at any location");
+        error_log(":{$port} [storage] File not found at any location");
         header("HTTP/1.0 404 Not Found");
         exit;
     }

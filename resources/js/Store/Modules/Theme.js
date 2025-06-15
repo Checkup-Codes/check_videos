@@ -12,7 +12,6 @@ export default {
   mutations: {
     // Temayı değiştirme işlemi
     setTheme(state, theme) {
-      console.log('Tema değiştiriliyor:', theme);
       
       // Mevcut temayı state'den kaldır
       document.documentElement.classList.remove(state.currentTheme);
@@ -33,9 +32,6 @@ export default {
       } else {
         document.documentElement.classList.remove('dark');
       }
-      
-      console.log('Tema değiştirildi:', document.documentElement.getAttribute('data-theme'));
-      console.log('HTML sınıfları:', document.documentElement.className);
     },
   },
   

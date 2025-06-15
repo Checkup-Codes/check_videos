@@ -28,10 +28,7 @@
         } else {
             document.documentElement.classList.remove('dark');
         }
-        
-        console.log('Sayfa yüklenirken ayarlanan tema:', savedTheme);
-        console.log('HTML sınıfları:', document.documentElement.className);
-    </script>
+            </script>
 
     @routes
     @vite(['resources/js/app.ts', 'resources/css/app.css', "resources/js/Pages/{$page['component']}.vue"])

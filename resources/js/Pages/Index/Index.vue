@@ -6,18 +6,7 @@
           <div class="text-center">
             <div class="relative mx-auto h-96 w-96">
               <template v-if="!isLoading">
-                <img
-                  v-if="logoPath !== '/images/checkup_codes_logo.png'"
-                  :src="logoPath"
-                  :alt="logoAlt"
-                  class="h-full w-full rounded-full object-cover"
-                />
-                <img
-                  v-else
-                  src="/images/checkup_codes_logo.png"
-                  alt="Default Logo"
-                  class="h-full w-full rounded-full object-cover"
-                />
+                <img :src="logoPath" :alt="logoAlt" class="h-full w-full rounded-full object-cover" />
               </template>
               <!-- Skeleton Loading -->
               <div v-else class="animate-pulse">
@@ -43,14 +32,18 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 import * as THREE from 'three';
 import NET from 'vanta/dist/vanta.net.min';
-import axios from 'axios';
+
+const props = defineProps({
+  logo: {
+    type: String,
+  },
+});
 
 const seoTitle = ref('');
 const seoDescription = ref('');
-const logoPath = ref('/images/checkup_codes_logo.png');
+const logoPath = ref(props.logo);
 const logoAlt = ref('Logo');
 const isLoading = ref(true);
 const vantaRef = ref(null);
@@ -58,6 +51,7 @@ let vantaEffect = null;
 
 onMounted(async () => {
   try {
+    console.log(props.logo);
   } catch (err) {
     console.error('Data fetch error:', err);
   } finally {
