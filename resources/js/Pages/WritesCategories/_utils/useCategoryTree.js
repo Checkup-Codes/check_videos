@@ -5,7 +5,7 @@ export function useCategoryTree() {
   const { props, url } = usePage();
   const categories = ref(props.categories || []);
   const parentCategories = ref([]);
-  const areAllCategoriesExpanded = ref(false);
+  const areAllCategoriesExpanded = ref(true);
 
   // Build hierarchical category tree from flat list
   const buildCategoryTree = () => {

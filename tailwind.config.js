@@ -22,6 +22,7 @@ export default {
             },
             gridTemplateColumns: {
                 'subsidebar': 'minmax(0, 380px) 1fr',
+                'subsidebar-narrow': 'minmax(0, 180px) 1fr',
                 'sidebar': '2fr 10fr',
             },
             boxShadow: {

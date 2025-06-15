@@ -1,5 +1,5 @@
 <template>
-  <div class="overflow-hidden border-b-2 border-base-300 lg:relative">
+  <div class="cursor-pointer overflow-hidden border-b-2 border-base-300 lg:relative" @click="toggleWidth">
     <div class="flex h-12 items-center justify-between px-5 text-sm font-semibold">
       <span class="">{{ title }}</span>
       <div class="flex items-center gap-2">
@@ -8,7 +8,7 @@
 
         <button
           v-if="showExpandCollapseButton"
-          @click="$emit('toggle-expand')"
+          @click.stop="$emit('toggle-expand')"
           class="btn btn-ghost btn-xs"
           :title="isExpanded ? 'Tümünü Daralt' : 'Tümünü Genişlet'"
         >
@@ -17,7 +17,7 @@
             <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
           </svg>
         </button>
-        <Link v-if="userName && href" :href="href" class="text-primary-500">
+        <Link v-if="userName && href" :href="href" class="text-primary-500" @click.stop>
           <Button :title="title" size="xsmall"> + </Button>
         </Link>
       </div>
@@ -26,6 +26,7 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import Button from '@/Components/CekapUI/Buttons/Button.vue';
 import { Link } from '@inertiajs/vue3';
@@ -48,5 +49,12 @@ const vueProps = defineProps({
   },
 });
 
-defineEmits(['toggle-expand']);
+const emit = defineEmits(['toggle-expand', 'toggle-width']);
+
+const isNarrow = ref(false);
+
+const toggleWidth = () => {
+  isNarrow.value = !isNarrow.value;
+  emit('toggle-width', isNarrow.value);
+};
 </script>

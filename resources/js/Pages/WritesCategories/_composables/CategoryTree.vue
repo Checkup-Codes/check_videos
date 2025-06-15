@@ -12,9 +12,9 @@
                 : 'border-base-200 bg-base-200 text-base-content hover:bg-base-300',
             ]"
           >
-            <!-- Lock icon for hidden category -->
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
+                <!-- Lock icon for hidden category -->
                 <span v-if="category.status === 'hidden'" class="opacity-70">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                     <path
@@ -37,28 +37,28 @@
                   </svg>
                 </span>
                 <span class="font-medium">{{ category.name }}</span>
+                <button
+                  v-if="category.children.length"
+                  @click.prevent.stop="toggleCollapse(category.id)"
+                  class="btn btn-ghost btn-sm btn-square"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4 transition-transform"
+                    :class="{ 'rotate-180': !isCollapsed(category.id) }"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
               </div>
               <div class="flex items-center gap-2">
                 <div class="badge badge-sm">{{ getTotalWriteCount(category) }}</div>
               </div>
             </div>
           </Link>
-          <button
-            v-if="category.children.length"
-            @click="toggleCollapse(category.id)"
-            class="btn btn-ghost btn-sm btn-square ml-1"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4 transition-transform"
-              :class="{ 'rotate-180': !isCollapsed(category.id) }"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
         </div>
 
         <!-- Subcategories -->
@@ -92,26 +92,26 @@
                       </svg>
                     </span>
                     <span>{{ child.name }}</span>
+                    <button
+                      v-if="child.children.length"
+                      @click.prevent.stop="toggleCollapse(child.id)"
+                      class="btn btn-ghost btn-xs btn-square"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-3 w-3 transition-transform"
+                        :class="{ 'rotate-180': !isCollapsed(child.id) }"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
                   </div>
                   <div class="badge badge-xs">{{ getTotalWriteCount(child) }}</div>
                 </div>
               </Link>
-              <button
-                v-if="child.children.length"
-                @click="toggleCollapse(child.id)"
-                class="btn btn-ghost btn-xs btn-square ml-1"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-3 w-3 transition-transform"
-                  :class="{ 'rotate-180': !isCollapsed(child.id) }"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
             </div>
 
             <!-- Third-level categories -->

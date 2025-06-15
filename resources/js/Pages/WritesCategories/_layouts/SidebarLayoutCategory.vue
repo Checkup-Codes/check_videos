@@ -1,5 +1,5 @@
 <template>
-  <CheckSubsidebar>
+  <CheckSubsidebar :isNarrow="isNarrow">
     <!-- <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="toggleSidebar" class="btn-ghost" /> -->
     <TopSubsidebar
       title="KATEGORİLER"
@@ -7,6 +7,7 @@
       :showExpandCollapseButton="true"
       :isExpanded="areAllCategoriesExpanded"
       @toggle-expand="toggleAllCategories"
+      @toggle-width="handleWidthToggle"
       class="border-base-200"
     >
       <template #actions>
@@ -26,7 +27,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
 import ToggleSubSidebarButtonClose from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 import SubSidebarScreen from '@/Components/CekapUI/Slots/SubSidebarScreen.vue';
@@ -48,6 +49,18 @@ const { parentCategories, areAllCategoriesExpanded, getLinkClasses, toggleAllCat
 // Local state
 const showCategories = ref(true);
 const categoryTreeRef = ref(null);
+const isNarrow = ref(false);
+
+const emit = defineEmits(['update:isNarrow']);
+
+const handleWidthToggle = (value) => {
+  isNarrow.value = value;
+};
+
+// Watch for isNarrow changes and emit to parent
+watch(isNarrow, (newValue) => {
+  emit('update:isNarrow', newValue);
+});
 </script>
 
 <style scoped>

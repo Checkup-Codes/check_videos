@@ -4,17 +4,22 @@
   <CheckLayout :isCollapsed="true">
     <template #sidebar>
       <KeepAlive :max="5" :include="['SidebarLayoutWrite', 'SidebarLayoutCategory']">
-        <component :is="sidebarComponent" :key="screenName" :class="sidebarStyle" />
+        <component
+          :is="sidebarComponent"
+          :key="screenName"
+          :class="sidebarStyle"
+          @update:isNarrow="handleSidebarWidthChange"
+        />
       </KeepAlive>
     </template>
-    <div :class="isMobile ? 'hidden lg:block' : 'block'">
+    <div :class="[isMobile ? 'hidden lg:block' : 'block', mainContentClass]">
       <slot name="screen"></slot>
     </div>
   </CheckLayout>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import CheckLayout from '@/Components/CekapUI/Slots/CheckLayout.vue';
 import SidebarLayoutWrite from './SidebarLayoutWrite.vue';
@@ -50,4 +55,24 @@ const sidebarComponent = computed(() => {
   }
   return null;
 });
+
+// Handle sidebar width changes
+const isSidebarNarrow = ref(false);
+const mainContentClass = computed(() => ({
+  'transition-all duration-300': true,
+  'lg:ml-[-200px]': isSidebarNarrow.value,
+  'lg:ml-[00px]': !isSidebarNarrow.value,
+}));
+
+const handleSidebarWidthChange = (isNarrow) => {
+  isSidebarNarrow.value = isNarrow;
+};
 </script>
+
+<style>
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+</style>
