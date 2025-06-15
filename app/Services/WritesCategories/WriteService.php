@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Services\WritesCategories\CategoryService;
+use App\Models\Seo;
+use App\Models\WritesCategories\WriteImage;
 
 class WriteService
 {
@@ -377,6 +379,22 @@ class WriteService
         return [
             'success' => $result,
             'execution_time' => $this->formatExecutionTime($executionTime)
+        ];
+    }
+
+    public function getScreenData(bool $isMobile = false): array
+    {
+        $seo = Seo::first();
+        $logo = WriteImage::where('category', 'logo')->first();
+
+        return [
+            'isMobileSidebar' => $isMobile,
+            'name' => 'writes',
+            'seo' => [
+                'title' => $seo->title ?? 'Seo Title',
+                'description' => $seo->description ?? 'Seo Description',
+                'logo' => $logo->image_path ?? '/images/checkup_codes_logo.png',
+            ],
         ];
     }
 }

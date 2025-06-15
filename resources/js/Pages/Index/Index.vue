@@ -6,7 +6,12 @@
           <div class="text-center">
             <div class="relative mx-auto h-96 w-96">
               <template v-if="!isLoading">
-                <img :src="logoPath" :alt="logoAlt" class="h-full w-full rounded-full object-cover" />
+                <img
+                  :src="logoPath"
+                  :alt="logoAlt"
+                  class="h-full w-full rounded-full object-cover"
+                  @error="handleImageError"
+                />
               </template>
               <!-- Skeleton Loading -->
               <div v-else class="animate-pulse">
@@ -44,7 +49,11 @@ const logoPath = ref(props.screen.seo.logo);
 const logoAlt = ref('Logo');
 const vantaRef = ref(null);
 let vantaEffect = null;
-const isLoading = ref(true);
+const isLoading = ref(false);
+
+const handleImageError = () => {
+  logoPath.value = '/images/default-logo.png'; // Varsayılan bir resim yolu
+};
 
 onMounted(async () => {
   // Vanta animasyonu başlat

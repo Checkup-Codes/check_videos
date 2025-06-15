@@ -16,11 +16,6 @@ class CategoriesController extends Controller
     private $categoryService;
     private $writeService;
 
-    private array $screenDefault = [
-        'isMobileSidebar' => false,
-        'name' => 'categories'
-    ];
-
     public function __construct(CategoryService $categoryService, WriteService $writeService)
     {
         $this->categoryService = $categoryService;
@@ -45,10 +40,7 @@ class CategoriesController extends Controller
         ]);
 
         return inertia('WritesCategories/Categories/IndexCategory', [
-            'screen'     => [
-                'isMobileSidebar' => true,
-                'name'            => 'categories'
-            ],
+            'screen'     => $this->categoryService->getScreenData(isMobile: true),
             'categories' => $categoriesResult['data'],
             'writes'     => $writesResult['data'],
             'isAdmin'    => $isAdmin,
@@ -94,7 +86,7 @@ class CategoriesController extends Controller
             'category' => $category,
             'categories' => $categoriesResult['data'],
             'writes' => $writesResult['data'],
-            'screen' => $this->screenDefault,
+            'screen'     => $this->categoryService->getScreenData(isMobile: false),
             'isAdmin' => $isAdmin,
             'performance' => [
                 'categories_execution_time' => $categoriesResult['execution_time'],
@@ -103,22 +95,6 @@ class CategoriesController extends Controller
         ]);
     }
 
-    /**
-     * Helper method to collect child category IDs
-     * 
-     * @param Category $category
-     * @param \Illuminate\Support\Collection $categoryIds
-     * @return void
-     */
-    private function getChildCategoryIds($category, &$categoryIds)
-    {
-        foreach ($category->children as $child) {
-            $categoryIds->push($child->id);
-            if ($child->children->count() > 0) {
-                $this->getChildCategoryIds($child, $categoryIds);
-            }
-        }
-    }
 
     /**
      * Show the form for creating a new category
@@ -132,7 +108,30 @@ class CategoriesController extends Controller
 
         return inertia('WritesCategories/Categories/CreateCategory', [
             'categories' => $categoriesResult['data'],
-            'screen' => $this->screenDefault,
+            'screen'     => $this->categoryService->getScreenData(isMobile: true),
+            'isAdmin' => $isAdmin,
+            'performance' => [
+                'categories_execution_time' => $categoriesResult['execution_time']
+            ]
+        ]);
+    }
+
+
+    /**
+     * Show the form for editing the specified category
+     * 
+     * @param Category $category
+     * @return \Inertia\Response
+     */
+    public function edit(Category $category)
+    {
+        $categoriesResult = $this->categoryService->getCategories();
+        $isAdmin = Auth::check();
+
+        return inertia('WritesCategories/Categories/EditCategory', [
+            'category' => $category->load('parent'),
+            'categories' => $categoriesResult['data'],
+            'screen'     => $this->categoryService->getScreenData(isMobile: true),
             'isAdmin' => $isAdmin,
             'performance' => [
                 'categories_execution_time' => $categoriesResult['execution_time']
@@ -169,27 +168,7 @@ class CategoriesController extends Controller
             ->with('success', 'Kategori başarıyla oluşturuldu.');
     }
 
-    /**
-     * Show the form for editing the specified category
-     * 
-     * @param Category $category
-     * @return \Inertia\Response
-     */
-    public function edit(Category $category)
-    {
-        $categoriesResult = $this->categoryService->getCategories();
-        $isAdmin = Auth::check();
 
-        return inertia('WritesCategories/Categories/EditCategory', [
-            'category' => $category->load('parent'),
-            'categories' => $categoriesResult['data'],
-            'screen'   => $this->screenDefault,
-            'isAdmin' => $isAdmin,
-            'performance' => [
-                'categories_execution_time' => $categoriesResult['execution_time']
-            ]
-        ]);
-    }
 
     /**
      * Update the specified category
@@ -282,7 +261,7 @@ class CategoriesController extends Controller
             'writes' => $writesResult['data'],
             'write' => $writeResult['data'],
             'categories' => $categoriesResult['data'],
-            'screen' => $this->screenDefault,
+            'screen'     => $this->categoryService->getScreenData(isMobile: true),
             'isAdmin' => $isAdmin,
             'performance' => [
                 'categories_execution_time' => $categoriesResult['execution_time'],
@@ -290,5 +269,22 @@ class CategoriesController extends Controller
                 'write_execution_time' => $writeResult['execution_time']
             ]
         ]);
+    }
+
+    /**
+     * Helper method to collect child category IDs
+     * 
+     * @param Category $category
+     * @param \Illuminate\Support\Collection $categoryIds
+     * @return void
+     */
+    private function getChildCategoryIds($category, &$categoryIds)
+    {
+        foreach ($category->children as $child) {
+            $categoryIds->push($child->id);
+            if ($child->children->count() > 0) {
+                $this->getChildCategoryIds($child, $categoryIds);
+            }
+        }
     }
 }

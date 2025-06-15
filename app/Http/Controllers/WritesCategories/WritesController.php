@@ -13,16 +13,6 @@ class WritesController extends Controller
 {
     private $writeService;
 
-    private array $screenDefault = [
-        'isMobileSidebar' => false,
-        'name' => 'writes'
-    ];
-
-    private array $screenMobile = [
-        'isMobileSidebar' => true,
-        'name' => 'writes'
-    ];
-
     public function __construct(WriteService $writeService)
     {
         $this->writeService = $writeService;
@@ -45,7 +35,7 @@ class WritesController extends Controller
         ]);
 
         return inertia('WritesCategories/Writes/IndexWrite', [
-            'screen'     => $this->screenMobile,
+            'screen'     => $this->writeService->getScreenData(isMobile: true),
             'writes'     => $writesResult['data'],
             'isAdmin'    => $isAdmin,
             'performance' => [
@@ -69,7 +59,7 @@ class WritesController extends Controller
         return inertia('WritesCategories/Writes/CreateWrite', [
             'writes'     => $writesResult['data'],
             'categories' => $categoriesResult['data'],
-            'screen'     => $this->screenDefault,
+            'screen'     => $this->writeService->getScreenData(false),
             'isAdmin'    => $isAdmin,
             'performance' => [
                 'writes_execution_time' => $writesResult['execution_time'],
@@ -103,7 +93,7 @@ class WritesController extends Controller
             'writes'     => $writesResult['data'],
             'write'      => $writeResult['data'],
             'categories' => $categoriesResult['data'],
-            'screen'     => $this->screenDefault,
+            'screen'     => $this->writeService->getScreenData(false),
             'showDraw'   => filter_var(request()->query('showDraw', false), FILTER_VALIDATE_BOOLEAN),
             'isAdmin'    => $isAdmin,
             'performance' => [
@@ -130,7 +120,7 @@ class WritesController extends Controller
             'write'      => $write,
             'writes'     => $writesResult['data'],
             'categories' => $categoriesResult['data'],
-            'screen'     => $this->screenDefault,
+            'screen'     => $this->writeService->getScreenData(false),
             'isAdmin'    => $isAdmin,
             'performance' => [
                 'writes_execution_time' => $writesResult['execution_time'],

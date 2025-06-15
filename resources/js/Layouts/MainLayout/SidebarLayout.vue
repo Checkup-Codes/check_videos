@@ -22,6 +22,4 @@ import { usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const { props } = usePage();
-
-const seoTitle = ref(props.screen.seo.title);
 </script>

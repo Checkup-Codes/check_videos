@@ -5,6 +5,8 @@ namespace App\Services\WritesCategories;
 use App\Models\WritesCategories\Category;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Seo;
+use App\Models\WritesCategories\WriteImage;
 
 class CategoryService
 {
@@ -264,5 +266,21 @@ class CategoryService
             DB::rollBack();
             throw $e;
         }
+    }
+
+    public function getScreenData(bool $isMobile = false): array
+    {
+        $seo = Seo::first();
+        $logo = WriteImage::where('category', 'logo')->first();
+
+        return [
+            'isMobileSidebar' => $isMobile,
+            'name' => 'categories',
+            'seo' => [
+                'title' => $seo->title ?? 'Seo Title',
+                'description' => $seo->description ?? 'Seo Description',
+                'logo' => $logo->image_path ?? '/images/checkup_codes_logo.png',
+            ],
+        ];
     }
 }

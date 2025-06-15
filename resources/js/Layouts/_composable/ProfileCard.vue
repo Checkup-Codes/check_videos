@@ -21,8 +21,8 @@
 
     <div class="flex flex-col">
       <template v-if="!isLoading">
-        <div class="font-semibold text-base-content">{{ seoTitle }}</div>
-        <div class="text-sm font-thin text-base-content">{{ seoDescription }}</div>
+        <div class="font-semibold text-base-content">{{ seoTitle ?? 'Seo Title' }}</div>
+        <div class="text-sm font-thin text-base-content">{{ seoDescription ?? 'Seo Description' }}</div>
       </template>
       <!-- Skeleton for text -->
       <div v-else class="space-y-2">
@@ -38,9 +38,9 @@ import { ref } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
 
 const { props } = usePage();
-const seoTitle = ref(props.screen.seo.title);
-const seoDescription = ref(props.screen.seo.description);
-const logoPath = ref(props.screen.seo.logo);
+const seoTitle = ref(props?.screen?.seo?.title ?? 'Seo Title');
+const seoDescription = ref(props?.screen?.seo?.description ?? 'Seo Description');
+const logoPath = ref(props?.screen?.seo?.logo ?? '');
 const logoAlt = ref('Logo');
 const isLoading = ref(false);
 
