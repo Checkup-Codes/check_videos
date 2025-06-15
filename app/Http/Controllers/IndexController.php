@@ -3,18 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Models\WritesCategories\WriteImage;
+use App\Models\Seo;
 
 class IndexController extends Controller
 {
+    private array $screenDefault;
+
+    public function __construct()
+    {
+        $seo = Seo::first();
+        $logo = WriteImage::where('category', 'logo')->first();
+        $this->screenDefault = [
+            'isMobileSidebar' => false,
+            'name' => 'Index',
+            'seo' => [
+                'title' => $seo->title ?? 'Checkup Codes',
+                'description' => $seo->description ?? 'Checkup Codes',
+                'logo' => $logo->image_path ?? '/images/checkup_codes_logo.png',
+            ],
+        ];
+    }
+
     public function index()
     {
-        // Write image'den kategorisi logo olanını al
-        $logo = WriteImage::where('category', 'logo')->first();
 
         return inertia(
             'Index/Index',
             [
-                'logo' => $logo->image_path ?? '/images/checkup_codes_logo.png',
+                'screen' => $this->screenDefault,
             ]
         );
     }

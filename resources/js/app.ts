@@ -1,4 +1,3 @@
-import './bootstrap';
 import '../css/app.css';
 import '@/Shared/Css/quill-custom-styles.css';
 
@@ -6,8 +5,9 @@ import { createSSRApp, h, DefineComponent } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
-import MainLayout from './Layouts/MainLayout.vue';
 import { InertiaProgress } from '@inertiajs/progress';
+// @ts-ignore
+import MainLayout from './Layouts/MainLayout.vue';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -52,31 +52,26 @@ library.add(
 );
 
 import store from './Store';
+import { APP_NAME, INERTIA_PROGRESS_CONFIG } from './Shared/utils/config';
+import { initializeIcons } from './Shared/utils/icons';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+// Initialize Font Awesome icons
+initializeIcons();
 
-InertiaProgress.init({
-  delay: 0,
-  color: '#29d',
-  includeCSS: true,
-  showSpinner: true,
-});
+// Initialize Inertia Progress
+InertiaProgress.init(INERTIA_PROGRESS_CONFIG);
 
-// Sistem tercihlerinden bağımsız olarak tema yönetimi
-// prefers-color-scheme medya sorgusu etkisizleştiriliyor
-// CSS dosyalarında kullanılan sistem tercihlerine bağlı kodlar yerine
-// Vue tarafından yönetilen tema sistemi kullanılıyor
+// Remove system theme preference
 document.documentElement.classList.remove('dark');
 
 createInertiaApp({
-  title: (title) => (title ? `${title} - ${appName}` : appName),
+  title: (title) => (title ? `${title} - ${APP_NAME}` : APP_NAME),
   resolve: async (name) => {
     const page = (
       await resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob<DefineComponent>('./Pages/**/*.vue'))
     ).default;
 
     page.layout = page.layout || MainLayout;
-
     return page;
   },
   setup({ el, App, props, plugin }) {
@@ -84,9 +79,7 @@ createInertiaApp({
 
     app.use(plugin).use(ZiggyVue).use(store).component('font-awesome-icon', FontAwesomeIcon);
 
-    // Check if the element exists before mounting
     if (el) {
-      // Tema sistemini başlat
       store.dispatch('Theme/initTheme');
       app.mount(el);
     } else {

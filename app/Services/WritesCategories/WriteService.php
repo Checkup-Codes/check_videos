@@ -5,15 +5,12 @@ namespace App\Services\WritesCategories;
 use App\Models\WritesCategories\Category;
 use App\Models\WritesCategories\Write;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Services\WritesCategories\CategoryService;
 
 class WriteService
 {
-    private const CACHE_TTL = 60;
-
     // Define threshold for slow operations in seconds
     private const SLOW_OPERATION_THRESHOLD = 0.5;
 
@@ -63,20 +60,12 @@ class WriteService
         $startTime = microtime(true);
         $isAdmin = Auth::check();
 
-        // If admin, bypass cache for fresh data
-        if ($isAdmin) {
-            $writes = Write::select('id', 'views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
-                ->orderByDesc('published_at')
-                ->get();
-        } else {
-            // For regular users, use cache for better performance
-            $writes = Cache::remember('content_writes', self::CACHE_TTL, function () {
-                return Write::select('id', 'views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
-                    ->where('status', 'published')
-                    ->orderByDesc('published_at')
-                    ->get();
-            });
-        }
+        $writes = Write::select('id', 'views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
+            ->when(!$isAdmin, function ($query) {
+                $query->where('status', 'published');
+            })
+            ->orderByDesc('published_at')
+            ->get();
 
         $executionTime = microtime(true) - $startTime;
 
@@ -97,20 +86,12 @@ class WriteService
         $startTime = microtime(true);
         $isAdmin = Auth::check();
 
-        // If admin, bypass cache for fresh data
-        if ($isAdmin) {
-            $writes = Write::select('id', 'views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
-                ->orderByDesc('published_at')
-                ->get();
-        } else {
-            // For regular users, use cache for better performance
-            $writes = Cache::remember('content_writes_all', self::CACHE_TTL, function () {
-                return Write::select('id', 'views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
-                    ->where('status', 'published')
-                    ->orderByDesc('published_at')
-                    ->get();
-            });
-        }
+        $writes = Write::select('id', 'views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
+            ->when(!$isAdmin, function ($query) {
+                $query->where('status', 'published');
+            })
+            ->orderByDesc('published_at')
+            ->get();
 
         $executionTime = microtime(true) - $startTime;
 
@@ -132,8 +113,7 @@ class WriteService
         $startTime = microtime(true);
         $isAdmin = Auth::check();
 
-        // Direct category_id writes
-        $writesFromMainTable = Write::whereIn('category_id', $categoryIds)
+        $writes = Write::whereIn('category_id', $categoryIds)
             ->when(!$isAdmin, function ($query) {
                 $query->where('status', 'published');
             })
@@ -141,45 +121,14 @@ class WriteService
                 'id',
                 'title',
                 'slug',
-                'author_id',
-                'category_id',
-                'published_at',
                 'status',
-                'views_count',
-                'seo_keywords',
-                'tags',
-                'meta_description',
-                'cover_image',
-                'created_at',
-                'updated_at'
-            );
-
-        // Writes from relationship table
-        $writesFromRelationTable = Write::whereHas('categories', function ($query) use ($categoryIds) {
-            $query->whereIn('category_id', $categoryIds);
-        })
-            ->when(!$isAdmin, function ($query) {
-                $query->where('status', 'published');
-            })
-            ->select(
-                'id',
-                'title',
-                'slug',
-                'author_id',
-                'category_id',
                 'published_at',
-                'status',
-                'views_count',
-                'seo_keywords',
-                'tags',
-                'meta_description',
-                'cover_image',
                 'created_at',
-                'updated_at'
-            );
-
-        // Combine both queries and ensure each write appears only once
-        $writes = $writesFromMainTable->union($writesFromRelationTable)
+                'updated_at',
+                'meta_description',
+                'summary',
+                'cover_image'
+            )
             ->orderByDesc('published_at')
             ->get();
 
@@ -300,7 +249,6 @@ class WriteService
             }
 
             DB::commit();
-            $this->clearCache();
 
             $executionTime = microtime(true) - $startTime;
 
@@ -341,7 +289,6 @@ class WriteService
             $write->update($data);
 
             DB::commit();
-            $this->clearCache();
 
             $executionTime = microtime(true) - $startTime;
 
@@ -373,7 +320,6 @@ class WriteService
             $result = $write->delete();
 
             DB::commit();
-            $this->clearCache();
 
             $executionTime = microtime(true) - $startTime;
 
@@ -432,15 +378,5 @@ class WriteService
             'success' => $result,
             'execution_time' => $this->formatExecutionTime($executionTime)
         ];
-    }
-
-    /**
-     * Clear cache (to prevent duplication)
-     */
-    public function clearCache()
-    {
-        Cache::forget('content_categories');
-        Cache::forget('content_writes');
-        Cache::forget('content_writes_all');
     }
 }

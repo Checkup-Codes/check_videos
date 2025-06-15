@@ -10,7 +10,7 @@
 
     <!-- Logo/Title -->
     <div class="px-3 py-1 font-bold uppercase text-primary">
-      <Link href="/">{{ seoTitle }}</Link>
+      <Link href="/">{{ title }}</Link>
     </div>
 
     <!-- Menu Toggle Button -->
@@ -90,6 +90,7 @@ const page = usePage();
 const imagePath = ref('');
 const auth = ref(null);
 const appName = computed(() => usePage().props.app.name);
+const title = ref('Check Videos');
 
 // Watch for page props changes to update auth data
 watch(
@@ -164,24 +165,6 @@ const handleMenuItemClick = (event) => {
     closeMenu();
   }
 };
-
-onMounted(async () => {
-  try {
-    const response = await axios.get('/api/seo/home');
-    if (response.data && response.data.title) {
-      seoTitle.value = response.data.title;
-    }
-  } catch (error) {
-    console.error('Error fetching SEO title:', error);
-  }
-
-  // Add escape key listener to close menu
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && isMenuOpen.value) {
-      closeMenu();
-    }
-  });
-});
 </script>
 
 <style scoped>

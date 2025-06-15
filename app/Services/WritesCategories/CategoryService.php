@@ -3,14 +3,11 @@
 namespace App\Services\WritesCategories;
 
 use App\Models\WritesCategories\Category;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class CategoryService
 {
-    private const CACHE_TTL = 60;
-
     // Define threshold for slow operations in seconds
     private const SLOW_OPERATION_THRESHOLD = 0.5;
 
@@ -40,7 +37,7 @@ class CategoryService
     }
 
     /**
-     * Get all categories from cache or database
+     * Get all categories from database
      * 
      * @return array Associated array with data and execution time
      */
@@ -49,15 +46,7 @@ class CategoryService
         $startTime = microtime(true);
         $isAdmin = Auth::check();
 
-        // For admin users, bypass cache to get fresh data
-        if ($isAdmin) {
-            $categories = $this->fetchCategoriesFromDatabase($isAdmin);
-        } else {
-            // For regular users, use cache for better performance
-            $categories = Cache::remember('content_categories', self::CACHE_TTL, function () use ($isAdmin) {
-                return $this->fetchCategoriesFromDatabase($isAdmin);
-            });
-        }
+        $categories = $this->fetchCategoriesFromDatabase($isAdmin);
 
         $executionTime = microtime(true) - $startTime;
 
@@ -131,7 +120,7 @@ class CategoryService
      * Set hidden status for children of hidden parent categories
      * Used for visual indication in the frontend (lock icon)
      * 
-     * @param array $categories
+     * @param \Illuminate\Database\Eloquent\Collection $categories
      * @return void
      */
     private function setChildrenHiddenStatus($categories)
@@ -144,7 +133,7 @@ class CategoryService
 
                     // Apply the same process to the child's children
                     if ($child->children->count() > 0) {
-                        $this->setChildrenHiddenStatus([$child]);
+                        $this->setChildrenHiddenStatus($child->children);
                     }
                 }
             }
@@ -207,7 +196,6 @@ class CategoryService
             $category = Category::create($data);
 
             DB::commit();
-            $this->clearCache();
 
             $executionTime = microtime(true) - $startTime;
 
@@ -237,7 +225,6 @@ class CategoryService
             $category->update($data);
 
             DB::commit();
-            $this->clearCache();
 
             $executionTime = microtime(true) - $startTime;
 
@@ -266,7 +253,6 @@ class CategoryService
             $result = $category->delete();
 
             DB::commit();
-            $this->clearCache();
 
             $executionTime = microtime(true) - $startTime;
 
@@ -278,13 +264,5 @@ class CategoryService
             DB::rollBack();
             throw $e;
         }
-    }
-
-    /**
-     * Clear category-related cache
-     */
-    public function clearCache()
-    {
-        Cache::forget('content_categories');
     }
 }

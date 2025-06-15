@@ -5,8 +5,6 @@ namespace App\Providers;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
-use Illuminate\Auth\Events\Login;
-use Illuminate\Auth\Events\Logout;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -18,13 +16,6 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
-        ],
-        // Login ve Logout eventlerini dinleyerek cache'i temizleyecek listener'lar ekliyoruz
-        Login::class => [
-            \App\Listeners\ClearCacheOnAuth::class,
-        ],
-        Logout::class => [
-            \App\Listeners\ClearCacheOnAuth::class,
         ],
     ];
 

@@ -25,7 +25,6 @@ export function useScrollManager(storageKey, resetInterval = SCROLL_RESET_INTERV
     const save = () => {
       if (scrollTop > 0) {
         localStorage.setItem(storageKey, scrollTop.toString());
-        console.log(`Saved scroll position for ${storageKey}:`, scrollTop);
       }
     };
 

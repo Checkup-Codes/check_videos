@@ -182,6 +182,10 @@ import '@/Shared/Css/quill-custom-styles.css';
 import { useGsapFadeIn } from '@/Pages/WritesCategories/_utils/useGsapAnimation.js';
 import { useProcessedQuillContent } from '@/Pages/WritesCategories/_utils/useProcessedQuillContent.js';
 import gsap from 'gsap';
+import ScrollTrigger from 'gsap/ScrollTrigger';
+
+// Register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Component name definition
@@ -271,7 +275,7 @@ onMounted(() => {
   // Simulate loading delay
   setTimeout(() => {
     isLoading.value = false;
-    useGsapFadeIn(contentRef);
+    useGsapFadeIn(contentRef, { duration: 0.8 });
   }, 800);
 
   // Restore write list scroll position after a short delay

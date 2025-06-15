@@ -68,3 +68,17 @@ body {
 .input-error {
   @apply text-sm text-red-500 dark:text-red-400;
 }
+
+/* Prevent right-click on images */
+img {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Allow right-click on specific images that need it */
+img.allow-right-click {
+  pointer-events: auto;
+}

@@ -1,24 +1,36 @@
 // useGsapAnimation.js
-// Minimal composable for GSAP animations in Vue 3
-// Provides a fade-in effect for any element ref
-
 import { onMounted } from 'vue';
 import gsap from 'gsap';
+import ScrollTrigger from 'gsap/ScrollTrigger';
+import { SplitText } from 'gsap/SplitText';
+import { TextPlugin } from 'gsap/TextPlugin';
+import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
+
+gsap.registerPlugin(ScrollTrigger, SplitText, TextPlugin, MotionPathPlugin);
+
+gsap.defaults({
+  ease: 'power2.out',
+  duration: 0.7
+});
 
 /**
  * useGsapFadeIn
- * Animates a given element with a fade-in effect on mount.
- * @param {Ref} elRef - The element ref to animate
- * @param {Object} options - Optional GSAP animation parameters
+ * Belirtilen elementi mount edildiğinde fade-in animasyonu ile gösterir.
+ * @param {Ref} elRef - Animasyon uygulanacak elementin ref'i
+ * @param {Object} options - GSAP animasyon ayarları (opsiyonel)
  */
 export function useGsapFadeIn(elRef, options = {}) {
   onMounted(() => {
     if (elRef.value) {
-      gsap.fromTo(
-        elRef.value,
-        { opacity: 0, y: 24 },
-        { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out', ...options }
-      );
+      const delayMs = options.delayMs || 0;
+
+      setTimeout(() => {
+        gsap.fromTo(
+          elRef.value,
+          { opacity: 0, y: 24 },
+          { opacity: 1, y: 0, ...options }
+        );
+      }, delayMs);
     }
   });
-} 
+}

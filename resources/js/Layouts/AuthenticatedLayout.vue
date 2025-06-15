@@ -15,16 +15,9 @@ const showingNavigationDropdown = ref(false);
     <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
       <nav class="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800">
         <!-- Primary Navigation Menu -->
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6">
           <div class="flex h-16 justify-between">
             <div class="flex">
-              <!-- Logo -->
-              <div class="flex shrink-0 items-center">
-                <Link :href="route('dashboard')">
-                  <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
-                </Link>
-              </div>
-
               <!-- Navigation Links -->
               <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')"> Dashboard </NavLink>
@@ -34,7 +27,7 @@ const showingNavigationDropdown = ref(false);
                 <NavLink :href="route('social-media.index')" :active="route().current('social-media.index')">
                   Sosyal Medya Yönetimi
                 </NavLink>
-                <NavLink :href="route('seo.index')" :active="route().current('seo.index')"> SEO Yönetimi </NavLink>
+                <NavLink :href="route('seo.edit')" :active="route().current('seo.edit')"> SEO Yönetimi </NavLink>
               </div>
             </div>
 
@@ -125,7 +118,7 @@ const showingNavigationDropdown = ref(false);
             <ResponsiveNavLink :href="route('social-media.index')" :active="route().current('social-media.index')">
               Sosyal Medya Yönetimi
             </ResponsiveNavLink>
-            <ResponsiveNavLink :href="route('seo.index')" :active="route().current('seo.index')">
+            <ResponsiveNavLink :href="route('seo.edit')" :active="route().current('seo.edit')">
               SEO Yönetimi
             </ResponsiveNavLink>
           </div>

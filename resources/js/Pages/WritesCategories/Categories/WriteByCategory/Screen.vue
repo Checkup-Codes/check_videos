@@ -182,6 +182,10 @@ import '@/Shared/Css/quill-custom-styles.css';
 import { useGsapFadeIn } from '@/Pages/WritesCategories/_utils/useGsapAnimation.js';
 import { useProcessedQuillContent } from '@/Pages/WritesCategories/_utils/useProcessedQuillContent.js';
 import gsap from 'gsap';
+import ScrollTrigger from 'gsap/ScrollTrigger';
+
+// Register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Component name definition
@@ -302,7 +306,7 @@ onMounted(() => {
   }
 
   // Animate Quill content with fade-in effect on mount
-  useGsapFadeIn(contentRef);
+  useGsapFadeIn(contentRef, { duration: 0.8 });
 });
 
 /**

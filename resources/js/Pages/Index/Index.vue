@@ -34,33 +34,19 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import * as THREE from 'three';
 import NET from 'vanta/dist/vanta.net.min';
+import { usePage } from '@inertiajs/vue3';
 
-const props = defineProps({
-  logo: {
-    type: String,
-  },
-});
+const { props } = usePage();
 
-const seoTitle = ref('');
-const seoDescription = ref('');
-const logoPath = ref(props.logo);
+const seoTitle = ref(props.screen.seo.title);
+const seoDescription = ref(props.screen.seo.description);
+const logoPath = ref(props.screen.seo.logo);
 const logoAlt = ref('Logo');
-const isLoading = ref(true);
 const vantaRef = ref(null);
 let vantaEffect = null;
+const isLoading = ref(true);
 
 onMounted(async () => {
-  try {
-    console.log(props.logo);
-  } catch (err) {
-    console.error('Data fetch error:', err);
-  } finally {
-    // Kısa bir gecikme ekleyerek skeleton'un görünmesini sağlayalım
-    setTimeout(() => {
-      isLoading.value = false;
-    }, 500);
-  }
-
   // Vanta animasyonu başlat
   if (!vantaEffect) {
     vantaEffect = NET({
@@ -77,6 +63,9 @@ onMounted(async () => {
       points: 12.0,
       maxDistance: 25.0,
       spacing: 15.0,
+      material: {
+        vertexColors: true,
+      },
     });
   }
 });

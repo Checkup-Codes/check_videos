@@ -7,93 +7,112 @@
     </template>
 
     <div class="py-12">
-      <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-3xl sm:px-6 lg:px-8">
         <div class="overflow-hidden bg-white shadow-sm dark:bg-gray-800 sm:rounded-lg">
           <div class="p-6 text-gray-900 dark:text-gray-100">
-            <div class="mb-6">
-              <h3 class="text-lg font-semibold">Ana Sayfa SEO Ayarları</h3>
-              <p class="mt-2 text-sm text-gray-500">
-                Bu ayarlar sitenizin ana sayfasında kullanılacak SEO bilgilerini içerir.
-              </p>
-            </div>
-
             <form @submit.prevent="submit" class="space-y-6">
-              <div>
-                <InputLabel for="route" value="Route" />
-                <TextInput id="route" type="text" class="mt-1 block w-full bg-gray-100" v-model="form.route" disabled />
-              </div>
+              <div class="card bg-base-100">
+                <div class="card-body">
+                  <!-- Temel SEO -->
+                  <div class="space-y-4">
+                    <h3 class="text-lg font-medium">Temel SEO</h3>
 
-              <div>
-                <InputLabel for="title" value="Başlık" />
-                <TextInput id="title" type="text" class="mt-1 block w-full" v-model="form.title" required />
-                <InputError :message="form.errors.title" class="mt-2" />
-              </div>
+                    <div class="form-control">
+                      <label class="label">
+                        <span class="label-text">Sayfa Başlığı</span>
+                      </label>
+                      <input type="text" v-model="form.title" class="input-bordered input" required />
+                    </div>
 
-              <div>
-                <InputLabel for="description" value="Açıklama" />
-                <TextArea id="description" class="mt-1 block w-full" v-model="form.description" required />
-                <InputError :message="form.errors.description" class="mt-2" />
-              </div>
+                    <div class="form-control">
+                      <label class="label">
+                        <span class="label-text">Meta Açıklama</span>
+                      </label>
+                      <textarea v-model="form.description" class="textarea-bordered textarea h-24" required></textarea>
+                    </div>
 
-              <div>
-                <InputLabel for="keywords" value="Anahtar Kelimeler" />
-                <TextInput id="keywords" type="text" class="mt-1 block w-full" v-model="form.keywords" />
-                <InputError :message="form.errors.keywords" class="mt-2" />
-                <p class="mt-1 text-sm text-gray-500">Virgülle ayırarak birden fazla anahtar kelime girebilirsiniz.</p>
-              </div>
-
-              <div class="border-t border-gray-200 pt-6 dark:border-gray-700">
-                <h4 class="mb-4 text-lg font-medium">Open Graph Ayarları</h4>
-
-                <div class="space-y-4">
-                  <div>
-                    <InputLabel for="og_title" value="OG Başlık" />
-                    <TextInput id="og_title" type="text" class="mt-1 block w-full" v-model="form.og_title" />
-                    <InputError :message="form.errors.og_title" class="mt-2" />
+                    <div class="form-control">
+                      <label class="label">
+                        <span class="label-text">Anahtar Kelimeler</span>
+                      </label>
+                      <input
+                        type="text"
+                        v-model="form.keywords"
+                        class="input-bordered input"
+                        placeholder="Virgülle ayırarak yazın"
+                      />
+                    </div>
                   </div>
 
-                  <div>
-                    <InputLabel for="og_description" value="OG Açıklama" />
-                    <TextArea id="og_description" class="mt-1 block w-full" v-model="form.og_description" />
-                    <InputError :message="form.errors.og_description" class="mt-2" />
+                  <div class="divider"></div>
+
+                  <!-- Open Graph -->
+                  <div class="space-y-4">
+                    <h3 class="text-lg font-medium">Sosyal Medya</h3>
+
+                    <div class="form-control">
+                      <label class="label">
+                        <span class="label-text">Paylaşım Başlığı</span>
+                      </label>
+                      <input type="text" v-model="form.og_title" class="input-bordered input" />
+                    </div>
+
+                    <div class="form-control">
+                      <label class="label">
+                        <span class="label-text">Paylaşım Açıklaması</span>
+                      </label>
+                      <textarea v-model="form.og_description" class="textarea-bordered textarea h-24"></textarea>
+                    </div>
+
+                    <div class="form-control">
+                      <label class="label">
+                        <span class="label-text">Paylaşım Görseli</span>
+                      </label>
+                      <input type="text" v-model="form.og_image" class="input-bordered input" />
+                    </div>
                   </div>
 
-                  <div>
-                    <InputLabel for="og_image" value="OG Görsel URL" />
-                    <TextInput id="og_image" type="text" class="mt-1 block w-full" v-model="form.og_image" />
-                    <InputError :message="form.errors.og_image" class="mt-2" />
+                  <div class="divider"></div>
+
+                  <!-- Gelişmiş -->
+                  <div class="space-y-4">
+                    <h3 class="text-lg font-medium">Gelişmiş</h3>
+
+                    <div class="form-control">
+                      <label class="label">
+                        <span class="label-text">Canonical URL</span>
+                      </label>
+                      <input type="text" v-model="form.canonical_url" class="input-bordered input" />
+                    </div>
+
+                    <div class="form-control">
+                      <label class="label">
+                        <span class="label-text">Robots</span>
+                      </label>
+                      <select v-model="form.robots" class="select-bordered select">
+                        <option value="index, follow">index, follow</option>
+                        <option value="noindex, follow">noindex, follow</option>
+                        <option value="index, nofollow">index, nofollow</option>
+                        <option value="noindex, nofollow">noindex, nofollow</option>
+                      </select>
+                    </div>
+
+                    <div class="form-control">
+                      <label class="label">
+                        <span class="label-text">Schema.org JSON</span>
+                      </label>
+                      <textarea
+                        v-model="form.schema_org"
+                        class="textarea-bordered textarea h-32 font-mono"
+                        placeholder='{"@context": "https://schema.org", ...}'
+                      ></textarea>
+                    </div>
+                  </div>
+
+                  <div class="card-actions mt-6 justify-end">
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
                   </div>
                 </div>
-              </div>
-
-              <div class="border-t border-gray-200 pt-6 dark:border-gray-700">
-                <h4 class="mb-4 text-lg font-medium">Gelişmiş Ayarlar</h4>
-
-                <div class="space-y-4">
-                  <div>
-                    <InputLabel for="canonical_url" value="Canonical URL" />
-                    <TextInput id="canonical_url" type="text" class="mt-1 block w-full" v-model="form.canonical_url" />
-                    <InputError :message="form.errors.canonical_url" class="mt-2" />
-                  </div>
-
-                  <div>
-                    <InputLabel for="robots" value="Robots" />
-                    <TextInput id="robots" type="text" class="mt-1 block w-full" v-model="form.robots" />
-                    <InputError :message="form.errors.robots" class="mt-2" />
-                    <p class="mt-1 text-sm text-gray-500">Örnek: index, follow</p>
-                  </div>
-
-                  <div>
-                    <InputLabel for="schema_org" value="Schema.org JSON" />
-                    <TextArea id="schema_org" class="mt-1 block w-full font-mono" v-model="form.schema_org" />
-                    <InputError :message="form.errors.schema_org" class="mt-2" />
-                    <p class="mt-1 text-sm text-gray-500">Geçerli bir JSON formatında olmalıdır.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="flex items-center justify-end border-t border-gray-200 pt-6 dark:border-gray-700">
-                <PrimaryButton :disabled="form.processing"> Değişiklikleri Kaydet </PrimaryButton>
               </div>
             </form>
           </div>
@@ -107,11 +126,6 @@
 import { Head } from '@inertiajs/vue3';
 import { useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import TextArea from '@/Components/TextArea.vue';
 
 const props = defineProps({
   seo: {
@@ -121,7 +135,6 @@ const props = defineProps({
 });
 
 const form = useForm({
-  route: props.seo.route,
   title: props.seo.title,
   description: props.seo.description,
   keywords: props.seo.keywords,
@@ -130,7 +143,7 @@ const form = useForm({
   og_image: props.seo.og_image,
   canonical_url: props.seo.canonical_url,
   robots: props.seo.robots,
-  schema_org: props.seo.schema_org,
+  schema_org: props.seo.schema_org ? JSON.stringify(props.seo.schema_org, null, 2) : '',
 });
 
 const submit = () => {

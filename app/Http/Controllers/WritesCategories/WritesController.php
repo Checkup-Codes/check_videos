@@ -18,6 +18,11 @@ class WritesController extends Controller
         'name' => 'writes'
     ];
 
+    private array $screenMobile = [
+        'isMobileSidebar' => true,
+        'name' => 'writes'
+    ];
+
     public function __construct(WriteService $writeService)
     {
         $this->writeService = $writeService;
@@ -40,10 +45,7 @@ class WritesController extends Controller
         ]);
 
         return inertia('WritesCategories/Writes/IndexWrite', [
-            'screen'     => [
-                'isMobileSidebar' => true,
-                'name'            => 'writes'
-            ],
+            'screen'     => $this->screenMobile,
             'writes'     => $writesResult['data'],
             'isAdmin'    => $isAdmin,
             'performance' => [
