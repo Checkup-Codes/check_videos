@@ -18,17 +18,29 @@ $host = preg_replace('/^www\./', '', $host);
 // Eklenen kod: /storage/ URL'lerini domain bazlı dizine yönlendirme
 if (strpos($uri, '/storage/') === 0) {
     // Domain bazlı storage path oluştur
-    $storagePath = __DIR__ . '/storage/multi/' . $host . '/app/public' . str_replace('/storage', '', $uri);
+    $storagePath = __DIR__ . '/storage/multi/' . $host . '/public' . str_replace('/storage', '', $uri);
 
-    // Eğer domain'e özel dosya yoksa, varsayılan storage'ı dene
+    // Debug log
+    error_log("Requested URI: " . $uri);
+    error_log("Host: " . $host);
+    error_log("Looking for file at: " . $storagePath);
+
+    // Eğer domain'e özel dosya yoksa, eski storage'ı dene
     if (!file_exists($storagePath)) {
-        $storagePath = __DIR__ . '/storage/app/public' . str_replace('/storage', '', $uri);
+        $oldPath = __DIR__ . '/storage/app/public' . str_replace('/storage', '', $uri);
+        error_log("File not found in domain storage, trying old path: " . $oldPath);
+        $storagePath = $oldPath;
     }
 
     if (file_exists($storagePath)) {
+        error_log("File found at: " . $storagePath);
         header('Content-Type: ' . mime_content_type($storagePath));
         header('Cache-Control: public, max-age=31536000'); // 1 yıl cache
         readfile($storagePath);
+        exit;
+    } else {
+        error_log("File not found at any location");
+        header("HTTP/1.0 404 Not Found");
         exit;
     }
 }
