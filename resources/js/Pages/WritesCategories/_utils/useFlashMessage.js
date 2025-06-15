@@ -18,6 +18,6 @@ export function useFlashMessage() {
   );
 
   return {
-    flashMessage
+    flashMessage,
   };
-} 
+}

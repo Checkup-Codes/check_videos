@@ -127,16 +127,35 @@
             <label class="label">
               <span class="label-text">Durumu</span>
             </label>
-            <select
-              v-model="form.status"
-              class="select-bordered select w-full bg-base-100 text-neutral-content"
-              :class="{ 'select-error': errors.status || form.errors.status }"
-            >
-              <option value="draft">Şablon</option>
-              <option value="published">Yayında</option>
-              <option value="private">Gizli</option>
-              <option value="link_only">Sadece Link</option>
-            </select>
+            <div class="dropdown w-full">
+              <div class="relative">
+                <input
+                  type="text"
+                  v-model="statusSearch"
+                  @input="filterStatus"
+                  placeholder="Durum seçin veya arayın..."
+                  class="input-bordered input w-full pr-10"
+                  :class="{ 'input-error': errors.status || form.errors.status }"
+                  tabindex="0"
+                />
+                <button
+                  v-if="statusSearch"
+                  @click="clearStatus"
+                  class="btn btn-ghost btn-xs btn-circle absolute right-2 top-1/2 -translate-y-1/2"
+                >
+                  ✕
+                </button>
+              </div>
+              <ul
+                tabindex="0"
+                class="dropdown-content menu z-[1] max-h-60 w-full overflow-y-auto rounded-box bg-base-100 p-2 shadow"
+                v-if="filteredStatuses.length > 0"
+              >
+                <li v-for="status in filteredStatuses" :key="status.value">
+                  <a @click="selectStatus(status)">{{ status.label }}</a>
+                </li>
+              </ul>
+            </div>
             <label v-if="errors.status || form.errors.status" class="label">
               <span class="label-text-alt text-error">{{ errors.status || form.errors.status }}</span>
             </label>
@@ -146,16 +165,35 @@
             <label class="label">
               <span class="label-text">Kategori</span>
             </label>
-            <select
-              v-model="form.category_id"
-              class="select-bordered select w-full bg-base-100 text-neutral-content"
-              :class="{ 'select-error': errors.category_id || form.errors.category_id }"
-            >
-              <option value="" disabled>Kategori seç</option>
-              <option v-for="category in categories" :key="category.id" :value="category.id">
-                {{ category.name }}
-              </option>
-            </select>
+            <div class="dropdown w-full">
+              <div class="relative">
+                <input
+                  type="text"
+                  v-model="categorySearch"
+                  @input="filterCategories"
+                  placeholder="Kategori seçin veya arayın..."
+                  class="input-bordered input w-full pr-10"
+                  :class="{ 'input-error': errors.category_id || form.errors.category_id }"
+                  tabindex="0"
+                />
+                <button
+                  v-if="categorySearch"
+                  @click="clearCategory"
+                  class="btn btn-ghost btn-xs btn-circle absolute right-2 top-1/2 -translate-y-1/2"
+                >
+                  ✕
+                </button>
+              </div>
+              <ul
+                tabindex="0"
+                class="dropdown-content menu z-[1] max-h-60 w-full overflow-y-auto rounded-box bg-base-100 p-2 shadow"
+                v-if="filteredCategories.length > 0"
+              >
+                <li v-for="category in filteredCategories" :key="category.id">
+                  <a @click="selectCategory(category)">{{ category.name }}</a>
+                </li>
+              </ul>
+            </div>
             <label v-if="errors.category_id || form.errors.category_id" class="label">
               <span class="label-text-alt text-error">{{ errors.category_id || form.errors.category_id }}</span>
             </label>
@@ -330,6 +368,81 @@ const publishDateObj = ref({
   time: '',
 });
 
+// Status options with labels
+const statusOptions = [
+  { value: 'draft', label: 'Şablon' },
+  { value: 'published', label: 'Yayında' },
+  { value: 'private', label: 'Gizli' },
+  { value: 'link_only', label: 'Sadece Link' },
+];
+
+// Search and filtered states
+const statusSearch = ref('');
+const categorySearch = ref('');
+const filteredStatuses = ref(statusOptions);
+const filteredCategories = ref(props.categories);
+
+// Filter functions
+const filterStatus = () => {
+  const searchTerm = statusSearch.value.toLowerCase();
+  filteredStatuses.value = statusOptions.filter((status) => status.label.toLowerCase().includes(searchTerm));
+};
+
+const filterCategories = () => {
+  const searchTerm = categorySearch.value.toLowerCase();
+  filteredCategories.value = props.categories.filter((category) => category.name.toLowerCase().includes(searchTerm));
+};
+
+// Selection functions
+const selectStatus = (status) => {
+  form.status = status.value;
+  statusSearch.value = status.label;
+  filteredStatuses.value = statusOptions;
+};
+
+const selectCategory = (category) => {
+  form.category_id = category.id;
+  categorySearch.value = category.name;
+  filteredCategories.value = props.categories;
+};
+
+// Clear functions
+const clearStatus = () => {
+  statusSearch.value = '';
+  form.status = '';
+  filteredStatuses.value = statusOptions;
+};
+
+const clearCategory = () => {
+  categorySearch.value = '';
+  form.category_id = '';
+  filteredCategories.value = props.categories;
+};
+
+// Initialize values if they exist
+onMounted(() => {
+  // Set initial status label
+  const currentStatus = statusOptions.find((s) => s.value === form.status);
+  if (currentStatus) {
+    statusSearch.value = currentStatus.label;
+  }
+
+  // Set initial category name
+  if (form.category_id) {
+    const category = props.categories.find((c) => c.id === form.category_id);
+    if (category) {
+      categorySearch.value = category.name;
+    }
+  }
+});
+
+// Set current date and time as default when component is mounted
+onMounted(() => {
+  const now = new Date();
+  publishDateObj.value.date = now.toISOString().split('T')[0];
+  publishDateObj.value.time = now.toTimeString().slice(0, 5);
+});
+
 // publishDateObj değiştiğinde form.published_at'i güncelle
 watch(
   publishDateObj.value,
@@ -375,14 +488,35 @@ const submitForm = () => {
 watch(
   () => form.title,
   (newTitle) => {
-    if (!form.slug || form.slug === '') {
-      form.slug = newTitle
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
-        .trim();
-    }
+    // Turkish character mapping
+    const turkishToEnglish = {
+      ı: 'i',
+      İ: 'i',
+      ğ: 'g',
+      Ğ: 'g',
+      ü: 'u',
+      Ü: 'u',
+      ş: 's',
+      Ş: 's',
+      ö: 'o',
+      Ö: 'o',
+      ç: 'c',
+      Ç: 'c',
+    };
+
+    // Convert Turkish characters to English
+    let slug = newTitle;
+    Object.entries(turkishToEnglish).forEach(([turkish, english]) => {
+      slug = slug.replace(new RegExp(turkish, 'g'), english);
+    });
+
+    // Convert to lowercase and replace special characters
+    form.slug = slug
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '') // Remove all special characters
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+      .trim();
   }
 );
 </script>

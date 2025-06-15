@@ -13,9 +13,9 @@ export function useHighlight(element) {
 
   // Find all code blocks
   const codeBlocks = element.querySelectorAll('pre code');
-  
+
   // Apply highlighting to each block
   codeBlocks.forEach((block) => {
     hljs.highlightElement(block);
   });
-} 
+}

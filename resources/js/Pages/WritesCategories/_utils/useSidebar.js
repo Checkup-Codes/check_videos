@@ -18,7 +18,7 @@ export function useSidebar() {
   };
 
   // Sidebar styling
-  const sidebarStyle = computed(() => isMobile.value ? '' : 'hidden lg:block');
+  const sidebarStyle = computed(() => (isMobile.value ? '' : 'hidden lg:block'));
 
   return {
     isCollapsed,
@@ -26,6 +26,6 @@ export function useSidebar() {
     shouldShowPerformanceMonitor,
     performanceData,
     toggleSidebar,
-    sidebarStyle
+    sidebarStyle,
   };
-} 
+}

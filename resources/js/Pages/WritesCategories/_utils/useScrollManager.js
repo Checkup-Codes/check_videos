@@ -77,14 +77,17 @@ export function useScrollManager(storageKey, resetInterval = SCROLL_RESET_INTERV
   // Set up automatic reset check interval
   let resetCheckInterval;
   onMounted(() => {
-    resetCheckInterval = setInterval(() => {
-      const now = Date.now();
-      const timeSinceLastReset = now - lastResetTime.value;
-      
-      if (timeSinceLastReset >= resetInterval) {
-        resetScroll();
-      }
-    }, Math.min(resetInterval, 60000)); // Check at most every minute
+    resetCheckInterval = setInterval(
+      () => {
+        const now = Date.now();
+        const timeSinceLastReset = now - lastResetTime.value;
+
+        if (timeSinceLastReset >= resetInterval) {
+          resetScroll();
+        }
+      },
+      Math.min(resetInterval, 60000)
+    ); // Check at most every minute
   });
 
   onUnmounted(() => {
@@ -98,6 +101,6 @@ export function useScrollManager(storageKey, resetInterval = SCROLL_RESET_INTERV
     saveScrollPosition,
     getSavedScrollPosition,
     resetScroll,
-    cleanup
+    cleanup,
   };
-} 
+}

@@ -1,4 +1,10 @@
 /* QuillJS Global Styles */
+.ql-editor {
+  @apply p-4;
+  min-height: 300px;
+  line-height: 1.6;
+}
+
 .ql-editor h1,
 .article-content h1 {
   @apply my-6 text-4xl font-bold;
@@ -38,14 +44,14 @@
 /* Fix spacing between paragraphs */
 .ql-editor p,
 .article-content p {
-  @apply mb-5 text-base leading-relaxed;
+  @apply mb-4 text-base leading-relaxed;
   color: hsl(var(--bc));
 }
 
 /* Space between paragraphs */
 .ql-editor p + p,
 .article-content p + p {
-  @apply mt-0;
+  @apply mt-4;
 }
 
 /* Empty paragraphs should show as line breaks */
@@ -53,9 +59,9 @@
 .article-content p:empty,
 .ql-editor p:has(br:only-child),
 .article-content p:has(br:only-child) {
-  @apply my-5 h-6;
+  @apply my-4 h-6;
   min-height: 1.5rem;
-  content: " ";
+  content: ' ';
   display: block;
 }
 
@@ -79,34 +85,91 @@
   @apply line-through;
 }
 
+/* Override QuillJS default styles */
+.ql-snow .ql-editor blockquote {
+  border-left: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 /* Blockquote style - DaisyUI uyumlu */
 .ql-editor blockquote,
 .article-content blockquote {
-  padding: 1rem 1.5rem;
-  border-left: 4px solid hsl(var(--p));
-  background-color: hsl(var(--b2));
+  @apply my-4 px-6 py-5;
+  border-left: 4px solid hsl(var(--p) / 0.8);
+  background-color: hsl(var(--b3));
   font-style: italic;
   position: relative;
-  margin: 1.5rem 0;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 0.25rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   color: hsl(var(--bc));
+  font-size: 0.95em;
+  line-height: 1.6;
+}
+
+/* Enhanced blockquote style for preview mode */
+.article-content blockquote {
+  @apply my-6;
+  background-color: hsl(var(--b3));
+  border-left: 5px solid hsl(var(--p));
+  border-radius: 0.25rem;
+}
+
+.article-content blockquote::before {
+  content: '"';
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  font-size: 4em;
+  color: hsl(var(--p) / 0.1);
+  font-family: Georgia, serif;
+  line-height: 1;
+}
+
+.article-content blockquote::after {
+  content: '"';
+  position: absolute;
+  bottom: -30px;
+  right: 10px;
+  font-size: 4em;
+  color: hsl(var(--p) / 0.1);
+  font-family: Georgia, serif;
+  line-height: 1;
 }
 
 /* Code blocks - DaisyUI uyumlu */
 .ql-editor code,
 .article-content code:not(.mockup-code *) {
+  @apply mx-0.5 px-2 py-0.5;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
   background-color: hsl(var(--b2));
   color: hsl(var(--bc));
-  border-radius: 0.35rem;
+  border-radius: 0.25rem;
   border: 1px solid hsl(var(--b3));
-  padding: 0.15rem 0.4rem;
-  margin: 0 0.1rem;
   font-size: 0.9em;
   display: inline;
   white-space: pre-wrap;
   word-break: normal;
+}
+
+/* Fix spacing after code blocks and blockquotes */
+.ql-editor blockquote + p,
+.article-content blockquote + p,
+.ql-editor code + p,
+.article-content code + p,
+.ql-editor pre + p,
+.article-content pre + p {
+  @apply mt-4;
+}
+
+/* Fix spacing before code blocks and blockquotes */
+.ql-editor p + blockquote,
+.article-content p + blockquote,
+.ql-editor p + code,
+.article-content p + code,
+.ql-editor p + pre,
+.article-content p + pre {
+  @apply mt-4;
 }
 
 /* DaisyUI mockup-code styling enhancement */
@@ -166,12 +229,11 @@
 /* Fallback for older code blocks that may not be converted */
 .ql-editor pre.ql-syntax,
 .article-content pre.ql-syntax {
-  padding: 1rem;
-  margin: 1rem 0;
+  @apply my-4 px-4 py-3;
   overflow-x: auto;
-  border-radius: 0.5rem;
+  border-radius: 0.25rem;
   border: 1px solid hsl(var(--b3));
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   line-height: 1.4;
   font-size: 0.9em;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
@@ -180,7 +242,7 @@
   max-width: 100%;
 }
 
-/* Lists - Fix duplicated numbers */
+/* Lists - Fix spacing and padding */
 .ql-editor ol,
 .article-content ol {
   @apply my-4 pl-8;
@@ -198,11 +260,12 @@
 .article-content li {
   @apply my-2;
   min-height: 1.5rem;
+  padding-left: 0.5rem;
 }
 
 /* Fix for duplicated numbers in ordered lists */
-.ql-editor li[data-list="ordered"],
-.article-content li[data-list="ordered"] {
+.ql-editor li[data-list='ordered'],
+.article-content li[data-list='ordered'] {
   list-style-type: none !important;
   display: block !important;
   counter-increment: list-0;
@@ -210,9 +273,9 @@
   padding-left: 0.5rem !important;
 }
 
-.ql-editor li[data-list="ordered"]::before,
-.article-content li[data-list="ordered"]::before {
-  content: counter(list-0) ".";
+.ql-editor li[data-list='ordered']::before,
+.article-content li[data-list='ordered']::before {
+  content: counter(list-0) '.';
   position: absolute;
   left: -2em;
   width: 2em;
@@ -230,17 +293,17 @@
 }
 
 /* Bullet list styling */
-.ql-editor li[data-list="bullet"],
-.article-content li[data-list="bullet"] {
+.ql-editor li[data-list='bullet'],
+.article-content li[data-list='bullet'] {
   list-style-type: none !important;
   display: block !important;
   position: relative !important;
   padding-left: 0.5rem !important;
 }
 
-.ql-editor li[data-list="bullet"]::before,
-.article-content li[data-list="bullet"]::before {
-  content: "•";
+.ql-editor li[data-list='bullet']::before,
+.article-content li[data-list='bullet']::before {
+  content: '•';
   position: absolute;
   left: -1.5em;
   width: 1.5em;
@@ -291,13 +354,13 @@
 }
 
 /* Inline styles for color and background */
-.ql-editor [style*="color:"],
-.article-content [style*="color:"] {
+.ql-editor [style*='color:'],
+.article-content [style*='color:'] {
   color: inherit; /* Will be overridden by inline style */
 }
 
-.ql-editor [style*="background-color:"],
-.article-content [style*="background-color:"] {
+.ql-editor [style*='background-color:'],
+.article-content [style*='background-color:'] {
   padding: 0.1em 0.3em;
   border-radius: 0.25em;
 }
@@ -345,12 +408,12 @@
   .article-content h3 {
     font-size: 1.25rem;
   }
-  
+
   .ql-editor .mockup-code,
   .article-content .mockup-code {
     font-size: 0.8em;
   }
-  
+
   .ql-editor .mockup-code pre,
   .article-content .mockup-code pre {
     padding-top: 0.3rem;
@@ -399,15 +462,15 @@
   border-color: hsl(var(--p)) !important;
 }
 
-.ql-editor .ql-color-picker .ql-picker-options [data-selected="true"] {
+.ql-editor .ql-color-picker .ql-picker-options [data-selected='true'] {
   border-color: hsl(var(--p)) !important;
 }
 
-.ql-editor [style*="color:"] {
+.ql-editor [style*='color:'] {
   color: inherit; /* Inline stil tarafından geçersiz kılınacak */
 }
 
-.ql-editor [style*="background-color:"] {
+.ql-editor [style*='background-color:'] {
   padding: 0.1em 0.3em;
   border-radius: 0.25em;
 }
@@ -440,4 +503,13 @@
 .ql-snow .ql-picker.ql-color-picker .ql-picker-label:hover,
 .ql-snow .ql-picker.ql-background .ql-picker-label:hover {
   border-color: hsl(var(--bc) / 0.2);
+}
+
+/* Fix toolbar spacing */
+.ql-toolbar.ql-snow {
+  @apply border-b border-base-300 p-2;
+}
+
+.ql-container.ql-snow {
+  @apply rounded-b-lg border border-base-300;
 }

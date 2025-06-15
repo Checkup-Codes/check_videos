@@ -1,6 +1,10 @@
 /* Global content styles */
 .article-content {
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont;
   line-height: 1.6;
   overflow-wrap: break-word;
   word-break: break-word;
@@ -47,8 +51,12 @@
 }
 
 @keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* Error state for images */
@@ -88,13 +96,13 @@
   position: relative !important;
 }
 
-[data-theme="light"] .mockup-code {
+[data-theme='light'] .mockup-code {
   background-color: #f5f5f5 !important;
   color: #24292e !important;
   border: 1px solid #e1e4e8 !important;
 }
 
-[data-theme="dark"] .mockup-code {
+[data-theme='dark'] .mockup-code {
   background-color: #1a1a1a !important;
   color: #e1e1e1 !important;
   border: 1px solid #2d2d2d !important;
@@ -136,7 +144,7 @@
 }
 
 .mockup-code .code-content::before {
-  content: "" !important;
+  content: '' !important;
   position: absolute !important;
   left: 48px !important;
   top: 0 !important;
@@ -144,11 +152,11 @@
   width: 1px !important;
 }
 
-[data-theme="light"] .mockup-code .code-content::before {
+[data-theme='light'] .mockup-code .code-content::before {
   background-color: #e5e7eb !important;
 }
 
-[data-theme="dark"] .mockup-code .code-content::before {
+[data-theme='dark'] .mockup-code .code-content::before {
   background-color: #2d2d2d !important;
 }
 
@@ -160,11 +168,11 @@
   line-height: 1.5 !important;
 }
 
-[data-theme="light"] .mockup-code .code-line:hover {
+[data-theme='light'] .mockup-code .code-line:hover {
   background-color: #f9fafb !important;
 }
 
-[data-theme="dark"] .mockup-code .code-line:hover {
+[data-theme='dark'] .mockup-code .code-line:hover {
   background-color: #1f1f1f !important;
 }
 
@@ -177,11 +185,11 @@
   font-size: 12px !important;
 }
 
-[data-theme="light"] .mockup-code .line-number {
+[data-theme='light'] .mockup-code .line-number {
   color: #6b7280 !important;
 }
 
-[data-theme="dark"] .mockup-code .line-number {
+[data-theme='dark'] .mockup-code .line-number {
   color: #6b7280 !important;
 }
 
@@ -192,7 +200,7 @@
 }
 
 /* Syntax highlighting - Light theme */
-[data-theme="light"] .mockup-code {
+[data-theme='light'] .mockup-code {
   --syntax-keyword: #9333ea;
   --syntax-string: #0550ae;
   --syntax-number: #0a7d33;
@@ -202,7 +210,7 @@
 }
 
 /* Syntax highlighting - Dark theme */
-[data-theme="dark"] .mockup-code {
+[data-theme='dark'] .mockup-code {
   --syntax-keyword: #c084fc;
   --syntax-string: #93c5fd;
   --syntax-number: #86efac;
@@ -212,12 +220,24 @@
 }
 
 /* Syntax highlighting classes */
-.mockup-code .keyword { color: var(--syntax-keyword) !important; }
-.mockup-code .string { color: var(--syntax-string) !important; }
-.mockup-code .number { color: var(--syntax-number) !important; }
-.mockup-code .comment { color: var(--syntax-comment) !important; }
-.mockup-code .function { color: var(--syntax-function) !important; }
-.mockup-code .operator { color: var(--syntax-operator) !important; }
+.mockup-code .keyword {
+  color: var(--syntax-keyword) !important;
+}
+.mockup-code .string {
+  color: var(--syntax-string) !important;
+}
+.mockup-code .number {
+  color: var(--syntax-number) !important;
+}
+.mockup-code .comment {
+  color: var(--syntax-comment) !important;
+}
+.mockup-code .function {
+  color: var(--syntax-function) !important;
+}
+.mockup-code .operator {
+  color: var(--syntax-operator) !important;
+}
 
 /* Inline code styles */
 .article-content code:not(.mockup-code *) {
@@ -227,13 +247,13 @@
   font-size: 0.9em !important;
 }
 
-[data-theme="light"] .article-content code:not(.mockup-code *) {
+[data-theme='light'] .article-content code:not(.mockup-code *) {
   background-color: #f5f5f5 !important;
   color: #24292e !important;
   border: 1px solid #e1e4e8 !important;
 }
 
-[data-theme="dark"] .article-content code:not(.mockup-code *) {
+[data-theme='dark'] .article-content code:not(.mockup-code *) {
   background-color: #1a1a1a !important;
   color: #e1e1e1 !important;
   border: 1px solid #2d2d2d !important;
@@ -244,18 +264,18 @@
   .article-content {
     font-size: 0.95rem !important;
   }
-  
+
   .mockup-code {
     margin: 1rem 0 !important;
     border-radius: 0.5rem !important;
   }
-  
+
   .mockup-code .code-content code {
     font-size: 0.85rem !important;
   }
-  
+
   .mockup-code .line-number {
     font-size: 0.75rem !important;
     min-width: 2rem !important;
   }
-} 
+}

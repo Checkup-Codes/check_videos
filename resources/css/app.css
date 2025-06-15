@@ -8,11 +8,11 @@
   :root {
     color-scheme: light;
   }
-  
+
   .dark {
     color-scheme: dark;
   }
-  
+
   @media (prefers-color-scheme: dark) {
     /* Bu media sorgusunu etkisiz hale getiriyoruz */
     :root:not(.dark) {
@@ -23,11 +23,13 @@
 
   /* Tema geçişlerini yumuşat */
   html {
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
   }
 
   /* DaisyUI tema stillerini güçlendir */
-  html[data-theme="nature"] {
+  html[data-theme='nature'] {
     --p: 142 70% 49%; /* primary */
     --pc: 0 0% 100%; /* primary content */
     --s: 160 63% 42%; /* secondary */
@@ -43,7 +45,7 @@
     --btn-focus-scale: 1;
   }
 
-  html[data-theme="ocean"] {
+  html[data-theme='ocean'] {
     --p: 168 70% 42%; /* primary */
     --pc: 0 0% 100%; /* primary content */
     --s: 210 64% 53%; /* secondary */

@@ -24,19 +24,19 @@ export function useProcessedQuillContent(contentRef, contentString) {
       if (node.nodeType === Node.TEXT_NODE) {
         const urlRegex = /(https?:\/\/[^\/]+\/storage\/[^\s]+\.(png|jpg|jpeg|gif))/gi;
         const matches = node.textContent.match(urlRegex);
-        
+
         if (matches) {
           const fragment = doc.createDocumentFragment();
           let lastIndex = 0;
-          
-          matches.forEach(url => {
+
+          matches.forEach((url) => {
             const startIndex = node.textContent.indexOf(url, lastIndex);
-            
+
             // Add text before the URL
             if (startIndex > lastIndex) {
               fragment.appendChild(doc.createTextNode(node.textContent.substring(lastIndex, startIndex)));
             }
-            
+
             // Create image element
             const img = doc.createElement('img');
             img.src = url;
@@ -44,7 +44,7 @@ export function useProcessedQuillContent(contentRef, contentString) {
             img.style.maxWidth = '100%';
             img.style.height = 'auto';
             img.style.display = 'block';
-            
+
             // Create paragraph wrapper for the image
             const wrapper = doc.createElement('div');
             wrapper.style.margin = '0';
@@ -52,15 +52,15 @@ export function useProcessedQuillContent(contentRef, contentString) {
             wrapper.style.lineHeight = '0';
             wrapper.appendChild(img);
             fragment.appendChild(wrapper);
-            
+
             lastIndex = startIndex + url.length;
           });
-          
+
           // Add remaining text
           if (lastIndex < node.textContent.length) {
             fragment.appendChild(doc.createTextNode(node.textContent.substring(lastIndex)));
           }
-          
+
           node.parentNode.replaceChild(fragment, node);
         }
       } else if (node.nodeType === Node.ELEMENT_NODE) {
@@ -79,7 +79,7 @@ export function useProcessedQuillContent(contentRef, contentString) {
       img.setAttribute('loading', 'lazy');
       img.setAttribute('decoding', 'async');
       img.setAttribute('importance', 'low');
-      
+
       // Set default dimensions for better layout stability
       if (!img.hasAttribute('width') && !img.hasAttribute('height')) {
         img.style.width = '100%';
@@ -91,30 +91,35 @@ export function useProcessedQuillContent(contentRef, contentString) {
       // Enhanced skeleton wrapper with better styling
       const skeletonWrapper = doc.createElement('div');
       skeletonWrapper.className = 'img-skeleton-wrapper';
-      
+
       const skeleton = doc.createElement('div');
       skeleton.className = 'skeleton';
       skeleton.id = `skeleton-${imageId}`;
-      
+
       const imgParent = img.parentNode;
       if (imgParent) {
         const imgWrapper = doc.createElement('div');
         imgWrapper.className = 'img-wrapper';
-        
+
         // Enhanced image loading transition
         img.style.opacity = '0';
         img.style.transition = 'opacity 0.3s ease-in-out';
-        img.setAttribute('onload', `
+        img.setAttribute(
+          'onload',
+          `
           this.style.opacity = '1';
           const skeleton = document.getElementById('skeleton-${imageId}');
           if (skeleton) {
             skeleton.style.opacity = '0';
             setTimeout(() => skeleton.style.display = 'none', 300);
           }
-        `);
-        
+        `
+        );
+
         // Enhanced error handling
-        img.setAttribute('onerror', `
+        img.setAttribute(
+          'onerror',
+          `
           const skeleton = document.getElementById('skeleton-${imageId}');
           if (skeleton) {
             skeleton.style.display = 'none';
@@ -128,13 +133,14 @@ export function useProcessedQuillContent(contentRef, contentString) {
             );
           }
           this.style.display = 'none';
-        `);
-        
+        `
+        );
+
         const imgClone = img.cloneNode(true);
         imgWrapper.appendChild(imgClone);
         skeletonWrapper.appendChild(skeleton);
         skeletonWrapper.appendChild(imgWrapper);
-        
+
         try {
           // If the parent is a paragraph, replace it with our wrapper
           if (imgParent.tagName.toLowerCase() === 'p') {
@@ -180,11 +186,11 @@ export function useProcessedQuillContent(contentRef, contentString) {
     codeBlocks.forEach((container, blockIndex) => {
       // Add mockup-code class
       container.setAttribute('class', 'mockup-code');
-      
+
       // Add a header div for controls
       const headerBar = doc.createElement('div');
       headerBar.className = 'code-header';
-      
+
       // Add copy button
       console.log('Creating copy button');
       const copyButton = doc.createElement('button');
@@ -198,7 +204,9 @@ export function useProcessedQuillContent(contentRef, contentString) {
         <span>Copy</span>
       `;
 
-      copyButton.setAttribute('onclick', `
+      copyButton.setAttribute(
+        'onclick',
+        `
         console.log('Copy button clicked');
         const codeBlock = this.closest('.mockup-code');
         let textToCopy = '';
@@ -240,7 +248,8 @@ export function useProcessedQuillContent(contentRef, contentString) {
             }, 2000);
           });
         }
-      `);
+      `
+      );
 
       console.log('Adding copy button to header');
       headerBar.appendChild(copyButton);
@@ -252,24 +261,27 @@ export function useProcessedQuillContent(contentRef, contentString) {
       if (codeLines.length > 0) {
         const codeContent = doc.createElement('div');
         codeContent.className = 'code-content';
-        
+
         Array.from(codeLines).forEach((line, index) => {
           const codeLine = doc.createElement('div');
           codeLine.className = 'code-line';
-          
+
           const lineNumber = doc.createElement('span');
           lineNumber.className = 'line-number';
           lineNumber.textContent = (index + 1).toString().padStart(2, '0');
-          
+
           const code = doc.createElement('code');
           let content = line.textContent || line.innerText;
-          
+
           // Basic syntax highlighting
           content = content
             // Comments
             .replace(/(\/\/.*$|\/\*[\s\S]*?\*\/)/gm, '<span class="comment">$1</span>')
             // Keywords
-            .replace(/\b(function|return|if|else|for|while|var|let|const|class|import|export|default|from|async|await)\b/g, '<span class="keyword">$1</span>')
+            .replace(
+              /\b(function|return|if|else|for|while|var|let|const|class|import|export|default|from|async|await)\b/g,
+              '<span class="keyword">$1</span>'
+            )
             // Strings
             .replace(/(['"`])(.*?)\1/g, '<span class="string">$1$2$1</span>')
             // Numbers
@@ -280,7 +292,7 @@ export function useProcessedQuillContent(contentRef, contentString) {
             .replace(/([+\-*/%=<>!&|])/g, '<span class="operator">$1</span>');
 
           code.innerHTML = content;
-          
+
           codeLine.appendChild(lineNumber);
           codeLine.appendChild(code);
           codeContent.appendChild(codeLine);
@@ -305,4 +317,4 @@ export function useProcessedQuillContent(contentRef, contentString) {
 
     return doc.body.innerHTML;
   });
-} 
+}

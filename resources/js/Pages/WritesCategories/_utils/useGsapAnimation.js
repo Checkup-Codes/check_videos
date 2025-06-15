@@ -10,7 +10,7 @@ gsap.registerPlugin(ScrollTrigger, SplitText, TextPlugin, MotionPathPlugin);
 
 gsap.defaults({
   ease: 'power2.out',
-  duration: 0.7
+  duration: 0.7,
 });
 
 /**
@@ -25,11 +25,7 @@ export function useGsapFadeIn(elRef, options = {}) {
       const delayMs = options.delayMs || 0;
 
       setTimeout(() => {
-        gsap.fromTo(
-          elRef.value,
-          { opacity: 0, y: 24 },
-          { opacity: 1, y: 0, ...options }
-        );
+        gsap.fromTo(elRef.value, { opacity: 0, y: 24 }, { opacity: 1, y: 0, ...options });
       }, delayMs);
     }
   });

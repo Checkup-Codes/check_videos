@@ -57,6 +57,6 @@ export function useCategoryTree() {
     parentCategories,
     areAllCategoriesExpanded,
     getLinkClasses,
-    toggleAllCategories
+    toggleAllCategories,
   };
-} 
+}
