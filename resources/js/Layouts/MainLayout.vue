@@ -1,4 +1,7 @@
 <template>
+  <Head>
+    <title>{{ title }}</title>
+  </Head>
   <SidebarLayout :class="sidebarClass" @link-clicked="toggleSidebar" />
   <div :class="contentWrapperClass">
     <HeaderLayout @toggle-sidebar="toggleSidebar" />
@@ -7,10 +10,18 @@
 </template>
 
 <script setup>
-import { ref, provide } from 'vue';
-import { usePage } from '@inertiajs/vue3';
+import { ref, provide, computed } from 'vue';
+import { usePage, Head } from '@inertiajs/vue3';
 import HeaderLayout from './MainLayout/HeaderLayout.vue';
 import SidebarLayout from './MainLayout/SidebarLayout.vue';
+
+const page = usePage();
+
+const title = computed(() => {
+  const pageTitle = page.props.title;
+  const appName = page.props.app.name;
+  return pageTitle ? `${pageTitle} - ${appName}` : appName;
+});
 
 const showSidebar = ref(false);
 
@@ -22,7 +33,6 @@ const sidebarClass = 'fixed inset-y-0 left-0 z-40 hidden overflow-hidden lg:bloc
 const contentWrapperClass = 'lg:pl-64 xl:pl-72';
 
 // Yazı listesini inertia'dan al ve provide et
-const page = usePage();
 const writes = page.props.writes || [];
 provide('writes', writes);
 

@@ -52,7 +52,7 @@ library.add(
 );
 
 import store from './Store';
-import { APP_NAME, INERTIA_PROGRESS_CONFIG } from './Shared/utils/config';
+import { INERTIA_PROGRESS_CONFIG } from './Shared/utils/config';
 import { initializeIcons } from './Shared/utils/icons';
 
 // Initialize Font Awesome icons
@@ -65,7 +65,6 @@ InertiaProgress.init(INERTIA_PROGRESS_CONFIG);
 document.documentElement.classList.remove('dark');
 
 createInertiaApp({
-  title: (title) => (title ? `${title} - ${APP_NAME}` : APP_NAME),
   resolve: async (name) => {
     const page = (
       await resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob<DefineComponent>('./Pages/**/*.vue'))
