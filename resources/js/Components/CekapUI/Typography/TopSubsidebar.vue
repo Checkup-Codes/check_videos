@@ -1,7 +1,7 @@
 <template>
-  <div class="cursor-pointer overflow-hidden border-b-2 border-base-300 lg:relative" @click="toggleWidth">
+  <div class="overflow-hidden border-b-2 border-base-300 lg:relative">
     <div class="flex h-12 items-center justify-between px-5 text-sm font-semibold">
-      <span class="">{{ title }}</span>
+      <span @click="toggleWidth" class="cursor-pointer">{{ title }}</span>
       <div class="flex items-center gap-2">
         <!-- Performance monitor slot -->
         <slot name="actions"></slot>
