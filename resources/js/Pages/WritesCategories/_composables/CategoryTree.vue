@@ -165,36 +165,44 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue';
+import { ref, watch, computed, inject, onMounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
+import { useStore } from 'vuex';
 
 // Component name definition for dev tools
 defineOptions({
   name: 'CategoryTree',
 });
 
-const props = defineProps({
-  parentCategories: {
-    type: Array,
-    required: true,
-  },
-  getLinkClasses: {
-    type: Function,
-    required: false,
-    default: () => '',
-  },
-  expandAll: {
-    type: Boolean,
-    default: false,
-  },
-});
+// const props = defineProps({
+//   parentCategories: {
+//     type: Array,
+//     required: true,
+//   },
+//   getLinkClasses: {
+//     type: Function,
+//     required: false,
+//     default: () => '',
+//   },
+//   expandAll: {
+//     type: Boolean,
+//     default: false,
+//   },
+// });
+
+const categories = inject('categories', []);
+const parentCategories = computed(() =>
+  categories.filter(
+    (cat) => !cat.parent_id || cat.parent_id === null || cat.parent_id === 'null' || cat.parent_id === 0
+  )
+);
 
 const emit = defineEmits(['update:expandAll']);
 const page = usePage();
 const url = computed(() => page.url);
 
 const scrollContainer = ref(null);
-const collapsedCategories = ref(new Set());
+const store = useStore();
 
 // Calculate total write count for a category and its children
 const getTotalWriteCount = (category) => {
@@ -213,40 +221,17 @@ const getTotalWriteCount = (category) => {
 
 // Expand or collapse all categories
 const expandAllCategories = (expand = true) => {
-  collapsedCategories.value.clear();
-
-  if (!expand) {
-    // Collapse - mark all categories as collapsed
-    props.parentCategories.forEach((category) => {
-      collapsedCategories.value.add(category.id);
-
-      if (category.children && category.children.length) {
-        category.children.forEach((child) => {
-          collapsedCategories.value.add(child.id);
-
-          if (child.children && child.children.length) {
-            child.children.forEach((subChild) => {
-              collapsedCategories.value.add(subChild.id);
-            });
-          }
-        });
-      }
-    });
-  }
+  store.dispatch('CategorySidebar/expandAllCategories', expand);
 };
 
 // Toggle collapse state for a single category
 const toggleCollapse = (categoryId) => {
-  if (collapsedCategories.value.has(categoryId)) {
-    collapsedCategories.value.delete(categoryId);
-  } else {
-    collapsedCategories.value.add(categoryId);
-  }
+  store.dispatch('CategorySidebar/toggleCollapse', categoryId);
 };
 
 // Check if a category is collapsed
 const isCollapsed = (categoryId) => {
-  return collapsedCategories.value.has(categoryId);
+  return store.getters['CategorySidebar/isCollapsed'](categoryId);
 };
 
 // Check if category or its children have link_only writes
@@ -264,18 +249,22 @@ const hasLinkOnlyWrites = (category) => {
 };
 
 // Watch for changes to expandAll prop
-watch(
-  () => props.expandAll,
-  (newVal) => {
-    expandAllCategories(newVal);
-  },
-  { immediate: true }
-);
+// watch(
+//   () => props.expandAll,
+//   (newVal) => {
+//     expandAllCategories(newVal);
+//   },
+//   { immediate: true }
+// );
 
 // Expose methods to parent component
 defineExpose({
   expandAllCategories,
   scrollContainer,
+});
+
+onMounted(() => {
+  console.log('CategoryTree categories:', categories);
 });
 </script>
 

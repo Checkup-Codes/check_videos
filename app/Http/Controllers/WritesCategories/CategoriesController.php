@@ -41,7 +41,6 @@ class CategoriesController extends Controller
 
         return inertia('WritesCategories/Categories/IndexCategory', [
             'screen'     => $this->categoryService->getScreenData(isMobile: true),
-            'categories' => $categoriesResult['data'],
             'writes'     => $writesResult['data'],
             'isAdmin'    => $isAdmin,
             'performance' => [
@@ -84,7 +83,6 @@ class CategoriesController extends Controller
 
         return inertia('WritesCategories/Categories/ShowCategory', [
             'category' => $category,
-            'categories' => $categoriesResult['data'],
             'writes' => $writesResult['data'],
             'screen'     => $this->categoryService->getScreenData(isMobile: false),
             'isAdmin' => $isAdmin,
@@ -107,7 +105,6 @@ class CategoriesController extends Controller
         $isAdmin = Auth::check();
 
         return inertia('WritesCategories/Categories/CreateCategory', [
-            'categories' => $categoriesResult['data'],
             'screen'     => $this->categoryService->getScreenData(isMobile: true),
             'isAdmin' => $isAdmin,
             'performance' => [
@@ -130,7 +127,6 @@ class CategoriesController extends Controller
 
         return inertia('WritesCategories/Categories/EditCategory', [
             'category' => $category->load('parent'),
-            'categories' => $categoriesResult['data'],
             'screen'     => $this->categoryService->getScreenData(isMobile: true),
             'isAdmin' => $isAdmin,
             'performance' => [
@@ -260,7 +256,6 @@ class CategoriesController extends Controller
             'category' => $category,
             'writes' => $writesResult['data'],
             'write' => $writeResult['data'],
-            'categories' => $categoriesResult['data'],
             'screen'     => $this->categoryService->getScreenData(isMobile: true),
             'isAdmin' => $isAdmin,
             'performance' => [

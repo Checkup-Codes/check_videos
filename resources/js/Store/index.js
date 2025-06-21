@@ -4,6 +4,7 @@ import ActiveMenu from './Modules/ActiveMenu';
 import Bookmarks from './Modules/Bookmarks';
 import Writes from './Modules/Writes';
 import Theme from './Modules/Theme';
+import CategorySidebar from './Modules/CategorySidebar';
 
 export default createStore({
   modules: {
@@ -11,5 +12,6 @@ export default createStore({
     Writes,
     Bookmarks,
     Theme,
+    CategorySidebar,
   },
 });

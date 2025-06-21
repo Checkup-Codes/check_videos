@@ -10,7 +10,6 @@
           ? 'border-primary bg-primary text-primary-content shadow-md'
           : 'border-base-200 bg-base-200 text-base-content hover:bg-base-300',
       ]"
-      @click="handleWriteClick(write)"
     >
       <!-- Başlık + Kilit -->
       <div class="mb-1 flex items-center gap-2">
@@ -68,72 +67,29 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed, watch, onActivated, onDeactivated } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch, onActivated, onDeactivated, inject } from 'vue';
 import { Link, usePage, router } from '@inertiajs/vue3';
-import { useScrollManager } from '@/Pages/WritesCategories/_utils/useScrollManager';
 
 defineOptions({ name: 'WriteList' });
 
-const props = defineProps({
-  writes: Array,
-  route: Function,
-});
-
+const writes = inject('writes', []);
 const page = usePage();
 const isAdmin = page.props.isAdmin || false;
 const scrollContainer = ref(null);
-const STORAGE_KEY = 'writeList_scrollPosition';
 let isActive = false;
 const activeWrite = ref('');
 
-// Initialize scroll manager
-const { saveScrollPosition, getSavedScrollPosition, cleanup } = useScrollManager(STORAGE_KEY);
-
 const filteredWrites = computed(() => {
-  return isAdmin ? props.writes : props.writes.filter((write) => write.status !== 'private');
+  return isAdmin ? writes : writes.filter((write) => write.status !== 'private');
 });
 
 defineExpose({ filteredWrites, scrollContainer });
-
-/**
- * Handle write click event
- */
-const handleWriteClick = (write) => {
-  const currentScroll = scrollContainer.value?.scrollTop || 0;
-  if (currentScroll > 0) {
-    saveScrollPosition(currentScroll, true); // Save immediately
-  }
-};
-
-/**
- * Restore scroll position from storage
- */
-const restoreScrollPosition = () => {
-  if (!scrollContainer.value) return;
-
-  const savedPosition = getSavedScrollPosition();
-  if (savedPosition > 0) {
-    scrollContainer.value.scrollTop = savedPosition;
-
-    // Ensure the active write is visible without animation
-    const activeWriteElement = document.querySelector('.border-primary');
-    if (activeWriteElement) {
-      const containerRect = scrollContainer.value.getBoundingClientRect();
-      const elementRect = activeWriteElement.getBoundingClientRect();
-
-      if (elementRect.top < containerRect.top || elementRect.bottom > containerRect.bottom) {
-        activeWriteElement.scrollIntoView({ block: 'center', behavior: 'instant' });
-      }
-    }
-  }
-};
 
 /**
  * Handle component activation (from KeepAlive)
  */
 onActivated(() => {
   isActive = true;
-  restoreScrollPosition();
   updateActiveWrite();
 });
 
@@ -142,20 +98,15 @@ onActivated(() => {
  */
 onDeactivated(() => {
   isActive = false;
-  const currentScroll = scrollContainer.value?.scrollTop || 0;
-  if (currentScroll > 0) {
-    saveScrollPosition(currentScroll, true);
-  }
 });
 
 /**
  * Watch for changes in the writes array
  */
 watch(
-  () => props.writes,
+  () => writes,
   (newVal, oldVal) => {
     if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-      restoreScrollPosition();
     }
   },
   { deep: true }
@@ -174,38 +125,17 @@ const updateActiveWrite = () => {
 onMounted(() => {
   isActive = true;
   updateActiveWrite();
-  restoreScrollPosition();
-
-  // Add scroll event listener with passive option for better performance
-  const handleScroll = () => {
-    if (isActive && scrollContainer.value) {
-      saveScrollPosition(scrollContainer.value.scrollTop);
-    }
-  };
-
-  scrollContainer.value?.addEventListener('scroll', handleScroll, { passive: true });
-
-  // Handle browser navigation
   const handlePopState = () => {
     if (isActive) {
-      restoreScrollPosition();
       updateActiveWrite();
     }
   };
 
   // Handle Inertia navigation
-  const handleNavigationStart = () => {
-    if (isActive && scrollContainer.value) {
-      const currentScroll = scrollContainer.value.scrollTop;
-      if (currentScroll > 0) {
-        saveScrollPosition(currentScroll, true);
-      }
-    }
-  };
+  const handleNavigationStart = () => {};
 
   const handleNavigationEnd = () => {
     if (isActive) {
-      restoreScrollPosition();
       updateActiveWrite();
     }
   };
@@ -218,8 +148,6 @@ onMounted(() => {
   // Cleanup on unmount
   onUnmounted(() => {
     isActive = false;
-    cleanup();
-    scrollContainer.value?.removeEventListener('scroll', handleScroll);
     window.removeEventListener('popstate', handlePopState);
     window.removeEventListener('inertia:start', handleNavigationStart);
     window.removeEventListener('inertia:finish', handleNavigationEnd);

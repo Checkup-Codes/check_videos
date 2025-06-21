@@ -8,13 +8,15 @@
     </TopSubsidebar>
 
     <SubSidebarScreen>
-      <WriteList ref="writeListRef" :writes="writes" :route="route" />
+      <KeepAlive>
+        <WriteList ref="writeListRef" :writes="writes" :route="route" />
+      </KeepAlive>
     </SubSidebarScreen>
   </CheckSubsidebar>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, inject } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import TopSubsidebar from '@/Components/CekapUI/Typography/TopSubsidebar.vue';
 import WriteList from '@/Pages/WritesCategories/_composables/WriteList.vue';
@@ -33,7 +35,7 @@ const { isCollapsed, toggleSidebar, shouldShowPerformanceMonitor, performanceDat
 
 // Local state
 const { props } = usePage();
-const writes = ref(props.writes || []);
+const writes = inject('writes', []);
 const writeListRef = ref(null);
 const isNarrow = ref(false);
 

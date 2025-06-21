@@ -36,7 +36,6 @@ class WritesController extends Controller
 
         return inertia('WritesCategories/Writes/IndexWrite', [
             'screen'     => $this->writeService->getScreenData(isMobile: true),
-            'writes'     => $writesResult['data'],
             'isAdmin'    => $isAdmin,
             'performance' => [
                 'execution_time' => $writesResult['execution_time'],
@@ -57,8 +56,6 @@ class WritesController extends Controller
         $categoriesResult = $this->writeService->getCategories();
 
         return inertia('WritesCategories/Writes/CreateWrite', [
-            'writes'     => $writesResult['data'],
-            'categories' => $categoriesResult['data'],
             'screen'     => $this->writeService->getScreenData(false),
             'isAdmin'    => $isAdmin,
             'performance' => [
@@ -90,9 +87,7 @@ class WritesController extends Controller
         ]);
 
         return inertia('WritesCategories/Writes/ShowWrite', [
-            'writes'     => $writesResult['data'],
             'write'      => $writeResult['data'],
-            'categories' => $categoriesResult['data'],
             'screen'     => $this->writeService->getScreenData(false),
             'showDraw'   => filter_var(request()->query('showDraw', false), FILTER_VALIDATE_BOOLEAN),
             'isAdmin'    => $isAdmin,
@@ -113,17 +108,14 @@ class WritesController extends Controller
     public function edit(Write $write)
     {
         $isAdmin = Auth::check();
-        $writesResult = $this->writeService->getAllWrites();
         $categoriesResult = $this->writeService->getCategories();
 
         return inertia('WritesCategories/Writes/EditWrite', [
             'write'      => $write,
-            'writes'     => $writesResult['data'],
             'categories' => $categoriesResult['data'],
             'screen'     => $this->writeService->getScreenData(false),
             'isAdmin'    => $isAdmin,
             'performance' => [
-                'writes_execution_time' => $writesResult['execution_time'],
                 'categories_execution_time' => $categoriesResult['execution_time']
             ]
         ]);
