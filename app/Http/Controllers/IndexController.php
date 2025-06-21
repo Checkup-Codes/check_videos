@@ -17,7 +17,7 @@ class IndexController extends Controller
             'isMobileSidebar' => false,
             'name' => 'Index',
             'seo' => [
-                'title' => $seo->title ?? 'Checkup Codes',
+                'title' => config('app.name', 'Checkup Codes'),
                 'description' => $seo->description ?? 'Checkup Codes',
                 'logo' => $logo->image_path ?? '/images/checkup_codes_logo.png',
             ],
