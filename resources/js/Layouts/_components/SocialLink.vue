@@ -54,31 +54,4 @@ const props = defineProps({
 const isActive = computed(() => {
   return props.matchPath && window.location.href.includes(props.matchPath);
 });
-
-// Kısayol tuşuyla aç
-function handleKeyPress(event) {
-  if (
-    props.shortcut &&
-    !event.ctrlKey &&
-    !event.altKey &&
-    !event.metaKey &&
-    event.key === props.shortcut &&
-    document.activeElement.tagName !== 'INPUT' &&
-    document.activeElement.tagName !== 'TEXTAREA'
-  ) {
-    window.open(props.href, '_blank');
-  }
-}
-
-onMounted(() => {
-  if (props.shortcut) {
-    document.addEventListener('keydown', handleKeyPress);
-  }
-});
-
-onBeforeUnmount(() => {
-  if (props.shortcut) {
-    document.removeEventListener('keydown', handleKeyPress);
-  }
-});
 </script>

@@ -63,29 +63,4 @@ const isActive = computed(() => {
   const isRoot = props.href === '/';
   return isRoot ? currentUrl.value === props.href : currentUrl.value.startsWith(props.href);
 });
-
-function handleKeyPress(event) {
-  if (
-    document.activeElement.tagName !== 'INPUT' &&
-    document.activeElement.tagName !== 'TEXTAREA' &&
-    !event.ctrlKey &&
-    !event.altKey &&
-    !event.metaKey &&
-    event.key === props.shortcut
-  ) {
-    router.visit(props.href);
-  }
-}
-
-onMounted(() => {
-  if (props.shortcut) {
-    document.addEventListener('keydown', handleKeyPress);
-  }
-});
-
-onBeforeUnmount(() => {
-  if (props.shortcut) {
-    document.removeEventListener('keydown', handleKeyPress);
-  }
-});
 </script>
