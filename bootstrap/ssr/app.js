@@ -1,6 +1,6 @@
 /* empty css     */
-import { mergeProps, useSSRContext, ref, computed, onMounted, onBeforeUnmount, unref, withCtx, createVNode, createBlock, createCommentVNode, toDisplayString, openBlock, watch, createTextVNode, provide, createSSRApp, h as h$1 } from "vue";
-import { usePage, Link, router, Head, createInertiaApp } from "@inertiajs/vue3";
+import { mergeProps, useSSRContext, ref, computed, unref, withCtx, createVNode, createBlock, createCommentVNode, toDisplayString, openBlock, onMounted, watch, createTextVNode, provide, createSSRApp, h as h$1 } from "vue";
+import { usePage, Link, Head, createInertiaApp } from "@inertiajs/vue3";
 import { InertiaProgress } from "@inertiajs/progress";
 import { ssrRenderAttrs, ssrRenderAttr, ssrInterpolate, ssrRenderComponent, ssrRenderClass, ssrRenderList, ssrRenderSlot } from "vue/server-renderer";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -430,21 +430,6 @@ const _sfc_main$7 = {
       const isRoot = props.href === "/";
       return isRoot ? currentUrl.value === props.href : currentUrl.value.startsWith(props.href);
     });
-    function handleKeyPress(event) {
-      if (document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA" && !event.ctrlKey && !event.altKey && !event.metaKey && event.key === props.shortcut) {
-        router.visit(props.href);
-      }
-    }
-    onMounted(() => {
-      if (props.shortcut) {
-        document.addEventListener("keydown", handleKeyPress);
-      }
-    });
-    onBeforeUnmount(() => {
-      if (props.shortcut) {
-        document.removeEventListener("keydown", handleKeyPress);
-      }
-    });
     return (_ctx, _push, _parent, _attrs) => {
       _push(ssrRenderComponent(unref(Link), mergeProps({
         href: __props.href,
@@ -507,6 +492,8 @@ const _sfc_main$6 = {
   __name: "MainNavigation",
   __ssrInlineRender: true,
   setup(__props) {
+    const { props } = usePage();
+    const isLoggedIn = props.auth && props.auth.user;
     return (_ctx, _push, _parent, _attrs) => {
       _push(`<nav${ssrRenderAttrs(mergeProps({ class: "w-full space-y-1 bg-base-200 px-2" }, _attrs))}>`);
       _push(ssrRenderComponent(_sfc_main$7, {
@@ -527,18 +514,26 @@ const _sfc_main$6 = {
         label: "Kategoriler",
         shortcut: "3"
       }, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$7, {
-        href: "/rendition/words",
-        icon: "fa-solid fa-globe",
-        label: "Kelimeler",
-        shortcut: "4"
-      }, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$7, {
-        href: "/versions",
-        icon: "fa-solid fa-sync",
-        label: "Versiyonlar",
-        shortcut: "5"
-      }, null, _parent));
+      if (unref(isLoggedIn)) {
+        _push(ssrRenderComponent(_sfc_main$7, {
+          href: "/rendition/words",
+          icon: "fa-solid fa-globe",
+          label: "Kelimeler",
+          shortcut: "4"
+        }, null, _parent));
+      } else {
+        _push(`<!---->`);
+      }
+      if (unref(isLoggedIn)) {
+        _push(ssrRenderComponent(_sfc_main$7, {
+          href: "/versions",
+          icon: "fa-solid fa-sync",
+          label: "Versiyonlar",
+          shortcut: "5"
+        }, null, _parent));
+      } else {
+        _push(`<!---->`);
+      }
       _push(`</nav>`);
     };
   }
@@ -579,21 +574,6 @@ const _sfc_main$5 = {
     const props = __props;
     const isActive = computed(() => {
       return props.matchPath && window.location.href.includes(props.matchPath);
-    });
-    function handleKeyPress(event) {
-      if (props.shortcut && !event.ctrlKey && !event.altKey && !event.metaKey && event.key === props.shortcut && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA") {
-        window.open(props.href, "_blank");
-      }
-    }
-    onMounted(() => {
-      if (props.shortcut) {
-        document.addEventListener("keydown", handleKeyPress);
-      }
-    });
-    onBeforeUnmount(() => {
-      if (props.shortcut) {
-        document.removeEventListener("keydown", handleKeyPress);
-      }
     });
     return (_ctx, _push, _parent, _attrs) => {
       _push(`<a${ssrRenderAttrs(mergeProps({
