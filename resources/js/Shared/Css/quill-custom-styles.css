@@ -1,3 +1,5 @@
+@import 'quill/dist/quill.snow.css';
+
 /* QuillJS Global Styles */
 .ql-editor {
   @apply p-4;
@@ -92,49 +94,31 @@
   padding: 0 !important;
 }
 
-/* Blockquote style - DaisyUI uyumlu */
+/* Blockquote style - tema uyumlu, light/dark için özel renkler */
 .ql-editor blockquote,
 .article-content blockquote {
-  @apply my-4 px-6 py-5;
-  border-left: 4px solid hsl(var(--p) / 0.8);
-  background-color: hsl(var(--b3));
+  border-left: 3px solid hsl(var(--p));
+  border-radius: 0.5rem;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
   font-style: italic;
-  position: relative;
-  border-radius: 0.25rem;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   color: hsl(var(--bc));
-  font-size: 0.95em;
-  line-height: 1.6;
+  box-shadow: none;
+  position: relative;
+  font-size: 1.05em;
+  line-height: 1.7;
+  background: #f3f4f6; /* varsayılan: light gri */
 }
 
-/* Enhanced blockquote style for preview mode */
-.article-content blockquote {
-  @apply my-6;
-  background-color: hsl(var(--b3));
-  border-left: 5px solid hsl(var(--p));
-  border-radius: 0.25rem;
+[data-theme~="dark"] .ql-editor blockquote,
+[data-theme~="dark"] .article-content blockquote {
+  background: #23272f; /* dark mod: açık koyu gri */
 }
 
-.article-content blockquote::before {
-  content: '"';
-  position: absolute;
-  top: -10px;
-  left: 10px;
-  font-size: 4em;
-  color: hsl(var(--p) / 0.1);
-  font-family: Georgia, serif;
-  line-height: 1;
-}
-
+.article-content blockquote::before,
 .article-content blockquote::after {
-  content: '"';
-  position: absolute;
-  bottom: -30px;
-  right: 10px;
-  font-size: 4em;
-  color: hsl(var(--p) / 0.1);
-  font-family: Georgia, serif;
-  line-height: 1;
+  content: none;
+  display: none;
 }
 
 /* Code blocks - DaisyUI uyumlu */
