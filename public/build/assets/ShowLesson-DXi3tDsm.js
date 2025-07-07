@@ -1,0 +1,1 @@
+import o from"./CheckLayout-BnF_u843.js";import r from"./Screen-0peJ9HG4.js";import{c as e,o as t,w as a,a as c}from"./app-CbroPFOm.js";import"./SidebarLayoutLesson-DXyJqI-v.js";import"./GoBackButton-CTWn94Zo.js";import"./CheckScreen-MJBmGKnl.js";const h={__name:"ShowLesson",setup(s){return(m,n)=>(t(),e(o,null,{screen:a(()=>[c(r)]),_:1}))}};export{h as default};
