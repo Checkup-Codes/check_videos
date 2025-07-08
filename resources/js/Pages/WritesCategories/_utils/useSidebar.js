@@ -6,12 +6,6 @@ export function useSidebar() {
   const isCollapsed = ref(true);
   const isMobile = computed(() => props.screen?.isMobileSidebar || false);
 
-  // Performance monitoring
-  const shouldShowPerformanceMonitor = computed(() => {
-    return !!props.isAdmin && !!props.performance && Object.keys(props.performance).length > 0;
-  });
-  const performanceData = computed(() => props.performance || {});
-
   // Sidebar state management
   const toggleSidebar = () => {
     isCollapsed.value = !isCollapsed.value;
@@ -23,8 +17,6 @@ export function useSidebar() {
   return {
     isCollapsed,
     isMobile,
-    shouldShowPerformanceMonitor,
-    performanceData,
     toggleSidebar,
     sidebarStyle,
   };

@@ -10,19 +10,14 @@
       @toggle-width="handleWidthToggle"
       class="border-base-200"
     >
-      <template #actions>
-        <PerformanceMonitorButton v-if="shouldShowPerformanceMonitor" :performance="performanceData" />
-      </template>
     </TopSubsidebar>
     <SubSidebarScreen>
-      <KeepAlive>
-        <CategoryTree
-          v-if="showCategories"
-          ref="categoryTreeRef"
-          :getLinkClasses="getLinkClasses"
-          :expandAll="areAllCategoriesExpanded"
-        />
-      </KeepAlive>
+      <CategoryTree
+        v-if="showCategories"
+        ref="categoryTreeRef"
+        :getLinkClasses="getLinkClasses"
+        :expandAll="areAllCategoriesExpanded"
+      />
     </SubSidebarScreen>
   </CheckSubsidebar>
 </template>
@@ -33,7 +28,6 @@ import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
 import ToggleSubSidebarButtonClose from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 import SubSidebarScreen from '@/Components/CekapUI/Slots/SubSidebarScreen.vue';
 import CategoryTree from '@/Pages/WritesCategories/_composables/CategoryTree.vue';
-import PerformanceMonitorButton from '@/Pages/WritesCategories/_composables/PerformanceMonitorButton.vue';
 import TopSubsidebar from '@/Components/CekapUI/Typography/TopSubsidebar.vue';
 import { useSidebar } from '../_utils/useSidebar';
 import { useStore } from 'vuex';
@@ -44,7 +38,7 @@ defineOptions({
 });
 
 // Composables
-const { isCollapsed, toggleSidebar, shouldShowPerformanceMonitor, performanceData } = useSidebar();
+const { isCollapsed, toggleSidebar } = useSidebar();
 const store = useStore();
 
 // Global categories'i inject ile al

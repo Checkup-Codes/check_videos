@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Seo;
 use App\Models\WritesCategories\WriteImage;
+use Illuminate\Support\Facades\Cache;
 
 class CategoryService
 {
@@ -45,16 +46,21 @@ class CategoryService
      */
     public function getCategories()
     {
-        $startTime = microtime(true);
         $isAdmin = Auth::check();
-
-        $categories = $this->fetchCategoriesFromDatabase($isAdmin);
-
-        $executionTime = microtime(true) - $startTime;
-
+        if (!$isAdmin) {
+            // Cache for 60 minutes for guests
+            return Cache::remember('public_categories_list', 60 * 60, function () {
+                $categories = $this->fetchCategoriesFromDatabase(false);
+                return [
+                    'data' => $categories,
+                    'count' => $categories->count()
+                ];
+            });
+        }
+        // Admin: always fresh
+        $categories = $this->fetchCategoriesFromDatabase(true);
         return [
             'data' => $categories,
-            'execution_time' => $this->formatExecutionTime($executionTime),
             'count' => $categories->count()
         ];
     }
@@ -192,15 +198,13 @@ class CategoryService
     public function createCategory(array $data)
     {
         $startTime = microtime(true);
-
         DB::beginTransaction();
         try {
             $category = Category::create($data);
-
             DB::commit();
-
+            // Invalidate cache
+            Cache::forget('public_categories_list');
             $executionTime = microtime(true) - $startTime;
-
             return [
                 'data' => $category,
                 'execution_time' => $this->formatExecutionTime($executionTime)
@@ -221,15 +225,13 @@ class CategoryService
     public function updateCategory(Category $category, array $data)
     {
         $startTime = microtime(true);
-
         DB::beginTransaction();
         try {
             $category->update($data);
-
             DB::commit();
-
+            // Invalidate cache
+            Cache::forget('public_categories_list');
             $executionTime = microtime(true) - $startTime;
-
             return [
                 'data' => $category,
                 'execution_time' => $this->formatExecutionTime($executionTime)
@@ -249,15 +251,13 @@ class CategoryService
     public function deleteCategory(Category $category)
     {
         $startTime = microtime(true);
-
         DB::beginTransaction();
         try {
             $result = $category->delete();
-
             DB::commit();
-
+            // Invalidate cache
+            Cache::forget('public_categories_list');
             $executionTime = microtime(true) - $startTime;
-
             return [
                 'success' => $result,
                 'execution_time' => $this->formatExecutionTime($executionTime)

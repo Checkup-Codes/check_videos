@@ -1,7 +1,30 @@
 <template>
   <div ref="scrollContainer" class="space-y-1 p-3">
+    <!-- Search bar for all users -->
+    <div class="mb-3">
+      <input v-model="searchQuery" type="text" class="input-bordered input w-full" placeholder="Kategori ara..." />
+    </div>
+    <!-- Filter buttons for logged-in users -->
+    <div v-if="isAdmin" class="mb-3 flex gap-2">
+      <button class="btn btn-xs" :class="{ 'btn-primary': adminFilter === 'all' }" @click="adminFilter = 'all'">
+        Tümü
+      </button>
+      <button class="btn btn-xs" :class="{ 'btn-primary': adminFilter === 'public' }" @click="adminFilter = 'public'">
+        Herkese Açık
+      </button>
+      <button
+        class="btn btn-xs"
+        :class="{ 'btn-primary': adminFilter === 'link_only' }"
+        @click="adminFilter = 'link_only'"
+      >
+        Sadece Link
+      </button>
+      <button class="btn btn-xs" :class="{ 'btn-primary': adminFilter === 'hidden' }" @click="adminFilter = 'hidden'">
+        Gizli
+      </button>
+    </div>
     <ul class="">
-      <li v-for="category in parentCategories" :key="category.id" class="mb-1">
+      <li v-for="category in filteredParentCategories" :key="category.id" class="mb-1">
         <div class="flex w-full items-center">
           <Link
             :href="route('categories.show', { category: category.slug })"
@@ -191,10 +214,47 @@ defineOptions({
 // });
 
 const categories = inject('categories', []);
+const isAdmin = inject('isAdmin', false);
+const searchQuery = ref('');
+const adminFilter = ref('all');
+
+// Recursive filter for search and status
+function filterCategories(categories, search, status) {
+  return categories
+    .map((cat) => {
+      // Recursively filter children first
+      const filteredChildren = filterCategories(cat.children || [], search, status);
+      // Search filter
+      const matchesSearch = cat.name.toLowerCase().includes(search.toLowerCase());
+      // Status filter
+      let matchesStatus = true;
+      if (isAdmin && status !== 'all') {
+        if (status === 'public') matchesStatus = cat.status !== 'hidden' && cat.status !== 'link_only';
+        else matchesStatus = cat.status === status;
+      }
+      // Show this category if:
+      // - It matches search+status
+      // - OR any child matches (filteredChildren not empty)
+      if ((matchesSearch && matchesStatus) || filteredChildren.length > 0) {
+        return {
+          ...cat,
+          children: filteredChildren,
+        };
+      }
+      // Otherwise, don't include this category
+      return null;
+    })
+    .filter(Boolean);
+}
+
 const parentCategories = computed(() =>
   categories.filter(
     (cat) => !cat.parent_id || cat.parent_id === null || cat.parent_id === 'null' || cat.parent_id === 0
   )
+);
+
+const filteredParentCategories = computed(() =>
+  filterCategories(parentCategories.value, searchQuery.value, adminFilter.value)
 );
 
 const emit = defineEmits(['update:expandAll']);

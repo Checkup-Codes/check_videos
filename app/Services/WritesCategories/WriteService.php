@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Services\WritesCategories\CategoryService;
 use App\Models\Seo;
 use App\Models\WritesCategories\WriteImage;
+use Illuminate\Support\Facades\Cache;
 
 class WriteService
 {
@@ -59,21 +60,26 @@ class WriteService
      */
     public function getWrites()
     {
-        $startTime = microtime(true);
         $isAdmin = Auth::check();
-
+        if (!$isAdmin) {
+            // Cache for 60 minutes for guests
+            return Cache::remember('public_writes_list', 60 * 60, function () {
+                $writes = Write::select('id', 'views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
+                    ->where('status', 'published')
+                    ->orderByDesc('published_at')
+                    ->get();
+                return [
+                    'data' => $writes,
+                    'count' => $writes->count()
+                ];
+            });
+        }
+        // Admin: always fresh
         $writes = Write::select('id', 'views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
-            ->when(!$isAdmin, function ($query) {
-                $query->where('status', 'published');
-            })
             ->orderByDesc('published_at')
             ->get();
-
-        $executionTime = microtime(true) - $startTime;
-
         return [
             'data' => $writes,
-            'execution_time' => $this->formatExecutionTime($executionTime),
             'count' => $writes->count()
         ];
     }
@@ -85,21 +91,26 @@ class WriteService
      */
     public function getAllWrites()
     {
-        $startTime = microtime(true);
         $isAdmin = Auth::check();
-
+        if (!$isAdmin) {
+            // Cache for 60 minutes for guests
+            return Cache::remember('public_writes_list', 60 * 60, function () {
+                $writes = Write::select('id', 'views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
+                    ->where('status', 'published')
+                    ->orderByDesc('published_at')
+                    ->get();
+                return [
+                    'data' => $writes,
+                    'count' => $writes->count()
+                ];
+            });
+        }
+        // Admin: always fresh
         $writes = Write::select('id', 'views_count', 'title', 'created_at', 'slug', 'status', 'updated_at', 'published_at')
-            ->when(!$isAdmin, function ($query) {
-                $query->where('status', 'published');
-            })
             ->orderByDesc('published_at')
             ->get();
-
-        $executionTime = microtime(true) - $startTime;
-
         return [
             'data' => $writes,
-            'execution_time' => $this->formatExecutionTime($executionTime),
             'count' => $writes->count()
         ];
     }
@@ -112,9 +123,7 @@ class WriteService
      */
     public function getWritesByCategories(Collection $categoryIds)
     {
-        $startTime = microtime(true);
         $isAdmin = Auth::check();
-
         $writes = Write::whereIn('category_id', $categoryIds)
             ->when(!$isAdmin, function ($query) {
                 $query->where('status', 'published');
@@ -133,12 +142,8 @@ class WriteService
             )
             ->orderByDesc('published_at')
             ->get();
-
-        $executionTime = microtime(true) - $startTime;
-
         return [
             'data' => $writes,
-            'execution_time' => $this->formatExecutionTime($executionTime),
             'count' => $writes->count()
         ];
     }
@@ -151,9 +156,7 @@ class WriteService
      */
     public function getWritesByCategory(Category $category)
     {
-        $startTime = microtime(true);
         $isAdmin = Auth::check();
-
         $writes = Write::where('category_id', $category->id)
             ->when(!$isAdmin, function ($query) {
                 $query->where('status', 'published');
@@ -172,12 +175,8 @@ class WriteService
             )
             ->orderByDesc('published_at')
             ->get();
-
-        $executionTime = microtime(true) - $startTime;
-
         return [
             'data' => $writes,
-            'execution_time' => $this->formatExecutionTime($executionTime),
             'count' => $writes->count()
         ];
     }
@@ -190,28 +189,19 @@ class WriteService
      */
     public function getWriteBySlug($slug)
     {
-        $startTime = microtime(true);
         $isAdmin = Auth::check();
-
         $query = Write::with(['writeDraws' => function ($query) {
             $query->orderBy('version', 'desc')->latest();
         }])->where('slug', $slug);
-
-        // Admin can view all writes, non-admin can only see published or link_only
         if (!$isAdmin) {
             $query->where(function ($q) {
                 $q->where('status', 'published')
                     ->orWhere('status', Write::STATUS_LINK_ONLY);
             });
         }
-
         $write = $query->firstOrFail();
-
-        $executionTime = microtime(true) - $startTime;
-
         return [
-            'data' => $write,
-            'execution_time' => $this->formatExecutionTime($executionTime)
+            'data' => $write
         ];
     }
 
@@ -234,29 +224,20 @@ class WriteService
      */
     public function createWrite(array $data)
     {
-        $startTime = microtime(true);
-
         DB::beginTransaction();
         try {
-            // If author_id isn't set, use authenticated user ID
             if (!isset($data['author_id']) || empty($data['author_id'])) {
                 $data['author_id'] = Auth::id();
             }
-
             $write = Write::create($data);
-
-            // Add category relationship to content_category_write table
             if (isset($data['category_id']) && !empty($data['category_id'])) {
                 $write->categories()->attach($data['category_id']);
             }
-
             DB::commit();
-
-            $executionTime = microtime(true) - $startTime;
-
+            // Invalidate cache
+            Cache::forget('public_writes_list');
             return [
-                'data' => $write,
-                'execution_time' => $this->formatExecutionTime($executionTime)
+                'data' => $write
             ];
         } catch (\Exception $e) {
             DB::rollBack();
@@ -273,30 +254,20 @@ class WriteService
      */
     public function updateWrite(Write $write, array $data)
     {
-        $startTime = microtime(true);
-
         DB::beginTransaction();
         try {
-            // Update category relationship if changed
             if (isset($data['category_id']) && $write->category_id != $data['category_id']) {
-                // First remove old relationships
                 $write->categories()->detach();
-
-                // Add new category relationship
                 if (!empty($data['category_id'])) {
                     $write->categories()->attach($data['category_id']);
                 }
             }
-
             $write->update($data);
-
             DB::commit();
-
-            $executionTime = microtime(true) - $startTime;
-
+            // Invalidate cache
+            Cache::forget('public_writes_list');
             return [
-                'data' => $write,
-                'execution_time' => $this->formatExecutionTime($executionTime)
+                'data' => $write
             ];
         } catch (\Exception $e) {
             DB::rollBack();
@@ -312,22 +283,15 @@ class WriteService
      */
     public function deleteWrite(Write $write)
     {
-        $startTime = microtime(true);
-
         DB::beginTransaction();
         try {
-            // Remove from relationship table
             $write->categories()->detach();
-
             $result = $write->delete();
-
             DB::commit();
-
-            $executionTime = microtime(true) - $startTime;
-
+            // Invalidate cache
+            Cache::forget('public_writes_list');
             return [
-                'success' => $result,
-                'execution_time' => $this->formatExecutionTime($executionTime)
+                'success' => $result
             ];
         } catch (\Exception $e) {
             DB::rollBack();
@@ -344,19 +308,13 @@ class WriteService
      */
     public function addDraw(Write $write, array $data)
     {
-        $startTime = microtime(true);
-
         $latestVersion = $write->writeDraws()->max('version') ?? 0;
         $writeDraw = $write->writeDraws()->create([
             'elements' => $data['elements'],
             'version'  => $latestVersion + 1,
         ]);
-
-        $executionTime = microtime(true) - $startTime;
-
         return [
-            'data' => $writeDraw,
-            'execution_time' => $this->formatExecutionTime($executionTime)
+            'data' => $writeDraw
         ];
     }
 
@@ -369,16 +327,10 @@ class WriteService
      */
     public function deleteDraw(Write $write, $drawId)
     {
-        $startTime = microtime(true);
-
         $writeDraw = $write->writeDraws()->findOrFail($drawId);
         $result = $writeDraw->delete();
-
-        $executionTime = microtime(true) - $startTime;
-
         return [
-            'success' => $result,
-            'execution_time' => $this->formatExecutionTime($executionTime)
+            'success' => $result
         ];
     }
 

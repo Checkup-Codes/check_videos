@@ -5,10 +5,6 @@ namespace App\Providers;
 use Carbon\Carbon;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Config;
-use Inertia\Inertia;
-use App\Services\WritesCategories\WriteService;
-use App\Services\WritesCategories\CategoryService;
-use Illuminate\Support\Facades\Log;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -43,16 +39,5 @@ class AppServiceProvider extends ServiceProvider
     {
         setlocale(LC_TIME, 'tr_TR.UTF-8');
         Carbon::setLocale('tr');
-
-        // Tüm inertia response'lara yazı listesini ekle
-        Inertia::share('writes', function () {
-            return app(WriteService::class)->getWrites()['data'];
-        });
-
-        // Tüm inertia response'lara kategori listesini ekle
-        Inertia::share('categories', function () {
-            $cats = app(CategoryService::class)->getCategories()['data'];
-            return $cats;
-        });
     }
 }

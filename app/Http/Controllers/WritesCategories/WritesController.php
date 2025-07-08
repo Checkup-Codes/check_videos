@@ -28,19 +28,10 @@ class WritesController extends Controller
         $writesResult = $this->writeService->getWrites();
         $isAdmin = Auth::check();
 
-        Log::info('Writes listed', [
-            'execution_time' => $writesResult['execution_time']['value'],
-            'is_slow' => $writesResult['execution_time']['is_slow'],
-            'count' => $writesResult['count']
-        ]);
-
         return inertia('WritesCategories/Writes/IndexWrite', [
+            'writes'     => $writesResult['data'],
             'screen'     => $this->writeService->getScreenData(isMobile: true),
-            'isAdmin'    => $isAdmin,
-            'performance' => [
-                'execution_time' => $writesResult['execution_time'],
-                'count' => $writesResult['count']
-            ]
+            'isAdmin'    => $isAdmin
         ]);
     }
 
@@ -56,12 +47,9 @@ class WritesController extends Controller
         $categoriesResult = $this->writeService->getCategories();
 
         return inertia('WritesCategories/Writes/CreateWrite', [
+            'writes'     => $writesResult['data'],
             'screen'     => $this->writeService->getScreenData(false),
-            'isAdmin'    => $isAdmin,
-            'performance' => [
-                'writes_execution_time' => $writesResult['execution_time'],
-                'categories_execution_time' => $categoriesResult['execution_time']
-            ]
+            'isAdmin'    => $isAdmin
         ]);
     }
 
@@ -80,22 +68,12 @@ class WritesController extends Controller
 
         $this->writeService->incrementViewCount($writeResult['data']);
 
-        Log::info('Write viewed', [
-            'slug' => $slug,
-            'execution_time' => $writeResult['execution_time']['value'],
-            'is_slow' => $writeResult['execution_time']['is_slow']
-        ]);
-
         return inertia('WritesCategories/Writes/ShowWrite', [
+            'writes'     => $writesResult['data'],
             'write'      => $writeResult['data'],
             'screen'     => $this->writeService->getScreenData(false),
             'showDraw'   => filter_var(request()->query('showDraw', false), FILTER_VALIDATE_BOOLEAN),
-            'isAdmin'    => $isAdmin,
-            'performance' => [
-                'write_execution_time' => $writeResult['execution_time'],
-                'writes_execution_time' => $writesResult['execution_time'],
-                'categories_execution_time' => $categoriesResult['execution_time']
-            ]
+            'isAdmin'    => $isAdmin
         ]);
     }
 
@@ -109,15 +87,14 @@ class WritesController extends Controller
     {
         $isAdmin = Auth::check();
         $categoriesResult = $this->writeService->getCategories();
+        $writesResult = $this->writeService->getWrites();
 
         return inertia('WritesCategories/Writes/EditWrite', [
+            'writes'     => $writesResult['data'],
             'write'      => $write,
             'categories' => $categoriesResult['data'],
             'screen'     => $this->writeService->getScreenData(false),
-            'isAdmin'    => $isAdmin,
-            'performance' => [
-                'categories_execution_time' => $categoriesResult['execution_time']
-            ]
+            'isAdmin'    => $isAdmin
         ]);
     }
 
@@ -130,12 +107,6 @@ class WritesController extends Controller
     public function destroy(Write $write)
     {
         $result = $this->writeService->deleteWrite($write);
-
-        Log::info('Write deleted', [
-            'id' => $write->id,
-            'execution_time' => $result['execution_time']['value'],
-            'is_slow' => $result['execution_time']['is_slow']
-        ]);
 
         return redirect()
             ->route('writes.index')
@@ -167,12 +138,6 @@ class WritesController extends Controller
         $data['author_id'] = Auth::id();
 
         $result = $this->writeService->createWrite($data);
-
-        Log::info('Write created', [
-            'id' => $result['data']->id,
-            'execution_time' => $result['execution_time']['value'],
-            'is_slow' => $result['execution_time']['is_slow']
-        ]);
 
         return redirect()
             ->route('writes.index')
@@ -210,21 +175,10 @@ class WritesController extends Controller
         try {
             $result = $this->writeService->updateWrite($write, $validated);
 
-            Log::info('Write updated', [
-                'id' => $write->id,
-                'execution_time' => $result['execution_time']['value'],
-                'is_slow' => $result['execution_time']['is_slow']
-            ]);
-
             return redirect()
                 ->route('writes.index')
                 ->with('success', 'Yazıyı modifiye ettik.');
         } catch (\Exception $e) {
-            Log::error('Write update failed', [
-                'id' => $write->id,
-                'error' => $e->getMessage()
-            ]);
-
             return back()->withErrors(['error' => 'Güncelleme sırasında bir hata oluştu.']);
         }
     }
@@ -245,10 +199,7 @@ class WritesController extends Controller
         ]);
 
         return response()->json([
-            'data' => $result['data'],
-            'performance' => [
-                'execution_time' => $result['execution_time']
-            ]
+            'data' => $result['data']
         ]);
     }
 
@@ -265,10 +216,7 @@ class WritesController extends Controller
         $result = $this->writeService->deleteDraw($write, $drawId);
 
         return response()->json([
-            'message' => 'Versiyon başarıyla silindi.',
-            'performance' => [
-                'execution_time' => $result['execution_time']
-            ]
+            'message' => 'Versiyon başarıyla silindi.'
         ]);
     }
 }

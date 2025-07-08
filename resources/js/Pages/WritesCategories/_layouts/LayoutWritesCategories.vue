@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, provide, watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import CheckLayout from '@/Components/CekapUI/Slots/CheckLayout.vue';
 import SidebarLayoutWrite from './SidebarLayoutWrite.vue';
@@ -28,6 +28,7 @@ import FlashMessage from '@/Components/CekapUI/Notifications/FlashMessage.vue';
 import ToggleSubSidebarButtonOpen from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 import { useSidebar } from '../_utils/useSidebar';
 import { useFlashMessage } from '../_utils/useFlashMessage';
+import { useStore } from 'vuex';
 
 // Component name definition for dev tools
 defineOptions({
@@ -37,6 +38,7 @@ defineOptions({
 // Composables
 const { isCollapsed, isMobile, toggleSidebar, sidebarStyle } = useSidebar();
 const { flashMessage } = useFlashMessage();
+const store = useStore();
 
 // Get screen name from props
 const { props } = usePage();
@@ -57,7 +59,17 @@ const sidebarComponent = computed(() => {
 });
 
 // Handle sidebar width changes
-const isSidebarNarrow = ref(false);
+const isSidebarNarrow = ref(store.getters['Writes/isCollapsed']);
+
+// Sync with store on mount and when store changes
+watch(
+  () => store.getters['Writes/isCollapsed'],
+  (val) => {
+    isSidebarNarrow.value = val;
+  },
+  { immediate: true }
+);
+
 const mainContentClass = computed(() => ({
   'transition-all duration-300': true,
   'lg:ml-[-200px]': isSidebarNarrow.value,
@@ -67,6 +79,9 @@ const mainContentClass = computed(() => ({
 const handleSidebarWidthChange = (isNarrow) => {
   isSidebarNarrow.value = isNarrow;
 };
+
+provide('categories', props.categories || []);
+provide('writes', props.writes || []);
 </script>
 
 <style>

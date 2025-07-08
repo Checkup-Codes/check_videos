@@ -33,20 +33,11 @@ class CategoriesController extends Controller
         $writesResult = $this->writeService->getWrites();
         $isAdmin = Auth::check();
 
-        Log::info('Categories listed', [
-            'execution_time' => $categoriesResult['execution_time']['value'],
-            'is_slow' => $categoriesResult['execution_time']['is_slow'],
-            'count' => $categoriesResult['count']
-        ]);
-
         return inertia('WritesCategories/Categories/IndexCategory', [
+            'categories' => $categoriesResult['data'],
             'screen'     => $this->categoryService->getScreenData(isMobile: true),
             'writes'     => $writesResult['data'],
-            'isAdmin'    => $isAdmin,
-            'performance' => [
-                'categories_execution_time' => $categoriesResult['execution_time'],
-                'writes_execution_time' => $writesResult['execution_time']
-            ]
+            'isAdmin'    => $isAdmin
         ]);
     }
 
@@ -74,22 +65,12 @@ class CategoriesController extends Controller
 
         $writesResult = $this->writeService->getWritesByCategories($categoryIds);
 
-        Log::info('Category viewed', [
-            'slug' => $slug,
-            'writes_count' => $writesResult['count'],
-            'execution_time' => $writesResult['execution_time']['value'],
-            'is_slow' => $writesResult['execution_time']['is_slow']
-        ]);
-
         return inertia('WritesCategories/Categories/ShowCategory', [
+            'categories' => $categoriesResult['data'],
             'category' => $category,
             'writes' => $writesResult['data'],
             'screen'     => $this->categoryService->getScreenData(isMobile: false),
-            'isAdmin' => $isAdmin,
-            'performance' => [
-                'categories_execution_time' => $categoriesResult['execution_time'],
-                'writes_execution_time' => $writesResult['execution_time']
-            ]
+            'isAdmin' => $isAdmin
         ]);
     }
 
@@ -105,11 +86,9 @@ class CategoriesController extends Controller
         $isAdmin = Auth::check();
 
         return inertia('WritesCategories/Categories/CreateCategory', [
+            'categories' => $categoriesResult['data'],
             'screen'     => $this->categoryService->getScreenData(isMobile: true),
-            'isAdmin' => $isAdmin,
-            'performance' => [
-                'categories_execution_time' => $categoriesResult['execution_time']
-            ]
+            'isAdmin' => $isAdmin
         ]);
     }
 
@@ -126,12 +105,10 @@ class CategoriesController extends Controller
         $isAdmin = Auth::check();
 
         return inertia('WritesCategories/Categories/EditCategory', [
+            'categories' => $categoriesResult['data'],
             'category' => $category->load('parent'),
             'screen'     => $this->categoryService->getScreenData(isMobile: true),
-            'isAdmin' => $isAdmin,
-            'performance' => [
-                'categories_execution_time' => $categoriesResult['execution_time']
-            ]
+            'isAdmin' => $isAdmin
         ]);
     }
 
@@ -152,12 +129,6 @@ class CategoriesController extends Controller
         ]);
 
         $result = $this->categoryService->createCategory($request->all());
-
-        Log::info('Category created', [
-            'id' => $result['data']->id,
-            'execution_time' => $result['execution_time']['value'],
-            'is_slow' => $result['execution_time']['is_slow']
-        ]);
 
         return redirect()
             ->route('categories.index')
@@ -195,12 +166,6 @@ class CategoriesController extends Controller
 
         $result = $this->categoryService->updateCategory($category, $request->all());
 
-        Log::info('Category updated', [
-            'id' => $category->id,
-            'execution_time' => $result['execution_time']['value'],
-            'is_slow' => $result['execution_time']['is_slow']
-        ]);
-
         return redirect()
             ->route('categories.index')
             ->with('success', 'Kategori başarıyla güncellendi.');
@@ -215,12 +180,6 @@ class CategoriesController extends Controller
     public function destroy(Category $category)
     {
         $result = $this->categoryService->deleteCategory($category);
-
-        Log::info('Category deleted', [
-            'id' => $category->id,
-            'execution_time' => $result['execution_time']['value'],
-            'is_slow' => $result['execution_time']['is_slow']
-        ]);
 
         return redirect()
             ->route('categories.index')
@@ -243,26 +202,13 @@ class CategoriesController extends Controller
         $writesResult = $this->writeService->getWritesByCategory($category);
         $writeResult = $this->writeService->getWriteBySlug($writeSlug);
 
-        Log::info('Write by category viewed', [
-            'category_slug' => $categorySlug,
-            'write_slug' => $writeSlug,
-            'writes_execution_time' => $writesResult['execution_time']['value'],
-            'writes_is_slow' => $writesResult['execution_time']['is_slow'],
-            'write_execution_time' => $writeResult['execution_time']['value'],
-            'write_is_slow' => $writeResult['execution_time']['is_slow']
-        ]);
-
         return inertia('WritesCategories/Categories/WriteByCategory', [
+            'categories' => $categoriesResult['data'],
             'category' => $category,
             'writes' => $writesResult['data'],
             'write' => $writeResult['data'],
             'screen'     => $this->categoryService->getScreenData(isMobile: true),
-            'isAdmin' => $isAdmin,
-            'performance' => [
-                'categories_execution_time' => $categoriesResult['execution_time'],
-                'writes_execution_time' => $writesResult['execution_time'],
-                'write_execution_time' => $writeResult['execution_time']
-            ]
+            'isAdmin' => $isAdmin
         ]);
     }
 

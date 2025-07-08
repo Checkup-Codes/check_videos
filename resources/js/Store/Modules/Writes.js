@@ -2,11 +2,15 @@ import axios from 'axios';
 
 const state = () => ({
   writes: [],
+  collapsed: false,
 });
 
 const mutations = {
   SET_WRITES(state, writes) {
     state.writes = writes;
+  },
+  SET_COLLAPSED(state, value) {
+    state.collapsed = value;
   },
 };
 
@@ -23,6 +27,7 @@ const actions = {
 
 const getters = {
   writes: (state) => state.writes,
+  isCollapsed: (state) => state.collapsed,
 };
 
 export default {
