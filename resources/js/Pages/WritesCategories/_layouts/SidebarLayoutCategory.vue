@@ -17,6 +17,7 @@
         ref="categoryTreeRef"
         :getLinkClasses="getLinkClasses"
         :expandAll="areAllCategoriesExpanded"
+        :isCollapsed="isNarrow"
       />
     </SubSidebarScreen>
   </CheckSubsidebar>
@@ -55,17 +56,23 @@ const getLinkClasses = () => '';
 
 const showCategories = ref(true);
 const categoryTreeRef = ref(null);
-const isNarrow = ref(false);
+const isNarrow = ref(store.getters['Writes/isCollapsed']);
 
 const emit = defineEmits(['update:isNarrow']);
 
 const handleWidthToggle = (value) => {
   isNarrow.value = value;
+  store.commit('Writes/SET_COLLAPSED', value);
 };
 
 // Watch for isNarrow changes and emit to parent
 watch(isNarrow, (newValue) => {
   emit('update:isNarrow', newValue);
+});
+
+// On mount, sync with store
+onMounted(() => {
+  isNarrow.value = store.getters['Writes/isCollapsed'];
 });
 
 // Helper function to get all category IDs recursively

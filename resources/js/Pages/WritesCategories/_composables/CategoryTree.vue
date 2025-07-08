@@ -197,21 +197,9 @@ defineOptions({
   name: 'CategoryTree',
 });
 
-// const props = defineProps({
-//   parentCategories: {
-//     type: Array,
-//     required: true,
-//   },
-//   getLinkClasses: {
-//     type: Function,
-//     required: false,
-//     default: () => '',
-//   },
-//   expandAll: {
-//     type: Boolean,
-//     default: false,
-//   },
-// });
+const props = defineProps({
+  isCollapsed: { type: Boolean, default: false },
+});
 
 const categories = inject('categories', []);
 const isAdmin = inject('isAdmin', false);
