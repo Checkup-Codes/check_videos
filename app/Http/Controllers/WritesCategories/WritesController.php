@@ -48,6 +48,7 @@ class WritesController extends Controller
 
         return inertia('WritesCategories/Writes/CreateWrite', [
             'writes'     => $writesResult['data'],
+            'categories' => $categoriesResult['data'],
             'screen'     => $this->writeService->getScreenData(false),
             'isAdmin'    => $isAdmin
         ]);
