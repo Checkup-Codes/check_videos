@@ -1,1 +1,0 @@
-import{g as r,o as a,a as e,w as s,f as c,K as o,u as n,p as l}from"./app-DXJXcAPF.js";const i={class:"flex lg:hidden"},p={__name:"GoBackButton",props:{url:{type:String,required:!0}},setup(t){return(u,_)=>(a(),r("div",i,[e(n(l),{href:t.url,class:"flex items-center p-2 text-black hover:text-gray-700"},{default:s(()=>[e(o),c(" Geri ")]),_:1},8,["href"])]))}};export{p as _};

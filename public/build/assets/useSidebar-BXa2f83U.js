@@ -1,1 +1,0 @@
-import{Q as l,r as n,i as r}from"./app-DXJXcAPF.js";function u(){const{props:i}=l(),e=n(!0),s=r(()=>{var o;return((o=i.screen)==null?void 0:o.isMobileSidebar)||!1}),t=()=>{e.value=!e.value},a=r(()=>s.value?"":"hidden lg:block");return{isCollapsed:e,isMobile:s,toggleSidebar:t,sidebarStyle:a}}export{u};
