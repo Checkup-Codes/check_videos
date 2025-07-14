@@ -356,6 +356,26 @@ const validateForm = () => {
   }
 };
 
+const LOCAL_STORAGE_KEY = `write_edit_form_${writeData.value.id || writeData.value.slug || 'unknown'}`;
+
+// Formu localStorage'a kaydet
+watch(
+  form,
+  (newVal) => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newVal));
+  },
+  { deep: true }
+);
+
+// Sayfa açıldığında localStorage'dan oku
+onMounted(() => {
+  const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+  if (saved) {
+    const parsed = JSON.parse(saved);
+    Object.assign(form, parsed);
+  }
+});
+
 // Submit form and update write
 const updateWrite = () => {
   validateForm();
@@ -364,6 +384,7 @@ const updateWrite = () => {
   if (!Object.values(errors.value).some((error) => error !== '')) {
     form.put(route('writes.update', { write: writeData.value.slug }), {
       onSuccess: () => {
+        localStorage.removeItem(LOCAL_STORAGE_KEY); // Temizle
         router.visit(route('writes.show', { write: form.slug }));
       },
     });

@@ -187,7 +187,7 @@
               <ul
                 tabindex="0"
                 class="dropdown-content menu z-[1] max-h-60 w-full overflow-y-auto rounded-box bg-base-100 p-2 shadow"
-                v-if="filteredCategories.length > 0"
+                v-if="filteredCategories && filteredCategories.length > 0"
               >
                 <li v-for="category in filteredCategories" :key="category.id">
                   <a @click="selectCategory(category)">{{ category.name }}</a>
@@ -330,7 +330,7 @@ defineOptions({
 
 // Get categories from page props
 const { props } = usePage();
-const categories = ref(props.categories);
+const categories = ref(props.categories || []);
 
 // Initialize form with default values
 const form = useForm({
@@ -380,7 +380,7 @@ const statusOptions = [
 const statusSearch = ref('');
 const categorySearch = ref('');
 const filteredStatuses = ref(statusOptions);
-const filteredCategories = ref(props.categories);
+const filteredCategories = ref(props.categories || []);
 
 // Filter functions
 const filterStatus = () => {
@@ -454,6 +454,26 @@ watch(
   { deep: true }
 );
 
+const LOCAL_STORAGE_KEY = 'write_create_form';
+
+// Formu localStorage'a kaydet
+watch(
+  form,
+  (newVal) => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newVal));
+  },
+  { deep: true }
+);
+
+// Sayfa açıldığında localStorage'dan oku
+onMounted(() => {
+  const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+  if (saved) {
+    const parsed = JSON.parse(saved);
+    Object.assign(form, parsed);
+  }
+});
+
 // Client-side form validation
 const validateForm = () => {
   errors.value.title = form.title ? '' : 'Başlık zorunludur.';
@@ -478,6 +498,7 @@ const submitForm = () => {
   if (!Object.values(errors.value).some((error) => error !== '')) {
     form.post(route('writes.store'), {
       onSuccess: () => {
+        localStorage.removeItem(LOCAL_STORAGE_KEY); // Temizle
         router.visit(route('dashboard'));
       },
     });
