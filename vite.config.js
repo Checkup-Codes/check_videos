@@ -10,8 +10,9 @@ export default defineConfig({
   },
   plugins: [
     laravel({
-      input: ['resources/css/app.css', 'resources/js/app.ts'],
+      input: ['resources/css/app.css', 'resources/js/app.ts', 'resources/js/ssr.ts'],
       refresh: true,
+      ssr: 'resources/js/ssr.ts',
     }),
     vue({
       template: {
