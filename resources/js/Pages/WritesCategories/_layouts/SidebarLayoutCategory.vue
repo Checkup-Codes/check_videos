@@ -11,7 +11,7 @@
       class="border-base-200"
     >
     </TopSubsidebar>
-    <SubSidebarScreen>
+    <SubSidebarScreen ref="scrollableRef">
       <CategoryTree
         v-if="showCategories"
         ref="categoryTreeRef"
@@ -57,6 +57,7 @@ const getLinkClasses = () => '';
 const showCategories = ref(true);
 const categoryTreeRef = ref(null);
 const isNarrow = ref(store.getters['Writes/isCollapsed']);
+const scrollableRef = ref(null);
 
 const emit = defineEmits(['update:isNarrow']);
 
@@ -74,6 +75,11 @@ watch(isNarrow, (newValue) => {
 onMounted(() => {
   isNarrow.value = store.getters['Writes/isCollapsed'];
 });
+
+const handleScroll = (e) => {
+  const scrollTop = e.target.scrollTop;
+  localStorage.setItem('categorySidebarScroll', scrollTop);
+};
 
 // Helper function to get all category IDs recursively
 const getAllCategoryIds = (categories) => {
@@ -99,7 +105,17 @@ const toggleAllCategories = () => {
 };
 
 onMounted(() => {
-  console.log('SidebarLayoutCategory categories:', categories);
+  if (scrollableRef.value) {
+    scrollableRef.value.addEventListener && scrollableRef.value.addEventListener('scroll', handleScroll);
+    if (scrollableRef.value.$el) {
+      scrollableRef.value.$el.addEventListener('scroll', handleScroll);
+      // Scroll pozisyonunu geri yükle
+      const savedScroll = localStorage.getItem('categorySidebarScroll');
+      if (savedScroll) {
+        scrollableRef.value.$el.scrollTop = parseInt(savedScroll, 10);
+      }
+    }
+  }
 });
 </script>
 

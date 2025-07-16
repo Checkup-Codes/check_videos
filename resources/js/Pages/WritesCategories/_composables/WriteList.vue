@@ -275,7 +275,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed, watch, onActivated, onDeactivated, inject } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch, onActivated, onDeactivated, inject, nextTick } from 'vue';
 import { Link, usePage, router } from '@inertiajs/vue3';
 
 defineOptions({ name: 'WriteList' });
@@ -357,12 +357,33 @@ const updateActiveWrite = () => {
   activeWrite.value = window.location.pathname;
 };
 
-/**
- * Handle component mount
- */
+const getScrollKey = () => {
+  return `writeListScroll_${adminFilter.value}_${searchQuery.value}`;
+};
+
+const handleScroll = (e) => {
+  localStorage.setItem(getScrollKey(), e.target.scrollTop);
+};
+
 onMounted(() => {
   isActive = true;
+  // Filtre ve arama sorgusunu localStorage'dan yükle
+  const savedFilter = localStorage.getItem('writeListFilter');
+  if (savedFilter) adminFilter.value = savedFilter;
+  const savedSearch = localStorage.getItem('writeListSearch');
+  if (savedSearch) searchQuery.value = savedSearch;
+
   updateActiveWrite();
+  nextTick(() => {
+    if (scrollContainer.value) {
+      scrollContainer.value.addEventListener('scroll', handleScroll);
+      // Scroll pozisyonunu geri yükle
+      const savedScroll = localStorage.getItem(getScrollKey());
+      if (savedScroll) {
+        scrollContainer.value.scrollTop = parseInt(savedScroll, 10);
+      }
+    }
+  });
   const handlePopState = () => {
     if (isActive) {
       updateActiveWrite();
@@ -386,6 +407,9 @@ onMounted(() => {
   // Cleanup on unmount
   onUnmounted(() => {
     isActive = false;
+    if (scrollContainer.value) {
+      scrollContainer.value.removeEventListener('scroll', handleScroll);
+    }
     window.removeEventListener('popstate', handlePopState);
     window.removeEventListener('inertia:start', handleNavigationStart);
     window.removeEventListener('inertia:finish', handleNavigationEnd);
@@ -399,6 +423,14 @@ const formatDate = (date) => {
   const options = { year: 'numeric', month: 'short', day: 'numeric' };
   return new Date(date).toLocaleDateString(undefined, options);
 };
+
+// Filtre ve arama sorgusu değişince localStorage'a kaydet
+watch(adminFilter, (val) => {
+  localStorage.setItem('writeListFilter', val);
+});
+watch(searchQuery, (val) => {
+  localStorage.setItem('writeListSearch', val);
+});
 </script>
 
 <style scoped>

@@ -310,10 +310,6 @@ defineExpose({
   expandAllCategories,
   scrollContainer,
 });
-
-onMounted(() => {
-  console.log('CategoryTree categories:', categories);
-});
 </script>
 
 <style scoped>

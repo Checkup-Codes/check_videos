@@ -4,7 +4,7 @@
     <TopSubsidebar title="YAZILAR" href="/writes/create" class="border-base-200" @toggle-width="handleWidthToggle">
     </TopSubsidebar>
 
-    <SubSidebarScreen>
+    <SubSidebarScreen ref="scrollableRef">
       <WriteList ref="writeListRef" :writes="writes" :route="route" :isCollapsed="isNarrow" />
     </SubSidebarScreen>
   </CheckSubsidebar>
@@ -34,6 +34,7 @@ const { props } = usePage();
 const writes = inject('writes', []);
 const writeListRef = ref(null);
 const isNarrow = ref(store.getters['Writes/isCollapsed']);
+const scrollableRef = ref(null);
 
 const emit = defineEmits(['update:isNarrow']);
 
@@ -47,8 +48,24 @@ watch(isNarrow, (newValue) => {
   emit('update:isNarrow', newValue);
 });
 
+const handleScroll = (e) => {
+  const scrollTop = e.target.scrollTop;
+  localStorage.setItem('writeSidebarScroll', scrollTop);
+};
+
 // On mount, sync with store
 onMounted(() => {
   isNarrow.value = store.getters['Writes/isCollapsed'];
+  if (scrollableRef.value) {
+    scrollableRef.value.addEventListener && scrollableRef.value.addEventListener('scroll', handleScroll);
+    if (scrollableRef.value.$el) {
+      scrollableRef.value.$el.addEventListener('scroll', handleScroll);
+      // Scroll pozisyonunu geri yükle
+      const savedScroll = localStorage.getItem('writeSidebarScroll');
+      if (savedScroll) {
+        scrollableRef.value.$el.scrollTop = parseInt(savedScroll, 10);
+      }
+    }
+  }
 });
 </script>
