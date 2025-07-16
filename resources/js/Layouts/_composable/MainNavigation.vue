@@ -11,7 +11,8 @@
 <script setup>
 import NavItem from '../_components/NavItem.vue';
 import { usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
-const { props } = usePage();
-const isLoggedIn = props.auth && props.auth.user;
+const page = usePage();
+const isLoggedIn = computed(() => !!(page.props.auth && page.props.auth.user));
 </script>

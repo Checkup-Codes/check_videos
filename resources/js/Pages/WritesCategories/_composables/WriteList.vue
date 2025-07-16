@@ -1,5 +1,5 @@
 <template>
-  <div ref="scrollContainer" class="write-list-container h-full space-y-1 overflow-y-auto p-3">
+  <div ref="scrollContainer" class="write-list-container space-y-1 overflow-y-auto p-3">
     <!-- Search bar for all users -->
     <div class="mb-3">
       <input v-model="searchQuery" type="text" class="input-bordered input w-full" placeholder="Yazı başlığı ara..." />
@@ -403,7 +403,6 @@ const formatDate = (date) => {
 
 <style scoped>
 .write-list-container {
-  height: calc(100vh - 4rem);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   /* Remove smooth scroll behavior */

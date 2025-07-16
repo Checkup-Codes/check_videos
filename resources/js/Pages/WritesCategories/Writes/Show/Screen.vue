@@ -202,7 +202,8 @@ const write = ref(props.write || {});
 const auth = props.auth;
 const contentRef = ref(null);
 const showDraw = ref(false);
-const isLoading = ref(true);
+// isLoading'i dinamik ve computed yap
+const isLoading = computed(() => !write.value.title);
 
 /**
  * Use the centralized Quill content processor
@@ -269,26 +270,7 @@ const animateSkeleton = () => {
  * Apply GSAP animation on mount and restore write list scroll position
  */
 onMounted(() => {
-  // Start skeleton animation
-  animateSkeleton();
-
-  // Simulate loading delay
-  setTimeout(() => {
-    isLoading.value = false;
-    useGsapFadeIn(contentRef, { duration: 0.8 });
-  }, 800);
-
-  // Restore write list scroll position after a short delay
-  // to ensure the list component is fully mounted
-  nextTick(() => {
-    const writeListElement = document.querySelector('.write-list-container');
-    if (writeListElement) {
-      const savedScrollTop = localStorage.getItem('writeListScrollPosition');
-      if (savedScrollTop) {
-        writeListElement.scrollTop = parseInt(savedScrollTop, 10);
-      }
-    }
-  });
+  useGsapFadeIn(contentRef, { duration: 0.8 });
 });
 
 /**
