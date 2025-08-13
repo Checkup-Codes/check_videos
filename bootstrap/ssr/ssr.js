@@ -699,7 +699,7 @@ const _sfc_main$2 = {
     const imagePath = ref("");
     const auth = ref(null);
     const appName = computed(() => usePage().props.app.name);
-    const title = ref("Check Videos");
+    const title = ref("");
     watch(
       () => page.props.value,
       (newProps) => {

@@ -90,7 +90,7 @@ const page = usePage();
 const imagePath = ref('');
 const auth = ref(null);
 const appName = computed(() => usePage().props.app.name);
-const title = ref('Check Videos');
+const title = ref('');
 
 // Watch for page props changes to update auth data
 watch(
