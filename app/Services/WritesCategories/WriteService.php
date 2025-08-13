@@ -308,11 +308,23 @@ class WriteService
      */
     public function addDraw(Write $write, array $data)
     {
-        $latestVersion = $write->writeDraws()->max('version') ?? 0;
-        $writeDraw = $write->writeDraws()->create([
-            'elements' => $data['elements'],
-            'version'  => $latestVersion + 1,
-        ]);
+        // Check if there's already a version 1 draw
+        $existingDraw = $write->writeDraws()->where('version', 1)->first();
+        
+        if ($existingDraw) {
+            // Update the existing version 1 draw
+            $existingDraw->update([
+                'elements' => $data['elements'],
+            ]);
+            $writeDraw = $existingDraw;
+        } else {
+            // Create new version 1 draw if none exists
+            $writeDraw = $write->writeDraws()->create([
+                'elements' => $data['elements'],
+                'version'  => 1,
+            ]);
+        }
+        
         return [
             'data' => $writeDraw
         ];
