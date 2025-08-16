@@ -21,8 +21,8 @@ export default {
                 sans: ['Geist Sans', ...defaultTheme.fontFamily.sans],
             },
             gridTemplateColumns: {
-                'subsidebar': 'minmax(0, 380px) 1fr',
-                'subsidebar-narrow': 'minmax(0, 180px) 1fr',
+                'subsidebar': 'minmax(0, 320px) 1fr',
+                'subsidebar-narrow': 'minmax(0, 150px) 1fr',
                 'sidebar': '2fr 10fr',
             },
             boxShadow: {

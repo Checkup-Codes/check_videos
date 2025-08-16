@@ -56,7 +56,7 @@
 
             <!-- Right side: Admin actions -->
             <div v-if="auth.user && !isLoading" class="flex gap-2">
-              <Link :href="route('writes.edit', write.id)" class="btn btn-ghost btn-sm text-xs">
+              <Link :href="route('writes.edit', write.slug)" class="btn btn-ghost btn-sm text-xs">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -233,7 +233,7 @@ const formatDate = (dateString) => {
  * Navigate to edit page
  */
 const editWrite = () => {
-  router.visit(route('writes.edit', { write: write.value.slug }));
+  router.visit(route('writes.edit', write.value.slug));
 };
 
 /**
@@ -343,7 +343,12 @@ const toggleContent = () => {
 
 const deleteWrite = (id) => {
   if (confirm('Bu yazıyı silmek istediğinize emin misiniz?')) {
-    router.delete(route('writes.destroy', id));
+    router.delete(route('writes.destroy', id), {
+      onSuccess: () => {
+        // Redirect back to category page after deletion
+        router.visit(route('categories.show', category.value.slug));
+      }
+    });
   }
 };
 </script>

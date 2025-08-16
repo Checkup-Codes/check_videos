@@ -213,10 +213,10 @@
     <Link
       v-for="write in filteredWrites"
       :key="write.id"
-      :href="route('writes.show', { write: write.slug })"
+      :href="getWriteRoute(write)"
       :class="[
         'block items-center justify-between rounded-lg border px-1 py-2 backdrop-blur-md transition-all duration-200',
-        activeWrite === `/writes/${write.slug}`
+        activeWrite === getActiveWritePath(write)
           ? 'border-primary bg-primary text-primary-content shadow-md'
           : 'border-base-200 bg-base-200 text-base-content hover:bg-base-300',
       ]"
@@ -234,7 +234,7 @@
         </span>
         <span
           v-if="write.status === 'link_only'"
-          :class="[activeWrite === `/writes/${write.slug}` ? 'text-primary-content' : 'text-primary']"
+          :class="[activeWrite === getActiveWritePath(write) ? 'text-primary-content' : 'text-primary']"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
             <path
@@ -297,6 +297,57 @@ const activeWrite = ref('');
 const searchQuery = ref('');
 const adminFilter = ref('all');
 const showFilterMenu = ref(false);
+
+/**
+ * Determine the correct route for a write based on current context
+ */
+const getWriteRoute = (write) => {
+  const currentPath = window.location.pathname;
+  
+  // If we're in categories context, use category-based route
+  if (currentPath.includes('/categories/')) {
+    // Extract category slug from current URL
+    const pathParts = currentPath.split('/').filter(part => part.length > 0);
+    
+    // Check if we're in a category page (not create/edit)
+    if (pathParts.length >= 2 && pathParts[0] === 'categories') {
+      const categorySlug = pathParts[1];
+      
+      // Make sure we're not in create/edit pages
+      if (categorySlug && categorySlug !== 'create' && categorySlug !== 'edit') {
+        return route('categories.showByCategory', { category: categorySlug, slug: write.slug });
+      }
+    }
+  }
+  
+  // Default to writes.show route
+  return route('writes.show', { write: write.slug });
+};
+
+/**
+ * Get active write path for highlighting
+ */
+const getActiveWritePath = (write) => {
+  const currentPath = window.location.pathname;
+  
+  // If we're in categories context, use category-based path
+  if (currentPath.includes('/categories/')) {
+    const pathParts = currentPath.split('/').filter(part => part.length > 0);
+    
+    // Check if we're in a category page (not create/edit)
+    if (pathParts.length >= 2 && pathParts[0] === 'categories') {
+      const categorySlug = pathParts[1];
+      
+      // Make sure we're not in create/edit pages
+      if (categorySlug && categorySlug !== 'create' && categorySlug !== 'edit') {
+        return `/categories/${categorySlug}/${write.slug}`;
+      }
+    }
+  }
+  
+  // Default to writes path
+  return `/writes/${write.slug}`;
+};
 
 const filteredWrites = computed(() => {
   let result = writes;

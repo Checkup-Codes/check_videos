@@ -16,7 +16,7 @@
       <div class="flex justify-end gap-2 p-2">
         <Link
           v-if="write.id"
-          :href="route('writes.edit', { write: write.slug })"
+          :href="route('writes.edit', write.slug)"
           class="btn btn-ghost btn-sm btn-circle"
           title="Düzenle"
         >

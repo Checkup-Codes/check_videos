@@ -29,8 +29,8 @@ const toggleSidebar = () => {
   showSidebar.value = !showSidebar.value;
 };
 
-const sidebarClass = 'fixed inset-y-0 left-0 z-40 hidden overflow-hidden lg:block lg:w-64 xl:w-72';
-const contentWrapperClass = 'lg:pl-64 xl:pl-72';
+const sidebarClass = 'fixed inset-y-0 left-0 z-40 hidden overflow-hidden lg:block lg:w-52 ';
+const contentWrapperClass = 'lg:pl-52 ';
 
 // Yazı listesini inertia'dan al ve provide et
 const writes = page.props.writes || [];

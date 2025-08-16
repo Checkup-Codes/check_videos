@@ -23,19 +23,6 @@
         {{ label }}
       </span>
     </div>
-
-    <!-- Sağ kısım: Shortcut badge -->
-    <div
-      v-if="shortcut"
-      class="rounded border px-2 py-0.5 text-xs transition-all"
-      :class="
-        isActive
-          ? 'bg-primary/20 border-primary text-primary-content'
-          : 'text-base-content/70 border-base-200 bg-base-100'
-      "
-    >
-      {{ shortcut }}
-    </div>
   </Link>
 </template>
 
@@ -48,7 +35,6 @@ const props = defineProps({
   href: String,
   icon: [String, Array],
   label: String,
-  shortcut: String,
   external: Boolean,
 });
 

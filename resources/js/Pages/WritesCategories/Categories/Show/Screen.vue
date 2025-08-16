@@ -85,7 +85,7 @@
             >
               <div class="card-body p-4">
                 <h2 class="card-title line-clamp-2 text-base">
-                  <Link :href="route('writes.show', write.slug)" class="hover:text-primary">
+                  <Link :href="route('categories.showByCategory', { category: category.slug, slug: write.slug })" class="hover:text-primary">
                     {{ write.title }}
                   </Link>
                 </h2>
