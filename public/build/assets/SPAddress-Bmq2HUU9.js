@@ -1,1 +1,0 @@
-import{c,o as r,t as e}from"./ssr-Cy795t1Y.js";const s={__name:"SPAddress",props:{product:Object},setup(t){return(a,o)=>(r(),c("span",null,e(t.product.platform)+" "+e(t.product.category)+", "+e(t.product.name),1))}};export{s as default};
