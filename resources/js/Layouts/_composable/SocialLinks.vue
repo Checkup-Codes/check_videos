@@ -23,8 +23,8 @@ const platformIcons = {
   Twitter: ['fab', 'twitter'],
   X: ['fab', 'twitter'],
   Facebook: ['fab', 'facebook'],
-  Tiktok: ['fab', 'tiktok'],
-  Pinterest: ['fab', 'pinterest'],
+  Tiktok: ['fab', 'tiktok'], // TikTok ikonu artık mevcut
+  Pinterest: ['fab', 'pinterest'], // Pinterest ikonu artık mevcut
   default: ['fas', 'link'],
 };
 

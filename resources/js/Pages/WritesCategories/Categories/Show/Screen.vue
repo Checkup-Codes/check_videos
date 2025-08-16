@@ -355,15 +355,12 @@ const displayedWrites = computed(() => {
 const loadMore = () => {
   if (isLoadingMore.value || !hasMore.value) return;
 
-  console.log('Loading more writes. Current page:', page.value, 'Has more:', hasMore.value);
-  
   isLoadingMore.value = true;
   page.value++;
 
   // Simulate loading delay
   setTimeout(() => {
     checkHasMore();
-    console.log('Loaded more writes. New page:', page.value, 'Has more:', hasMore.value);
     isLoadingMore.value = false;
   }, 300);
 };
@@ -395,47 +392,31 @@ const setupInfiniteScroll = () => {
   let scrollContainer = document.querySelector('.h-screen-minus-12.overflow-y-auto');
   
   if (!scrollContainer) {
-    console.warn('Scroll container not found, trying alternative selector');
     // Try alternative selector
     const altContainer = document.querySelector('.overflow-y-auto');
     if (!altContainer) {
-      console.error('No scroll container found');
       return;
     }
     scrollContainer = altContainer;
   }
 
-  console.log('Scroll container found:', scrollContainer);
-
   const handleScroll = () => {
     const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
     const scrollPercentage = (scrollTop + clientHeight) / scrollHeight;
-    
-    console.log('Scroll info:', {
-      scrollTop,
-      scrollHeight,
-      clientHeight,
-      scrollPercentage,
-      isLoadingMore: isLoadingMore.value,
-      hasMore: hasMore.value
-    });
 
     // Load more when user scrolls to 80% of the content
     if (scrollPercentage > 0.8 && !isLoadingMore.value && hasMore.value) {
-      console.log('Loading more writes via scroll...');
       loadMore();
     }
   };
 
   scrollContainer.addEventListener('scroll', handleScroll);
-  console.log('Scroll listener added to:', scrollContainer);
 
   // Also set up intersection observer as backup
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting && !isLoadingMore.value && hasMore.value) {
-          console.log('Loading more writes via observer...');
           loadMore();
         }
       });
@@ -449,7 +430,6 @@ const setupInfiniteScroll = () => {
 
   if (observerTarget.value) {
     observer.observe(observerTarget.value);
-    console.log('Observer set up for:', observerTarget.value);
   }
 
   return () => {
@@ -467,14 +447,6 @@ const checkHasMore = () => {
   const endIndex = page.value * 10;
   const totalWrites = filteredWrites.value.length;
   hasMore.value = endIndex < totalWrites;
-  
-  console.log('Check has more:', {
-    page: page.value,
-    endIndex,
-    totalWrites,
-    hasMore: hasMore.value,
-    displayedCount: displayedWrites.value.length
-  });
 };
 
 /**
@@ -591,13 +563,11 @@ onMounted(() => {
     const handleWindowScroll = () => {
       const scrollPercentage = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight;
       if (scrollPercentage > 0.8 && !isLoadingMore.value && hasMore.value) {
-        console.log('Loading more writes via window scroll...');
         loadMore();
       }
     };
     
     window.addEventListener('scroll', handleWindowScroll);
-    console.log('Window scroll listener added as fallback');
   }, 100);
 
   if (flashSuccess.value) {
