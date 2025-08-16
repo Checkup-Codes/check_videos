@@ -1,31 +1,31 @@
 <template>
   <CheckScreen>
     <div class="card border border-base-200 bg-base-100 shadow-md transition-all duration-200">
-      <div class="card-body p-4 sm:p-6">
+      <div class="card-body p-3 sm:p-6">
         <!-- Title and category section -->
-        <div class="mb-6">
+        <div class="mb-4 sm:mb-6">
           <div v-if="isLoading" class="skeleton-wrapper">
-            <div class="skeleton h-8 w-3/4 rounded-lg"></div>
+            <div class="skeleton h-6 sm:h-8 w-3/4 rounded-lg"></div>
             <div class="mt-2">
-              <div class="skeleton h-4 w-24 rounded-lg"></div>
+              <div class="skeleton h-3 sm:h-4 w-24 rounded-lg"></div>
             </div>
           </div>
           <template v-else>
-            <div class="flex items-center gap-3">
-              <div class="flex-1">
-                <h1 class="text-2xl font-bold text-base-content sm:text-3xl">{{ category.name }}</h1>
-                <div class="mt-2 flex items-center gap-2">
-                  <span v-if="category.description" class="badge badge-outline text-sm">
+            <div class="flex items-center gap-2 sm:gap-3">
+              <div class="flex-1 min-w-0">
+                <h1 class="text-lg sm:text-2xl lg:text-3xl font-bold text-base-content break-words">{{ category.name }}</h1>
+                <div class="mt-2 flex flex-wrap items-center gap-1 sm:gap-2">
+                  <span v-if="category.description" class="badge badge-outline text-xs sm:text-sm">
                     {{ category.description }}
                   </span>
-                  <span class="text-base-content/60 text-sm">
+                  <span class="text-base-content/60 text-xs sm:text-sm">
                     {{ filteredWrites.length }} yazı
                   </span>
                 </div>
               </div>
               <!-- Category icon -->
-              <div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div class="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
               </div>
@@ -34,32 +34,34 @@
         </div>
 
         <!-- Admin controls -->
-        <div v-if="auth.user && !isLoading" class="mb-6 flex justify-end gap-2">
-          <Link :href="route('categories.edit', category.id)" class="btn btn-outline btn-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-2 h-4 w-4">
+        <div v-if="auth.user && !isLoading" class="mb-4 sm:mb-6 flex flex-wrap justify-end gap-1 sm:gap-2">
+          <Link :href="route('categories.edit', category.id)" class="btn btn-outline btn-xs sm:btn-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4">
               <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
             </svg>
-            Düzenle
+            <span class="hidden sm:inline">Düzenle</span>
+            <span class="sm:hidden">Düzenle</span>
           </Link>
 
-          <button @click="deleteCategory(category.id)" class="btn btn-outline btn-error btn-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-2 h-4 w-4">
+          <button @click="deleteCategory(category.id)" class="btn btn-outline btn-error btn-xs sm:btn-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4">
               <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
             </svg>
-            Sil
+            <span class="hidden sm:inline">Sil</span>
+            <span class="sm:hidden">Sil</span>
           </button>
         </div>
 
         <!-- Search and Filter Section -->
-        <div v-if="!isLoading" class="mb-6">
-          <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div v-if="!isLoading" class="mb-4 sm:mb-6">
+          <div class="flex flex-col gap-3 sm:gap-4">
             <!-- Search Input -->
-            <div class="flex-1 max-w-md">
+            <div class="w-full">
               <div class="relative">
                 <input 
                   v-model="searchQuery" 
                   type="text" 
-                  class="input input-bordered w-full pl-10" 
+                  class="input input-bordered w-full pl-9 sm:pl-10 text-sm sm:text-base" 
                   placeholder="Yazı başlığı ara..."
                 />
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-base-content/50">
@@ -69,17 +71,17 @@
             </div>
 
             <!-- Filter Buttons -->
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-1 sm:gap-2">
               <button 
                 @click="statusFilter = 'all'" 
-                class="btn btn-sm"
+                class="btn btn-xs sm:btn-sm"
                 :class="statusFilter === 'all' ? 'btn-primary' : 'btn-outline'"
               >
                 Tümü
               </button>
               <button 
                 @click="statusFilter = 'published'" 
-                class="btn btn-sm"
+                class="btn btn-xs sm:btn-sm"
                 :class="statusFilter === 'published' ? 'btn-primary' : 'btn-outline'"
               >
                 Yayında
@@ -87,7 +89,7 @@
               <button 
                 v-if="auth.user"
                 @click="statusFilter = 'private'" 
-                class="btn btn-sm"
+                class="btn btn-xs sm:btn-sm"
                 :class="statusFilter === 'private' ? 'btn-primary' : 'btn-outline'"
               >
                 Gizli
@@ -95,7 +97,7 @@
               <button 
                 v-if="auth.user"
                 @click="statusFilter = 'link_only'" 
-                class="btn btn-sm"
+                class="btn btn-xs sm:btn-sm"
                 :class="statusFilter === 'link_only' ? 'btn-primary' : 'btn-outline'"
               >
                 Sadece Link
@@ -104,8 +106,8 @@
           </div>
 
           <!-- Results Count and Clear Filters -->
-          <div class="mt-3 flex items-center justify-between">
-            <div class="text-sm text-base-content/60">
+          <div class="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div class="text-xs sm:text-sm text-base-content/60">
               {{ displayedWrites.length }} / {{ filteredWrites.length }} yazı gösteriliyor
               <span v-if="searchQuery || statusFilter !== 'all'">
                 ({{ writes.length }} toplam yazıdan)
@@ -114,7 +116,7 @@
             <button 
               v-if="searchQuery || statusFilter !== 'all'"
               @click="clearFilters" 
-              class="btn btn-ghost btn-xs"
+              class="btn btn-ghost btn-xs self-start sm:self-auto"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 h-3 w-3">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -125,40 +127,40 @@
         </div>
 
         <!-- List view of writes -->
-        <div v-if="isLoading" class="space-y-4">
+        <div v-if="isLoading" class="space-y-3 sm:space-y-4">
           <div v-for="i in 3" :key="i" class="card border border-base-200 bg-base-100 shadow-sm">
-            <div class="card-body p-6">
-              <div class="flex items-start gap-4">
-                <div class="skeleton h-12 w-12 rounded-lg"></div>
+            <div class="card-body p-3 sm:p-6">
+              <div class="flex items-start gap-3 sm:gap-4">
+                <div class="skeleton h-10 w-10 sm:h-12 sm:w-12 rounded-lg"></div>
                 <div class="flex-1 space-y-2">
-                  <div class="skeleton h-5 w-3/4 rounded-lg"></div>
-                  <div class="skeleton h-4 w-full rounded-lg"></div>
-                  <div class="skeleton h-4 w-2/3 rounded-lg"></div>
+                  <div class="skeleton h-4 sm:h-5 w-3/4 rounded-lg"></div>
+                  <div class="skeleton h-3 sm:h-4 w-full rounded-lg"></div>
+                  <div class="skeleton h-3 sm:h-4 w-2/3 rounded-lg"></div>
                 </div>
-                <div class="skeleton h-8 w-20 rounded-lg"></div>
+                <div class="skeleton h-6 w-16 sm:h-8 sm:w-20 rounded-lg"></div>
               </div>
             </div>
           </div>
         </div>
         
         <div v-else>
-                    <div v-if="writes.length > 0" class="space-y-4">
+          <div v-if="writes.length > 0" class="space-y-3 sm:space-y-4">
             <div
               v-for="write in displayedWrites"
               :key="write.id"
               class="card border border-base-200 bg-base-100 shadow-sm"
             >
-              <div class="card-body p-6">
-                <div class="flex items-start gap-4">
+              <div class="card-body p-3 sm:p-6">
+                <div class="flex items-start gap-3 sm:gap-4">
                   <!-- Write icon/status indicator -->
-                  <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <svg v-if="write.status === 'private'" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div class="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <svg v-if="write.status === 'private'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
-                    <svg v-else-if="write.status === 'link_only'" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg v-else-if="write.status === 'link_only'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 010 5.656l-3 3a4 4 0 01-5.656-5.656l1.5-1.5M10.172 13.828a4 4 0 010-5.656l3-3a4 4 0 015.656 5.656l-1.5 1.5" />
                     </svg>
-                    <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                   </div>
@@ -169,70 +171,73 @@
                       :href="route('categories.showByCategory', { category: category.slug, slug: write.slug })" 
                       class="block"
                     >
-                      <h3 class="text-lg font-semibold line-clamp-2 mb-2">{{ write.title }}</h3>
+                      <h3 class="text-base sm:text-lg font-semibold line-clamp-2 mb-1 sm:mb-2 break-words">{{ write.title }}</h3>
                     </Link>
                     
-                    <p v-if="write.summary" class="text-base-content/70 text-sm line-clamp-2 mb-3">
+                    <p v-if="write.summary" class="text-base-content/70 text-xs sm:text-sm line-clamp-2 mb-2 sm:mb-3">
                       {{ write.summary }}
                     </p>
                     
                     <!-- Metadata -->
-                    <div class="flex flex-wrap items-center gap-4 text-xs text-base-content/60">
+                    <div class="flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-base-content/60">
                       <span class="flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-3.5 w-3.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-3 w-3 sm:h-3.5 sm:w-3.5">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                         </svg>
-                        {{ write.views_count }} görüntüleme
+                        {{ write.views_count }}
                       </span>
                       
                       <span class="flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-3.5 w-3.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-3 w-3 sm:h-3.5 sm:w-3.5">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                        {{ formatDate(write.created_at) }}
+                        <span class="hidden sm:inline">{{ formatDate(write.created_at) }}</span>
+                        <span class="sm:hidden">{{ formatDateMobile(write.created_at) }}</span>
                       </span>
                       
                       <span v-if="write.updated_at !== write.created_at" class="flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-3.5 w-3.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-3 w-3 sm:h-3.5 sm:w-3.5">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>
-                        Son güncelleme: {{ formatDate(write.updated_at) }}
+                        <span class="hidden sm:inline">Son güncelleme: {{ formatDate(write.updated_at) }}</span>
+                        <span class="sm:hidden">Güncelleme: {{ formatDateMobile(write.updated_at) }}</span>
                       </span>
                     </div>
                   </div>
 
                   <!-- Action buttons -->
-                  <div class="flex shrink-0 items-center gap-2">
+                  <div class="flex shrink-0 flex-col sm:flex-row items-center gap-1 sm:gap-2">
                     <Link 
                       :href="route('categories.showByCategory', { category: category.slug, slug: write.slug })" 
-                      class="btn btn-primary btn-sm"
+                      class="btn btn-primary btn-xs sm:btn-sm w-full sm:w-auto"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 h-4 w-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.639 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.639 0-8.573-3.007-9.963-7.178z" />
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 h-3 w-3 sm:h-4 sm:w-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.639 0 8.573 3.007 9.542 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.639 0-8.573-3.007-9.542-7.178z" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
-                      Oku
+                      <span class="hidden sm:inline">Oku</span>
+                      <span class="sm:hidden">Oku</span>
                     </Link>
                     
-                    <div v-if="auth.user" class="dropdown dropdown-end">
-                      <button class="btn btn-ghost btn-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
+                    <div v-if="auth.user" class="dropdown dropdown-end w-full sm:w-auto">
+                      <button class="btn btn-ghost btn-xs sm:btn-sm w-full sm:w-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3 w-3 sm:h-4 sm:w-4">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
                         </svg>
                       </button>
-                      <ul class="dropdown-content menu z-[1] w-52 rounded-box bg-base-100 p-2 shadow">
+                      <ul class="dropdown-content menu z-[1] w-40 sm:w-52 rounded-box bg-base-100 p-2 shadow">
                         <li>
-                          <Link :href="route('writes.edit', write.slug)" class="flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
+                          <Link :href="route('writes.edit', write.slug)" class="flex items-center gap-2 text-xs sm:text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3 w-3 sm:h-4 sm:w-4">
                               <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                             </svg>
                             Düzenle
                           </Link>
                         </li>
                         <li>
-                          <button @click="deleteWrite(write)" class="flex items-center gap-2 text-error">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
+                          <button @click="deleteWrite(write)" class="flex items-center gap-2 text-error text-xs sm:text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3 w-3 sm:h-4 sm:w-4">
                               <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                             </svg>
                             Sil
@@ -247,10 +252,10 @@
           </div>
           
           <div v-else class="alert alert-info">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-5 w-5 shrink-0 stroke-current">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-4 w-4 sm:h-5 sm:w-5 shrink-0 stroke-current">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
-            <div>
+            <div class="text-sm">
               <span v-if="searchQuery || statusFilter !== 'all'">
                 Arama kriterlerinize uygun yazı bulunamadı.
               </span>
@@ -261,26 +266,26 @@
           </div>
 
           <!-- Loading more indicator -->
-          <div v-if="isLoadingMore" class="space-y-4">
+          <div v-if="isLoadingMore" class="space-y-3 sm:space-y-4">
             <div v-for="i in 3" :key="i" class="card border border-base-200 bg-base-100 shadow-sm">
-              <div class="card-body p-6">
-                <div class="flex items-start gap-4">
-                  <div class="skeleton h-12 w-12 rounded-lg"></div>
+              <div class="card-body p-3 sm:p-6">
+                <div class="flex items-start gap-3 sm:gap-4">
+                  <div class="skeleton h-10 w-10 sm:h-12 sm:w-12 rounded-lg"></div>
                   <div class="flex-1 space-y-2">
-                    <div class="skeleton h-5 w-3/4 rounded-lg"></div>
-                    <div class="skeleton h-4 w-full rounded-lg"></div>
-                    <div class="skeleton h-4 w-2/3 rounded-lg"></div>
+                    <div class="skeleton h-4 sm:h-5 w-3/4 rounded-lg"></div>
+                    <div class="skeleton h-3 sm:h-4 w-full rounded-lg"></div>
+                    <div class="skeleton h-3 sm:h-4 w-2/3 rounded-lg"></div>
                   </div>
-                  <div class="skeleton h-8 w-20 rounded-lg"></div>
+                  <div class="skeleton h-6 w-16 sm:h-8 sm:w-20 rounded-lg"></div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Infinite scroll observer target -->
-          <div v-if="hasMore" ref="observerTarget" class="h-8 w-full flex items-center justify-center">
-            <div class="loading loading-spinner loading-sm"></div>
-            <span class="ml-2 text-sm text-base-content/60">Daha fazla yazı yükleniyor...</span>
+          <div v-if="hasMore" ref="observerTarget" class="h-6 sm:h-8 w-full flex items-center justify-center">
+            <div class="loading loading-spinner loading-xs sm:loading-sm"></div>
+            <span class="ml-2 text-xs sm:text-sm text-base-content/60">Daha fazla yazı yükleniyor...</span>
           </div>
         </div>
       </div>
@@ -464,6 +469,24 @@ const formatDate = (dateString) => {
     day: 'numeric',
   });
 };
+
+/**
+ * Format date for mobile display (shorter format)
+ * @param {string} dateString - ISO date string
+ * @returns {string} Formatted date for mobile
+ */
+const formatDateMobile = (dateString) => {
+  if (!dateString) return '';
+
+  const date = new Date(dateString);
+  return date.toLocaleDateString('tr-TR', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+};
+
+
 
 /**
  * Navigate to edit page
@@ -677,5 +700,82 @@ onMounted(() => {
 /* No dropdown animations */
 .dropdown-content {
   /* No animations */
+}
+
+/* Mobile responsive improvements */
+@media (max-width: 640px) {
+  /* Ensure proper text wrapping on mobile */
+  .break-words {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  /* Optimize button sizes for touch */
+  .btn-xs {
+    min-height: 2rem;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  /* Ensure dropdowns are properly sized on mobile */
+  .dropdown-content {
+    min-width: 8rem;
+  }
+  
+  /* Optimize card spacing for mobile */
+  .card-body {
+    padding: 0.75rem;
+  }
+  
+  /* Ensure proper icon sizing on mobile */
+  .h-3.w-3 {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+  
+  /* Optimize text sizes for mobile readability */
+  .text-xs {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+  
+  /* Ensure proper spacing between elements */
+  .gap-1 {
+    gap: 0.25rem;
+  }
+  
+  .gap-2 {
+    gap: 0.5rem;
+  }
+  
+  .gap-3 {
+    gap: 0.75rem;
+  }
+}
+
+/* Tablet responsive improvements */
+@media (min-width: 641px) and (max-width: 1024px) {
+  /* Optimize for tablet screens */
+  .card-body {
+    padding: 1rem 1.5rem;
+  }
+  
+  /* Ensure proper button sizing on tablets */
+  .btn-sm {
+    min-height: 2.25rem;
+    padding: 0.375rem 0.75rem;
+  }
+}
+
+/* Ensure proper touch targets on mobile */
+@media (max-width: 640px) {
+  .btn, .dropdown button {
+    min-height: 2.5rem;
+    min-width: 2.5rem;
+  }
+  
+  /* Ensure proper spacing for touch interactions */
+  .flex-col > * + * {
+    margin-top: 0.5rem;
+  }
 }
 </style>
