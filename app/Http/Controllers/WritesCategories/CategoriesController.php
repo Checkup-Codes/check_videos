@@ -207,7 +207,7 @@ class CategoriesController extends Controller
             'category' => $category,
             'writes' => $writesResult['data'],
             'write' => $writeResult['data'],
-            'screen'     => $this->categoryService->getScreenData(isMobile: true),
+            'screen'     => $this->categoryService->getScreenData(isMobile: false),
             'isAdmin' => $isAdmin
         ]);
     }
