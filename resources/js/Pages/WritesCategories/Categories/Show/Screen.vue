@@ -3,7 +3,7 @@
     <div class="card border border-base-200 bg-base-100 shadow-md transition-all duration-200">
       <div class="card-body p-4 sm:p-6">
         <!-- Title and category section -->
-        <div class="mb-2 sm:mb-4">
+        <div class="mb-6">
           <div v-if="isLoading" class="skeleton-wrapper">
             <div class="skeleton h-8 w-3/4 rounded-lg"></div>
             <div class="mt-2">
@@ -11,154 +11,277 @@
             </div>
           </div>
           <template v-else>
-            <h1 class="line-clamp-2 break-words text-xl font-bold sm:text-2xl">{{ category.name }}</h1>
-            <div class="mt-2">
-              <span v-if="category.description" class="badge badge-outline line-clamp-1 text-xs">
-                {{ category.description }}
-              </span>
+            <div class="flex items-center gap-3">
+              <div class="flex-1">
+                <h1 class="text-2xl font-bold text-base-content sm:text-3xl">{{ category.name }}</h1>
+                <div class="mt-2 flex items-center gap-2">
+                  <span v-if="category.description" class="badge badge-outline text-sm">
+                    {{ category.description }}
+                  </span>
+                  <span class="text-base-content/60 text-sm">
+                    {{ filteredWrites.length }} yazı
+                  </span>
+                </div>
+              </div>
+              <!-- Category icon -->
+              <div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              </div>
             </div>
           </template>
         </div>
 
         <!-- Admin controls -->
-        <div v-if="auth.user && !isLoading" class="mb-4 flex justify-end gap-2">
-          <Link :href="route('categories.edit', category.id)" class="btn btn-ghost btn-sm text-xs">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="mr-1 h-4 w-4"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-              />
+        <div v-if="auth.user && !isLoading" class="mb-6 flex justify-end gap-2">
+          <Link :href="route('categories.edit', category.id)" class="btn btn-outline btn-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-2 h-4 w-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
             </svg>
             Düzenle
           </Link>
 
-          <button @click="deleteCategory(category.id)" class="btn btn-ghost btn-sm text-xs text-error">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="mr-1 h-4 w-4"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-              />
+          <button @click="deleteCategory(category.id)" class="btn btn-outline btn-error btn-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-2 h-4 w-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
             </svg>
             Sil
           </button>
         </div>
 
-        <!-- List view of writes -->
-        <div v-if="isLoading" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <div v-for="i in 3" :key="i" class="card h-[200px] border border-base-200 bg-base-100 shadow-md">
-            <div class="card-body p-4">
-              <div class="skeleton h-4 w-3/4 rounded-lg"></div>
-              <div class="mt-2 space-y-2">
-                <div class="skeleton h-4 w-full rounded-lg"></div>
-                <div class="skeleton h-4 w-5/6 rounded-lg"></div>
+        <!-- Search and Filter Section -->
+        <div v-if="!isLoading" class="mb-6">
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <!-- Search Input -->
+            <div class="flex-1 max-w-md">
+              <div class="relative">
+                <input 
+                  v-model="searchQuery" 
+                  type="text" 
+                  class="input input-bordered w-full pl-10" 
+                  placeholder="Yazı başlığı ara..."
+                />
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-base-content/50">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                </svg>
               </div>
-              <div class="mt-4 flex gap-2">
-                <div class="skeleton h-4 w-16 rounded-lg"></div>
-                <div class="skeleton h-4 w-16 rounded-lg"></div>
-                <div class="skeleton h-4 w-16 rounded-lg"></div>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="flex items-center gap-2">
+              <button 
+                @click="statusFilter = 'all'" 
+                class="btn btn-sm"
+                :class="statusFilter === 'all' ? 'btn-primary' : 'btn-outline'"
+              >
+                Tümü
+              </button>
+              <button 
+                @click="statusFilter = 'published'" 
+                class="btn btn-sm"
+                :class="statusFilter === 'published' ? 'btn-primary' : 'btn-outline'"
+              >
+                Yayında
+              </button>
+              <button 
+                v-if="auth.user"
+                @click="statusFilter = 'private'" 
+                class="btn btn-sm"
+                :class="statusFilter === 'private' ? 'btn-primary' : 'btn-outline'"
+              >
+                Gizli
+              </button>
+              <button 
+                v-if="auth.user"
+                @click="statusFilter = 'link_only'" 
+                class="btn btn-sm"
+                :class="statusFilter === 'link_only' ? 'btn-primary' : 'btn-outline'"
+              >
+                Sadece Link
+              </button>
+            </div>
+          </div>
+
+          <!-- Results Count and Clear Filters -->
+          <div class="mt-3 flex items-center justify-between">
+            <div class="text-sm text-base-content/60">
+              {{ displayedWrites.length }} / {{ filteredWrites.length }} yazı gösteriliyor
+              <span v-if="searchQuery || statusFilter !== 'all'">
+                ({{ writes.length }} toplam yazıdan)
+              </span>
+            </div>
+            <button 
+              v-if="searchQuery || statusFilter !== 'all'"
+              @click="clearFilters" 
+              class="btn btn-ghost btn-xs"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 h-3 w-3">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Filtreleri Temizle
+            </button>
+          </div>
+        </div>
+
+        <!-- List view of writes -->
+        <div v-if="isLoading" class="space-y-4">
+          <div v-for="i in 3" :key="i" class="card border border-base-200 bg-base-100 shadow-sm">
+            <div class="card-body p-6">
+              <div class="flex items-start gap-4">
+                <div class="skeleton h-12 w-12 rounded-lg"></div>
+                <div class="flex-1 space-y-2">
+                  <div class="skeleton h-5 w-3/4 rounded-lg"></div>
+                  <div class="skeleton h-4 w-full rounded-lg"></div>
+                  <div class="skeleton h-4 w-2/3 rounded-lg"></div>
+                </div>
+                <div class="skeleton h-8 w-20 rounded-lg"></div>
               </div>
             </div>
           </div>
         </div>
+        
         <div v-else>
-          <div v-if="writes.length > 0" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div v-if="writes.length > 0" class="space-y-4">
             <div
-              v-for="write in filteredWrites"
+              v-for="write in displayedWrites"
               :key="write.id"
-              class="card h-[200px] border border-base-200 bg-base-100 shadow-md"
+              class="card border border-base-200 bg-base-100 shadow-sm"
             >
-              <div class="card-body p-4">
-                <h2 class="card-title line-clamp-2 text-base">
-                  <Link :href="route('categories.showByCategory', { category: category.slug, slug: write.slug })" class="hover:text-primary">
-                    {{ write.title }}
-                  </Link>
-                </h2>
-                <p class="text-base-content/70 mt-2 line-clamp-2 text-sm">{{ write.summary }}</p>
-                <div class="text-base-content/70 mt-4 flex flex-wrap items-center gap-2 text-xs">
-                  <span class="flex items-center gap-1">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      class="h-3.5 w-3.5"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                      />
+              <div class="card-body p-6">
+                <div class="flex items-start gap-4">
+                  <!-- Write icon/status indicator -->
+                  <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <svg v-if="write.status === 'private'" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
-                    {{ write.views_count }}
-                  </span>
-                  <span class="whitespace-nowrap">{{ formatDate(write.created_at) }}</span>
-                  <span v-if="write.updated_at !== write.created_at" class="whitespace-nowrap">
-                    Son güncelleme: {{ formatDate(write.updated_at) }}
-                  </span>
+                    <svg v-else-if="write.status === 'link_only'" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 010 5.656l-3 3a4 4 0 01-5.656-5.656l1.5-1.5M10.172 13.828a4 4 0 010-5.656l3-3a4 4 0 015.656 5.656l-1.5 1.5" />
+                    </svg>
+                    <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+
+                  <!-- Content -->
+                  <div class="flex-1 min-w-0">
+                    <Link 
+                      :href="route('categories.showByCategory', { category: category.slug, slug: write.slug })" 
+                      class="block"
+                    >
+                      <h3 class="text-lg font-semibold line-clamp-2 mb-2">{{ write.title }}</h3>
+                    </Link>
+                    
+                    <p v-if="write.summary" class="text-base-content/70 text-sm line-clamp-2 mb-3">
+                      {{ write.summary }}
+                    </p>
+                    
+                    <!-- Metadata -->
+                    <div class="flex flex-wrap items-center gap-4 text-xs text-base-content/60">
+                      <span class="flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-3.5 w-3.5">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        {{ write.views_count }} görüntüleme
+                      </span>
+                      
+                      <span class="flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-3.5 w-3.5">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        {{ formatDate(write.created_at) }}
+                      </span>
+                      
+                      <span v-if="write.updated_at !== write.created_at" class="flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-3.5 w-3.5">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Son güncelleme: {{ formatDate(write.updated_at) }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Action buttons -->
+                  <div class="flex shrink-0 items-center gap-2">
+                    <Link 
+                      :href="route('categories.showByCategory', { category: category.slug, slug: write.slug })" 
+                      class="btn btn-primary btn-sm"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1 h-4 w-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.639 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.639 0-8.573-3.007-9.963-7.178z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      Oku
+                    </Link>
+                    
+                    <div v-if="auth.user" class="dropdown dropdown-end">
+                      <button class="btn btn-ghost btn-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+                        </svg>
+                      </button>
+                      <ul class="dropdown-content menu z-[1] w-52 rounded-box bg-base-100 p-2 shadow">
+                        <li>
+                          <Link :href="route('writes.edit', write.slug)" class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                            </svg>
+                            Düzenle
+                          </Link>
+                        </li>
+                        <li>
+                          <button @click="deleteWrite(write)" class="flex items-center gap-2 text-error">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                            </svg>
+                            Sil
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          
           <div v-else class="alert alert-info">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              class="h-5 w-5 shrink-0 stroke-current"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              ></path>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-5 w-5 shrink-0 stroke-current">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
-            <span>Bu kategoride henüz yazı bulunmuyor.</span>
+            <div>
+              <span v-if="searchQuery || statusFilter !== 'all'">
+                Arama kriterlerinize uygun yazı bulunamadı.
+              </span>
+              <span v-else>
+                Bu kategoride henüz yazı bulunmuyor.
+              </span>
+            </div>
           </div>
 
           <!-- Loading more indicator -->
-          <div v-if="isLoadingMore" class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <div v-for="i in 3" :key="i" class="card h-[200px] border border-base-200 bg-base-100 shadow-md">
-              <div class="card-body p-4">
-                <div class="skeleton h-4 w-3/4 rounded-lg"></div>
-                <div class="mt-2 space-y-2">
-                  <div class="skeleton h-4 w-full rounded-lg"></div>
-                  <div class="skeleton h-4 w-5/6 rounded-lg"></div>
-                </div>
-                <div class="mt-4 flex gap-2">
-                  <div class="skeleton h-4 w-16 rounded-lg"></div>
-                  <div class="skeleton h-4 w-16 rounded-lg"></div>
-                  <div class="skeleton h-4 w-16 rounded-lg"></div>
+          <div v-if="isLoadingMore" class="space-y-4">
+            <div v-for="i in 3" :key="i" class="card border border-base-200 bg-base-100 shadow-sm">
+              <div class="card-body p-6">
+                <div class="flex items-start gap-4">
+                  <div class="skeleton h-12 w-12 rounded-lg"></div>
+                  <div class="flex-1 space-y-2">
+                    <div class="skeleton h-5 w-3/4 rounded-lg"></div>
+                    <div class="skeleton h-4 w-full rounded-lg"></div>
+                    <div class="skeleton h-4 w-2/3 rounded-lg"></div>
+                  </div>
+                  <div class="skeleton h-8 w-20 rounded-lg"></div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Infinite scroll observer target -->
-          <div v-if="hasMore" ref="observerTarget" class="h-4 w-full"></div>
+          <div v-if="hasMore" ref="observerTarget" class="h-8 w-full flex items-center justify-center">
+            <div class="loading loading-spinner loading-sm"></div>
+            <span class="ml-2 text-sm text-base-content/60">Daha fazla yazı yükleniyor...</span>
+          </div>
         </div>
       </div>
     </div>
@@ -166,7 +289,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue';
+import { ref, computed, onMounted, nextTick, watch } from 'vue';
 import { usePage, Link, router } from '@inertiajs/vue3';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 import gsap from 'gsap';
@@ -194,74 +317,164 @@ const page = ref(1);
 const hasMore = ref(true);
 const observerTarget = ref(null);
 
+// Search and filter states
+const searchQuery = ref('');
+const statusFilter = ref('all');
+
 /**
  * Filter writes based on user role and status
  */
 const filteredWrites = computed(() => {
-  if (auth.user) {
-    // Admin can see all writes
-    return writes.value;
-  } else {
-    // Regular users can only see published writes
-    return writes.value.filter((write) => write.status === 'published');
+  let filtered = writes.value;
+
+  if (searchQuery.value) {
+    filtered = filtered.filter(write => 
+      write.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+    );
   }
+
+  if (statusFilter.value !== 'all') {
+    filtered = filtered.filter(write => write.status === statusFilter.value);
+  }
+
+  return filtered;
 });
 
 /**
- * Load more writes when scrolling
+ * Get displayed writes with pagination
  */
-const loadMore = async () => {
+const displayedWrites = computed(() => {
+  const startIndex = 0;
+  const endIndex = page.value * 10;
+  return filteredWrites.value.slice(startIndex, endIndex);
+});
+
+/**
+ * Load more writes when scrolling (client-side pagination)
+ */
+const loadMore = () => {
   if (isLoadingMore.value || !hasMore.value) return;
 
+  console.log('Loading more writes. Current page:', page.value, 'Has more:', hasMore.value);
+  
   isLoadingMore.value = true;
   page.value++;
 
-  try {
-    const response = await fetch(
-      route('api.categories.writes', {
-        category: category.value.id,
-        page: page.value,
-      })
-    );
-    const data = await response.json();
-
-    if (data.writes.length === 0) {
-      hasMore.value = false;
-    } else {
-      writes.value.push(...data.writes);
-    }
-  } catch (error) {
-    console.error('Error loading more writes:', error);
-  } finally {
+  // Simulate loading delay
+  setTimeout(() => {
+    checkHasMore();
+    console.log('Loaded more writes. New page:', page.value, 'Has more:', hasMore.value);
     isLoadingMore.value = false;
-  }
+  }, 300);
 };
 
 /**
- * Setup intersection observer for infinite scroll
+ * Clear search and filters
+ */
+const clearFilters = () => {
+  searchQuery.value = '';
+  statusFilter.value = 'all';
+  page.value = 1;
+  checkHasMore();
+};
+
+/**
+ * Watch for filter changes and reset pagination
+ */
+watch([searchQuery, statusFilter], () => {
+  // Reset pagination when filters change
+  page.value = 1;
+  checkHasMore();
+});
+
+/**
+ * Setup scroll-based infinite scroll
  */
 const setupInfiniteScroll = () => {
+  // Find the scroll container from CheckScreen
+  let scrollContainer = document.querySelector('.h-screen-minus-12.overflow-y-auto');
+  
+  if (!scrollContainer) {
+    console.warn('Scroll container not found, trying alternative selector');
+    // Try alternative selector
+    const altContainer = document.querySelector('.overflow-y-auto');
+    if (!altContainer) {
+      console.error('No scroll container found');
+      return;
+    }
+    scrollContainer = altContainer;
+  }
+
+  console.log('Scroll container found:', scrollContainer);
+
+  const handleScroll = () => {
+    const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
+    const scrollPercentage = (scrollTop + clientHeight) / scrollHeight;
+    
+    console.log('Scroll info:', {
+      scrollTop,
+      scrollHeight,
+      clientHeight,
+      scrollPercentage,
+      isLoadingMore: isLoadingMore.value,
+      hasMore: hasMore.value
+    });
+
+    // Load more when user scrolls to 80% of the content
+    if (scrollPercentage > 0.8 && !isLoadingMore.value && hasMore.value) {
+      console.log('Loading more writes via scroll...');
+      loadMore();
+    }
+  };
+
+  scrollContainer.addEventListener('scroll', handleScroll);
+  console.log('Scroll listener added to:', scrollContainer);
+
+  // Also set up intersection observer as backup
   const observer = new IntersectionObserver(
     (entries) => {
-      if (entries[0].isIntersecting && !isLoadingMore.value && hasMore.value) {
-        loadMore();
-      }
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !isLoadingMore.value && hasMore.value) {
+          console.log('Loading more writes via observer...');
+          loadMore();
+        }
+      });
     },
     {
-      rootMargin: '100px',
+      root: scrollContainer,
+      rootMargin: '200px',
       threshold: 0.1,
     }
   );
 
   if (observerTarget.value) {
     observer.observe(observerTarget.value);
+    console.log('Observer set up for:', observerTarget.value);
   }
 
   return () => {
+    scrollContainer.removeEventListener('scroll', handleScroll);
     if (observerTarget.value) {
       observer.unobserve(observerTarget.value);
     }
   };
+};
+
+/**
+ * Check if there are more writes to load
+ */
+const checkHasMore = () => {
+  const endIndex = page.value * 10;
+  const totalWrites = filteredWrites.value.length;
+  hasMore.value = endIndex < totalWrites;
+  
+  console.log('Check has more:', {
+    page: page.value,
+    endIndex,
+    totalWrites,
+    hasMore: hasMore.value,
+    displayedCount: displayedWrites.value.length
+  });
 };
 
 /**
@@ -369,8 +582,23 @@ onMounted(() => {
     isLoading.value = false;
   }, 800);
 
-  // Setup infinite scroll
-  setupInfiniteScroll();
+  // Setup infinite scroll with delay to ensure DOM is ready
+  setTimeout(() => {
+    setupInfiniteScroll();
+    checkHasMore();
+    
+    // Also set up window scroll as fallback
+    const handleWindowScroll = () => {
+      const scrollPercentage = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight;
+      if (scrollPercentage > 0.8 && !isLoadingMore.value && hasMore.value) {
+        console.log('Loading more writes via window scroll...');
+        loadMore();
+      }
+    };
+    
+    window.addEventListener('scroll', handleWindowScroll);
+    console.log('Window scroll listener added as fallback');
+  }, 100);
 
   if (flashSuccess.value) {
     setTimeout(() => {
@@ -449,5 +677,35 @@ onMounted(() => {
 /* Ensure skeleton animations are smooth */
 .skeleton {
   transition: opacity 0.3s ease-in-out;
+}
+
+/* Card styling without hover effects */
+.card {
+  /* No transitions or hover effects */
+}
+
+/* Line clamp utilities */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* No transitions for interactive elements */
+.btn, .badge {
+  /* No transitions */
+}
+
+/* No dropdown animations */
+.dropdown-content {
+  /* No animations */
 }
 </style>

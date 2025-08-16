@@ -213,6 +213,35 @@ class CategoriesController extends Controller
     }
 
     /**
+     * Get writes for a category with pagination (API endpoint)
+     * 
+     * @param string $categorySlug
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getWrites($categorySlug)
+    {
+        $category = Category::where('slug', $categorySlug)->firstOrFail();
+        
+        // Collect IDs of current category and all its children
+        $categoryIds = collect([$category->id]);
+        $this->getChildCategoryIds($category, $categoryIds);
+        
+        $page = request()->get('page', 1);
+        $perPage = 10;
+        
+        $writes = Write::whereIn('category_id', $categoryIds)
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
+        
+        return response()->json([
+            'writes' => $writes->items(),
+            'hasMore' => $writes->hasMorePages(),
+            'currentPage' => $writes->currentPage(),
+            'lastPage' => $writes->lastPage(),
+        ]);
+    }
+
+    /**
      * Helper method to collect child category IDs
      * 
      * @param Category $category

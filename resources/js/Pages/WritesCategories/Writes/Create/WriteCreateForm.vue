@@ -303,14 +303,25 @@
         <div class="divider"></div>
 
         <div class="flex justify-end space-x-3">
+          <!-- Reset button -->
+          <button
+            type="button"
+            @click="resetForm"
+            class="btn btn-outline"
+            :disabled="form.processing"
+          >
+            Sıfırla
+          </button>
+          
           <!-- Button component implemented directly -->
           <button
             type="submit"
             class="btn btn-primary"
             :class="{ loading: form.processing }"
-            :disabled="form.processing"
+            :disabled="form.processing || !form.title || !form.slug || !form.content || !form.category_id"
+            :title="form.processing ? 'Kaydediliyor...' : (!form.title || !form.slug || !form.content || !form.category_id ? 'Lütfen gerekli alanları doldurun' : 'Yazıyı kaydet')"
           >
-            Yazıyı Kaydet
+            {{ form.processing ? 'Kaydediliyor...' : 'Yazıyı Kaydet' }}
           </button>
         </div>
       </form>
@@ -347,6 +358,9 @@ const form = useForm({
   views_count: 0,
   hasDraw: false,
 });
+
+// Force reset processing state on form creation
+form.processing = false;
 
 // Form validation errors
 const errors = ref({
@@ -460,49 +474,124 @@ const LOCAL_STORAGE_KEY = 'write_create_form';
 watch(
   form,
   (newVal) => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newVal));
+    // Don't save processing state to localStorage
+    const { processing, ...formData } = newVal;
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(formData));
   },
   { deep: true }
 );
 
 // Sayfa açıldığında localStorage'dan oku
 onMounted(() => {
+  // Force reset processing state
+  form.processing = false;
+  
+  // Clear any existing processing state from localStorage
   const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
   if (saved) {
-    const parsed = JSON.parse(saved);
-    Object.assign(form, parsed);
+    try {
+      const parsed = JSON.parse(saved);
+      // Don't restore processing state from localStorage
+      const { processing, ...formData } = parsed;
+      
+      // Only restore if we have actual form data (not just processing state)
+      if (Object.keys(formData).length > 0 && (formData.title || formData.content || formData.category_id)) {
+        Object.assign(form, formData);
+      } else {
+        // Clear localStorage if it only contains processing state
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
+      }
+    } catch (error) {
+      console.error('Error parsing localStorage data:', error);
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+    }
   }
+  
+  // Ensure processing is false
+  form.processing = false;
+  
+  // Debug: Check form state
+  console.log('Form mounted. Processing:', form.processing);
+  console.log('Form data:', form.data());
 });
 
 // Client-side form validation
 const validateForm = () => {
-  errors.value.title = form.title ? '' : 'Başlık zorunludur.';
-  errors.value.slug = form.slug ? '' : 'Slug zorunludur.';
-  errors.value.content = form.content ? '' : 'İçerik zorunludur.';
-  errors.value.published_at =
-    publishDateObj.value.date && publishDateObj.value.time ? '' : 'Yayınlama tarihi zorunludur.';
-  errors.value.summary = form.summary ? '' : 'Özet zorunludur.';
-  errors.value.category_id = form.category_id ? '' : 'Kategori seçilmelidir.';
+  // Reset all errors
+  Object.keys(errors.value).forEach(key => {
+    errors.value[key] = '';
+  });
 
-  // Tüm doğrulamalar geçtiyse published_at formatını düzelt
-  if (!errors.value.published_at) {
-    form.published_at = `${publishDateObj.value.date}T${publishDateObj.value.time}:00`;
+  // Required fields
+  if (!form.title || form.title.trim() === '') {
+    errors.value.title = 'Başlık zorunludur.';
   }
+  
+  if (!form.slug || form.slug.trim() === '') {
+    errors.value.slug = 'Slug zorunludur.';
+  }
+  
+  if (!form.content || form.content.trim() === '') {
+    errors.value.content = 'İçerik zorunludur.';
+  }
+  
+  if (!form.category_id) {
+    errors.value.category_id = 'Kategori seçilmelidir.';
+  }
+
+  // Optional fields with warnings
+  if (!form.summary || form.summary.trim() === '') {
+    errors.value.summary = 'Özet önerilir (opsiyonel).';
+  }
+
+  // Handle published_at
+  if (publishDateObj.value.date && publishDateObj.value.time) {
+    form.published_at = `${publishDateObj.value.date}T${publishDateObj.value.time}:00`;
+  } else {
+    form.published_at = null; // Make it optional
+  }
+
+  console.log('Validation completed. Errors:', errors.value);
 };
 
 // Submit form handler
 const submitForm = () => {
   validateForm();
 
-  // Only submit if there are no validation errors
-  if (!Object.values(errors.value).some((error) => error !== '')) {
+  // Debug: Log validation errors
+  console.log('Form errors:', errors.value);
+  console.log('Form data:', form.data());
+  console.log('Publish date obj:', publishDateObj.value);
+
+  // Only submit if there are no critical validation errors
+  const criticalErrors = ['title', 'slug', 'content', 'category_id'];
+  const hasCriticalErrors = criticalErrors.some(field => errors.value[field] !== '');
+  
+  if (!hasCriticalErrors) {
     form.post(route('writes.store'), {
       onSuccess: () => {
         localStorage.removeItem(LOCAL_STORAGE_KEY); // Temizle
         router.visit(route('dashboard'));
       },
+      onError: (errors) => {
+        console.log('Server errors:', errors);
+      }
     });
+  } else {
+    console.log('Form validation failed - critical errors present');
   }
+};
+
+// Reset form function
+const resetForm = () => {
+  form.reset();
+  form.processing = false; // Ensure processing is reset
+  Object.keys(errors.value).forEach(key => {
+    errors.value[key] = '';
+  });
+  publishDateObj.value = { date: '', time: '' };
+  localStorage.removeItem(LOCAL_STORAGE_KEY);
+  console.log('Form reset completed');
 };
 
 // Auto-generate slug from title

@@ -108,6 +108,7 @@ Route::group(['prefix' => 'rendition', 'as' => 'rendition.'], function () {
 // Public API Routes
 Route::get('/api/social-media', [SocialMediaController::class, 'getAll'])->name('social-media.all');
 Route::get('/api/logo', [MediaController::class, 'getLogo'])->name('api.logo');
+Route::get('/api/categories/{category}/writes', [CategoriesController::class, 'getWrites'])->name('api.categories.writes');
 
 // SEO Routes
 Route::get('/robots.txt', [App\Http\Controllers\RobotsController::class, 'generate']);
