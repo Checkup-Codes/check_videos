@@ -2,7 +2,13 @@
   <div ref="scrollContainer" class="write-list-container space-y-1 overflow-y-auto p-3">
     <!-- Search bar for all users -->
     <div class="mb-3">
-      <input v-model="searchQuery" type="text" class="input-bordered input w-full" placeholder="Yazı başlığı ara..." />
+      <input 
+        v-model="searchQuery" 
+        type="text" 
+        class="input-bordered input w-full" 
+        placeholder="Yazı başlığı ara..." 
+        @input="handleSearchInput"
+      />
     </div>
     <!-- Responsive filter buttons for logged-in users -->
     <div v-if="isAdmin" class="mb-3">
@@ -210,63 +216,71 @@
         </div>
       </div>
     </div>
-    <Link
-      v-for="write in filteredWrites"
-      :key="write.id"
-      :href="getWriteRoute(write)"
-      :class="[
-        'block items-center justify-between rounded-lg border px-1 py-2 backdrop-blur-md transition-all duration-200',
-        activeWrite === getActiveWritePath(write)
-          ? 'border-primary bg-primary text-primary-content shadow-md'
-          : 'border-base-200 bg-base-200 text-base-content hover:bg-base-300',
-      ]"
-    >
-      <!-- Başlık + Kilit -->
-      <div class="mb-1 flex items-center gap-2">
-        <span v-if="write.status === 'private'">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-            <path
-              fill-rule="evenodd"
-              d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </span>
-        <span
-          v-if="write.status === 'link_only'"
-          :class="[activeWrite === getActiveWritePath(write) ? 'text-primary-content' : 'text-primary']"
+    
+    <!-- Virtual scrolling container -->
+    <div ref="virtualContainer" class="virtual-scroll-container" :style="{ height: totalHeight + 'px' }">
+      <div :style="{ transform: `translateY(${offsetY}px)` }">
+        <Link
+          v-for="write in visibleWrites"
+          :key="write.id"
+          :href="getWriteRoute(write)"
+          :class="[
+            'block items-center justify-between rounded-lg border px-1 py-2 backdrop-blur-md transition-all duration-200',
+            activeWrite === getActiveWritePath(write)
+              ? 'border-primary bg-primary text-primary-content shadow-md'
+              : 'border-base-200 bg-base-200 text-base-content hover:bg-base-300',
+          ]"
+          :style="{ height: itemHeight + 'px' }"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-            <path
-              fill-rule="evenodd"
-              d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </span>
-        <span>{{ write.title }}</span>
+          <!-- Başlık + Kilit -->
+          <div class="mb-1 flex items-center gap-2">
+            <span v-if="write.status === 'private'">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path
+                  fill-rule="evenodd"
+                  d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </span>
+            <span
+              v-if="write.status === 'link_only'"
+              :class="[activeWrite === getActiveWritePath(write) ? 'text-primary-content' : 'text-primary']"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path
+                  fill-rule="evenodd"
+                  d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </span>
+            <span class="truncate">{{ write.title }}</span>
+          </div>
+          <!-- Tarih ve view bilgisi -->
+          <div class="text-base-content/70 flex justify-between text-xs">
+            <span>{{ formatDate(write.created_at) }}</span>
+            <span class="flex items-center gap-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-[14px] w-[14px]"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              {{ write.views_count }}
+            </span>
+          </div>
+        </Link>
       </div>
-      <!-- Tarih ve view bilgisi -->
-      <div class="text-base-content/70 flex justify-between text-xs">
-        <span>{{ formatDate(write.created_at) }}</span>
-        <span class="flex items-center gap-1">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-[14px] w-[14px]"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
-          {{ write.views_count }}
-        </span>
-      </div>
-    </Link>
+    </div>
+    
     <!-- Boş durum -->
     <div v-if="filteredWrites.length === 0" class="flex h-32 items-center justify-center text-center opacity-50">
       <div>Henüz yazı bulunmuyor</div>
@@ -286,17 +300,51 @@ const props = defineProps({
   isCollapsed: { type: Boolean, default: false },
 });
 
-const writes = props.writes.length ? props.writes : inject('writes', []);
+// Daha güvenli veri alımı
+const writes = computed(() => {
+  // Önce props'tan gelen veriyi kontrol et
+  if (props.writes && props.writes.length > 0) {
+    return props.writes;
+  }
+  
+  // Props'ta veri yoksa inject'ten al
+  const injectedWrites = inject('writes', []);
+  if (injectedWrites && injectedWrites.length > 0) {
+    return injectedWrites;
+  }
+  
+  // Hiçbiri yoksa boş array döndür
+  return [];
+});
+
 const page = usePage();
 const isAdmin = page.props.isAdmin || false;
 const scrollContainer = ref(null);
+const virtualContainer = ref(null);
 let isActive = false;
 const activeWrite = ref('');
 
 // Search and filter state
 const searchQuery = ref('');
+const debouncedSearchQuery = ref('');
 const adminFilter = ref('all');
 const showFilterMenu = ref(false);
+
+// Virtual scrolling state
+const itemHeight = 80; // Height of each write item
+const bufferSize = 5; // Number of items to render outside viewport
+const startIndex = ref(0);
+const endIndex = ref(0);
+const offsetY = ref(0);
+
+// Debounce search input
+let searchTimeout = null;
+const handleSearchInput = () => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    debouncedSearchQuery.value = searchQuery.value;
+  }, 300);
+};
 
 /**
  * Determine the correct route for a write based on current context
@@ -350,10 +398,10 @@ const getActiveWritePath = (write) => {
 };
 
 const filteredWrites = computed(() => {
-  let result = writes;
+  let result = writes.value;
   // Search filter for all users
-  if (searchQuery.value) {
-    result = result.filter((write) => write.title.toLowerCase().includes(searchQuery.value.toLowerCase()));
+  if (debouncedSearchQuery.value) {
+    result = result.filter((write) => write.title.toLowerCase().includes(debouncedSearchQuery.value.toLowerCase()));
   }
   if (!isAdmin) {
     // Guest: hide private
@@ -371,6 +419,30 @@ const filteredWrites = computed(() => {
     return result;
   }
 });
+
+// Virtual scrolling computed properties
+const totalHeight = computed(() => filteredWrites.value.length * itemHeight);
+const visibleWrites = computed(() => {
+  return filteredWrites.value.slice(startIndex.value, endIndex.value);
+});
+
+/**
+ * Update virtual scrolling indices based on scroll position
+ */
+const updateVirtualScroll = () => {
+  if (!scrollContainer.value) return;
+  
+  const scrollTop = scrollContainer.value.scrollTop;
+  const containerHeight = scrollContainer.value.clientHeight;
+  
+  startIndex.value = Math.max(0, Math.floor(scrollTop / itemHeight) - bufferSize);
+  endIndex.value = Math.min(
+    filteredWrites.value.length,
+    Math.ceil((scrollTop + containerHeight) / itemHeight) + bufferSize
+  );
+  
+  offsetY.value = startIndex.value * itemHeight;
+};
 
 defineExpose({ filteredWrites, scrollContainer });
 
@@ -393,9 +465,40 @@ onDeactivated(() => {
  * Watch for changes in the writes array
  */
 watch(
-  () => writes,
+  () => writes.value,
   (newVal, oldVal) => {
     if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+      nextTick(() => {
+        updateVirtualScroll();
+      });
+    }
+  },
+  { deep: true }
+);
+
+/**
+ * Watch for route changes to update data
+ */
+watch(
+  () => page.url,
+  () => {
+    nextTick(() => {
+      updateActiveWrite();
+      updateVirtualScroll();
+    });
+  }
+);
+
+/**
+ * Watch for props changes
+ */
+watch(
+  () => props.writes,
+  (newVal) => {
+    if (newVal && newVal.length > 0) {
+      nextTick(() => {
+        updateVirtualScroll();
+      });
     }
   },
   { deep: true }
@@ -409,22 +512,29 @@ const updateActiveWrite = () => {
 };
 
 const getScrollKey = () => {
-  return `writeListScroll_${adminFilter.value}_${searchQuery.value}`;
+  return `writeListScroll_${adminFilter.value}_${debouncedSearchQuery.value}`;
 };
 
 const handleScroll = (e) => {
   localStorage.setItem(getScrollKey(), e.target.scrollTop);
+  updateVirtualScroll();
 };
 
 onMounted(() => {
   isActive = true;
+  
   // Filtre ve arama sorgusunu localStorage'dan yükle
   const savedFilter = localStorage.getItem('writeListFilter');
   if (savedFilter) adminFilter.value = savedFilter;
   const savedSearch = localStorage.getItem('writeListSearch');
-  if (savedSearch) searchQuery.value = savedSearch;
+  if (savedSearch) {
+    searchQuery.value = savedSearch;
+    debouncedSearchQuery.value = savedSearch;
+  }
 
   updateActiveWrite();
+  
+  // DOM'un hazır olmasını bekle
   nextTick(() => {
     if (scrollContainer.value) {
       scrollContainer.value.addEventListener('scroll', handleScroll);
@@ -433,8 +543,11 @@ onMounted(() => {
       if (savedScroll) {
         scrollContainer.value.scrollTop = parseInt(savedScroll, 10);
       }
+      // Initialize virtual scrolling
+      updateVirtualScroll();
     }
   });
+  
   const handlePopState = () => {
     if (isActive) {
       updateActiveWrite();
@@ -447,6 +560,10 @@ onMounted(() => {
   const handleNavigationEnd = () => {
     if (isActive) {
       updateActiveWrite();
+      // Route değişikliği sonrası veriyi yenile
+      nextTick(() => {
+        updateVirtualScroll();
+      });
     }
   };
 
@@ -460,6 +577,9 @@ onMounted(() => {
     isActive = false;
     if (scrollContainer.value) {
       scrollContainer.value.removeEventListener('scroll', handleScroll);
+    }
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
     }
     window.removeEventListener('popstate', handlePopState);
     window.removeEventListener('inertia:start', handleNavigationStart);
@@ -479,7 +599,7 @@ const formatDate = (date) => {
 watch(adminFilter, (val) => {
   localStorage.setItem('writeListFilter', val);
 });
-watch(searchQuery, (val) => {
+watch(debouncedSearchQuery, (val) => {
   localStorage.setItem('writeListSearch', val);
 });
 </script>
@@ -490,6 +610,11 @@ watch(searchQuery, (val) => {
   -webkit-overflow-scrolling: touch;
   /* Remove smooth scroll behavior */
   /* scroll-behavior: smooth; */
+}
+
+.virtual-scroll-container {
+  position: relative;
+  width: 100%;
 }
 
 /* Custom scrollbar styling */

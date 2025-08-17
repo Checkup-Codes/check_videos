@@ -129,7 +129,22 @@
               <span>{{ write.summary }}</span>
             </div>
 
-            <div class="article-content ql-editor" ref="contentRef" v-html="processedContent"></div>
+            <!-- Lazy load content with intersection observer -->
+            <div 
+              v-if="contentShouldLoad" 
+              class="article-content ql-editor" 
+              ref="contentRef" 
+              v-html="processedContent"
+            ></div>
+            <div v-else class="content-placeholder">
+              <div class="skeleton-wrapper space-y-3">
+                <div class="skeleton h-4 w-full rounded-lg"></div>
+                <div class="skeleton h-4 w-5/6 rounded-lg"></div>
+                <div class="skeleton h-4 w-4/6 rounded-lg"></div>
+                <div class="skeleton h-4 w-full rounded-lg"></div>
+                <div class="skeleton h-4 w-3/4 rounded-lg"></div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -170,22 +185,115 @@
         </div>
       </div>
     </div>
+
+    <!-- Fixed Table of Contents Button -->
+    <button
+      v-if="!isLoading && showTableOfContents"
+      @click="toggleTableOfContents"
+      class="fixed right-4 top-1/2 transform -translate-y-1/2 z-50 btn btn-primary btn-circle shadow-lg hover:shadow-xl transition-all duration-200"
+      :class="{ 'btn-active': isTableOfContentsOpen }"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="h-6 w-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+        />
+      </svg>
+    </button>
+
+    <!-- Table of Contents Sidebar -->
+    <div
+      v-if="!isLoading && showTableOfContents"
+      class="fixed right-0 top-0 h-full w-80 bg-base-100 shadow-2xl transform transition-transform duration-300 z-40"
+      :class="{ 'translate-x-full': !isTableOfContentsOpen }"
+    >
+      <div class="flex flex-col h-full">
+        <!-- Header -->
+        <div class="flex items-center justify-between p-4 border-b border-base-200">
+          <h3 class="text-lg font-semibold">İçindekiler</h3>
+          <button
+            @click="toggleTableOfContents"
+            class="btn btn-ghost btn-sm btn-circle"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="h-5 w-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Content -->
+        <div class="flex-1 overflow-y-auto p-4">
+          <div v-if="tableOfContents.length === 0" class="text-center text-base-content/60 py-8">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="h-12 w-12 mx-auto mb-4 opacity-50"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <p>İçindekiler bulunamadı</p>
+          </div>
+          
+          <div v-else class="space-y-2">
+            <div
+              v-for="(item, index) in tableOfContents"
+              :key="index"
+              @click="scrollToHeading(item.id)"
+              class="cursor-pointer p-3 rounded-lg hover:bg-base-200 transition-colors duration-200"
+              :class="getHeadingClass(item.level)"
+            >
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-base-content/50 font-mono">{{ index + 1 }}</span>
+                <span class="text-sm font-medium line-clamp-2">{{ item.text }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Backdrop -->
+    <div
+      v-if="!isLoading && showTableOfContents && isTableOfContentsOpen"
+      @click="toggleTableOfContents"
+      class="fixed inset-0 bg-black/20 z-30"
+    ></div>
   </CheckScreen>
 </template>
 
 <script setup>
-import { ref, onMounted, computed, nextTick } from 'vue';
+import { ref, onMounted, computed, nextTick, onUnmounted, watch } from 'vue';
 import { usePage, router, Link } from '@inertiajs/vue3';
 import ExcalidrawComponent from '@/Components/ExcalidrawComponent.vue';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 import '@/Shared/Css/quill-custom-styles.css';
-import { useGsapFadeIn } from '@/Pages/WritesCategories/_utils/useGsapAnimation.js';
 import { useProcessedQuillContent } from '@/Pages/WritesCategories/_utils/useProcessedQuillContent.js';
-import gsap from 'gsap';
-import ScrollTrigger from 'gsap/ScrollTrigger';
-
-// Register ScrollTrigger plugin
-gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Component name definition
@@ -204,13 +312,17 @@ const contentRef = ref(null);
 const auth = props.auth || {};
 const showDraw = ref(false);
 const isLoading = ref(true);
+const contentShouldLoad = ref(false);
+const showTableOfContents = ref(false);
+const isTableOfContentsOpen = ref(false);
+const tableOfContents = ref([]);
 
 /**
- * Use the centralized Quill content processor
+ * Use the centralized Quill content processor with lazy loading
  */
 const processedContent = useProcessedQuillContent(
   contentRef,
-  computed(() => write.value.content)
+  computed(() => contentShouldLoad.value ? write.value.content : '')
 );
 
 /**
@@ -237,34 +349,56 @@ const editWrite = () => {
 };
 
 /**
- * Animate skeleton loading
+ * Intersection Observer for lazy loading content
  */
-const animateSkeleton = () => {
-  const skeletons = document.querySelectorAll('.skeleton');
-  gsap.to(skeletons, {
-    opacity: 0.5,
-    duration: 0.8,
-    stagger: 0.1,
-    repeat: -1,
-    yoyo: true,
-    ease: 'power1.inOut',
-  });
-};
+let contentObserver = null;
 
 /**
  * Handle content after component mount
  */
 onMounted(() => {
-  // Start skeleton animation
-  animateSkeleton();
-
+  // Start with content loading disabled for better initial performance
+  contentShouldLoad.value = false;
+  
   // Simulate loading delay
   setTimeout(() => {
     isLoading.value = false;
-    if (contentRef.value) {
-      setupLinkHandling();
+    
+    // Set up intersection observer for lazy loading
+    const contentPlaceholder = document.querySelector('.content-placeholder');
+    if (contentPlaceholder) {
+      contentObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !contentShouldLoad.value) {
+            contentShouldLoad.value = true;
+            // Setup link handling after content loads
+            nextTick(() => {
+              setupLinkHandling();
+              // Generate table of contents after content is loaded
+              setTimeout(() => {
+                generateTableOfContents();
+              }, 100);
+            });
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '50px'
+      });
+      
+      contentObserver.observe(contentPlaceholder);
+    } else {
+      // Fallback: load content immediately if no placeholder
+      contentShouldLoad.value = true;
+      nextTick(() => {
+        setupLinkHandling();
+        // Generate table of contents after content is loaded
+        setTimeout(() => {
+          generateTableOfContents();
+        }, 100);
+      });
     }
-  }, 800);
+  }, 300);
 
   // URL parametrelerine göre çizim/içerik gösterme durumunu belirle
   if (window.location.pathname.includes('categories')) {
@@ -305,8 +439,24 @@ onMounted(() => {
     });
   }
 
-  // Animate Quill content with fade-in effect on mount
-  useGsapFadeIn(contentRef, { duration: 0.8 });
+  // Preload images if content contains them
+  if (write.value.content && write.value.content.includes('<img')) {
+    const imgRegex = /<img[^>]+src="([^"]+)"/g;
+    let match;
+    while ((match = imgRegex.exec(write.value.content)) !== null) {
+      const img = new Image();
+      img.src = match[1];
+    }
+  }
+});
+
+/**
+ * Cleanup observer on unmount
+ */
+onUnmounted(() => {
+  if (contentObserver) {
+    contentObserver.disconnect();
+  }
 });
 
 /**
@@ -326,6 +476,37 @@ const setupLinkHandling = () => {
       link.setAttribute('rel', 'noopener noreferrer');
     }
   });
+};
+
+/**
+ * Generate table of contents from content
+ */
+const generateTableOfContents = () => {
+  if (!contentRef.value) return;
+  
+  const headings = contentRef.value.querySelectorAll('h1, h2, h3, h4, h5, h6');
+  const toc = [];
+  
+  headings.forEach((heading, index) => {
+    // Generate unique ID if not exists
+    if (!heading.id) {
+      heading.id = `heading-${index}`;
+    }
+    
+    const level = parseInt(heading.tagName.charAt(1));
+    const text = heading.textContent.trim();
+    
+    if (text) {
+      toc.push({
+        id: heading.id,
+        text: text,
+        level: level
+      });
+    }
+  });
+  
+  tableOfContents.value = toc;
+  showTableOfContents.value = toc.length > 0;
 };
 
 const toggleContent = () => {
@@ -351,6 +532,79 @@ const deleteWrite = (id) => {
     });
   }
 };
+
+
+
+/**
+ * Scroll to a heading by its ID
+ * @param {string} id - The ID of the heading to scroll to
+ */
+const scrollToHeading = (id) => {
+  const element = document.getElementById(id);
+  if (element) {
+    element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+    
+    // Close sidebar on mobile
+    if (window.innerWidth < 768) {
+      isTableOfContentsOpen.value = false;
+    }
+  }
+};
+
+/**
+ * Get heading class based on level
+ * @param {number} level - The heading level (1, 2, or 3)
+ * @returns {string} Tailwind classes for the heading
+ */
+const getHeadingClass = (level) => {
+  switch (level) {
+    case 1:
+      return 'border-l-4 border-primary bg-primary/5';
+    case 2:
+      return 'border-l-4 border-secondary bg-secondary/5 ml-4';
+    case 3:
+      return 'border-l-4 border-accent bg-accent/5 ml-8';
+    case 4:
+      return 'border-l-4 border-base-300 bg-base-200/50 ml-12';
+    case 5:
+      return 'border-l-4 border-base-300 bg-base-200/30 ml-16';
+    case 6:
+      return 'border-l-4 border-base-300 bg-base-200/20 ml-20';
+    default:
+      return '';
+  }
+};
+
+/**
+ * Toggle the visibility of the table of contents sidebar
+ */
+const toggleTableOfContents = () => {
+  isTableOfContentsOpen.value = !isTableOfContentsOpen.value;
+};
+
+/**
+ * Watch for content changes to regenerate table of contents
+ */
+watch(processedContent, () => {
+  if (contentShouldLoad.value && processedContent.value) {
+    nextTick(() => {
+      generateTableOfContents();
+    });
+  }
+}, { flush: 'post' });
+
+/**
+ * Watch for showDraw changes to hide table of contents when drawing is shown
+ */
+watch(showDraw, (newValue) => {
+  if (newValue) {
+    isTableOfContentsOpen.value = false;
+  }
+});
+
 </script>
 
 <style scoped>
@@ -372,5 +626,40 @@ const deleteWrite = (id) => {
 
 .skeleton-wrapper {
   @apply animate-pulse;
+}
+
+.content-placeholder {
+  min-height: 200px;
+}
+
+/* Optimize content rendering */
+.article-content {
+  contain: layout style paint;
+  will-change: auto;
+}
+
+/* Reduce layout thrashing */
+.content-container {
+  contain: layout;
+}
+
+/* Table of Contents styles */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .fixed.right-4 {
+    right: 1rem;
+  }
 }
 </style>
