@@ -2,11 +2,11 @@
   <div ref="scrollContainer" class="write-list-container space-y-1 overflow-y-auto p-3">
     <!-- Search bar for all users -->
     <div class="mb-3">
-      <input 
-        v-model="searchQuery" 
-        type="text" 
-        class="input-bordered input w-full" 
-        placeholder="Yazı başlığı ara..." 
+      <input
+        v-model="searchQuery"
+        type="text"
+        class="input-bordered input w-full"
+        placeholder="Yazı başlığı ara..."
         @input="handleSearchInput"
       />
     </div>
@@ -216,7 +216,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Virtual scrolling container -->
     <div ref="virtualContainer" class="virtual-scroll-container" :style="{ height: totalHeight + 'px' }">
       <div :style="{ transform: `translateY(${offsetY}px)` }">
@@ -280,7 +280,7 @@
         </Link>
       </div>
     </div>
-    
+
     <!-- Boş durum -->
     <div v-if="filteredWrites.length === 0" class="flex h-32 items-center justify-center text-center opacity-50">
       <div>Henüz yazı bulunmuyor</div>
@@ -306,13 +306,13 @@ const writes = computed(() => {
   if (props.writes && props.writes.length > 0) {
     return props.writes;
   }
-  
+
   // Props'ta veri yoksa inject'ten al
   const injectedWrites = inject('writes', []);
   if (injectedWrites && injectedWrites.length > 0) {
     return injectedWrites;
   }
-  
+
   // Hiçbiri yoksa boş array döndür
   return [];
 });
@@ -351,23 +351,23 @@ const handleSearchInput = () => {
  */
 const getWriteRoute = (write) => {
   const currentPath = window.location.pathname;
-  
+
   // If we're in categories context, use category-based route
   if (currentPath.includes('/categories/')) {
     // Extract category slug from current URL
-    const pathParts = currentPath.split('/').filter(part => part.length > 0);
-    
+    const pathParts = currentPath.split('/').filter((part) => part.length > 0);
+
     // Check if we're in a category page (not create/edit)
     if (pathParts.length >= 2 && pathParts[0] === 'categories') {
       const categorySlug = pathParts[1];
-      
+
       // Make sure we're not in create/edit pages
       if (categorySlug && categorySlug !== 'create' && categorySlug !== 'edit') {
         return route('categories.showByCategory', { category: categorySlug, slug: write.slug });
       }
     }
   }
-  
+
   // Default to writes.show route
   return route('writes.show', { write: write.slug });
 };
@@ -377,22 +377,22 @@ const getWriteRoute = (write) => {
  */
 const getActiveWritePath = (write) => {
   const currentPath = window.location.pathname;
-  
+
   // If we're in categories context, use category-based path
   if (currentPath.includes('/categories/')) {
-    const pathParts = currentPath.split('/').filter(part => part.length > 0);
-    
+    const pathParts = currentPath.split('/').filter((part) => part.length > 0);
+
     // Check if we're in a category page (not create/edit)
     if (pathParts.length >= 2 && pathParts[0] === 'categories') {
       const categorySlug = pathParts[1];
-      
+
       // Make sure we're not in create/edit pages
       if (categorySlug && categorySlug !== 'create' && categorySlug !== 'edit') {
         return `/categories/${categorySlug}/${write.slug}`;
       }
     }
   }
-  
+
   // Default to writes path
   return `/writes/${write.slug}`;
 };
@@ -431,16 +431,16 @@ const visibleWrites = computed(() => {
  */
 const updateVirtualScroll = () => {
   if (!scrollContainer.value) return;
-  
+
   const scrollTop = scrollContainer.value.scrollTop;
   const containerHeight = scrollContainer.value.clientHeight;
-  
+
   startIndex.value = Math.max(0, Math.floor(scrollTop / itemHeight) - bufferSize);
   endIndex.value = Math.min(
     filteredWrites.value.length,
     Math.ceil((scrollTop + containerHeight) / itemHeight) + bufferSize
   );
-  
+
   offsetY.value = startIndex.value * itemHeight;
 };
 
@@ -522,7 +522,7 @@ const handleScroll = (e) => {
 
 onMounted(() => {
   isActive = true;
-  
+
   // Filtre ve arama sorgusunu localStorage'dan yükle
   const savedFilter = localStorage.getItem('writeListFilter');
   if (savedFilter) adminFilter.value = savedFilter;
@@ -533,7 +533,7 @@ onMounted(() => {
   }
 
   updateActiveWrite();
-  
+
   // DOM'un hazır olmasını bekle
   nextTick(() => {
     if (scrollContainer.value) {
@@ -547,7 +547,7 @@ onMounted(() => {
       updateVirtualScroll();
     }
   });
-  
+
   const handlePopState = () => {
     if (isActive) {
       updateActiveWrite();

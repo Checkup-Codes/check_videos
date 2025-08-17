@@ -110,8 +110,8 @@
   background: #f3f4f6; /* varsayılan: light gri */
 }
 
-[data-theme~="dark"] .ql-editor blockquote,
-[data-theme~="dark"] .article-content blockquote {
+[data-theme~='dark'] .ql-editor blockquote,
+[data-theme~='dark'] .article-content blockquote {
   background: #23272f; /* dark mod: açık koyu gri */
 }
 

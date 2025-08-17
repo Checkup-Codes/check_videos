@@ -15,7 +15,16 @@ import {
   faSun,
   faMoon,
 } from '@fortawesome/free-solid-svg-icons';
-import { faInstagram, faGithub, faYoutube, faLinkedin, faMedium, faTwitter, faTiktok, faPinterest } from '@fortawesome/free-brands-svg-icons';
+import {
+  faInstagram,
+  faGithub,
+  faYoutube,
+  faLinkedin,
+  faMedium,
+  faTwitter,
+  faTiktok,
+  faPinterest,
+} from '@fortawesome/free-brands-svg-icons';
 
 const solidIcons = [
   faHome,

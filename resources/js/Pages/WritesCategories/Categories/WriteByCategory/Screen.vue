@@ -130,10 +130,10 @@
             </div>
 
             <!-- Lazy load content with intersection observer -->
-            <div 
-              v-if="contentShouldLoad" 
-              class="article-content ql-editor" 
-              ref="contentRef" 
+            <div
+              v-if="contentShouldLoad"
+              class="article-content ql-editor"
+              ref="contentRef"
               v-html="processedContent"
             ></div>
             <div v-else class="content-placeholder">
@@ -190,7 +190,7 @@
     <button
       v-if="!isLoading && showTableOfContents"
       @click="toggleTableOfContents"
-      class="fixed right-4 top-1/2 transform -translate-y-1/2 z-50 btn btn-primary btn-circle shadow-lg hover:shadow-xl transition-all duration-200"
+      class="btn btn-primary btn-circle fixed right-4 top-1/2 z-50 -translate-y-1/2 transform shadow-lg transition-all duration-200 hover:shadow-xl"
       :class="{ 'btn-active': isTableOfContentsOpen }"
     >
       <svg
@@ -201,28 +201,21 @@
         stroke="currentColor"
         class="h-6 w-6"
       >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-        />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
       </svg>
     </button>
 
     <!-- Table of Contents Sidebar -->
     <div
       v-if="!isLoading && showTableOfContents"
-      class="fixed right-0 top-0 h-full w-80 bg-base-100 shadow-2xl transform transition-transform duration-300 z-40"
+      class="fixed right-0 top-0 z-40 h-full w-80 transform bg-base-100 shadow-2xl transition-transform duration-300"
       :class="{ 'translate-x-full': !isTableOfContentsOpen }"
     >
-      <div class="flex flex-col h-full">
+      <div class="flex h-full flex-col">
         <!-- Header -->
-        <div class="flex items-center justify-between p-4 border-b border-base-200">
+        <div class="flex items-center justify-between border-b border-base-200 p-4">
           <h3 class="text-lg font-semibold">İçindekiler</h3>
-          <button
-            @click="toggleTableOfContents"
-            class="btn btn-ghost btn-sm btn-circle"
-          >
+          <button @click="toggleTableOfContents" class="btn btn-ghost btn-sm btn-circle">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -231,25 +224,21 @@
               stroke="currentColor"
               class="h-5 w-5"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
         <!-- Content -->
         <div class="flex-1 overflow-y-auto p-4">
-          <div v-if="tableOfContents.length === 0" class="text-center text-base-content/60 py-8">
+          <div v-if="tableOfContents.length === 0" class="text-base-content/60 py-8 text-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class="h-12 w-12 mx-auto mb-4 opacity-50"
+              class="mx-auto mb-4 h-12 w-12 opacity-50"
             >
               <path
                 stroke-linecap="round"
@@ -259,18 +248,18 @@
             </svg>
             <p>İçindekiler bulunamadı</p>
           </div>
-          
+
           <div v-else class="space-y-2">
             <div
               v-for="(item, index) in tableOfContents"
               :key="index"
               @click="scrollToHeading(item.id)"
-              class="cursor-pointer p-3 rounded-lg hover:bg-base-200 transition-colors duration-200"
+              class="cursor-pointer rounded-lg p-3 transition-colors duration-200 hover:bg-base-200"
               :class="getHeadingClass(item.level)"
             >
               <div class="flex items-center gap-2">
-                <span class="text-xs text-base-content/50 font-mono">{{ index + 1 }}</span>
-                <span class="text-sm font-medium line-clamp-2">{{ item.text }}</span>
+                <span class="text-base-content/50 font-mono text-xs">{{ index + 1 }}</span>
+                <span class="line-clamp-2 text-sm font-medium">{{ item.text }}</span>
               </div>
             </div>
           </div>
@@ -282,7 +271,7 @@
     <div
       v-if="!isLoading && showTableOfContents && isTableOfContentsOpen"
       @click="toggleTableOfContents"
-      class="fixed inset-0 bg-black/20 z-30"
+      class="fixed inset-0 z-30 bg-black/20"
     ></div>
   </CheckScreen>
 </template>
@@ -322,7 +311,7 @@ const tableOfContents = ref([]);
  */
 const processedContent = useProcessedQuillContent(
   contentRef,
-  computed(() => contentShouldLoad.value ? write.value.content : '')
+  computed(() => (contentShouldLoad.value ? write.value.content : ''))
 );
 
 /**
@@ -359,33 +348,36 @@ let contentObserver = null;
 onMounted(() => {
   // Start with content loading disabled for better initial performance
   contentShouldLoad.value = false;
-  
+
   // Simulate loading delay
   setTimeout(() => {
     isLoading.value = false;
-    
+
     // Set up intersection observer for lazy loading
     const contentPlaceholder = document.querySelector('.content-placeholder');
     if (contentPlaceholder) {
-      contentObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting && !contentShouldLoad.value) {
-            contentShouldLoad.value = true;
-            // Setup link handling after content loads
-            nextTick(() => {
-              setupLinkHandling();
-              // Generate table of contents after content is loaded
-              setTimeout(() => {
-                generateTableOfContents();
-              }, 100);
-            });
-          }
-        });
-      }, {
-        threshold: 0.1,
-        rootMargin: '50px'
-      });
-      
+      contentObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && !contentShouldLoad.value) {
+              contentShouldLoad.value = true;
+              // Setup link handling after content loads
+              nextTick(() => {
+                setupLinkHandling();
+                // Generate table of contents after content is loaded
+                setTimeout(() => {
+                  generateTableOfContents();
+                }, 100);
+              });
+            }
+          });
+        },
+        {
+          threshold: 0.1,
+          rootMargin: '50px',
+        }
+      );
+
       contentObserver.observe(contentPlaceholder);
     } else {
       // Fallback: load content immediately if no placeholder
@@ -483,28 +475,28 @@ const setupLinkHandling = () => {
  */
 const generateTableOfContents = () => {
   if (!contentRef.value) return;
-  
+
   const headings = contentRef.value.querySelectorAll('h1, h2, h3, h4, h5, h6');
   const toc = [];
-  
+
   headings.forEach((heading, index) => {
     // Generate unique ID if not exists
     if (!heading.id) {
       heading.id = `heading-${index}`;
     }
-    
+
     const level = parseInt(heading.tagName.charAt(1));
     const text = heading.textContent.trim();
-    
+
     if (text) {
       toc.push({
         id: heading.id,
         text: text,
-        level: level
+        level: level,
       });
     }
   });
-  
+
   tableOfContents.value = toc;
   showTableOfContents.value = toc.length > 0;
 };
@@ -528,12 +520,10 @@ const deleteWrite = (id) => {
       onSuccess: () => {
         // Redirect back to category page after deletion
         router.visit(route('categories.show', category.value.slug));
-      }
+      },
     });
   }
 };
-
-
 
 /**
  * Scroll to a heading by its ID
@@ -544,9 +534,9 @@ const scrollToHeading = (id) => {
   if (element) {
     element.scrollIntoView({
       behavior: 'smooth',
-      block: 'start'
+      block: 'start',
     });
-    
+
     // Close sidebar on mobile
     if (window.innerWidth < 768) {
       isTableOfContentsOpen.value = false;
@@ -588,13 +578,17 @@ const toggleTableOfContents = () => {
 /**
  * Watch for content changes to regenerate table of contents
  */
-watch(processedContent, () => {
-  if (contentShouldLoad.value && processedContent.value) {
-    nextTick(() => {
-      generateTableOfContents();
-    });
-  }
-}, { flush: 'post' });
+watch(
+  processedContent,
+  () => {
+    if (contentShouldLoad.value && processedContent.value) {
+      nextTick(() => {
+        generateTableOfContents();
+      });
+    }
+  },
+  { flush: 'post' }
+);
 
 /**
  * Watch for showDraw changes to hide table of contents when drawing is shown
@@ -604,7 +598,6 @@ watch(showDraw, (newValue) => {
     isTableOfContentsOpen.value = false;
   }
 });
-
 </script>
 
 <style scoped>

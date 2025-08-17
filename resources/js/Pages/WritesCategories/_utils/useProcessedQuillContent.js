@@ -18,29 +18,29 @@ const cacheSize = 50; // Maximum number of cached items
 export function useProcessedQuillContent(contentRef, contentString) {
   const isProcessing = ref(false);
   const processedContent = ref('');
-  
+
   // Process content function
   const processContent = (content) => {
     if (!content) {
       processedContent.value = '';
       return;
     }
-    
+
     // Check cache first
     const cacheKey = content;
     if (contentCache.has(cacheKey)) {
       processedContent.value = contentCache.get(cacheKey);
       return;
     }
-    
+
     // Prevent multiple simultaneous processing
     if (isProcessing.value) {
       processedContent.value = content; // Return raw content while processing
       return;
     }
-    
+
     isProcessing.value = true;
-    
+
     // Process content synchronously for immediate response
     try {
       // Parse the HTML content
@@ -340,7 +340,7 @@ export function useProcessedQuillContent(contentRef, contentString) {
       });
 
       const result = doc.body.innerHTML;
-      
+
       // Cache the result
       if (contentCache.size >= cacheSize) {
         // Remove oldest entry
@@ -348,22 +348,25 @@ export function useProcessedQuillContent(contentRef, contentString) {
         contentCache.delete(firstKey);
       }
       contentCache.set(cacheKey, result);
-      
+
       processedContent.value = result;
       isProcessing.value = false;
-      
     } catch (error) {
       console.error('Error processing content:', error);
       processedContent.value = content; // Return raw content on error
       isProcessing.value = false;
     }
   };
-  
+
   // Watch for content changes
-  watch(contentString, (newContent) => {
-    processContent(newContent);
-  }, { immediate: true });
-  
+  watch(
+    contentString,
+    (newContent) => {
+      processContent(newContent);
+    },
+    { immediate: true }
+  );
+
   return computed(() => processedContent.value);
 }
 
@@ -380,6 +383,6 @@ export function clearContentCache() {
 export function getCacheStats() {
   return {
     size: contentCache.size,
-    maxSize: cacheSize
+    maxSize: cacheSize,
   };
 }

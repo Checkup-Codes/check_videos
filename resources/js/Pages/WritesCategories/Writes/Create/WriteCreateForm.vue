@@ -304,22 +304,21 @@
 
         <div class="flex justify-end space-x-3">
           <!-- Reset button -->
-          <button
-            type="button"
-            @click="resetForm"
-            class="btn btn-outline"
-            :disabled="form.processing"
-          >
-            Sıfırla
-          </button>
-          
+          <button type="button" @click="resetForm" class="btn btn-outline" :disabled="form.processing">Sıfırla</button>
+
           <!-- Button component implemented directly -->
           <button
             type="submit"
             class="btn btn-primary"
             :class="{ loading: form.processing }"
             :disabled="form.processing || !form.title || !form.slug || !form.content || !form.category_id"
-            :title="form.processing ? 'Kaydediliyor...' : (!form.title || !form.slug || !form.content || !form.category_id ? 'Lütfen gerekli alanları doldurun' : 'Yazıyı kaydet')"
+            :title="
+              form.processing
+                ? 'Kaydediliyor...'
+                : !form.title || !form.slug || !form.content || !form.category_id
+                  ? 'Lütfen gerekli alanları doldurun'
+                  : 'Yazıyı kaydet'
+            "
           >
             {{ form.processing ? 'Kaydediliyor...' : 'Yazıyı Kaydet' }}
           </button>
@@ -485,7 +484,7 @@ watch(
 onMounted(() => {
   // Force reset processing state
   form.processing = false;
-  
+
   // Clear any existing processing state from localStorage
   const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
   if (saved) {
@@ -493,7 +492,7 @@ onMounted(() => {
       const parsed = JSON.parse(saved);
       // Don't restore processing state from localStorage
       const { processing, ...formData } = parsed;
-      
+
       // Only restore if we have actual form data (not just processing state)
       if (Object.keys(formData).length > 0 && (formData.title || formData.content || formData.category_id)) {
         Object.assign(form, formData);
@@ -506,10 +505,10 @@ onMounted(() => {
       localStorage.removeItem(LOCAL_STORAGE_KEY);
     }
   }
-  
+
   // Ensure processing is false
   form.processing = false;
-  
+
   // Debug: Check form state
   console.log('Form mounted. Processing:', form.processing);
   console.log('Form data:', form.data());
@@ -518,7 +517,7 @@ onMounted(() => {
 // Client-side form validation
 const validateForm = () => {
   // Reset all errors
-  Object.keys(errors.value).forEach(key => {
+  Object.keys(errors.value).forEach((key) => {
     errors.value[key] = '';
   });
 
@@ -526,15 +525,15 @@ const validateForm = () => {
   if (!form.title || form.title.trim() === '') {
     errors.value.title = 'Başlık zorunludur.';
   }
-  
+
   if (!form.slug || form.slug.trim() === '') {
     errors.value.slug = 'Slug zorunludur.';
   }
-  
+
   if (!form.content || form.content.trim() === '') {
     errors.value.content = 'İçerik zorunludur.';
   }
-  
+
   if (!form.category_id) {
     errors.value.category_id = 'Kategori seçilmelidir.';
   }
@@ -565,8 +564,8 @@ const submitForm = () => {
 
   // Only submit if there are no critical validation errors
   const criticalErrors = ['title', 'slug', 'content', 'category_id'];
-  const hasCriticalErrors = criticalErrors.some(field => errors.value[field] !== '');
-  
+  const hasCriticalErrors = criticalErrors.some((field) => errors.value[field] !== '');
+
   if (!hasCriticalErrors) {
     form.post(route('writes.store'), {
       onSuccess: () => {
@@ -575,7 +574,7 @@ const submitForm = () => {
       },
       onError: (errors) => {
         console.log('Server errors:', errors);
-      }
+      },
     });
   } else {
     console.log('Form validation failed - critical errors present');
@@ -586,7 +585,7 @@ const submitForm = () => {
 const resetForm = () => {
   form.reset();
   form.processing = false; // Ensure processing is reset
-  Object.keys(errors.value).forEach(key => {
+  Object.keys(errors.value).forEach((key) => {
     errors.value[key] = '';
   });
   publishDateObj.value = { date: '', time: '' };
