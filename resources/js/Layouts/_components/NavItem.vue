@@ -7,16 +7,20 @@
       'border-primary bg-primary text-primary-content shadow-md': isActive,
       // Pasif durumda: yumuşak görünüm
       'border-base-200 bg-base-200 text-base-content hover:bg-base-300': !isActive,
+      // Compact mode için padding ayarı
+      'justify-center px-2': isCompact,
     }"
+    :title="isCompact ? label : ''"
   >
     <!-- Sol kısım: İkon + Label -->
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3" :class="{ 'gap-0': isCompact }">
       <font-awesome-icon
         :icon="dynamicIcon"
         class="h-4 w-4 transition-colors duration-200"
         :class="isActive ? 'text-primary-content' : 'text-base-content'"
       />
       <span
+        v-if="!isCompact"
         class="font-sans text-sm transition-colors duration-200"
         :class="isActive ? 'text-primary-content' : 'text-base-content'"
       >
@@ -36,6 +40,10 @@ const props = defineProps({
   icon: [String, Array],
   label: String,
   external: Boolean,
+  isCompact: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const dynamicIcon = computed(() => {

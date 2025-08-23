@@ -1,8 +1,14 @@
 <template>
   <nav class="w-full bg-base-200 px-2">
-    <h3 class="border-t-2 border-base-300 px-3 py-3 text-xs">Hesaplar</h3>
+    <h3 v-if="!isCompact" class="border-t-2 border-base-300 px-3 py-3 text-xs">Hesaplar</h3>
     <template v-for="link in socialLinks" :key="link.id">
-      <SocialLink v-if="link.is_active" :href="link.url" :icon="getSocialIcon(link.platform)" :label="link.platform" />
+      <SocialLink
+        v-if="link.is_active"
+        :href="link.url"
+        :icon="getSocialIcon(link.platform)"
+        :label="link.platform"
+        :is-compact="isCompact"
+      />
     </template>
   </nav>
 </template>
@@ -31,6 +37,13 @@ const platformIcons = {
 const getSocialIcon = (platform) => {
   return platformIcons[platform] || platformIcons.default;
 };
+
+defineProps({
+  isCompact: {
+    type: Boolean,
+    default: false,
+  },
+});
 
 onMounted(async () => {
   try {

@@ -1,7 +1,11 @@
 <template>
-  <div class="flex w-fit cursor-pointer items-center gap-4 rounded-lg p-4" @click="redirectToLogin">
+  <div
+    class="flex w-fit cursor-pointer items-center gap-4 rounded-lg p-3"
+    :class="{ 'justify-center p-2': isCompact }"
+    @click="redirectToLogin"
+  >
     <div class="avatar">
-      <div class="h-10 w-10 rounded-full bg-white ring ring-primary ring-offset-2 ring-offset-base-100">
+      <div class="h-9 w-9 rounded-full bg-white ring ring-primary ring-offset-2 ring-offset-base-100">
         <template v-if="!isLoading">
           <img
             :src="logoPath"
@@ -19,7 +23,7 @@
       </div>
     </div>
 
-    <div class="flex flex-col">
+    <div v-if="!isCompact" class="flex flex-col">
       <template v-if="!isLoading">
         <div class="font-semibold text-base-content">{{ seoTitle ?? 'Seo Title' }}</div>
       </template>
@@ -42,6 +46,13 @@ const seoDescription = ref(props?.screen?.seo?.description ?? 'Seo Description')
 const logoPath = ref(props?.screen?.seo?.logo ?? '');
 const logoAlt = ref('Logo');
 const isLoading = ref(false);
+
+defineProps({
+  isCompact: {
+    type: Boolean,
+    default: false,
+  },
+});
 
 const redirectToLogin = () => {
   router.visit('/login');

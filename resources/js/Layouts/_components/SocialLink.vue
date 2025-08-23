@@ -7,17 +7,18 @@
     :class="{
       'border-primary bg-primary text-primary-content shadow-md': isActive,
       'border-base-200 bg-base-200 text-base-content hover:bg-base-300': !isActive,
+      'justify-center px-2': isCompact,
     }"
-    :title="label"
+    :title="isCompact ? label : ''"
   >
     <!-- Sol kısım: İkon + Label -->
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3" :class="{ 'gap-0': isCompact }">
       <font-awesome-icon :icon="icon" class="h-5 w-5 text-base-content" />
-      <span class="text-sm font-medium text-base-content">{{ label }}</span>
+      <span v-if="!isCompact" class="text-sm font-medium text-base-content">{{ label }}</span>
     </div>
 
     <!-- Sağ kısım: Shortcut badge -->
-    <div v-if="shortcut" class="badge text-xs">
+    <div v-if="shortcut && !isCompact" class="badge text-xs">
       {{ shortcut }}
     </div>
   </a>
@@ -47,6 +48,10 @@ const props = defineProps({
   matchPath: {
     type: String,
     default: '', // örnek: '/twitter'
+  },
+  isCompact: {
+    type: Boolean,
+    default: false,
   },
 });
 
