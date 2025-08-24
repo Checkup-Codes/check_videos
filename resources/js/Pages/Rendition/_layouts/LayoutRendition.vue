@@ -2,7 +2,7 @@
   <Head :title="titleName" />
   <FlashMessage :message="flashSuccess" />
   <ToggleSubSidebarButtonOpen v-if="!isSidebarCollapsed" :isCollapsed="true" :toggle="collapseSidebar" />
-  <CheckLayout :isCollapsed="isSidebarCollapsed">
+  <CheckLayout :isCollapsed="isSidebarCollapsed" :class="currentTheme">
     <SidebarRendition
       v-if="isSidebarCollapsed && (screenName === 'words' || screenName === 'packs')"
       @update:isCollapsed="handleSidebarCollapse"
@@ -20,9 +20,15 @@ import FlashMessage from '@/Components/CekapUI/Notifications/FlashMessage.vue';
 import ToggleSubSidebarButtonOpen from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 import SidebarRendition from '@/Pages/Rendition/_layouts/SidebarRendition.vue';
 import { usePage, Head } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
 
 const { props } = usePage();
+const store = useStore();
+
+// Get current theme
+const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
+
 const isMobile = props.screen?.isMobileSidebar || false;
 const sidebarStyle = isMobile ? '' : 'hidden lg:block';
 const screenName = props.screen?.name || '';

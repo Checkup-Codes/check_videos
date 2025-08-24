@@ -1,5 +1,5 @@
 <template>
-  <CheckSubsidebar :isNarrow="isNarrow">
+  <CheckSubsidebar :isNarrow="isNarrow" :class="currentTheme">
     <!-- <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="collapseSidebar" /> -->
     <TopSubsidebar title="YAZILAR" href="/writes/create" class="border-base-200" @toggle-width="handleWidthToggle">
     </TopSubsidebar>
@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import { ref, watch, inject, onMounted } from 'vue';
+import { ref, watch, inject, onMounted, computed } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import TopSubsidebar from '@/Components/CekapUI/Typography/TopSubsidebar.vue';
 import WriteList from '@/Pages/WritesCategories/_composables/WriteList.vue';
@@ -28,6 +28,9 @@ defineOptions({
 // Composables
 const { isCollapsed, toggleSidebar } = useSidebar();
 const store = useStore();
+
+// Get current theme
+const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
 
 // Local state
 const { props } = usePage();

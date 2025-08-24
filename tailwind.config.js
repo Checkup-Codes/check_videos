@@ -53,34 +53,88 @@ export default {
 
     plugins: [forms, daisyui],
     daisyui: {
-        themes: [
-            "light", 
-            "dark",
-            {
-                nature: {
-                    primary: "#2ecc71",
-                    secondary: "#27ae60",
-                    accent: "#3498db",
-                    neutral: "#191D24",
-                    "base-100": "#f0f8f1",
-                    info: "#3ABFF8",
-                    success: "#36D399",
-                    warning: "#FBBD23",
-                    error: "#F87272",
-                },
-                ocean: {
-                    primary: "#1abc9c",
-                    secondary: "#3498db",
-                    accent: "#9b59b6",
-                    neutral: "#2c3e50",
-                    "base-100": "#ecf0f1",
-                    info: "#3ABFF8",
-                    success: "#36D399",
-                    warning: "#FBBD23",
-                    error: "#F87272",
-                }
-            }
-        ],
+                          themes: [
+                      "light",
+                      "dark",
+                      {
+                          lotr: {
+                              primary: "#d4af37", /* altın sarısı */
+                              secondary: "#8b4513", /* kahverengi */
+                              accent: "#ffd700", /* parlak altın */
+                              neutral: "#2d1810", /* koyu kahve */
+                              "base-100": "#f5f5dc", /* açık bej */
+                              info: "#3ABFF8",
+                              success: "#36D399",
+                              warning: "#FBBD23",
+                              error: "#F87272",
+                          }
+                      },
+                      {
+                          neon: {
+                              primary: "#00ffff", /* cyan */
+                              secondary: "#ff00ff", /* magenta */
+                              accent: "#00ff00", /* lime */
+                              neutral: "#1a1a1a", /* koyu gri */
+                              "base-100": "#0d0d0d", /* neredeyse siyah */
+                              info: "#00ffff",
+                              success: "#00ff00",
+                              warning: "#ffff00",
+                              error: "#ff0000",
+                          }
+                      },
+                      {
+                          cyberpunk: {
+                              primary: "#ff0000", /* kırmızı */
+                              secondary: "#ffff00", /* sarı */
+                              accent: "#0000ff", /* mavi */
+                              neutral: "#262626", /* koyu gri */
+                              "base-100": "#141414", /* çok koyu */
+                              info: "#00ffff",
+                              success: "#00ff00",
+                              warning: "#ffff00",
+                              error: "#ff0000",
+                          }
+                      },
+                      {
+                          nature: {
+                              primary: "#22c55e", /* yeşil */
+                              secondary: "#f97316", /* turuncu */
+                              accent: "#eab308", /* sarı */
+                              neutral: "#365314", /* koyu yeşil */
+                              "base-100": "#f0fdf4", /* açık yeşil */
+                              info: "#3ABFF8",
+                              success: "#22c55e",
+                              warning: "#f97316",
+                              error: "#ef4444",
+                          }
+                      },
+                      {
+                          ocean: {
+                              primary: "#3b82f6", /* mavi */
+                              secondary: "#06b6d4", /* turkuaz */
+                              accent: "#1d4ed8", /* koyu mavi */
+                              neutral: "#1e3a8a", /* çok koyu mavi */
+                              "base-100": "#f0f9ff", /* açık mavi */
+                              info: "#3b82f6",
+                              success: "#06b6d4",
+                              warning: "#f59e0b",
+                              error: "#ef4444",
+                          }
+                      },
+                      {
+                          sunset: {
+                              primary: "#fb923c", /* turuncu */
+                              secondary: "#ec4899", /* pembe */
+                              accent: "#fbbf24", /* sarı */
+                              neutral: "#9a3412", /* koyu turuncu */
+                              "base-100": "#fff7ed", /* açık turuncu */
+                              info: "#fb923c",
+                              success: "#fbbf24",
+                              warning: "#ec4899",
+                              error: "#ef4444",
+                          }
+                      }
+                  ],
         darkTheme: "dark",
         base: true,
         styled: true,

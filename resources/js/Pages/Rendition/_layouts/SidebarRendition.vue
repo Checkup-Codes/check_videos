@@ -1,5 +1,5 @@
 <template>
-  <CheckSubsidebar>
+  <CheckSubsidebar :class="currentTheme">
     <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="collapseSidebar" />
     <TopSubsidebar title="DİL PAKETLERİ" :href="route('rendition.language-packs.create')" />
     <SubSidebarScreen>
@@ -29,14 +29,20 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { usePage, Link } from '@inertiajs/vue3';
+import { useStore } from 'vuex';
 import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
 import ToggleSubSidebarButtonClose from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 import TopSubsidebar from '@/Components/CekapUI/Typography/TopSubsidebar.vue';
 import SubSidebarScreen from '@/Components/CekapUI/Slots/SubSidebarScreen.vue';
 
 const { props, url } = usePage();
+const store = useStore();
+
+// Get current theme
+const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
+
 const languagePacks = props.languagePacks || [];
 const auth = props.auth;
 
@@ -56,20 +62,20 @@ const getLinkClasses = (href) => {
 <style scoped>
 .menu :where(li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title)):not(.active):focus,
 .menu :where(li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title)):not(.active):hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: hsl(var(--bc) / 0.05);
 }
 
 .menu :where(li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title)).active {
-  background-color: rgba(0, 0, 0, 0.1);
-  color: rgba(0, 0, 0, 0.9);
+  background-color: hsl(var(--bc) / 0.1);
+  color: hsl(var(--bc));
   font-weight: 600;
-  border-left: 3px solid #000;
+  border-left: 3px solid hsl(var(--p));
 }
 
 .badge-outline {
   background-color: transparent;
-  border-color: rgba(0, 0, 0, 0.2);
-  color: rgba(0, 0, 0, 0.7);
+  border-color: hsl(var(--bc) / 0.2);
+  color: hsl(var(--bc) / 0.7);
   font-size: 0.65rem;
   min-width: 1.5rem;
   height: 1.25rem;

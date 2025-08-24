@@ -3,34 +3,34 @@
     <div class="p-6">
       <div class="mb-6 flex items-center justify-between">
         <div>
-          <h2 class="text-xl font-bold">Dil Paketleri</h2>
-          <p class="text-sm">Toplam Paket Sayısı: {{ languagePacks.length }}</p>
+          <h2 class="text-xl font-bold text-base-content">Dil Paketleri</h2>
+          <p class="text-sm text-base-content/70">Toplam Paket Sayısı: {{ languagePacks.length }}</p>
         </div>
         <a
           v-if="isLoggedIn"
           :href="route('rendition.language-packs.create')"
-          class="rounded-md bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="btn btn-primary btn-sm"
         >
           Yeni Paket Oluştur
         </a>
       </div>
 
       <!-- Arama ve Filtre -->
-      <div class="overflow-hidden rounded-lg bg-white shadow">
-        <div class="border-b p-4">
+      <div class="card bg-base-100 shadow-lg">
+        <div class="card-body">
           <div class="flex flex-wrap gap-4">
             <div class="min-w-[200px] flex-1">
               <input
                 type="text"
                 v-model="searchQuery"
                 placeholder="Kelime veya anlam ara..."
-                class="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="input input-bordered w-full"
               />
             </div>
             <div class="min-w-[200px] flex-1">
               <select
                 v-model="statusFilter"
-                class="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="select select-bordered w-full"
               >
                 <option value="">Tüm Durumlar</option>
                 <option value="0">Öğrenilmedi</option>
@@ -40,7 +40,7 @@
             </div>
             <button
               @click="clearFilters"
-              class="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              class="btn btn-outline btn-sm"
             >
               Filtreleri Temizle
             </button>
@@ -49,51 +49,47 @@
 
         <!-- Yükleme Durumu -->
         <div v-if="isLoading" class="p-8 text-center">
-          <div class="inline-block h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500"></div>
-          <p class="mt-2 text-gray-600">Kelime listesi yükleniyor...</p>
+          <div class="loading loading-spinner loading-lg"></div>
+          <p class="mt-2 text-base-content/70">Kelime listesi yükleniyor...</p>
         </div>
 
         <!-- Tablo -->
         <div v-else class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+          <table class="table table-zebra w-full">
+            <thead>
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Paket Adı
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Dil</th>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Kelime Sayısı
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">İşlemler</th>
+                <th>Paket Adı</th>
+                <th>Dil</th>
+                <th>Kelime Sayısı</th>
+                <th>İşlemler</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200 bg-white">
-              <tr v-for="pack in languagePacks" :key="pack.id" class="hover:bg-gray-50">
-                <td class="whitespace-nowrap px-6 py-4">
-                  <div class="text-sm font-medium text-gray-900">{{ pack.name }}</div>
-                  <div class="text-sm text-gray-500">{{ pack.description }}</div>
+            <tbody>
+              <tr v-for="pack in languagePacks" :key="pack.id" class="hover">
+                <td>
+                  <div class="text-sm font-medium text-base-content">{{ pack.name }}</div>
+                  <div class="text-sm text-base-content/70">{{ pack.description }}</div>
                 </td>
-                <td class="whitespace-nowrap px-6 py-4">
-                  <span class="inline-flex rounded-full bg-blue-100 px-2 text-xs font-semibold leading-5 text-blue-800">
+                <td>
+                  <span class="badge badge-primary">
                     {{ getLanguageName(pack.language) }}
                   </span>
                 </td>
-                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                <td class="text-sm text-base-content/70">
                   {{ pack.word_count }}
                 </td>
-                <td class="whitespace-nowrap px-6 py-4 text-sm font-medium">
-                  <div class="flex space-x-2">
+                <td>
+                  <div class="flex gap-2">
                     <a
                       :href="route('rendition.language-packs.words', pack.id)"
-                      class="text-blue-600 hover:text-blue-900"
+                      class="link link-primary"
                     >
                       Kelimeler
                     </a>
                     <a
                       v-if="isLoggedIn"
                       :href="route('rendition.language-packs.edit', pack.id)"
-                      class="text-indigo-600 hover:text-indigo-900"
+                      class="link link-secondary"
                     >
                       Düzenle
                     </a>

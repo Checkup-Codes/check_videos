@@ -5,9 +5,9 @@
     <div class="p-4">
       <div class="mb-4 flex justify-between">
         <div>
-          <h2 class="text-xl font-bold text-gray-800">{{ languagePack.name }}</h2>
-          <p class="text-sm text-gray-600">{{ languagePack.description }}</p>
-          <p class="mt-1 text-sm text-gray-600">
+          <h2 class="text-xl font-bold text-base-content">{{ languagePack.name }}</h2>
+          <p class="text-sm text-base-content/70">{{ languagePack.description }}</p>
+          <p class="mt-1 text-sm text-base-content/70">
             <span class="font-medium">Dil:</span> {{ getLanguageName(languagePack.language) }}
           </p>
         </div>
@@ -15,19 +15,19 @@
           <button
             v-if="isLoggedIn"
             @click="fetchAvailableWords"
-            class="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="btn btn-primary"
           >
             Kelime Ekle
           </button>
           <a
             :href="route('rendition.language-packs.export', languagePack.id)"
-            class="rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+            class="btn btn-success"
           >
             Dışa Aktar
           </a>
           <a
             :href="route('rendition.language-packs.index')"
-            class="rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            class="btn btn-outline"
           >
             Geri Dön
           </a>
@@ -35,8 +35,8 @@
       </div>
 
       <div class="overflow-x-auto">
-        <table class="min-w-full rounded-lg border border-gray-300 bg-white shadow-md">
-          <thead class="bg-gray-200 text-gray-700">
+        <table class="table table-zebra w-full">
+          <thead>
             <tr>
               <th class="border-b px-4 py-3 text-left text-sm font-semibold">Kelime</th>
               <th class="border-b px-4 py-3 text-left text-sm font-semibold">Anlam</th>
@@ -47,11 +47,11 @@
           </thead>
           <tbody>
             <tr v-if="!languagePack.words || languagePack.words.length === 0">
-              <td colspan="5" class="border-b px-4 py-6 text-center text-gray-500">
+              <td colspan="5" class="text-center py-6 text-base-content/70">
                 Bu dil paketinde henüz kelime bulunmamaktadır. Kelime ekleyin.
               </td>
             </tr>
-            <tr v-for="word in languagePack.words" :key="word.id" class="transition hover:bg-gray-100">
+            <tr v-for="word in languagePack.words" :key="word.id" class="hover">
               <td class="border-b px-4 py-3 font-medium">{{ word.word }}</td>
               <td class="border-b px-4 py-3">{{ word.meaning }}</td>
               <td class="border-b px-4 py-3 capitalize">{{ word.type }}</td>
@@ -60,7 +60,7 @@
                 <button
                   v-if="isLoggedIn"
                   @click="removeWord(word)"
-                  class="rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-200"
+                  class="btn btn-error btn-xs"
                 >
                   Kaldır
                 </button>
@@ -72,11 +72,11 @@
     </div>
 
     <!-- Kelime Ekleme Modal -->
-    <div v-if="showAddWordsModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div class="w-full max-w-2xl rounded-lg bg-white p-6 shadow-lg">
+    <div v-if="showAddWordsModal" class="modal modal-open">
+      <div class="modal-box max-w-2xl">
         <div class="mb-4 flex items-center justify-between">
           <h3 class="text-lg font-bold">Kelime Ekle</h3>
-          <button @click="showAddWordsModal = false" class="text-gray-500 hover:text-gray-700">
+          <button @click="showAddWordsModal = false" class="btn btn-ghost btn-sm">
             <svg
               class="h-5 w-5"
               fill="none"
@@ -91,53 +91,57 @@
 
         <!-- Arama Filtresi -->
         <div class="mb-4">
-          <label class="mb-1 block text-sm font-medium text-gray-700">Kelime Ara</label>
+          <label class="label">
+            <span class="label-text">Kelime Ara</span>
+          </label>
           <input
             v-model="searchQuery"
             type="text"
             placeholder="Kelime veya anlam ara..."
-            class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="input input-bordered w-full"
           />
         </div>
 
         <div class="mb-4">
-          <label class="mb-1 block text-sm font-medium text-gray-700">Kelimeler</label>
+          <label class="label">
+            <span class="label-text">Kelimeler</span>
+          </label>
           <div v-if="loading" class="flex justify-center py-4">
-            <div class="h-6 w-6 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
+            <div class="loading loading-spinner loading-md"></div>
           </div>
-          <div v-else-if="availableWords.length === 0" class="py-4 text-center text-gray-500">
+          <div v-else-if="availableWords.length === 0" class="py-4 text-center text-base-content/70">
             Eklenebilecek kelime bulunamadı. Önce yeni kelimeler ekleyin.
           </div>
-          <div v-else class="max-h-60 overflow-y-auto rounded-md border border-gray-300 p-2">
+          <div v-else class="max-h-60 overflow-y-auto border border-base-300 rounded-lg p-2">
             <div
               v-for="word in filteredAvailableWords"
               :key="word.id"
-              class="flex items-center rounded px-2 py-1 hover:bg-gray-100"
+              class="flex items-center rounded px-2 py-1 hover:bg-base-200"
             >
               <input
                 :id="`word-${word.id}`"
                 v-model="selectedWords"
                 :value="word.id"
                 type="checkbox"
-                class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                class="checkbox checkbox-primary"
               />
-              <label :for="`word-${word.id}`" class="ml-2 block text-sm text-gray-700">
+              <label :for="`word-${word.id}`" class="ml-2 block text-sm text-base-content">
                 {{ word.word }} - {{ word.meaning }} ({{ getLanguageName(word.language) }})
               </label>
             </div>
           </div>
         </div>
 
-        <div class="flex justify-end space-x-2">
+        <div class="modal-action">
           <button
             @click="showAddWordsModal = false"
-            class="rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            class="btn btn-outline"
           >
             İptal
           </button>
           <button
             @click="addWords"
-            class="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="btn btn-primary"
             :disabled="selectedWords.length === 0 || processing"
           >
             {{ processing ? 'Ekleniyor...' : 'Ekle' }}

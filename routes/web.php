@@ -87,6 +87,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // SEO Management
     Route::get('/seo', [SeoController::class, 'edit'])->name('seo.edit');
     Route::put('/seo', [SeoController::class, 'update'])->name('seo.update');
+    
+    // Theme Management
+    Route::get('/theme-management', function () {
+        return Inertia::render('ThemeManagement');
+    })->name('theme.management');
+    
+
+    
+
 });
 
 // Rendition Routes

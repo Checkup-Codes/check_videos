@@ -1,5 +1,5 @@
 <template>
-  <CheckSubsidebar :isNarrow="isNarrow">
+  <CheckSubsidebar :isNarrow="isNarrow" :class="currentTheme">
     <!-- <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="toggleSidebar" class="btn-ghost" /> -->
     <TopSubsidebar
       title="KATEGORİLER"
@@ -41,6 +41,9 @@ defineOptions({
 // Composables
 const { isCollapsed, toggleSidebar } = useSidebar();
 const store = useStore();
+
+// Get current theme
+const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
 
 // Global categories'i inject ile al
 const categories = inject('categories', []);

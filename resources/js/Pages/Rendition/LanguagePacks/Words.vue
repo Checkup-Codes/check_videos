@@ -1,5 +1,5 @@
 <template>
-  <LayoutRendition>
+  <LayoutRendition :class="currentTheme">
     <template #screen>
       <Screen v-bind="props" />
     </template>
@@ -7,8 +7,15 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 import LayoutRendition from '@/Pages/Rendition/_layouts/LayoutRendition.vue';
 import Screen from '@/Pages/Rendition/LanguagePacks/Words/Screen.vue';
+
+const store = useStore();
+
+// Get current theme
+const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
 
 const props = defineProps({
   languagePack: Object,

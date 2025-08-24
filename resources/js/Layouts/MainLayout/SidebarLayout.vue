@@ -1,9 +1,11 @@
 <template>
-  <aside class="flex h-screen flex-col justify-between border-r-2 border-base-300 bg-base-200 p-1 font-sans">
+  <aside class="flex h-screen flex-col justify-between border-r-2 border-base-300 bg-base-200 p-1 font-sans" :class="currentTheme">
     <div>
       <ProfileCard :is-compact="isCompact" />
       <MainNavigation :is-compact="isCompact" />
       <SocialLinks :is-compact="isCompact" />
+      
+
     </div>
 
     <div class="absolute inset-x-0 bottom-0 py-4 text-center">
@@ -20,8 +22,12 @@ import SocialLinks from '@/Layouts/_composable/SocialLinks.vue';
 import ThemeSwitcher from '@/Layouts/_components/ThemeSwitcher.vue';
 import { usePage } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
 
 const { props } = usePage();
+const store = useStore();
+
+const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
 
 const seoTitle = computed(() => {
   return props?.screen?.seo?.title ?? 'Check Videos';

@@ -1,7 +1,7 @@
 <template>
   <FlashMessage :message="flashMessage" />
   <ToggleSubSidebarButtonOpen v-if="!isCollapsed" :isCollapsed="true" :toggle="toggleSidebar" />
-  <CheckLayout :isCollapsed="true">
+  <CheckLayout :isCollapsed="true" :class="currentTheme">
     <template #sidebar>
       <KeepAlive :max="5" :include="['SidebarLayoutWrite', 'SidebarLayoutCategory']">
         <component
@@ -39,6 +39,9 @@ defineOptions({
 const { isCollapsed, isMobile, toggleSidebar, sidebarStyle } = useSidebar();
 const { flashMessage } = useFlashMessage();
 const store = useStore();
+
+// Get current theme
+const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
 
 // Get screen name from props
 const { props } = usePage();

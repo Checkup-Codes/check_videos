@@ -29,36 +29,342 @@
   }
 
   /* DaisyUI tema stillerini güçlendir */
-  html[data-theme='nature'] {
-    --p: 142 70% 49%; /* primary */
+
+
+  html[data-theme='lotr'] {
+    --p: 25 70% 45%; /* primary - altın sarısı */
     --pc: 0 0% 100%; /* primary content */
-    --s: 160 63% 42%; /* secondary */
+    --s: 15 60% 35%; /* secondary - kahverengi */
     --sc: 0 0% 100%; /* secondary content */
-    --a: 210 64% 53%; /* accent */
+    --a: 45 80% 55%; /* accent - parlak altın */
     --ac: 0 0% 100%; /* accent content */
-    --n: 222 13% 12%; /* neutral */
+    --n: 20 30% 15%; /* neutral - koyu kahve */
     --nc: 0 0% 100%; /* neutral content */
-    --b1: 120 16% 95%; /* base 100 */
-    --bc: 222 13% 12%; /* base content */
+    --b1: 30 20% 92%; /* base 100 - açık bej */
+    --bc: 20 30% 15%; /* base content */
     --animation-btn: 0;
     --animation-input: 0;
     --btn-focus-scale: 1;
+    --border-radius: 0.75rem; /* border radius */
+    --border-color: 25 70% 45%; /* border color */
+    --shadow: 0 4px 6px -1px rgba(139, 69, 19, 0.3); /* shadow */
   }
 
-  html[data-theme='ocean'] {
-    --p: 168 70% 42%; /* primary */
+  /* Lord of the Rings teması için özel stiller */
+  html[data-theme='lotr'] {
+    /* Özel border stilleri */
+    --border-width: 2px;
+    --border-style: solid;
+    
+    /* Özel font ailesi */
+    font-family: 'Cinzel', 'Times New Roman', serif;
+  }
+
+  html[data-theme='lotr'] .btn {
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    border: var(--border-width) var(--border-style) hsl(var(--border-color));
+  }
+
+  html[data-theme='lotr'] .card {
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    border: var(--border-width) var(--border-style) hsl(var(--border-color));
+  }
+
+  html[data-theme='lotr'] .input,
+  html[data-theme='lotr'] .select {
+    border-radius: var(--border-radius);
+    border: var(--border-width) var(--border-style) hsl(var(--border-color));
+  }
+
+  html[data-theme='lotr'] .navbar {
+    background: linear-gradient(135deg, hsl(var(--p)) 0%, hsl(var(--s)) 100%);
+    box-shadow: var(--shadow);
+  }
+
+  html[data-theme='lotr'] .sidebar {
+    background: linear-gradient(180deg, hsl(var(--b1)) 0%, hsl(var(--n)) 100%);
+    border-right: var(--border-width) var(--border-style) hsl(var(--border-color));
+  }
+
+  /* Lord of the Rings teması için ek özelleştirmeler */
+  html[data-theme='lotr'] {
+    /* Özel animasyonlar */
+    --animation-duration: 0.3s;
+    --animation-timing: ease-in-out;
+  }
+
+  html[data-theme='lotr'] .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px -2px rgba(139, 69, 19, 0.4);
+    transition: all var(--animation-duration) var(--animation-timing);
+  }
+
+  html[data-theme='lotr'] .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px -4px rgba(139, 69, 19, 0.4);
+    transition: all var(--animation-duration) var(--animation-timing);
+  }
+
+  html[data-theme='lotr'] .input:focus,
+  html[data-theme='lotr'] .select:focus,
+  html[data-theme='lotr'] .textarea:focus {
+    border-color: hsl(var(--a));
+    box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+    transition: all var(--animation-duration) var(--animation-timing);
+  }
+
+  /* Lord of the Rings teması için özel gradient arka planlar */
+  html[data-theme='lotr'] .bg-primary {
+    background: linear-gradient(135deg, hsl(var(--p)) 0%, hsl(var(--a)) 100%);
+  }
+
+  html[data-theme='lotr'] .bg-secondary {
+    background: linear-gradient(135deg, hsl(var(--s)) 0%, hsl(var(--n)) 100%);
+  }
+
+  html[data-theme='lotr'] .bg-accent {
+    background: linear-gradient(135deg, hsl(var(--a)) 0%, hsl(var(--p)) 100%);
+  }
+
+  /* Lord of the Rings teması için özel border stilleri */
+  html[data-theme='lotr'] .border {
+    border-color: hsl(var(--border-color));
+  }
+
+  html[data-theme='lotr'] .border-base-300 {
+    border-color: hsl(var(--border-color));
+  }
+
+  /* Lord of the Rings teması için özel shadow stilleri */
+  html[data-theme='lotr'] .shadow {
+    box-shadow: var(--shadow);
+  }
+
+  html[data-theme='lotr'] .shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(139, 69, 19, 0.4), 0 4px 6px -2px rgba(139, 69, 19, 0.2);
+  }
+
+  /* Neon Teması */
+  html[data-theme='neon'] {
+    --p: 180 100% 50%; /* primary - cyan */
+    --pc: 0 0% 0%; /* primary content */
+    --s: 300 100% 50%; /* secondary - magenta */
+    --sc: 0 0% 0%; /* secondary content */
+    --a: 120 100% 50%; /* accent - lime */
+    --ac: 0 0% 0%; /* accent content */
+    --n: 0 0% 10%; /* neutral - çok koyu gri */
+    --nc: 180 100% 50%; /* neutral content */
+    --b1: 0 0% 5%; /* base 100 - neredeyse siyah */
+    --bc: 180 100% 50%; /* base content */
+    --animation-btn: 0.25s;
+    --animation-input: 0.2s;
+    --btn-focus-scale: 1.05;
+    --border-radius: 0.5rem;
+    --shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+    --animation-duration: 0.3s;
+  }
+
+  /* Neon tema özel efektleri */
+  html[data-theme='neon'] .btn {
+    border: 2px solid hsl(var(--p));
+    box-shadow: 0 0 10px hsl(var(--p));
+    transition: all 0.3s ease;
+  }
+
+  html[data-theme='neon'] .btn:hover {
+    box-shadow: 0 0 20px hsl(var(--p)), 0 0 30px hsl(var(--p));
+    transform: scale(1.05);
+  }
+
+  html[data-theme='neon'] .card {
+    border: 1px solid hsl(var(--s));
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+  }
+
+  html[data-theme='neon'] .card:hover {
+    box-shadow: 0 0 25px rgba(255, 0, 255, 0.5);
+    transform: translateY(-2px);
+  }
+
+  /* Cyberpunk Teması */
+  html[data-theme='cyberpunk'] {
+    --p: 0 100% 50%; /* primary - kırmızı */
     --pc: 0 0% 100%; /* primary content */
-    --s: 210 64% 53%; /* secondary */
-    --sc: 0 0% 100%; /* secondary content */
-    --a: 279 56% 53%; /* accent */
+    --s: 60 100% 50%; /* secondary - sarı */
+    --sc: 0 0% 0%; /* secondary content */
+    --a: 240 100% 50%; /* accent - mavi */
     --ac: 0 0% 100%; /* accent content */
-    --n: 210 31% 25%; /* neutral */
+    --n: 0 0% 15%; /* neutral - koyu gri */
+    --nc: 0 100% 50%; /* neutral content */
+    --b1: 0 0% 8%; /* base 100 - çok koyu */
+    --bc: 0 100% 50%; /* base content */
+    --animation-btn: 0.1s;
+    --animation-input: 0.1s;
+    --btn-focus-scale: 1.1;
+    --border-radius: 0.25rem;
+    --shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+    --animation-duration: 0.2s;
+  }
+
+  /* Cyberpunk tema özel efektleri */
+  html[data-theme='cyberpunk'] .btn {
+    border: 2px solid hsl(var(--p));
+    background: linear-gradient(45deg, hsl(var(--p)), hsl(var(--s)));
+    text-shadow: 0 0 5px hsl(var(--p));
+    transition: all 0.2s ease;
+  }
+
+  html[data-theme='cyberpunk'] .btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px hsl(var(--p));
+  }
+
+  html[data-theme='cyberpunk'] .card {
+    border: 1px solid hsl(var(--a));
+    background: linear-gradient(135deg, hsl(var(--b1)), hsl(var(--n)));
+  }
+
+  /* Nature Teması */
+  html[data-theme='nature'] {
+    --p: 142 76% 36%; /* primary - yeşil */
+    --pc: 0 0% 100%; /* primary content */
+    --s: 25 95% 53%; /* secondary - turuncu */
+    --sc: 0 0% 100%; /* secondary content */
+    --a: 48 96% 53%; /* accent - sarı */
+    --ac: 0 0% 0%; /* accent content */
+    --n: 120 14% 18%; /* neutral - koyu yeşil */
     --nc: 0 0% 100%; /* neutral content */
-    --b1: 180 5% 94%; /* base 100 */
-    --bc: 210 31% 25%; /* base content */
-    --animation-btn: 0;
-    --animation-input: 0;
-    --btn-focus-scale: 1;
+    --b1: 120 14% 96%; /* base 100 - açık yeşil */
+    --bc: 120 14% 18%; /* base content */
+    --animation-btn: 0.4s;
+    --animation-input: 0.3s;
+    --btn-focus-scale: 1.02;
+    --border-radius: 1rem;
+    --shadow: 0 4px 6px -1px rgba(34, 197, 94, 0.2);
+    --animation-duration: 0.4s;
+  }
+
+  /* Nature tema özel efektleri */
+  html[data-theme='nature'] .btn {
+    border-radius: var(--border-radius);
+    background: linear-gradient(135deg, hsl(var(--p)), hsl(var(--a)));
+    transition: all 0.4s ease;
+  }
+
+  html[data-theme='nature'] .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(34, 197, 94, 0.3);
+  }
+
+  html[data-theme='nature'] .card {
+    border-radius: var(--border-radius);
+    background: linear-gradient(135deg, hsl(var(--b1)), hsl(var(--s) / 0.1));
+  }
+
+  /* Ocean Teması */
+  html[data-theme='ocean'] {
+    --p: 217 91% 60%; /* primary - mavi */
+    --pc: 0 0% 100%; /* primary content */
+    --s: 187 100% 42%; /* secondary - turkuaz */
+    --sc: 0 0% 100%; /* secondary content */
+    --a: 221 83% 53%; /* accent - koyu mavi */
+    --ac: 0 0% 100%; /* accent content */
+    --n: 221 83% 20%; /* neutral - çok koyu mavi */
+    --nc: 0 0% 100%; /* neutral content */
+    --b1: 210 40% 98%; /* base 100 - çok açık mavi */
+    --bc: 221 83% 20%; /* base content */
+    --animation-btn: 0.5s;
+    --animation-input: 0.4s;
+    --btn-focus-scale: 1.03;
+    --border-radius: 0.8rem;
+    --shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
+    --animation-duration: 0.5s;
+  }
+
+  /* Ocean tema özel efektleri */
+  html[data-theme='ocean'] .btn {
+    border-radius: var(--border-radius);
+    background: linear-gradient(135deg, hsl(var(--p)), hsl(var(--s)));
+    transition: all 0.5s ease;
+  }
+
+  html[data-theme='ocean'] .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+  }
+
+  html[data-theme='ocean'] .card {
+    border-radius: var(--border-radius);
+    background: linear-gradient(135deg, hsl(var(--b1)), hsl(var(--p) / 0.1));
+  }
+
+  /* Sunset Teması */
+  html[data-theme='sunset'] {
+    --p: 25 95% 53%; /* primary - turuncu */
+    --pc: 0 0% 100%; /* primary content */
+    --s: 330 81% 60%; /* secondary - pembe */
+    --sc: 0 0% 100%; /* secondary content */
+    --a: 48 96% 53%; /* accent - sarı */
+    --ac: 0 0% 0%; /* accent content */
+    --n: 25 95% 20%; /* neutral - koyu turuncu */
+    --nc: 0 0% 100%; /* neutral content */
+    --b1: 25 95% 97%; /* base 100 - çok açık turuncu */
+    --bc: 25 95% 20%; /* base content */
+    --animation-btn: 0.6s;
+    --animation-input: 0.5s;
+    --btn-focus-scale: 1.04;
+    --border-radius: 1.2rem;
+    --shadow: 0 4px 6px -1px rgba(251, 146, 60, 0.3);
+    --animation-duration: 0.6s;
+  }
+
+  /* Sunset tema özel efektleri */
+  html[data-theme='sunset'] .btn {
+    border-radius: var(--border-radius);
+    background: linear-gradient(135deg, hsl(var(--p)), hsl(var(--s)));
+    transition: all 0.6s ease;
+  }
+
+  html[data-theme='sunset'] .btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(251, 146, 60, 0.4);
+  }
+
+  html[data-theme='sunset'] .card {
+    border-radius: var(--border-radius);
+    background: linear-gradient(135deg, hsl(var(--b1)), hsl(var(--p) / 0.1));
+  }
+
+  /* Custom Tema */
+  html[data-theme='custom'] {
+    --animation-btn: 0.3s;
+    --animation-input: 0.2s;
+    --btn-focus-scale: 1.05;
+    --animation-duration: 0.3s;
+  }
+
+  /* Neon efekt sınıfı */
+  .neon-effect .btn {
+    border: 2px solid currentColor;
+    box-shadow: 0 0 10px currentColor;
+    transition: all 0.3s ease;
+  }
+
+  .neon-effect .btn:hover {
+    box-shadow: 0 0 20px currentColor, 0 0 30px currentColor;
+    transform: scale(1.05);
+  }
+
+  .neon-effect .card {
+    border: 1px solid hsl(var(--a));
+    box-shadow: 0 0 15px hsl(var(--a) / 0.3);
+  }
+
+  .neon-effect .card:hover {
+    box-shadow: 0 0 25px hsl(var(--a) / 0.5);
+    transform: translateY(-2px);
   }
 }
 
