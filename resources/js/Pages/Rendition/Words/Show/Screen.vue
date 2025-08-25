@@ -1,89 +1,146 @@
 <template>
   <CheckScreen>
-    <div class="px-5 transition-all duration-200 dark:border-gray-700 dark:bg-base-100">
-      <div class="mb-4 flex items-center justify-between">
-        <div class="flex-1">
-          <h1 class="p-5 text-2xl font-bold">
-            {{ props.pack?.name || 'Kelimeler' }}
-            <span class="badge badge-outline ml-2">{{ props.words?.length || 0 }} kelime</span>
-          </h1>
-        </div>
-        <div class="flex gap-2">
-          <Link
-            v-if="isLoggedIn && props.pack"
-            :href="route('rendition.language-packs.edit', props.pack.id)"
-            class="btn btn-outline btn-sm"
-          >
-            Paketi Düzenle
-          </Link>
-          <Link v-if="isLoggedIn" :href="route('rendition.words.create')" class="btn btn-primary btn-sm">
-            Yeni Kelime
-          </Link>
+    <div class="container mx-auto max-w-7xl px-4 py-6">
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-3xl font-bold tracking-tight">
+              {{ props.pack?.name || 'Kelimeler' }}
+            </h1>
+            <p class="text-muted-foreground mt-1">{{ props.words?.length || 0 }} kelime bulundu</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <Link
+              v-if="isLoggedIn && props.pack"
+              :href="route('rendition.language-packs.edit', props.pack.id)"
+              class="ring-offset-background focus-visible:ring-ring border-input bg-background hover:text-accent-foreground inline-flex h-9 items-center justify-center rounded-md border px-3 text-sm font-medium transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            >
+              Paketi Düzenle
+            </Link>
+            <Link
+              v-if="isLoggedIn"
+              :href="route('rendition.words.create')"
+              class="ring-offset-background focus-visible:ring-ring text-primary-foreground hover:bg-primary/90 inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            >
+              Yeni Kelime
+            </Link>
+          </div>
         </div>
       </div>
 
-      <!-- Filtreler -->
-      <div v-if="!showGameInterface" class="mb-4 flex flex-wrap gap-3">
-        <!-- Arama Kutusu -->
-        <div class="form-control min-w-[200px] flex-1">
-          <div class="input-group">
-            <input
-              type="text"
-              v-model="searchQuery"
-              placeholder="Kelime ara..."
-              class="input-bordered input input-sm w-52"
-              @keyup.enter="filterWords"
+      <!-- Search and Filters -->
+      <div class="mb-6 space-y-4">
+        <!-- Search -->
+        <div class="relative max-w-sm">
+          <svg
+            class="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
             />
-            <button class="btn btn-sm btn-square mx-5" @click="filterWords">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
+          </svg>
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Kelime ara..."
+            class="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 py-1 pl-8 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50"
+            @keyup.enter="filterWords"
+          />
+        </div>
+
+        <!-- Game Filters -->
+        <div class="space-y-3">
+          <div class="flex flex-wrap gap-2">
+            <button
+              @click="startGame('multiple-choice')"
+              class="ring-offset-background focus-visible:ring-ring border-input bg-background hover:text-accent-foreground inline-flex h-8 items-center justify-center rounded-md border px-3 text-sm font-medium transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+              :disabled="!hasEnoughWords"
+            >
+              Çoktan Seçmeli
+            </button>
+            <button
+              @click="startGame('fill-in-the-blank')"
+              class="ring-offset-background focus-visible:ring-ring border-input bg-background hover:text-accent-foreground inline-flex h-8 items-center justify-center rounded-md border px-3 text-sm font-medium transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+              :disabled="!hasEnoughWords"
+            >
+              Boşluk Doldurma
+            </button>
+            <button
+              @click="startGame('word-completion')"
+              class="ring-offset-background focus-visible:ring-ring border-input bg-background hover:text-accent-foreground inline-flex h-8 items-center justify-center rounded-md border px-3 text-sm font-medium transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+              :disabled="!hasEnoughWords"
+            >
+              Kelime Tamamlama
+            </button>
+          </div>
+
+          <!-- Simple Filters -->
+          <div class="flex flex-wrap gap-2">
+            <select
+              v-model="gameConfig.smartFilter"
+              class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-8 items-center justify-center rounded-md border px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            >
+              <option value="all">Tüm Kelimeler</option>
+              <option value="never-answered">Hiç Cevaplanmamış</option>
+              <option value="most-mistakes">Çok Hata Yapılan</option>
+              <option value="flagged">İşaretlenen</option>
+              <option value="unlearned">Öğrenilmemiş</option>
+              <option value="nouns">İsimler</option>
+              <option value="verbs">Fiiller</option>
+              <option value="adjectives">Sıfatlar</option>
+            </select>
+
+            <select
+              v-model="gameConfig.questionCount"
+              class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-8 items-center justify-center rounded-md border px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            >
+              <option value="5">5 Soru</option>
+              <option value="10">10 Soru</option>
+              <option value="15">15 Soru</option>
+              <option value="20">20 Soru</option>
+              <option value="25">25 Soru</option>
+            </select>
+
+            <button
+              @click="resetGameConfig"
+              class="ring-offset-background focus-visible:ring-ring border-input bg-background hover:text-accent-foreground inline-flex h-8 items-center justify-center rounded-md border px-3 text-sm font-medium transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            >
+              Sıfırla
+            </button>
+          </div>
+
+          <!-- Filter Info -->
+          <div v-if="gameConfig.smartFilter !== 'all'" class="bg-muted/50 rounded-md border p-3">
+            <div class="flex items-center gap-2 text-sm">
+              <svg class="text-muted-foreground h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-            </button>
+              <span class="text-muted-foreground">
+                {{ getFilterDescription(gameConfig.smartFilter).description }}
+                <span class="font-medium">{{ filteredWordsForGame.length }} kelime</span> bulundu.
+              </span>
+            </div>
           </div>
         </div>
-
-        <!-- Tür Filtresi
-        <select
-          v-model="filterType"
-          class="select-bordered select select-sm min-w-[150px] flex-1"
-          @change="filterWords"
-        >
-          <option value="">Tüm Türler</option>
-          <option value="noun">İsim</option>
-          <option value="verb">Fiil</option>
-          <option value="adjective">Sıfat</option>
-          <option value="adverb">Zarf</option>
-        </select> -->
-
-        <!-- Durum Filtresi 
-        <select
-          v-model="filterStatus"
-          class="select-bordered select select-sm min-w-[150px] flex-1"
-          @change="filterWords"
-        >
-          <option value="">Tüm Durumlar</option>
-          <option value="0">Öğrenilmedi</option>
-          <option value="1">Öğreniliyor</option>
-          <option value="2">Öğrenildi</option>
-        </select>-->
       </div>
 
-      <!-- Oyun Komponentleri -->
+      <!-- Game Interface -->
       <transition name="game-transition" mode="out-in">
-        <div v-if="showGameInterface" key="game" class="my-20">
+        <div v-if="showGameInterface" key="game" class="my-8">
           <div v-if="loadingGame" class="flex h-60 items-center justify-center">
-            <span class="loading loading-spinner loading-lg"></span>
+            <div class="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
           </div>
 
           <MultipleChoice
@@ -112,663 +169,292 @@
           />
         </div>
 
-        <!-- Kelimeler Görünümü -->
+        <!-- Words Table -->
         <div v-else key="wordList">
-          <!-- Oyun Ayarları -->
-          <div class="mb-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-            <!-- Oyun Butonları -->
-            <div class="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <button
-                @click="startGame('multiple-choice')"
-                class="group relative flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-all hover:border-blue-500 hover:shadow-md"
-                :disabled="!hasEnoughWords"
-              >
-                <div
-                  class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-500 transition-all group-hover:bg-blue-100"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+          <div class="rounded-md border">
+            <div class="relative w-full overflow-auto">
+              <table class="w-full caption-bottom text-sm">
+                <thead class="[&_tr]:border-b">
+                  <tr class="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors">
+                    <th
+                      class="text-muted-foreground h-10 px-2 text-left align-middle font-medium [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+                    >
+                      Kelime
+                    </th>
+                    <th
+                      class="text-muted-foreground h-10 px-2 text-left align-middle font-medium [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+                    >
+                      Anlam
+                    </th>
+                    <th
+                      class="text-muted-foreground h-10 px-2 text-left align-middle font-medium [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+                    >
+                      İşlem
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="[&_tr:last-child]:border-0">
+                  <tr
+                    v-if="isLoading"
+                    class="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                    />
-                  </svg>
-                </div>
-                <div class="text-left">
-                  <h3 class="font-medium text-gray-900">Çoktan Seçmeli</h3>
-                  <p class="text-sm text-gray-500">Doğru cevabı seçin</p>
-                </div>
-              </button>
-
-              <button
-                @click="startGame('fill-in-the-blank')"
-                class="group relative flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-all hover:border-green-500 hover:shadow-md"
-                :disabled="!hasEnoughWords"
-              >
-                <div
-                  class="flex h-12 w-12 items-center justify-center rounded-full bg-green-50 text-green-500 transition-all group-hover:bg-green-100"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+                    <td colspan="3" class="p-4 text-center">
+                      <div
+                        class="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"
+                      ></div>
+                    </td>
+                  </tr>
+                  <tr
+                    v-else-if="displayedWords.length === 0"
+                    class="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                    />
-                  </svg>
-                </div>
-                <div class="text-left">
-                  <h3 class="font-medium text-gray-900">Boşluk Doldurma</h3>
-                  <p class="text-sm text-gray-500">Eksik kelimeyi yazın</p>
-                </div>
-              </button>
-
-              <button
-                @click="startGame('word-completion')"
-                class="group relative flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-all hover:border-purple-500 hover:shadow-md"
-                :disabled="!hasEnoughWords"
-              >
-                <div
-                  class="flex h-12 w-12 items-center justify-center rounded-full bg-purple-50 text-purple-500 transition-all group-hover:bg-purple-100"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+                    <td colspan="3" class="text-muted-foreground p-4 text-center">Sonuç bulunamadı</td>
+                  </tr>
+                  <tr
+                    v-for="word in displayedWords"
+                    :key="word.id"
+                    class="hover:bg-muted/50 data-[state=selected]:bg-muted cursor-pointer border-b transition-colors"
+                    @click="showWordDetails(word)"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
-                    />
-                  </svg>
-                </div>
-                <div class="text-left">
-                  <h3 class="font-medium text-gray-900">Kelime Tamamlama</h3>
-                  <p class="text-sm text-gray-500">Eksik harfleri tamamlayın</p>
-                </div>
-              </button>
-            </div>
-
-            <!-- Kelime Filtreleri -->
-            <div class="mt-6">
-              <!-- Filtre Toggle Butonu -->
-              <div class="flex items-center justify-between mb-4">
-                <button 
-                  @click="showFilters = !showFilters" 
-                  class="btn btn-outline btn-sm flex items-center gap-2"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z" />
-                  </svg>
-                  {{ showFilters ? 'Filtreleri Gizle' : 'Filtreleri Göster' }}
-                </button>
-                <button @click="resetGameConfig" class="btn btn-ghost btn-sm">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  Sıfırla
-                </button>
-              </div>
-
-              <!-- Filtre İçeriği -->
-              <div v-if="showFilters" class="space-y-4">
-                <!-- Akıllı Filtreler -->
-                <div class="bg-base-200 p-4 rounded-lg">
-                  <h4 class="font-semibold text-base-content mb-3">🧠 Akıllı Filtreler</h4>
-                  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                    <label class="btn btn-sm" :class="{ 'btn-primary': gameConfig.smartFilter === 'never-answered', 'btn-outline': gameConfig.smartFilter !== 'never-answered' }">
-                      <input type="radio" v-model="gameConfig.smartFilter" value="never-answered" class="hidden" />
-                      🆕 Hiç Cevaplanmamış ({{ wordCounts.neverAnswered || 0 }})
-                    </label>
-                    <label class="btn btn-sm" :class="{ 'btn-primary': gameConfig.smartFilter === 'most-mistakes', 'btn-outline': gameConfig.smartFilter !== 'most-mistakes' }">
-                      <input type="radio" v-model="gameConfig.smartFilter" value="most-mistakes" class="hidden" />
-                      ❌ Çok Hata ({{ wordCounts.mostMistakes || 0 }})
-                    </label>
-                    <label class="btn btn-sm" :class="{ 'btn-primary': gameConfig.smartFilter === 'flagged', 'btn-outline': gameConfig.smartFilter !== 'flagged' }">
-                      <input type="radio" v-model="gameConfig.smartFilter" value="flagged" class="hidden" />
-                      ⭐ İşaretlenen ({{ wordCounts.flagged || 0 }})
-                    </label>
-                    <label class="btn btn-sm" :class="{ 'btn-primary': gameConfig.smartFilter === 'recently-learned', 'btn-outline': gameConfig.smartFilter !== 'recently-learned' }">
-                      <input type="radio" v-model="gameConfig.smartFilter" value="recently-learned" class="hidden" />
-                      🕒 Son Öğrenilen ({{ wordCounts.recentlyLearned || 0 }})
-                    </label>
-                    <label class="btn btn-sm" :class="{ 'btn-primary': gameConfig.smartFilter === 'unlearned', 'btn-outline': gameConfig.smartFilter !== 'unlearned' }">
-                      <input type="radio" v-model="gameConfig.smartFilter" value="unlearned" class="hidden" />
-                      📖 Öğrenilmemiş ({{ wordCounts.status?.[0] || 0 }})
-                    </label>
-                  </div>
-                </div>
-
-                <!-- Başarı Oranı Filtresi -->
-                <div class="bg-base-200 p-4 rounded-lg">
-                  <h4 class="font-semibold text-base-content mb-3">📊 Başarı Oranı Filtresi</h4>
-                  <div class="space-y-3">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                      <label class="btn btn-sm whitespace-nowrap" :class="{ 'btn-primary': gameConfig.smartFilter === 'success-rate', 'btn-outline': gameConfig.smartFilter !== 'success-rate' }">
-                        <input type="radio" v-model="gameConfig.smartFilter" value="success-rate" class="hidden" />
-                        Başarı Oranı Altında
-                      </label>
-                      <div class="flex-1 w-full sm:w-auto">
-                        <input 
-                          type="range" 
-                          v-model="gameConfig.successRateThreshold" 
-                          min="0" 
-                          max="100" 
-                          step="5"
-                          class="range range-primary range-sm w-full"
-                          :disabled="gameConfig.smartFilter !== 'success-rate'"
-                        />
+                    <td class="p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                      <div class="font-medium">{{ word.word }}</div>
+                    </td>
+                    <td class="p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                      <div class="text-muted-foreground">{{ getPrimaryMeaning(word) }}</div>
+                    </td>
+                    <td class="p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                      <div class="flex items-center gap-2">
+                        <button
+                          class="ring-offset-background focus-visible:ring-ring hover:text-accent-foreground inline-flex h-8 w-8 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                        >
+                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                            />
+                          </svg>
+                        </button>
+                        <Link
+                          v-if="isLoggedIn"
+                          :href="route('rendition.words.edit', word.id)"
+                          class="ring-offset-background focus-visible:ring-ring hover:text-accent-foreground inline-flex h-8 w-8 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                          @click.stop
+                        >
+                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                            />
+                          </svg>
+                        </Link>
                       </div>
-                      <span class="text-sm font-medium min-w-[3rem] text-center">%{{ gameConfig.successRateThreshold }}</span>
-                    </div>
-                    <div class="text-xs text-base-content/70">
-                      Başarı oranı %{{ gameConfig.successRateThreshold }}'in altında olan kelimeler gösterilecek
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Kelime Türü Filtreleri -->
-                <div class="bg-base-200 p-4 rounded-lg">
-                  <h4 class="font-semibold text-base-content mb-3">📝 Kelime Türü</h4>
-                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    <label class="btn btn-sm" :class="{ 'btn-primary': gameConfig.smartFilter === 'nouns', 'btn-outline': gameConfig.smartFilter !== 'nouns' }">
-                      <input type="radio" v-model="gameConfig.smartFilter" value="nouns" class="hidden" />
-                      📝 İsimler ({{ wordCounts.types?.noun || 0 }})
-                    </label>
-                    <label class="btn btn-sm" :class="{ 'btn-primary': gameConfig.smartFilter === 'verbs', 'btn-outline': gameConfig.smartFilter !== 'verbs' }">
-                      <input type="radio" v-model="gameConfig.smartFilter" value="verbs" class="hidden" />
-                      🏃 Fiiller ({{ wordCounts.types?.verb || 0 }})
-                    </label>
-                    <label class="btn btn-sm" :class="{ 'btn-primary': gameConfig.smartFilter === 'adjectives', 'btn-outline': gameConfig.smartFilter !== 'adjectives' }">
-                      <input type="radio" v-model="gameConfig.smartFilter" value="adjectives" class="hidden" />
-                      🎨 Sıfatlar ({{ wordCounts.types?.adjective || 0 }})
-                    </label>
-                  </div>
-                </div>
-
-                <!-- Zorluk Seviyesi Filtreleri -->
-                <div class="bg-base-200 p-4 rounded-lg">
-                  <h4 class="font-semibold text-base-content mb-3">🎯 Zorluk Seviyesi</h4>
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <label class="btn btn-sm" :class="{ 'btn-primary': gameConfig.smartFilter === 'easy', 'btn-outline': gameConfig.smartFilter !== 'easy' }">
-                      <input type="radio" v-model="gameConfig.smartFilter" value="easy" class="hidden" />
-                      😊 Kolay ({{ (wordCounts.difficulty?.[1] || 0) + (wordCounts.difficulty?.[2] || 0) }})
-                    </label>
-                    <label class="btn btn-sm" :class="{ 'btn-primary': gameConfig.smartFilter === 'difficult', 'btn-outline': gameConfig.smartFilter !== 'difficult' }">
-                      <input type="radio" v-model="gameConfig.smartFilter" value="difficult" class="hidden" />
-                      🔥 Zor ({{ (wordCounts.difficulty?.[3] || 0) + (wordCounts.difficulty?.[4] || 0) }})
-                    </label>
-                  </div>
-                </div>
-
-                <!-- Tüm Kelimeler -->
-                <div class="bg-base-200 p-4 rounded-lg">
-                  <label class="btn btn-sm w-full" :class="{ 'btn-primary': gameConfig.smartFilter === 'all', 'btn-outline': gameConfig.smartFilter !== 'all' }">
-                    <input type="radio" v-model="gameConfig.smartFilter" value="all" class="hidden" />
-                    📚 Tüm Kelimeler ({{ props.words?.length || 0 }})
-                  </label>
-                </div>
-              </div>
-
-              <!-- Seçili Filtre Bilgilendirmesi -->
-              <div v-if="gameConfig.smartFilter !== 'all'" class="mt-4 p-4 bg-info/10 border border-info/20 rounded-lg">
-                <div class="flex items-start gap-3">
-                  <div class="text-info">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div class="flex-1">
-                    <h5 class="font-semibold text-base-content mb-1">{{ getFilterDescription(gameConfig.smartFilter).title }}</h5>
-                    <p class="text-sm text-base-content/70">{{ getFilterDescription(gameConfig.smartFilter).description }}</p>
-                    <div class="mt-2 text-xs text-base-content/60">
-                      <strong>Filtreleme Kriteri:</strong> {{ getFilterDescription(gameConfig.smartFilter).criteria }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Oyun Ayarları -->
-              <div class="mt-6 p-4 bg-base-200 rounded-lg">
-                <h4 class="font-semibold text-base-content mb-3">🎮 Oyun Ayarları</h4>
-                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                  <div class="form-control w-full sm:w-auto">
-                    <label class="label">
-                      <span class="label-text font-medium">Soru Sayısı</span>
-                    </label>
-                    <select v-model="gameConfig.questionCount" class="select select-bordered select-sm w-full sm:w-auto">
-                      <option v-if="filteredWordsForGame.length < 60" :value="filteredWordsForGame.length">
-                        Tümü ({{ filteredWordsForGame.length }})
-                      </option>
-                      <option value="5">5 Soru</option>
-                      <option value="10">10 Soru</option>
-                      <option value="15">15 Soru</option>
-                      <option value="20">20 Soru</option>
-                      <option value="25">25 Soru</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-
-          </div>
-
-          <!-- Kelime Tablosu -->
-          <div class="mt-6">
-            <!-- Tablo Başlığı -->
-            <div class="flex items-center justify-between mb-4">
-              <div class="flex items-center gap-3">
-                <h3 class="text-lg font-bold text-base-content">📋 Kelime Listesi</h3>
-                <div class="badge badge-primary badge-lg">
-                  {{ filteredWordsForGame.length }} kelime
-                </div>
-                <div v-if="gameConfig.smartFilter !== 'all'" class="badge badge-secondary badge-sm">
-                  {{ getSmartFilterLabel(gameConfig.smartFilter) }} filtresi aktif
-                </div>
-              </div>
-              <div class="flex gap-2">
-                <button 
-                  @click="exportFilteredWords"
-                  class="btn btn-success btn-sm"
-                  :disabled="filteredWordsForGame.length === 0"
-                >
-                  <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  Dışa Aktar
-                </button>
-              </div>
-            </div>
-
-            <!-- Durum Mesajları -->
-            <div v-if="filteredWordsForGame.length === 0" class="alert alert-warning mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
-              <span>Seçili filtrelerle eşleşen kelime bulunamadı. Lütfen filtreleri değiştirin.</span>
-            </div>
-            
-            <div v-else-if="filteredWordsForGame.length < 5" class="alert alert-info mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-              <span>Seçili filtrelerle sadece {{ filteredWordsForGame.length }} kelime bulundu. Oyun için en az 5 kelime önerilir.</span>
-            </div>
-            
-            <div v-else class="alert alert-success mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>{{ filteredWordsForGame.length }} kelime hazır! Oyunu başlatabilirsiniz.</span>
-            </div>
-
-            <!-- Tablo -->
-            <div class="card bg-base-100 shadow-sm">
-              <div class="card-body p-0">
-                <div class="overflow-x-auto">
-                  <table class="table table-zebra w-full">
-                    <thead>
-                      <tr>
-                        <th class="text-left">Kelime</th>
-                        <th class="text-left">Anlam</th>
-                        <th class="text-center">
-                          <div class="flex items-center justify-center gap-2">
-                            Tür
-                            <button
-                              class="btn btn-ghost btn-xs"
-                              @click="sortTable('type')"
-                              :class="{
-                                'text-primary': sortState.type !== 'none',
-                                'opacity-50': sortState.type === 'none',
-                              }"
-                            >
-                              <svg
-                                v-if="sortState.type === 'none'"
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-4 w-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  stroke-width="2"
-                                  d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
-                                />
-                              </svg>
-                              <svg
-                                v-else-if="sortState.type === 'asc'"
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-4 w-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-                              </svg>
-                              <svg
-                                v-else
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-4 w-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                              </svg>
-                            </button>
-                          </div>
-                        </th>
-                        <th class="text-center">Zorluk</th>
-                        <th class="text-center">Durum</th>
-                        <th class="text-center">
-                          <div class="flex items-center justify-center gap-2">
-                            Başarı
-                            <button
-                              class="btn btn-ghost btn-xs"
-                              @click="sortTable('success')"
-                              :class="{
-                                'text-primary': sortState.success !== 'none',
-                                'opacity-50': sortState.success === 'none',
-                              }"
-                            >
-                              <svg
-                                v-if="sortState.success === 'none'"
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-4 w-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  stroke-width="2"
-                                  d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
-                                />
-                              </svg>
-                              <svg
-                                v-else-if="sortState.success === 'asc'"
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-4 w-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-                              </svg>
-                              <svg
-                                v-else
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-4 w-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                              </svg>
-                            </button>
-                          </div>
-                        </th>
-                        <th class="text-center">İşlem</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-if="isLoading">
-                        <td colspan="6" class="text-center py-8">
-                          <span class="loading loading-spinner loading-md"></span>
-                        </td>
-                      </tr>
-                      <tr v-else-if="displayedWords.length === 0">
-                        <td colspan="6" class="text-center py-8">
-                          <div class="text-base-content/70">Sonuç bulunamadı</div>
-                        </td>
-                      </tr>
-                      <tr 
-                        v-for="word in displayedWords" 
-                        :key="word.id"
-                        class="hover:bg-base-200 cursor-pointer"
-                        @click="showWordDetails(word)"
-                      >
-                        <td class="font-semibold text-base-content">{{ word.word }}</td>
-                        <td class="text-base-content/80">{{ getPrimaryMeaning(word) }}</td>
-                        <td class="text-center">
-                          <span class="badge badge-outline badge-sm">{{ getWordTypeLabel(word.type) }}</span>
-                        </td>
-                        <td class="text-center">
-                          <span class="badge badge-sm" :class="getDifficultyBadgeClass(word.difficulty_level)">
-                            {{ getDifficultyLabel(word.difficulty_level) }}
-                          </span>
-                        </td>
-                        <td class="text-center">
-                          <span class="badge badge-sm" :class="getLearningStatusBadgeClass(word.learning_status)">
-                            {{ getLearningStatusLabel(word.learning_status) }}
-                          </span>
-                        </td>
-                        <td class="text-center">
-                          <span v-if="word.review_count > 0" class="badge badge-sm" :class="getSuccessRateBadgeClass(calculateSuccessRate(word).rate)">
-                            {{ calculateSuccessRate(word).label }}
-                          </span>
-                          <span v-else class="text-xs text-base-content/50">-</span>
-                        </td>
-                        <td class="text-center">
-                          <div class="flex gap-1 justify-center">
-                            <button class="btn btn-ghost btn-xs">
-                              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                              </svg>
-                            </button>
-                            <Link v-if="isLoggedIn" :href="route('rendition.words.edit', word.id)" class="btn btn-ghost btn-xs">
-                              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
-                            </Link>
-                          </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
           <!-- Pagination -->
-          <div v-if="filteredWordsForGame.length > perPage" class="mt-4 flex justify-between">
-            <div>
-              <span class="text-sm opacity-70">
-                {{ paginationInfo }}
-              </span>
+          <div v-if="filteredWordsForGame.length > perPage" class="mt-4 flex items-center justify-between">
+            <div class="text-muted-foreground text-sm">
+              {{ paginationInfo }}
             </div>
-            <div class="join">
-              <button class="btn btn-sm join-item" :disabled="currentPage <= 1" @click="changePage(currentPage - 1)">
-                «
-              </button>
-              <button class="btn btn-sm join-item">{{ currentPage }}</button>
+            <div class="flex items-center space-x-2">
               <button
-                class="btn btn-sm join-item"
-                :disabled="currentPage >= totalPages"
-                @click="changePage(currentPage + 1)"
+                @click="changePage(currentPage - 1)"
+                :disabled="currentPage <= 1"
+                class="ring-offset-background focus-visible:ring-ring border-input bg-background hover:text-accent-foreground inline-flex h-8 items-center justify-center rounded-md border px-3 text-sm font-medium transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
               >
-                »
+                Önceki
+              </button>
+              <span class="text-sm font-medium">{{ currentPage }}</span>
+              <button
+                @click="changePage(currentPage + 1)"
+                :disabled="currentPage >= totalPages"
+                class="ring-offset-background focus-visible:ring-ring border-input bg-background hover:text-accent-foreground inline-flex h-8 items-center justify-center rounded-md border px-3 text-sm font-medium transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+              >
+                Sonraki
               </button>
             </div>
           </div>
 
-          <div v-if="props.words?.length === 0" class="alert alert-info mt-6">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              class="h-6 w-6 shrink-0 stroke-current"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              ></path>
-            </svg>
-            <span>Bu pakette kelime bulunmamaktadır.</span>
-          </div>
-
-          <div v-else-if="filteredWordsForGame.length < 5" class="alert alert-warning mt-6">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              class="h-6 w-6 shrink-0 stroke-current"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              ></path>
-            </svg>
-            <span>Seçili filtrelerle yeterli kelime bulunamadı. En az 5 kelime gerekiyor.</span>
+          <!-- Empty State -->
+          <div v-if="props.words?.length === 0" class="mt-8 text-center">
+            <div class="text-muted-foreground mx-auto h-12 w-12">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <h3 class="mt-4 text-lg font-semibold">Kelime bulunamadı</h3>
+            <p class="text-muted-foreground mt-2">Bu pakette henüz kelime bulunmamaktadır.</p>
           </div>
         </div>
       </transition>
     </div>
 
-    <!-- Kelime Detay Modalı -->
-    <div v-if="selectedWord" class="modal modal-open">
-      <div class="modal-box max-w-2xl">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="font-bold text-lg text-base-content">{{ selectedWord.word }}</h3>
-          <button @click="selectedWord = null" class="btn btn-ghost btn-sm btn-circle">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+    <!-- Word Detail Modal -->
+    <div v-if="selectedWord" class="fixed inset-0 z-50 bg-white/80 dark:bg-black/80">
+      <div
+        class="fixed left-[50%] top-[50%] z-50 grid w-full max-w-2xl translate-x-[-50%] translate-y-[-50%] gap-4 border bg-white p-6 shadow-xl duration-200 dark:bg-gray-900 sm:rounded-xl"
+      >
+        <!-- Modal Header -->
+        <div class="flex flex-col space-y-1.5 text-center sm:text-left">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold leading-none tracking-tight">{{ selectedWord.word }}</h3>
+            <button
+              @click="selectedWord = null"
+              class="ring-offset-background focus:ring-ring data-[state=open]:text-muted-foreground rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent"
+            >
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <p class="text-muted-foreground text-sm">
+            {{ getWordTypeLabel(selectedWord.type) }} • {{ getDifficultyLabel(selectedWord.difficulty_level) }}
+          </p>
         </div>
 
+        <!-- Modal Content -->
         <div class="space-y-4">
-          <!-- Anlamlar -->
+          <!-- Meanings -->
           <div>
-            <h4 class="font-semibold text-base-content mb-2">Anlamlar</h4>
-            <div class="space-y-2">
-              <div 
-                v-for="(meaning, index) in selectedWord.meanings" 
+            <h4 class="text-sm font-medium leading-none">Anlamlar</h4>
+            <div class="mt-2 space-y-2">
+              <div
+                v-for="(meaning, index) in selectedWord.meanings"
                 :key="index"
-                class="flex items-center gap-2 p-2 rounded-lg"
-                :class="meaning.is_primary ? 'bg-primary/10 border border-primary/20' : 'bg-base-200'"
+                class="flex items-start gap-3 rounded-md border p-3"
+                :class="meaning.is_primary ? 'border-primary/20 bg-primary/5' : ''"
               >
-                <span class="text-sm font-medium">{{ index + 1 }}.</span>
-                <span class="text-base-content">{{ meaning.meaning }}</span>
-                <span v-if="meaning.is_primary" class="badge badge-primary badge-xs">Birincil</span>
+                <span
+                  class="bg-muted flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-medium"
+                >
+                  {{ index + 1 }}
+                </span>
+                <div class="min-w-0 flex-1">
+                  <span class="text-sm">{{ meaning.meaning }}</span>
+                  <span
+                    v-if="meaning.is_primary"
+                    class="text-primary-foreground ml-2 inline-flex items-center rounded-full bg-primary px-2 py-1 text-xs font-medium"
+                  >
+                    Birincil
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Kelime Bilgileri -->
+          <!-- Stats -->
           <div class="grid grid-cols-2 gap-4">
-            <div>
-              <h4 class="font-semibold text-base-content mb-2">Temel Bilgiler</h4>
-              <div class="space-y-2 text-sm">
+            <div class="rounded-md border p-3">
+              <h4 class="text-sm font-medium leading-none">Öğrenme Durumu</h4>
+              <div class="text-muted-foreground mt-2 space-y-1 text-sm">
                 <div class="flex justify-between">
-                  <span class="text-base-content/70">Tür:</span>
-                  <span class="text-base-content">{{ getWordTypeLabel(selectedWord.type) }}</span>
+                  <span>Durum:</span>
+                  <span class="font-medium">{{ getLearningStatusLabel(selectedWord.learning_status) }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-base-content/70">Zorluk:</span>
-                  <span class="badge badge-sm" :class="getDifficultyBadgeClass(selectedWord.difficulty_level)">
-                    {{ getDifficultyLabel(selectedWord.difficulty_level) }}
-                  </span>
+                  <span>Toplam:</span>
+                  <span class="font-medium">{{ selectedWord.review_count || 0 }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-base-content/70">Durum:</span>
-                  <span class="badge badge-sm" :class="getLearningStatusBadgeClass(selectedWord.learning_status)">
-                    {{ getLearningStatusLabel(selectedWord.learning_status) }}
-                  </span>
+                  <span>Yanlış:</span>
+                  <span class="font-medium">{{ selectedWord.incorrect_count || 0 }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-base-content/70">Öne Çıkar:</span>
-                  <span class="text-base-content">{{ selectedWord.is_flagged ? 'Evet' : 'Hayır' }}</span>
+                  <span>Başarı:</span>
+                  <span class="font-medium">{{ calculateSuccessRate(selectedWord).label }}</span>
                 </div>
               </div>
             </div>
 
-            <div>
-              <h4 class="font-semibold text-base-content mb-2">İstatistikler</h4>
-              <div class="space-y-2 text-sm">
-                <div class="flex justify-between">
-                  <span class="text-base-content/70">Toplam Sorulma:</span>
-                  <span class="text-base-content">{{ selectedWord.review_count || 0 }}</span>
+            <div class="rounded-md border p-3">
+              <h4 class="text-sm font-medium leading-none">Diğer Bilgiler</h4>
+              <div class="text-muted-foreground mt-2 space-y-1 text-sm">
+                <div v-if="selectedWord.synonyms && selectedWord.synonyms.length > 0">
+                  <span class="font-medium">Eş Anlamlılar:</span>
+                  <div class="mt-1 flex flex-wrap gap-1">
+                    <span
+                      v-for="synonym in selectedWord.synonyms"
+                      :key="synonym"
+                      class="bg-muted inline-flex items-center rounded-md px-2 py-1 text-xs"
+                    >
+                      {{ typeof synonym === 'object' ? synonym.synonym : synonym }}
+                    </span>
+                  </div>
                 </div>
-                <div class="flex justify-between">
-                  <span class="text-base-content/70">Yanlış Sayısı:</span>
-                  <span class="text-base-content">{{ selectedWord.incorrect_count || 0 }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-base-content/70">Başarı Oranı:</span>
-                  <span class="badge badge-sm" :class="getSuccessRateBadgeClass(calculateSuccessRate(selectedWord).rate)">
-                    {{ calculateSuccessRate(selectedWord).label }}
-                  </span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-base-content/70">Son Güncelleme:</span>
-                  <span class="text-base-content">{{ new Date(selectedWord.updated_at).toLocaleDateString('tr-TR') }}</span>
+                <div v-if="selectedWord.flag" class="flex items-center gap-1">
+                  <svg class="h-4 w-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                    />
+                  </svg>
+                  <span class="font-medium">Öne çıkarılmış</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Örnek Cümleler -->
+          <!-- Example Sentences -->
           <div v-if="selectedWord.example_sentences && selectedWord.example_sentences.length > 0">
-            <h4 class="font-semibold text-base-content mb-2">Örnek Cümleler</h4>
-            <div class="space-y-2">
-              <div 
-                v-for="(sentence, index) in selectedWord.example_sentences" 
+            <h4 class="text-sm font-medium leading-none">Örnek Cümleler</h4>
+            <div class="mt-2 space-y-2">
+              <div
+                v-for="(sentence, index) in selectedWord.example_sentences"
                 :key="index"
-                class="p-3 bg-base-200 rounded-lg"
+                class="rounded-md border p-3"
               >
-                <div class="text-base-content font-medium">{{ sentence }}</div>
-                <div v-if="selectedWord.example_translations && selectedWord.example_translations[index]" class="text-sm text-base-content/70 mt-1">
-                  {{ selectedWord.example_translations[index] }}
+                <div class="flex items-start gap-3">
+                  <span
+                    class="bg-primary/20 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-medium text-primary"
+                  >
+                    {{ index + 1 }}
+                  </span>
+                  <div class="min-w-0 flex-1">
+                    <p class="text-sm font-medium">{{ getSentenceText(sentence) }}</p>
+                    <p v-if="getSentenceTranslation(sentence)" class="text-muted-foreground mt-1 text-xs">
+                      {{ getSentenceTranslation(sentence) }}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          <!-- Eş Anlamlılar -->
-          <div v-if="selectedWord.synonyms && selectedWord.synonyms.length > 0">
-            <h4 class="font-semibold text-base-content mb-2">Eş Anlamlılar</h4>
-            <div class="flex flex-wrap gap-2">
-              <span 
-                v-for="synonym in selectedWord.synonyms" 
-                :key="synonym"
-                class="badge badge-outline"
-              >
-                {{ synonym }}
-              </span>
             </div>
           </div>
         </div>
 
-        <div class="modal-action">
-          <button @click="selectedWord = null" class="btn btn-outline">Kapat</button>
+        <!-- Modal Footer -->
+        <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">
+          <button
+            @click="selectedWord = null"
+            class="ring-offset-background focus-visible:ring-ring border-input bg-background hover:text-accent-foreground inline-flex h-9 items-center justify-center rounded-md border px-3 text-sm font-medium transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+          >
+            Kapat
+          </button>
+          <Link
+            v-if="isLoggedIn"
+            :href="route('rendition.words.edit', selectedWord.id)"
+            class="ring-offset-background focus-visible:ring-ring text-primary-foreground hover:bg-primary/90 inline-flex h-9 items-center justify-center rounded-md bg-primary px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            @click="selectedWord = null"
+          >
+            Düzenle
+          </Link>
         </div>
       </div>
     </div>
@@ -854,23 +540,23 @@ const wordCounts = computed(() => {
   props.words.forEach((word) => {
     // Tür sayıları
     counts.types[word.type] = (counts.types[word.type] || 0) + 1;
-    
+
     // Durum sayıları
     counts.status[word.learning_status] = (counts.status[word.learning_status] || 0) + 1;
-    
+
     // Zorluk sayıları
     counts.difficulty[word.difficulty_level] = (counts.difficulty[word.difficulty_level] || 0) + 1;
-    
+
     // Hiç cevaplanmamış
     if (!word.review_count || word.review_count === 0) {
       counts.neverAnswered++;
     }
-    
+
     // Çok hata yapılanlar (3+ yanlış)
     if (word.incorrect_count && word.incorrect_count >= 3) {
       counts.mostMistakes++;
     }
-    
+
     // Az bilinenler (başarı oranı %50'den düşük)
     if (word.review_count && word.review_count > 0) {
       const successRate = ((word.review_count - (word.incorrect_count || 0)) / word.review_count) * 100;
@@ -878,12 +564,12 @@ const wordCounts = computed(() => {
         counts.leastKnown++;
       }
     }
-    
+
     // İşaretlenenler
     if (word.is_flagged) {
       counts.flagged++;
     }
-    
+
     // Son öğrenilenler (son 7 gün)
     if (word.last_reviewed_at) {
       const lastReview = new Date(word.last_reviewed_at);
@@ -965,7 +651,7 @@ const filterWords = () => {
 const filteredWords = computed(() => {
   // filteredWordsForGame'i kullan ve rastgele karıştır
   let wordsToUse = [...filteredWordsForGame.value];
-  
+
   // Son olarak rastgele karıştır
   wordsToUse = wordsToUse.sort(() => Math.random() - 0.5);
 
@@ -981,15 +667,15 @@ const filteredWordsForGame = computed(() => {
   // Akıllı filtre uygula
   switch (gameConfig.value.smartFilter) {
     case 'never-answered':
-      wordsToUse = wordsToUse.filter(word => !word.review_count || word.review_count === 0);
+      wordsToUse = wordsToUse.filter((word) => !word.review_count || word.review_count === 0);
       break;
     case 'most-mistakes':
-      wordsToUse = wordsToUse.filter(word => word.incorrect_count && word.incorrect_count >= 3);
+      wordsToUse = wordsToUse.filter((word) => word.incorrect_count && word.incorrect_count >= 3);
       // En çok hata yapılanlar en üstte
       wordsToUse.sort((a, b) => (b.incorrect_count || 0) - (a.incorrect_count || 0));
       break;
     case 'success-rate':
-      wordsToUse = wordsToUse.filter(word => {
+      wordsToUse = wordsToUse.filter((word) => {
         if (!word.review_count || word.review_count === 0) return false;
         const successRate = ((word.review_count - (word.incorrect_count || 0)) / word.review_count) * 100;
         return successRate < gameConfig.value.successRateThreshold;
@@ -1002,12 +688,12 @@ const filteredWordsForGame = computed(() => {
       });
       break;
     case 'flagged':
-      wordsToUse = wordsToUse.filter(word => word.is_flagged);
+      wordsToUse = wordsToUse.filter((word) => word.is_flagged);
       break;
     case 'recently-learned':
       const weekAgo = new Date();
       weekAgo.setDate(weekAgo.getDate() - 7);
-      wordsToUse = wordsToUse.filter(word => {
+      wordsToUse = wordsToUse.filter((word) => {
         if (!word.last_reviewed_at) return false;
         return new Date(word.last_reviewed_at) > weekAgo;
       });
@@ -1015,26 +701,26 @@ const filteredWordsForGame = computed(() => {
       wordsToUse.sort((a, b) => new Date(b.last_reviewed_at) - new Date(a.last_reviewed_at));
       break;
     case 'nouns':
-      wordsToUse = wordsToUse.filter(word => word.type === 'noun');
+      wordsToUse = wordsToUse.filter((word) => word.type === 'noun');
       break;
     case 'verbs':
-      wordsToUse = wordsToUse.filter(word => word.type === 'verb');
+      wordsToUse = wordsToUse.filter((word) => word.type === 'verb');
       break;
     case 'adjectives':
-      wordsToUse = wordsToUse.filter(word => word.type === 'adjective');
+      wordsToUse = wordsToUse.filter((word) => word.type === 'adjective');
       break;
     case 'difficult':
-      wordsToUse = wordsToUse.filter(word => word.difficulty_level >= 3);
+      wordsToUse = wordsToUse.filter((word) => word.difficulty_level >= 3);
       // En zor olanlar en üstte
       wordsToUse.sort((a, b) => b.difficulty_level - a.difficulty_level);
       break;
     case 'easy':
-      wordsToUse = wordsToUse.filter(word => word.difficulty_level <= 2);
+      wordsToUse = wordsToUse.filter((word) => word.difficulty_level <= 2);
       // En kolay olanlar en üstte
       wordsToUse.sort((a, b) => a.difficulty_level - b.difficulty_level);
       break;
     case 'unlearned':
-      wordsToUse = wordsToUse.filter(word => word.learning_status === 0);
+      wordsToUse = wordsToUse.filter((word) => word.learning_status === 0);
       break;
     case 'all':
     default:
@@ -1114,73 +800,73 @@ const getFilterDescription = (filter) => {
       return {
         title: '🆕 Hiç Cevaplanmamış Kelimeler',
         description: 'Daha önce hiç sorulmamış, henüz test edilmemiş kelimeler. Yeni başlayanlar için ideal.',
-        criteria: 'review_count = 0 olan kelimeler'
+        criteria: 'review_count = 0 olan kelimeler',
       };
     case 'most-mistakes':
       return {
         title: '❌ Çok Hata Yapılan Kelimeler',
         description: 'En çok yanlış cevaplanan kelimeler. Bu kelimeler üzerinde daha fazla çalışmanız gerekiyor.',
-        criteria: 'incorrect_count >= 3 olan kelimeler'
+        criteria: 'incorrect_count >= 3 olan kelimeler',
       };
     case 'success-rate':
       return {
         title: `📊 Başarı Oranı %${gameConfig.value.successRateThreshold} Altındaki Kelimeler`,
         description: 'Başarı oranı belirlenen eşiğin altında olan kelimeler. Bu kelimeleri tekrar etmeniz önerilir.',
-        criteria: `(doğru cevap / toplam sorulma) * 100 < ${gameConfig.value.successRateThreshold}%`
+        criteria: `(doğru cevap / toplam sorulma) * 100 < ${gameConfig.value.successRateThreshold}%`,
       };
     case 'flagged':
       return {
         title: '⭐ İşaretlenen Kelimeler',
         description: 'Öne çıkarılan, önemli olduğu düşünülen kelimeler. Özel olarak işaretlenmiş kelimeler.',
-        criteria: 'is_flagged = true olan kelimeler'
+        criteria: 'is_flagged = true olan kelimeler',
       };
     case 'recently-learned':
       return {
         title: '🕒 Son Öğrenilen Kelimeler',
         description: 'Yakın zamanda (son 7 gün içinde) öğrenilen kelimeler. Tekrar için ideal zaman.',
-        criteria: 'last_reviewed_at son 7 gün içinde olan kelimeler'
+        criteria: 'last_reviewed_at son 7 gün içinde olan kelimeler',
       };
     case 'nouns':
       return {
         title: '📝 İsim Türündeki Kelimeler',
         description: 'Sadece isim türündeki kelimeler. İsim odaklı çalışma için.',
-        criteria: 'type = "noun" olan kelimeler'
+        criteria: 'type = "noun" olan kelimeler',
       };
     case 'verbs':
       return {
         title: '🏃 Fiil Türündeki Kelimeler',
         description: 'Sadece fiil türündeki kelimeler. Fiil odaklı çalışma için.',
-        criteria: 'type = "verb" olan kelimeler'
+        criteria: 'type = "verb" olan kelimeler',
       };
     case 'adjectives':
       return {
         title: '🎨 Sıfat Türündeki Kelimeler',
         description: 'Sadece sıfat türündeki kelimeler. Sıfat odaklı çalışma için.',
-        criteria: 'type = "adjective" olan kelimeler'
+        criteria: 'type = "adjective" olan kelimeler',
       };
     case 'difficult':
       return {
         title: '🔥 Zor Seviyedeki Kelimeler',
         description: 'Zor ve çok zor seviyedeki kelimeler. İleri seviye çalışma için.',
-        criteria: 'difficulty_level >= 3 olan kelimeler'
+        criteria: 'difficulty_level >= 3 olan kelimeler',
       };
     case 'easy':
       return {
         title: '😊 Kolay Seviyedeki Kelimeler',
         description: 'Kolay ve orta seviyedeki kelimeler. Temel çalışma için.',
-        criteria: 'difficulty_level <= 2 olan kelimeler'
+        criteria: 'difficulty_level <= 2 olan kelimeler',
       };
     case 'unlearned':
       return {
         title: '📖 Öğrenilmemiş Kelimeler',
         description: 'Henüz öğrenilmemiş kelimeler. Yeni kelimeler öğrenmek için.',
-        criteria: 'learning_status = 0 olan kelimeler'
+        criteria: 'learning_status = 0 olan kelimeler',
       };
     default:
       return {
         title: '📚 Tüm Kelimeler',
         description: 'Filtre olmadan tüm kelimeler. Genel çalışma için.',
-        criteria: 'Tüm kelimeler gösteriliyor'
+        criteria: 'Tüm kelimeler gösteriliyor',
       };
   }
 };
@@ -1188,10 +874,10 @@ const getFilterDescription = (filter) => {
 // Filtrelenmiş kelimeleri dışa aktar
 const exportFilteredWords = () => {
   if (filteredWordsForGame.value.length === 0) return;
-  
+
   const csvContent = [
     ['Kelime', 'Anlam', 'Tür', 'Zorluk', 'Durum', 'Başarı Oranı', 'Toplam Sorulma', 'Yanlış Sayısı'],
-    ...filteredWordsForGame.value.map(word => [
+    ...filteredWordsForGame.value.map((word) => [
       word.word,
       getPrimaryMeaning(word),
       getWordTypeLabel(word.type),
@@ -1199,9 +885,11 @@ const exportFilteredWords = () => {
       getLearningStatusLabel(word.learning_status),
       word.review_count > 0 ? calculateSuccessRate(word).label : '-',
       word.review_count || 0,
-      word.incorrect_count || 0
-    ])
-  ].map(row => row.join(',')).join('\n');
+      word.incorrect_count || 0,
+    ]),
+  ]
+    .map((row) => row.join(','))
+    .join('\n');
 
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
@@ -1220,12 +908,10 @@ const showWordDetails = (word) => {
   selectedWord.value = word;
 };
 
-
-
 // Yeterli kelime var mı kontrol et
-const hasEnoughWords = (count) => {
-  return count >= 5;
-};
+const hasEnoughWords = computed(() => {
+  return filteredWordsForGame.value.length >= 5;
+});
 
 // Oyunu başlat
 const startGame = (gameType) => {
@@ -1447,6 +1133,21 @@ const resetGameConfig = () => {
     smartFilter: 'all',
     successRateThreshold: 50,
   };
+};
+
+// Helper function to get the sentence text
+const getSentenceText = (sentence) => {
+  if (typeof sentence === 'string') return sentence;
+  if (sentence && sentence.sentence) return sentence.sentence;
+  if (sentence && sentence.translation) return sentence.translation;
+  return '';
+};
+
+// Helper function to get the sentence translation
+const getSentenceTranslation = (sentence) => {
+  if (typeof sentence === 'string') return '';
+  if (sentence && sentence.translation) return sentence.translation;
+  return '';
 };
 </script>
 

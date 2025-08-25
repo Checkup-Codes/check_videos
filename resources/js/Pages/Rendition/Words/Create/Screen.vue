@@ -16,12 +16,12 @@
               <label class="label">
                 <span class="label-text font-semibold">Kelime</span>
               </label>
-              <input 
-                type="text" 
-                v-model="form.word" 
-                class="input input-bordered input-lg w-full" 
+              <input
+                type="text"
+                v-model="form.word"
+                class="input-bordered input input-lg w-full"
                 placeholder="Kelimeyi girin..."
-                required 
+                required
               />
               <label v-if="errors.word" class="label">
                 <span class="label-text-alt text-error">{{ errors.word }}</span>
@@ -39,7 +39,7 @@
                   <input
                     type="text"
                     v-model="meaning.meaning"
-                    class="input input-bordered w-full"
+                    class="input-bordered input w-full"
                     :placeholder="`${index + 1}. anlam`"
                     required
                   />
@@ -51,7 +51,7 @@
                         name="primaryMeaning"
                         :checked="meaning.is_primary"
                         @change="setPrimaryMeaning(index)"
-                        class="radio radio-sm radio-primary"
+                        class="radio radio-primary radio-sm"
                       />
                     </label>
                   </div>
@@ -71,16 +71,17 @@
               <label v-if="errors.meanings" class="label">
                 <span class="label-text-alt text-error">{{ errors.meanings }}</span>
               </label>
-              
+
               <!-- Anlam Ekleme Butonu -->
               <div class="mt-3">
-                <button 
-                  type="button" 
-                  @click="addMeaning" 
-                  class="btn btn-outline btn-sm w-full"
-                >
-                  <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                <button type="button" @click="addMeaning" class="btn btn-outline btn-sm w-full">
+                  <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    />
                   </svg>
                   Yeni Anlam Ekle
                 </button>
@@ -91,21 +92,31 @@
           <!-- Dil Paketleri -->
           <div class="space-y-4">
             <div class="divider">
-              <span class="text-base-content font-semibold">Dil Paketleri</span>
+              <span class="font-semibold text-base-content">Dil Paketleri</span>
             </div>
-            
+
             <div v-if="props.languagePacks.length === 0" class="alert alert-info">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                class="h-6 w-6 shrink-0 stroke-current"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
               </svg>
               <span>Henüz dil paketi bulunmamaktadır.</span>
             </div>
-            
-            <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              <div 
-                v-for="pack in props.languagePacks" 
-                :key="pack.id" 
-                class="card bg-base-200 hover:bg-base-300 transition-colors cursor-pointer"
+
+            <div v-else class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+              <div
+                v-for="pack in props.languagePacks"
+                :key="pack.id"
+                class="card cursor-pointer bg-base-200 transition-colors hover:bg-base-300"
                 :class="{ 'ring-2 ring-primary': form.language_pack_ids.includes(pack.id) }"
                 @click="togglePack(pack.id)"
               >
@@ -113,17 +124,15 @@
                   <div class="flex items-center justify-between">
                     <div>
                       <h3 class="font-semibold text-base-content">{{ pack.name }}</h3>
-                      <p class="text-sm text-base-content/70">{{ pack.description }}</p>
+                      <p class="text-base-content/70 text-sm">{{ pack.description }}</p>
                     </div>
                     <div class="badge badge-primary">{{ pack.language.toUpperCase() }}</div>
                   </div>
-                  <div class="mt-2 text-xs text-base-content/60">
-                    {{ pack.word_count || 0 }} kelime
-                  </div>
+                  <div class="text-base-content/60 mt-2 text-xs">{{ pack.word_count || 0 }} kelime</div>
                 </div>
               </div>
             </div>
-            
+
             <label v-if="errors.language_pack_ids" class="label">
               <span class="label-text-alt text-error">{{ errors.language_pack_ids }}</span>
             </label>
@@ -132,17 +141,15 @@
           <!-- Daha Fazla Seçenek -->
           <div class="collapse collapse-arrow bg-base-200">
             <input type="checkbox" v-model="showAdvancedOptions" />
-            <div class="collapse-title text-base-content font-semibold">
-              Daha Fazla Seçenek
-            </div>
+            <div class="collapse-title font-semibold text-base-content">Daha Fazla Seçenek</div>
             <div class="collapse-content">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+              <div class="grid grid-cols-1 gap-4 pt-4 md:grid-cols-2">
                 <!-- Tür -->
                 <div class="form-control w-full">
                   <label class="label">
                     <span class="label-text">Tür</span>
                   </label>
-                  <select v-model="form.type" class="select select-bordered w-full">
+                  <select v-model="form.type" class="select-bordered select w-full">
                     <option value="">Tür seçiniz</option>
                     <option value="noun">İsim (Noun)</option>
                     <option value="verb">Fiil (Verb)</option>
@@ -164,7 +171,7 @@
                   <label class="label">
                     <span class="label-text">Dil</span>
                   </label>
-                  <select v-model="form.language" class="select select-bordered w-full">
+                  <select v-model="form.language" class="select-bordered select w-full">
                     <option value="en">İngilizce (EN)</option>
                     <option value="tr">Türkçe (TR)</option>
                     <option value="de">Almanca (DE)</option>
@@ -184,7 +191,7 @@
                   <label class="label">
                     <span class="label-text">Zorluk Seviyesi</span>
                   </label>
-                  <select v-model="form.difficulty_level" class="select select-bordered w-full">
+                  <select v-model="form.difficulty_level" class="select-bordered select w-full">
                     <option :value="1">Kolay</option>
                     <option :value="2">Orta</option>
                     <option :value="3">Zor</option>
@@ -200,109 +207,139 @@
                   <label class="label">
                     <span class="label-text">Öğrenme Durumu</span>
                   </label>
-                  <select v-model="form.learning_status" class="select select-bordered w-full">
+                  <select v-model="form.learning_status" class="select-bordered select w-full">
                     <option :value="0">Öğrenilmedi</option>
                     <option :value="1">Öğreniliyor</option>
                     <option :value="2">Öğrenildi</option>
                   </select>
                 </div>
 
-                                 <!-- Öne Çıkar -->
-                 <div class="form-control">
-                   <label class="label cursor-pointer">
-                     <span class="label-text">Öne Çıkar</span>
-                     <input type="checkbox" v-model="form.flag" class="checkbox checkbox-primary" />
-                   </label>
-                 </div>
-               </div>
+                <!-- Öne Çıkar -->
+                <div class="form-control">
+                  <label class="label cursor-pointer">
+                    <span class="label-text">Öne Çıkar</span>
+                    <input type="checkbox" v-model="form.flag" class="checkbox checkbox-primary" />
+                  </label>
+                </div>
+              </div>
 
-               <!-- Örnek Cümleler -->
-               <div class="divider">Örnek Cümleler</div>
-               <div class="space-y-4">
-                 <div
-                   v-for="(sentence, index) in form.example_sentences"
-                   :key="index"
-                   class="grid grid-cols-1 md:grid-cols-2 gap-3"
-                 >
-                   <div class="form-control w-full">
-                     <label class="label">
-                       <span class="label-text">Cümle {{ index + 1 }}</span>
-                     </label>
-                     <input v-model="form.example_sentences[index]" class="input input-bordered w-full" placeholder="Örnek cümle..." />
-                   </div>
-                   <div class="flex items-end gap-2">
-                     <div class="form-control w-full">
-                       <label class="label">
-                         <span class="label-text">Çeviri</span>
-                       </label>
-                       <input v-model="form.example_translations[index]" class="input input-bordered w-full" placeholder="Cümle çevirisi..." />
-                     </div>
-                     <button
-                       type="button"
-                       @click="removeExampleSentence(index)"
-                       class="btn btn-error btn-outline btn-sm btn-circle mb-2"
-                     >
-                       <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                       </svg>
-                     </button>
-                   </div>
-                 </div>
-                 <button type="button" @click="addExampleSentence" class="btn btn-outline btn-sm">
-                   <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                   </svg>
-                   Örnek Cümle Ekle
-                 </button>
-               </div>
+              <!-- Örnek Cümleler -->
+              <div class="divider">Örnek Cümleler</div>
+              <div class="space-y-4">
+                <div
+                  v-for="(sentence, index) in form.example_sentences"
+                  :key="index"
+                  class="grid grid-cols-1 gap-3 md:grid-cols-2"
+                >
+                  <div class="form-control w-full">
+                    <label class="label">
+                      <span class="label-text">Cümle {{ index + 1 }}</span>
+                    </label>
+                    <input
+                      v-model="form.example_sentences[index]"
+                      class="input-bordered input w-full"
+                      placeholder="Örnek cümle..."
+                    />
+                  </div>
+                  <div class="flex items-end gap-2">
+                    <div class="form-control w-full">
+                      <label class="label">
+                        <span class="label-text">Çeviri</span>
+                      </label>
+                      <input
+                        v-model="form.example_translations[index]"
+                        class="input-bordered input w-full"
+                        placeholder="Cümle çevirisi..."
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      @click="removeExampleSentence(index)"
+                      class="btn btn-error btn-outline btn-sm btn-circle mb-2"
+                    >
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <button type="button" @click="addExampleSentence" class="btn btn-outline btn-sm">
+                  <svg class="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    />
+                  </svg>
+                  Örnek Cümle Ekle
+                </button>
+              </div>
 
-               <!-- Eş Anlamlılar -->
-               <div class="divider">Eş Anlamlılar</div>
-               <div class="space-y-4">
-                 <div class="flex flex-wrap gap-2">
-                   <div v-for="(synonym, index) in form.synonyms" :key="index" class="badge badge-outline badge-lg gap-1">
-                     {{ synonym }}
-                     <button type="button" @click="removeSynonym(index)" class="btn btn-ghost btn-xs btn-circle">
-                       <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                       </svg>
-                     </button>
-                   </div>
-                 </div>
-                 <div class="flex gap-2">
-                   <input
-                     v-model="newSynonym"
-                     type="text"
-                     class="input input-bordered w-full"
-                     placeholder="Yeni eş anlamlı kelime"
-                     @keyup.enter.prevent="addSynonym"
-                   />
-                   <button type="button" @click="addSynonym" class="btn btn-outline">
-                     <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                     </svg>
-                     Ekle
-                   </button>
-                 </div>
-               </div>
-             </div>
-           </div>
-
-
+              <!-- Eş Anlamlılar -->
+              <div class="divider">Eş Anlamlılar</div>
+              <div class="space-y-4">
+                <div class="flex flex-wrap gap-2">
+                  <div
+                    v-for="(synonym, index) in form.synonyms"
+                    :key="index"
+                    class="badge badge-outline badge-lg gap-1"
+                  >
+                    {{ synonym }}
+                    <button type="button" @click="removeSynonym(index)" class="btn btn-ghost btn-xs btn-circle">
+                      <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="flex gap-2">
+                  <input
+                    v-model="newSynonym"
+                    type="text"
+                    class="input-bordered input w-full"
+                    placeholder="Yeni eş anlamlı kelime"
+                    @keyup.enter.prevent="addSynonym"
+                  />
+                  <button type="button" @click="addSynonym" class="btn btn-outline">
+                    <svg class="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                      />
+                    </svg>
+                    Ekle
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <!-- Form Buttons -->
           <div class="divider"></div>
 
           <div class="flex justify-end gap-3">
-            <Link :href="route('rendition.words.index')" class="btn btn-outline"> 
-              <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <Link :href="route('rendition.words.index')" class="btn btn-outline">
+              <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
-              İptal 
+              İptal
             </Link>
             <button type="submit" class="btn btn-primary btn-lg" :disabled="processing">
               <span v-if="processing" class="loading loading-spinner loading-sm"></span>
-              <svg v-else class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg v-else class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
               Kelimeyi Kaydet

@@ -87,20 +87,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // SEO Management
     Route::get('/seo', [SeoController::class, 'edit'])->name('seo.edit');
     Route::put('/seo', [SeoController::class, 'update'])->name('seo.update');
-    
+
     // Theme Management
     Route::get('/theme-management', function () {
         return Inertia::render('ThemeManagement');
     })->name('theme.management');
-    
-
-    
-
 });
 
 // Rendition Routes
 Route::group(['prefix' => 'rendition', 'as' => 'rendition.'], function () {
     // Words Management
+    Route::post('words/search', [WordController::class, 'searchWord'])->name('words.search');
     Route::post('words/{id}/learning-status', [WordController::class, 'updateLearningStatus'])->name('words.learning-status');
     Route::post('words/{id}/review-status', [WordController::class, 'updateReviewStatus'])->name('words.review-status');
     Route::get('words/available-for-pack/{packId}', [WordController::class, 'availableForPack'])->name('words.available-for-pack');

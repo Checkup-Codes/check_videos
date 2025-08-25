@@ -24,7 +24,7 @@ class WordController extends Controller
             $search = request()->input('search');
             $language = request()->input('language');
             $status = request()->input('status');
-            $perPage = 15; // Number of words per page
+            $perPage = 10; // Number of words per page
 
             // Start building the query
             $query = Word::query();
@@ -50,6 +50,24 @@ class WordController extends Controller
                 ->orderBy('word')
                 ->paginate($perPage);
 
+            // Debug logging
+            Log::info('WordController@index - Pagination Debug:', [
+                'total_words' => $words->total(),
+                'current_page' => $words->currentPage(),
+                'last_page' => $words->lastPage(),
+                'per_page' => $words->perPage(),
+                'items_count' => $words->count(),
+                'from' => $words->firstItem(),
+                'to' => $words->lastItem(),
+            ]);
+
+            // Test if pagination is working
+            Log::info('Pagination test:', [
+                'is_paginator' => $words instanceof \Illuminate\Pagination\LengthAwarePaginator,
+                'has_items' => $words->items() ? 'yes' : 'no',
+                'items_count' => count($words->items()),
+            ]);
+
             // Add meaning property for backward compatibility
             $words->through(function ($word) {
                 if (!property_exists($word, 'meaning') || !$word->meaning) {
@@ -68,6 +86,8 @@ class WordController extends Controller
                 return $word;
             });
 
+            Log::info('After through method - items count:', ['count' => count($words->items())]);
+
             // Get language packs for the sidebar
             $languagePacks = DB::table('lang_language_packs')->select([
                 'lang_language_packs.id',
@@ -82,16 +102,24 @@ class WordController extends Controller
                 ->orderBy('lang_language_packs.language')
                 ->get();
 
+            // Test pagination data
+            $paginationData = [
+                'current_page' => $words->currentPage(),
+                'last_page' => $words->lastPage(),
+                'per_page' => $words->perPage(),
+                'total' => $words->total(),
+                'from' => $words->firstItem(),
+                'to' => $words->lastItem(),
+            ];
+
+            Log::info('Pagination Data:', $paginationData);
+            Log::info('Words count:', ['count' => count($words->items())]);
+            Log::info('Total words:', ['total' => $words->total()]);
+            Log::info('Last page:', ['last_page' => $words->lastPage()]);
+
             return Inertia::render('Rendition/Words/IndexWord', [
                 'words' => $words->items(),
-                'pagination' => [
-                    'current_page' => $words->currentPage(),
-                    'last_page' => $words->lastPage(),
-                    'per_page' => $words->perPage(),
-                    'total' => $words->total(),
-                    'from' => $words->firstItem(),
-                    'to' => $words->lastItem(),
-                ],
+                'pagination' => $paginationData,
                 'filters' => [
                     'search' => $search,
                     'language' => $language,
@@ -107,6 +135,7 @@ class WordController extends Controller
             // Log the error for debugging
             Log::error('Error in WordController@index: ' . $e->getMessage());
             Log::error($e->getTraceAsString());
+            Log::info('Falling back to empty dataset due to exception');
 
             // Fall back to returning an empty dataset
             return Inertia::render('Rendition/Words/IndexWord', [
@@ -114,7 +143,7 @@ class WordController extends Controller
                 'pagination' => [
                     'current_page' => 1,
                     'last_page' => 1,
-                    'per_page' => 15,
+                    'per_page' => 10,
                     'total' => 0,
                     'from' => 0,
                     'to' => 0,
@@ -550,6 +579,123 @@ class WordController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return Redirect::back()->with('error', 'Database update failed');
+        }
+    }
+
+    /**
+     * Kelime arama fonksiyonu - Google benzeri arama
+     */
+    public function searchWord(Request $request)
+    {
+        try {
+            $searchTerm = $request->input('search');
+
+            if (empty($searchTerm)) {
+                return Response::json([
+                    'success' => false,
+                    'message' => 'Arama terimi gerekli'
+                ]);
+            }
+
+            // Kelimeyi bul
+            $word = Word::with([
+                'meanings',
+                'exampleSentences',
+                'synonyms',
+                'languagePacks'
+            ])
+                ->where('word', 'like', "%{$searchTerm}%")
+                ->orWhereHas('meanings', function ($query) use ($searchTerm) {
+                    $query->where('meaning', 'like', "%{$searchTerm}%");
+                })
+                ->first();
+
+            if (!$word) {
+                return Response::json([
+                    'success' => false,
+                    'message' => 'Kelime bulunamadı'
+                ]);
+            }
+
+            // Add meaning property for backward compatibility
+            if (!property_exists($word, 'meaning') || !$word->meaning) {
+                $primaryMeaning = $word->meanings->first(function ($meaning) {
+                    return $meaning->is_primary;
+                });
+
+                if ($primaryMeaning) {
+                    $word->meaning = $primaryMeaning->meaning;
+                } else if ($word->meanings->count() > 0) {
+                    $word->meaning = $word->meanings->first()->meaning;
+                } else {
+                    $word->meaning = '';
+                }
+            }
+
+            // Dil paketlerini getir
+            $languagePacks = $word->languagePacks->map(function ($pack) {
+                return [
+                    'id' => $pack->id,
+                    'name' => $pack->name,
+                    'slug' => $pack->slug,
+                    'language' => $pack->language
+                ];
+            });
+
+            // Örnek cümleleri getir
+            $exampleSentences = $word->exampleSentences->map(function ($sentence) {
+                return [
+                    'sentence' => $sentence->sentence,
+                    'translation' => $sentence->translation,
+                    'language' => $sentence->language
+                ];
+            });
+
+            // Eş anlamlıları getir
+            $synonyms = $word->synonyms->map(function ($synonym) {
+                return [
+                    'synonym' => $synonym->synonym,
+                    'language' => $synonym->language
+                ];
+            });
+
+            // Anlamları getir
+            $meanings = $word->meanings->map(function ($meaning) {
+                return [
+                    'meaning' => $meaning->meaning,
+                    'is_primary' => $meaning->is_primary,
+                    'display_order' => $meaning->display_order
+                ];
+            });
+
+            return Response::json([
+                'success' => true,
+                'word' => [
+                    'id' => $word->id,
+                    'word' => $word->word,
+                    'meaning' => $word->meaning,
+                    'type' => $word->type,
+                    'language' => $word->language,
+                    'difficulty_level' => $word->difficulty_level,
+                    'learning_status' => $word->learning_status,
+                    'review_count' => $word->review_count,
+                    'incorrect_count' => $word->incorrect_count,
+                    'last_review_date' => $word->last_review_date,
+                    'flag' => $word->flag,
+                    'language_packs' => $languagePacks,
+                    'example_sentences' => $exampleSentences,
+                    'synonyms' => $synonyms,
+                    'meanings' => $meanings
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in WordController@searchWord: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
+
+            return Response::json([
+                'success' => false,
+                'message' => 'Arama sırasında bir hata oluştu: ' . $e->getMessage()
+            ]);
         }
     }
 
