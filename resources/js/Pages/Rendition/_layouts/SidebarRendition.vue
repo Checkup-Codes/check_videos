@@ -43,7 +43,11 @@ const store = useStore();
 // Get current theme
 const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
 
-const languagePacks = props.languagePacks || [];
+const languagePacks = computed(() => {
+  const packs = props.languagePacks || [];
+  // Kelime sayısına göre azalan sıralama (en fazla kelime en üstte)
+  return packs.sort((a, b) => (b.word_count || 0) - (a.word_count || 0));
+});
 const auth = props.auth;
 
 const isCollapsed = ref(true);
