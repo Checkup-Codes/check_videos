@@ -1,6 +1,8 @@
 <template>
-  <nav class="w-full bg-base-200 px-2">
-    <h3 v-if="!isCompact" class="border-t-2 border-base-300 px-3 py-3 text-xs">Hesaplar</h3>
+  <div class="space-y-1" :class="{ 'text-center': isCompact }">
+    <h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">
+      {{ isCompact ? '-----' : 'Sosyal Medya' }}
+    </h4>
     <template v-for="link in socialLinks" :key="link.id">
       <SocialLink
         v-if="link.is_active"
@@ -10,7 +12,7 @@
         :is-compact="isCompact"
       />
     </template>
-  </nav>
+  </div>
 </template>
 
 <script setup>
@@ -29,8 +31,8 @@ const platformIcons = {
   Twitter: ['fab', 'twitter'],
   X: ['fab', 'twitter'],
   Facebook: ['fab', 'facebook'],
-  Tiktok: ['fab', 'tiktok'], // TikTok ikonu artık mevcut
-  Pinterest: ['fab', 'pinterest'], // Pinterest ikonu artık mevcut
+  Tiktok: ['fab', 'tiktok'],
+  Pinterest: ['fab', 'pinterest'],
   default: ['fas', 'link'],
 };
 
@@ -51,6 +53,27 @@ onMounted(async () => {
     socialLinks.value = response.data;
   } catch (error) {
     console.error('Sosyal medya linkleri yüklenirken hata oluştu:', error);
+    // Fallback sosyal medya linkleri
+    socialLinks.value = [
+      {
+        id: 1,
+        platform: 'Instagram',
+        url: 'https://instagram.com/notiriel',
+        is_active: true,
+      },
+      {
+        id: 2,
+        platform: 'Youtube',
+        url: 'https://youtube.com/@notiriel',
+        is_active: true,
+      },
+      {
+        id: 3,
+        platform: 'Github',
+        url: 'https://github.com/notiriel',
+        is_active: true,
+      },
+    ];
   }
 });
 </script>

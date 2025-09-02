@@ -98,6 +98,116 @@
   html[data-theme='lotr'] .btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 12px -2px rgba(139, 69, 19, 0.4);
+  }
+
+  /* Sidebar tema uyumluluğu için özel stiller */
+  html[data-theme='lotr'] aside {
+    background: linear-gradient(180deg, hsl(var(--b1)) 0%, hsl(var(--n)) 100%);
+    border-right: 2px solid hsl(var(--border-color));
+  }
+
+  html[data-theme='lotr'] aside .bg-base-100 {
+    background: hsl(var(--b1));
+    border: 1px solid hsl(var(--border-color));
+    box-shadow: var(--shadow);
+  }
+
+  html[data-theme='lotr'] aside .bg-primary {
+    background: hsl(var(--p));
+  }
+
+  html[data-theme='lotr'] aside .bg-secondary {
+    background: hsl(var(--s));
+  }
+
+  /* Dark tema için sidebar stilleri */
+  html[data-theme='dark'] aside {
+    background: hsl(var(--b2));
+    border-right: 2px solid hsl(var(--b3));
+  }
+
+  html[data-theme='dark'] aside .bg-base-100 {
+    background: hsl(var(--b1));
+    border: 1px solid hsl(var(--b3));
+  }
+
+  /* Neon tema için sidebar stilleri */
+  html[data-theme='neon'] aside {
+    background: hsl(var(--b2));
+    border-right: 2px solid hsl(var(--a));
+    box-shadow: 0 0 20px hsl(var(--a) / 0.3);
+  }
+
+  html[data-theme='neon'] aside .bg-base-100 {
+    background: hsl(var(--b1));
+    border: 1px solid hsl(var(--a));
+    box-shadow: 0 0 10px hsl(var(--a) / 0.2);
+  }
+
+  /* Cyberpunk tema için sidebar stilleri */
+  html[data-theme='cyberpunk'] aside {
+    background: hsl(var(--b2));
+    border-right: 2px solid hsl(var(--p));
+    box-shadow: inset -2px 0 0 hsl(var(--p));
+  }
+
+  html[data-theme='cyberpunk'] aside .bg-base-100 {
+    background: hsl(var(--b1));
+    border: 1px solid hsl(var(--p));
+    box-shadow: 0 0 15px hsl(var(--p) / 0.3);
+  }
+
+  /* Nature tema için sidebar stilleri */
+  html[data-theme='nature'] aside {
+    background: linear-gradient(180deg, hsl(var(--b1)) 0%, hsl(var(--s)) 100%);
+    border-right: 2px solid hsl(var(--a));
+  }
+
+  html[data-theme='nature'] aside .bg-base-100 {
+    background: hsl(var(--b1));
+    border: 1px solid hsl(var(--a));
+    box-shadow: 0 4px 12px hsl(var(--a) / 0.2);
+  }
+
+  /* Ocean tema için sidebar stilleri */
+  html[data-theme='ocean'] aside {
+    background: linear-gradient(180deg, hsl(var(--b1)) 0%, hsl(var(--p)) 100%);
+    border-right: 2px solid hsl(var(--a));
+  }
+
+  html[data-theme='ocean'] aside .bg-base-100 {
+    background: hsl(var(--b1));
+    border: 1px solid hsl(var(--a));
+    box-shadow: 0 4px 12px hsl(var(--a) / 0.2);
+  }
+
+  /* Sunset tema için sidebar stilleri */
+  html[data-theme='sunset'] aside {
+    background: linear-gradient(180deg, hsl(var(--b1)) 0%, hsl(var(--s)) 100%);
+    border-right: 2px solid hsl(var(--p));
+  }
+
+  html[data-theme='sunset'] aside .bg-base-100 {
+    background: hsl(var(--b1));
+    border: 1px solid hsl(var(--p));
+    box-shadow: 0 4px 12px hsl(var(--p) / 0.2);
+  }
+
+  /* Custom tema için sidebar stilleri */
+  html[data-theme='custom'] aside {
+    background: hsl(var(--b2));
+    border-right: 2px solid hsl(var(--p));
+  }
+
+  html[data-theme='custom'] aside .bg-base-100 {
+    background: hsl(var(--b1));
+    border: 1px solid hsl(var(--p));
+    box-shadow: var(--shadow);
+  }
+
+  html[data-theme='lotr'] .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px -2px rgba(139, 69, 19, 0.4);
     transition: all var(--animation-duration) var(--animation-timing);
   }
 
