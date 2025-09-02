@@ -1,7 +1,7 @@
-import { mergeProps, useSSRContext, ref, computed, unref, withCtx, createVNode, createBlock, createCommentVNode, openBlock, toDisplayString, onMounted, watch, createTextVNode, provide, createSSRApp, h as h$1 } from "vue";
+import { mergeProps, useSSRContext, computed, unref, withCtx, createVNode, createBlock, createCommentVNode, openBlock, toDisplayString, ref, onMounted, watch, createTextVNode, provide, createSSRApp, h as h$1 } from "vue";
 import { usePage, Link, Head, createInertiaApp } from "@inertiajs/vue3";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { ssrRenderAttrs, ssrRenderAttr, ssrInterpolate, ssrRenderComponent, ssrRenderClass, ssrRenderList, ssrRenderSlot } from "vue/server-renderer";
+import { ssrRenderAttrs, ssrRenderComponent, ssrRenderClass, ssrInterpolate, ssrRenderList, ssrRenderSlot } from "vue/server-renderer";
 import axios from "axios";
 import { useStore, createStore } from "vuex";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -355,7 +355,7 @@ const _export_sfc = (sfc, props) => {
   }
   return target;
 };
-const _sfc_main$9 = {};
+const _sfc_main$7 = {};
 function _sfc_ssrRender(_ctx, _push, _parent, _attrs) {
   _push(`<svg${ssrRenderAttrs(mergeProps({
     class: "mr-2 h-6 w-6",
@@ -365,63 +365,14 @@ function _sfc_ssrRender(_ctx, _push, _parent, _attrs) {
     xmlns: "http://www.w3.org/2000/svg"
   }, _attrs))}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>`);
 }
-const _sfc_setup$9 = _sfc_main$9.setup;
-_sfc_main$9.setup = (props, ctx) => {
+const _sfc_setup$7 = _sfc_main$7.setup;
+_sfc_main$7.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Shared/Svg/GoBack.vue");
-  return _sfc_setup$9 ? _sfc_setup$9(props, ctx) : void 0;
+  return _sfc_setup$7 ? _sfc_setup$7(props, ctx) : void 0;
 };
-const GoBackSvg = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["ssrRender", _sfc_ssrRender]]);
-const _sfc_main$8 = {
-  __name: "ProfileCard",
-  __ssrInlineRender: true,
-  props: {
-    isCompact: {
-      type: Boolean,
-      default: false
-    }
-  },
-  setup(__props) {
-    var _a, _b, _c, _d, _e, _f;
-    const { props } = usePage();
-    const seoTitle = ref(((_b = (_a = props == null ? void 0 : props.screen) == null ? void 0 : _a.seo) == null ? void 0 : _b.title) ?? "Seo Title");
-    ref(((_d = (_c = props == null ? void 0 : props.screen) == null ? void 0 : _c.seo) == null ? void 0 : _d.description) ?? "Seo Description");
-    const logoPath = ref(((_f = (_e = props == null ? void 0 : props.screen) == null ? void 0 : _e.seo) == null ? void 0 : _f.logo) ?? "");
-    const logoAlt = ref("Logo");
-    const isLoading = ref(false);
-    return (_ctx, _push, _parent, _attrs) => {
-      _push(`<div${ssrRenderAttrs(mergeProps({
-        class: ["flex w-fit cursor-pointer items-center gap-4 rounded-lg p-3", { "justify-center p-2": __props.isCompact }]
-      }, _attrs))} data-v-aa0e7f77><div class="avatar" data-v-aa0e7f77><div class="h-9 w-9 rounded-full bg-white ring ring-primary ring-offset-2 ring-offset-base-100" data-v-aa0e7f77>`);
-      if (!isLoading.value) {
-        _push(`<img${ssrRenderAttr("src", logoPath.value)}${ssrRenderAttr("alt", logoAlt.value)} class="h-full w-full rounded-full object-cover" data-v-aa0e7f77>`);
-      } else {
-        _push(`<div class="h-full w-full rounded-full bg-base-200" data-v-aa0e7f77><div class="animate-shimmer h-full w-full rounded-full bg-gradient-to-r from-base-200 via-base-100 to-base-200" data-v-aa0e7f77></div></div>`);
-      }
-      _push(`</div></div>`);
-      if (!__props.isCompact) {
-        _push(`<div class="flex flex-col" data-v-aa0e7f77>`);
-        if (!isLoading.value) {
-          _push(`<div class="font-semibold text-base-content" data-v-aa0e7f77>${ssrInterpolate(seoTitle.value ?? "Seo Title")}</div>`);
-        } else {
-          _push(`<div class="space-y-2" data-v-aa0e7f77><div class="h-5 w-32 animate-pulse rounded bg-base-200" data-v-aa0e7f77></div><div class="h-4 w-40 animate-pulse rounded bg-base-200" data-v-aa0e7f77></div></div>`);
-        }
-        _push(`</div>`);
-      } else {
-        _push(`<!---->`);
-      }
-      _push(`</div>`);
-    };
-  }
-};
-const _sfc_setup$8 = _sfc_main$8.setup;
-_sfc_main$8.setup = (props, ctx) => {
-  const ssrContext = useSSRContext();
-  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/_composable/ProfileCard.vue");
-  return _sfc_setup$8 ? _sfc_setup$8(props, ctx) : void 0;
-};
-const ProfileCard = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["__scopeId", "data-v-aa0e7f77"]]);
-const _sfc_main$7 = {
+const GoBackSvg = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["ssrRender", _sfc_ssrRender]]);
+const _sfc_main$6 = {
   __name: "NavItem",
   __ssrInlineRender: true,
   props: {
@@ -448,25 +399,83 @@ const _sfc_main$7 = {
     return (_ctx, _push, _parent, _attrs) => {
       _push(ssrRenderComponent(unref(Link), mergeProps({
         href: __props.href,
-        class: ["flex w-full items-center justify-between rounded-lg border px-3 py-1.5 backdrop-blur-md transition-all duration-200", {
-          // Aktif durumda: tema uyumlu ve zıt kontrast
-          "border-primary bg-primary text-primary-content shadow-md": isActive.value,
-          // Pasif durumda: yumuşak görünüm
-          "border-base-200 bg-base-200 text-base-content hover:bg-base-300": !isActive.value,
-          // Compact mode için padding ayarı
+        class: ["flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-200 hover:bg-base-100 hover:shadow-sm", {
+          "bg-primary/10 text-primary": isActive.value,
+          "text-base-content hover:text-base-content": !isActive.value,
           "justify-center px-2": __props.isCompact
         }],
         title: __props.isCompact ? __props.label : ""
       }, _attrs), {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(`<div class="${ssrRenderClass([{ "gap-0": __props.isCompact }, "flex items-center gap-3"])}"${_scopeId}>`);
-            _push2(ssrRenderComponent(unref(FontAwesomeIcon), {
-              icon: dynamicIcon.value,
-              class: ["h-4 w-4 transition-colors duration-200", isActive.value ? "text-primary-content" : "text-base-content"]
-            }, null, _parent2, _scopeId));
+            _push2(`<div class="${ssrRenderClass([{ "mx-auto gap-0": __props.isCompact }, "flex items-center gap-3"])}"${_scopeId}><div class="flex h-5 w-5 items-center justify-center"${_scopeId}>`);
+            if (__props.icon === "home") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "grid") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "lock") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "trash") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "speech") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "user-plus") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "users") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "book-open") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "palette") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "user") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "volume-up") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "chart-bar") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "search") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "fa-solid fa-pencil") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "fa-solid fa-book") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "fa-solid fa-globe") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "fa-solid fa-sync") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "fa-solid fa-project-diagram") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "fa-solid fa-users") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "fa-solid fa-cogs") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"${_scopeId}></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "fa-solid fa-tools") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"${_scopeId}></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "fa-solid fa-laptop-code") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "fa-solid fa-photo-video") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "fa-solid fa-bookmark") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "fa-solid fa-share-alt") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "fa-solid fa-language") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "fa-solid fa-chalkboard-teacher") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "fa-solid fa-user-circle") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"${_scopeId}></path></svg>`);
+            } else if (__props.icon === "fa-solid fa-palette") {
+              _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"${_scopeId}></path></svg>`);
+            } else {
+              _push2(ssrRenderComponent(unref(FontAwesomeIcon), {
+                icon: dynamicIcon.value,
+                class: "h-5 w-5 transition-colors duration-200"
+              }, null, _parent2, _scopeId));
+            }
+            _push2(`</div>`);
             if (!__props.isCompact) {
-              _push2(`<span class="${ssrRenderClass([isActive.value ? "text-primary-content" : "text-base-content", "font-sans text-sm transition-colors duration-200"])}"${_scopeId}>${ssrInterpolate(__props.label)}</span>`);
+              _push2(`<span class="text-sm font-medium transition-colors duration-200"${_scopeId}>${ssrInterpolate(__props.label)}</span>`);
             } else {
               _push2(`<!---->`);
             }
@@ -474,16 +483,408 @@ const _sfc_main$7 = {
           } else {
             return [
               createVNode("div", {
-                class: ["flex items-center gap-3", { "gap-0": __props.isCompact }]
+                class: ["flex items-center gap-3", { "mx-auto gap-0": __props.isCompact }]
               }, [
-                createVNode(unref(FontAwesomeIcon), {
-                  icon: dynamicIcon.value,
-                  class: ["h-4 w-4 transition-colors duration-200", isActive.value ? "text-primary-content" : "text-base-content"]
-                }, null, 8, ["icon", "class"]),
+                createVNode("div", { class: "flex h-5 w-5 items-center justify-center" }, [
+                  __props.icon === "home" ? (openBlock(), createBlock("svg", {
+                    key: 0,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                    })
+                  ])) : __props.icon === "grid" ? (openBlock(), createBlock("svg", {
+                    key: 1,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                    })
+                  ])) : __props.icon === "lock" ? (openBlock(), createBlock("svg", {
+                    key: 2,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    })
+                  ])) : __props.icon === "trash" ? (openBlock(), createBlock("svg", {
+                    key: 3,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    })
+                  ])) : __props.icon === "speech" ? (openBlock(), createBlock("svg", {
+                    key: 4,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                    })
+                  ])) : __props.icon === "user-plus" ? (openBlock(), createBlock("svg", {
+                    key: 5,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                    })
+                  ])) : __props.icon === "users" ? (openBlock(), createBlock("svg", {
+                    key: 6,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                    })
+                  ])) : __props.icon === "book-open" ? (openBlock(), createBlock("svg", {
+                    key: 7,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                    })
+                  ])) : __props.icon === "palette" ? (openBlock(), createBlock("svg", {
+                    key: 8,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+                    })
+                  ])) : __props.icon === "user" ? (openBlock(), createBlock("svg", {
+                    key: 9,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    })
+                  ])) : __props.icon === "volume-up" ? (openBlock(), createBlock("svg", {
+                    key: 10,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+                    })
+                  ])) : __props.icon === "chart-bar" ? (openBlock(), createBlock("svg", {
+                    key: 11,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                    })
+                  ])) : __props.icon === "search" ? (openBlock(), createBlock("svg", {
+                    key: 12,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    })
+                  ])) : __props.icon === "fa-solid fa-pencil" ? (openBlock(), createBlock("svg", {
+                    key: 13,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                    })
+                  ])) : __props.icon === "fa-solid fa-book" ? (openBlock(), createBlock("svg", {
+                    key: 14,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                    })
+                  ])) : __props.icon === "fa-solid fa-globe" ? (openBlock(), createBlock("svg", {
+                    key: 15,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    })
+                  ])) : __props.icon === "fa-solid fa-sync" ? (openBlock(), createBlock("svg", {
+                    key: 16,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    })
+                  ])) : __props.icon === "fa-solid fa-project-diagram" ? (openBlock(), createBlock("svg", {
+                    key: 17,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
+                    })
+                  ])) : __props.icon === "fa-solid fa-users" ? (openBlock(), createBlock("svg", {
+                    key: 18,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                    })
+                  ])) : __props.icon === "fa-solid fa-cogs" ? (openBlock(), createBlock("svg", {
+                    key: 19,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                    }),
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    })
+                  ])) : __props.icon === "fa-solid fa-tools" ? (openBlock(), createBlock("svg", {
+                    key: 20,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                    }),
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    })
+                  ])) : __props.icon === "fa-solid fa-laptop-code" ? (openBlock(), createBlock("svg", {
+                    key: 21,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                    })
+                  ])) : __props.icon === "fa-solid fa-photo-video" ? (openBlock(), createBlock("svg", {
+                    key: 22,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    })
+                  ])) : __props.icon === "fa-solid fa-bookmark" ? (openBlock(), createBlock("svg", {
+                    key: 23,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                    })
+                  ])) : __props.icon === "fa-solid fa-share-alt" ? (openBlock(), createBlock("svg", {
+                    key: 24,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"
+                    })
+                  ])) : __props.icon === "fa-solid fa-language" ? (openBlock(), createBlock("svg", {
+                    key: 25,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
+                    })
+                  ])) : __props.icon === "fa-solid fa-chalkboard-teacher" ? (openBlock(), createBlock("svg", {
+                    key: 26,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    })
+                  ])) : __props.icon === "fa-solid fa-user-circle" ? (openBlock(), createBlock("svg", {
+                    key: 27,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    })
+                  ])) : __props.icon === "fa-solid fa-palette" ? (openBlock(), createBlock("svg", {
+                    key: 28,
+                    class: "h-5 w-5",
+                    fill: "none",
+                    stroke: "currentColor",
+                    viewBox: "0 0 24 24"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+                    })
+                  ])) : (openBlock(), createBlock(unref(FontAwesomeIcon), {
+                    key: 29,
+                    icon: dynamicIcon.value,
+                    class: "h-5 w-5 transition-colors duration-200"
+                  }, null, 8, ["icon"]))
+                ]),
                 !__props.isCompact ? (openBlock(), createBlock("span", {
                   key: 0,
-                  class: ["font-sans text-sm transition-colors duration-200", isActive.value ? "text-primary-content" : "text-base-content"]
-                }, toDisplayString(__props.label), 3)) : createCommentVNode("", true)
+                  class: "text-sm font-medium transition-colors duration-200"
+                }, toDisplayString(__props.label), 1)) : createCommentVNode("", true)
               ], 2)
             ];
           }
@@ -493,72 +894,10 @@ const _sfc_main$7 = {
     };
   }
 };
-const _sfc_setup$7 = _sfc_main$7.setup;
-_sfc_main$7.setup = (props, ctx) => {
-  const ssrContext = useSSRContext();
-  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/_components/NavItem.vue");
-  return _sfc_setup$7 ? _sfc_setup$7(props, ctx) : void 0;
-};
-const _sfc_main$6 = {
-  __name: "MainNavigation",
-  __ssrInlineRender: true,
-  props: {
-    isCompact: {
-      type: Boolean,
-      default: false
-    }
-  },
-  setup(__props) {
-    const page = usePage();
-    const isLoggedIn = computed(() => !!(page.props.auth && page.props.auth.user));
-    return (_ctx, _push, _parent, _attrs) => {
-      _push(`<nav${ssrRenderAttrs(mergeProps({ class: "w-full space-y-1 bg-base-200 px-2" }, _attrs))}>`);
-      _push(ssrRenderComponent(_sfc_main$7, {
-        href: "/",
-        icon: "home",
-        label: "Ana Sayfa",
-        "is-compact": __props.isCompact
-      }, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$7, {
-        href: "/writes",
-        icon: "fa-solid fa-pencil",
-        label: "Yazılar",
-        "is-compact": __props.isCompact
-      }, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$7, {
-        href: "/categories",
-        icon: "fa-solid fa-book",
-        label: "Kategoriler",
-        "is-compact": __props.isCompact
-      }, null, _parent));
-      if (isLoggedIn.value) {
-        _push(ssrRenderComponent(_sfc_main$7, {
-          href: "/rendition/words",
-          icon: "fa-solid fa-globe",
-          label: "Kelimeler",
-          "is-compact": __props.isCompact
-        }, null, _parent));
-      } else {
-        _push(`<!---->`);
-      }
-      if (isLoggedIn.value) {
-        _push(ssrRenderComponent(_sfc_main$7, {
-          href: "/versions",
-          icon: "fa-solid fa-sync",
-          label: "Versiyonlar",
-          "is-compact": __props.isCompact
-        }, null, _parent));
-      } else {
-        _push(`<!---->`);
-      }
-      _push(`</nav>`);
-    };
-  }
-};
 const _sfc_setup$6 = _sfc_main$6.setup;
 _sfc_main$6.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
-  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/_composable/MainNavigation.vue");
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/_components/NavItem.vue");
   return _sfc_setup$6 ? _sfc_setup$6(props, ctx) : void 0;
 };
 const _sfc_main$5 = {
@@ -577,37 +916,22 @@ const _sfc_main$5 = {
       type: String,
       required: true
     },
-    shortcut: {
-      type: String,
-      default: null
-    },
-    matchPath: {
-      type: String,
-      default: ""
-      // örnek: '/twitter'
-    },
     isCompact: {
       type: Boolean,
       default: false
     }
   },
   setup(__props) {
-    const props = __props;
-    const isActive = computed(() => {
-      return props.matchPath && window.location.href.includes(props.matchPath);
-    });
     return (_ctx, _push, _parent, _attrs) => {
       _push(`<a${ssrRenderAttrs(mergeProps({
         href: __props.href,
         target: "_blank",
         rel: "noopener noreferrer",
-        class: ["flex w-full items-center justify-between rounded-lg border px-3 py-2 backdrop-blur-md transition-all duration-200", {
-          "border-primary bg-primary text-primary-content shadow-md": isActive.value,
-          "border-base-200 bg-base-200 text-base-content hover:bg-base-300": !isActive.value,
+        class: ["flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-200 hover:bg-base-100 hover:shadow-sm", {
           "justify-center px-2": __props.isCompact
         }],
         title: __props.isCompact ? __props.label : ""
-      }, _attrs))}><div class="${ssrRenderClass([{ "gap-0": __props.isCompact }, "flex items-center gap-3"])}">`);
+      }, _attrs))}><div class="${ssrRenderClass([{ "mx-auto gap-0": __props.isCompact }, "flex items-center gap-3"])}">`);
       _push(ssrRenderComponent(unref(FontAwesomeIcon), {
         icon: __props.icon,
         class: "h-5 w-5 text-base-content"
@@ -617,13 +941,7 @@ const _sfc_main$5 = {
       } else {
         _push(`<!---->`);
       }
-      _push(`</div>`);
-      if (__props.shortcut && !__props.isCompact) {
-        _push(`<div class="badge text-xs">${ssrInterpolate(__props.shortcut)}</div>`);
-      } else {
-        _push(`<!---->`);
-      }
-      _push(`</a>`);
+      _push(`</div></a>`);
     };
   }
 };
@@ -654,9 +972,7 @@ const _sfc_main$4 = {
       X: ["fab", "twitter"],
       Facebook: ["fab", "facebook"],
       Tiktok: ["fab", "tiktok"],
-      // TikTok ikonu artık mevcut
       Pinterest: ["fab", "pinterest"],
-      // Pinterest ikonu artık mevcut
       default: ["fas", "link"]
     };
     const getSocialIcon = (platform) => {
@@ -668,16 +984,32 @@ const _sfc_main$4 = {
         socialLinks.value = response.data;
       } catch (error) {
         console.error("Sosyal medya linkleri yüklenirken hata oluştu:", error);
+        socialLinks.value = [
+          {
+            id: 1,
+            platform: "Instagram",
+            url: "https://instagram.com/notiriel",
+            is_active: true
+          },
+          {
+            id: 2,
+            platform: "Youtube",
+            url: "https://youtube.com/@notiriel",
+            is_active: true
+          },
+          {
+            id: 3,
+            platform: "Github",
+            url: "https://github.com/notiriel",
+            is_active: true
+          }
+        ];
       }
     });
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<nav${ssrRenderAttrs(mergeProps({ class: "w-full bg-base-200 px-2" }, _attrs))}>`);
-      if (!__props.isCompact) {
-        _push(`<h3 class="border-t-2 border-base-300 px-3 py-3 text-xs">Hesaplar</h3>`);
-      } else {
-        _push(`<!---->`);
-      }
-      _push(`<!--[-->`);
+      _push(`<div${ssrRenderAttrs(mergeProps({
+        class: ["space-y-1", { "text-center": __props.isCompact }]
+      }, _attrs))}><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">${ssrInterpolate(__props.isCompact ? "-----" : "Sosyal Medya")}</h4><!--[-->`);
       ssrRenderList(socialLinks.value, (link) => {
         _push(`<!--[-->`);
         if (link.is_active) {
@@ -692,7 +1024,7 @@ const _sfc_main$4 = {
         }
         _push(`<!--]-->`);
       });
-      _push(`<!--]--></nav>`);
+      _push(`<!--]--></div>`);
     };
   }
 };
@@ -760,6 +1092,9 @@ const _sfc_main$2 = {
     const auth = ref(null);
     const appName = computed(() => usePage().props.app.name);
     const title = ref("");
+    const isLoggedIn = computed(() => {
+      return !!(page.props.auth && page.props.auth.user);
+    });
     watch(
       () => page.props.value,
       (newProps) => {
@@ -795,7 +1130,7 @@ const _sfc_main$2 = {
       document.body.classList.remove("menu-open");
     };
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<!--[--><header class="sticky top-0 z-40 flex h-12 items-center justify-between border-b border-base-200 bg-base-100 px-4 sm:px-5 lg:hidden" data-v-69c01a67>`);
+      _push(`<!--[--><header class="sticky top-0 z-40 flex h-12 items-center justify-between border-b border-base-200 bg-base-100 px-4 sm:px-5 lg:hidden" data-v-ca895dce>`);
       if (basePath.value) {
         _push(ssrRenderComponent(unref(Link), {
           href: `/${basePath.value}`,
@@ -813,9 +1148,9 @@ const _sfc_main$2 = {
           _: 1
         }, _parent));
       } else {
-        _push(`<div class="w-8" data-v-69c01a67></div>`);
+        _push(`<div class="w-8" data-v-ca895dce></div>`);
       }
-      _push(`<div class="px-3 py-1 font-bold uppercase text-primary" data-v-69c01a67>`);
+      _push(`<div class="px-3 py-1 font-bold uppercase text-primary" data-v-ca895dce>`);
       _push(ssrRenderComponent(unref(Link), { href: "/" }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
@@ -828,21 +1163,110 @@ const _sfc_main$2 = {
         }),
         _: 1
       }, _parent));
-      _push(`</div><button class="btn btn-ghost btn-sm px-2" data-v-69c01a67><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-v-69c01a67><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" data-v-69c01a67></path></svg></button></header>`);
+      _push(`</div><button class="btn btn-ghost btn-sm px-2" data-v-ca895dce><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-v-ca895dce><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" data-v-ca895dce></path></svg></button></header>`);
       if (isMenuOpen.value) {
-        _push(`<div class="${ssrRenderClass([isMenuOpen.value ? "opacity-100" : "opacity-0", "fixed inset-0 z-50 bg-black/50 transition-opacity duration-300"])}" data-v-69c01a67></div>`);
+        _push(`<div class="${ssrRenderClass([isMenuOpen.value ? "opacity-100" : "opacity-0", "fixed inset-0 z-50 bg-black/50 transition-opacity duration-300"])}" data-v-ca895dce></div>`);
       } else {
         _push(`<!---->`);
       }
-      _push(`<div class="${ssrRenderClass([isMenuOpen.value ? "translate-y-0" : "translate-y-full", "drawer-content drawer-end fixed inset-x-0 bottom-0 z-50 transform transition-all duration-300 ease-in-out"])}" data-v-69c01a67><div class="max-h-[90vh] overflow-y-auto rounded-t-xl border border-base-200 bg-base-100 pb-6 pt-4 shadow-lg" data-v-69c01a67><div class="mb-4 flex justify-center" data-v-69c01a67><div class="h-1 w-10 rounded-full bg-base-300" data-v-69c01a67></div></div><div class="px-4" data-v-69c01a67>`);
-      _push(ssrRenderComponent(ProfileCard, { imagePath: imagePath.value }, null, _parent));
-      _push(`<div class="mt-4" data-v-69c01a67>`);
-      _push(ssrRenderComponent(_sfc_main$6, null, null, _parent));
-      _push(`</div><div class="mt-4" data-v-69c01a67>`);
-      _push(ssrRenderComponent(_sfc_main$4, null, null, _parent));
-      _push(`</div><div class="mt-6 flex flex-col items-center" data-v-69c01a67>`);
+      _push(`<div class="${ssrRenderClass([isMenuOpen.value ? "translate-y-0" : "translate-y-full", "drawer-content drawer-end fixed inset-x-0 bottom-0 z-50 transform transition-all duration-300 ease-in-out"])}" data-v-ca895dce><div class="max-h-[90vh] overflow-y-auto rounded-t-xl border border-base-200 bg-base-100 pb-6 pt-4 shadow-lg" data-v-ca895dce><div class="mb-4 flex justify-center" data-v-ca895dce><div class="h-1 w-10 rounded-full bg-base-300" data-v-ca895dce></div></div><div class="px-4" data-v-ca895dce><div class="mb-4 rounded-lg border border-base-300 bg-base-100 p-4 shadow-sm" data-v-ca895dce><div class="flex items-center justify-between" data-v-ca895dce><div class="flex items-center space-x-3" data-v-ca895dce><div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary" data-v-ca895dce><span class="text-sm font-bold text-primary-content" data-v-ca895dce>${ssrInterpolate(appName.value.charAt(0))}</span></div><div data-v-ca895dce><h3 class="font-semibold text-base-content" data-v-ca895dce>${ssrInterpolate(appName.value)}</h3></div></div></div></div>`);
+      if (!isLoggedIn.value) {
+        _push(`<div class="mb-4" data-v-ca895dce><a href="https://youtu.be/FPsx8xHLR1k?si=3dNFdwhk5s8LyqOe" target="_blank" data-v-ca895dce><button class="w-full rounded-lg border border-base-300 bg-base-100 p-3 shadow-sm transition-colors hover:bg-base-200" data-v-ca895dce><div class="flex items-center space-x-3" data-v-ca895dce><div class="flex h-5 w-5 items-center justify-center rounded bg-secondary" data-v-ca895dce><svg class="h-3 w-3 text-secondary-content" fill="currentColor" viewBox="0 0 20 20" data-v-ca895dce><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" data-v-ca895dce></path></svg></div><span class="text-sm font-medium text-base-content" data-v-ca895dce>Powered by : Notiriel</span></div></button></a></div>`);
+      } else {
+        _push(`<!---->`);
+      }
+      _push(`<div class="mb-4 space-y-1" data-v-ca895dce><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider" data-v-ca895dce>Ana Navigasyon</h4>`);
+      _push(ssrRenderComponent(_sfc_main$6, {
+        href: "/",
+        icon: "home",
+        label: "Ana Sayfa"
+      }, null, _parent));
+      _push(ssrRenderComponent(_sfc_main$6, {
+        href: "/dashboard",
+        icon: "chart-bar",
+        label: "Dashboard"
+      }, null, _parent));
+      _push(`</div><div class="mb-4 space-y-1" data-v-ca895dce><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider" data-v-ca895dce>İçerik Yönetimi</h4>`);
+      _push(ssrRenderComponent(_sfc_main$6, {
+        href: "/writes",
+        icon: "fa-solid fa-pencil",
+        label: "Yazılar"
+      }, null, _parent));
+      _push(ssrRenderComponent(_sfc_main$6, {
+        href: "/categories",
+        icon: "fa-solid fa-book",
+        label: "Kategoriler"
+      }, null, _parent));
+      _push(`</div>`);
+      if (isLoggedIn.value) {
+        _push(`<div class="mb-4 space-y-1" data-v-ca895dce><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider" data-v-ca895dce>Dil &amp; Çeviri</h4>`);
+        _push(ssrRenderComponent(_sfc_main$6, {
+          href: "/rendition/words",
+          icon: "fa-solid fa-globe",
+          label: "Kelimeler"
+        }, null, _parent));
+        _push(ssrRenderComponent(_sfc_main$6, {
+          href: "/rendition/language-packs",
+          icon: "fa-solid fa-language",
+          label: "Dil Paketleri"
+        }, null, _parent));
+        _push(`</div>`);
+      } else {
+        _push(`<!---->`);
+      }
+      if (isLoggedIn.value) {
+        _push(`<div class="mb-4 space-y-1" data-v-ca895dce><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider" data-v-ca895dce>Proje Yönetimi</h4>`);
+        _push(ssrRenderComponent(_sfc_main$6, {
+          href: "/projects",
+          icon: "fa-solid fa-project-diagram",
+          label: "Projeler"
+        }, null, _parent));
+        _push(`</div>`);
+      } else {
+        _push(`<!---->`);
+      }
+      if (isLoggedIn.value) {
+        _push(`<div class="mb-4 space-y-1" data-v-ca895dce><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider" data-v-ca895dce>Sistem &amp; Araçlar</h4>`);
+        _push(ssrRenderComponent(_sfc_main$6, {
+          href: "/versions",
+          icon: "fa-solid fa-sync",
+          label: "Versiyonlar"
+        }, null, _parent));
+        _push(`</div>`);
+      } else {
+        _push(`<!---->`);
+      }
+      if (isLoggedIn.value) {
+        _push(`<div class="mb-4 space-y-1" data-v-ca895dce><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider" data-v-ca895dce>Media &amp; Varlıklar</h4>`);
+        _push(ssrRenderComponent(_sfc_main$6, {
+          href: "/media",
+          icon: "fa-solid fa-photo-video",
+          label: "Medya"
+        }, null, _parent));
+        _push(ssrRenderComponent(_sfc_main$6, {
+          href: "/bookmarks",
+          icon: "fa-solid fa-bookmark",
+          label: "Yer İmleri"
+        }, null, _parent));
+        _push(ssrRenderComponent(_sfc_main$6, {
+          href: "/social-media",
+          icon: "fa-solid fa-share-alt",
+          label: "Sosyal Medya"
+        }, null, _parent));
+        _push(`</div>`);
+      } else {
+        _push(`<!---->`);
+      }
+      if (!isLoggedIn.value) {
+        _push(`<div class="mb-4" data-v-ca895dce>`);
+        _push(ssrRenderComponent(_sfc_main$4, { "is-compact": false }, null, _parent));
+        _push(`</div>`);
+      } else {
+        _push(`<!---->`);
+      }
+      _push(`<div class="mt-6 flex flex-col items-center" data-v-ca895dce>`);
       _push(ssrRenderComponent(_sfc_main$3, null, null, _parent));
-      _push(`<p class="text-base-content/60 mt-2 text-xs" data-v-69c01a67>${ssrInterpolate(appName.value)} - Tüm Hakları Saklıdır</p></div></div></div></div><!--]-->`);
+      _push(`<p class="text-base-content/60 mt-2 text-xs" data-v-ca895dce>${ssrInterpolate(appName.value)} - Tüm Hakları Saklıdır</p></div></div></div></div><!--]-->`);
     };
   }
 };
@@ -852,7 +1276,7 @@ _sfc_main$2.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/MainLayout/HeaderLayout.vue");
   return _sfc_setup$2 ? _sfc_setup$2(props, ctx) : void 0;
 };
-const HeaderLayout = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-69c01a67"]]);
+const HeaderLayout = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-ca895dce"]]);
 const _sfc_main$1 = {
   __name: "SidebarLayout",
   __ssrInlineRender: true,
@@ -863,20 +1287,141 @@ const _sfc_main$1 = {
     }
   },
   setup(__props) {
-    const { props } = usePage();
+    const page = usePage();
     const store2 = useStore();
     const currentTheme = computed(() => store2.getters["Theme/getCurrentTheme"]);
-    const seoTitle = computed(() => {
+    const isLoggedIn = computed(() => {
+      return !!(page.props.auth && page.props.auth.user);
+    });
+    const appName = computed(() => {
       var _a, _b;
-      return ((_b = (_a = props == null ? void 0 : props.screen) == null ? void 0 : _a.seo) == null ? void 0 : _b.title) ?? "Check Videos";
+      return ((_b = (_a = page.props) == null ? void 0 : _a.app) == null ? void 0 : _b.name) ?? "Check Videos";
+    });
+    const seoTitle = computed(() => {
+      var _a, _b, _c;
+      return ((_c = (_b = (_a = page.props) == null ? void 0 : _a.screen) == null ? void 0 : _b.seo) == null ? void 0 : _c.title) ?? "Check Videos";
     });
     return (_ctx, _push, _parent, _attrs) => {
       _push(`<aside${ssrRenderAttrs(mergeProps({
-        class: ["flex h-screen flex-col justify-between border-r-2 border-base-300 bg-base-200 p-1 font-sans", currentTheme.value]
-      }, _attrs))}><div>`);
-      _push(ssrRenderComponent(ProfileCard, { "is-compact": __props.isCompact }, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$6, { "is-compact": __props.isCompact }, null, _parent));
-      _push(ssrRenderComponent(_sfc_main$4, { "is-compact": __props.isCompact }, null, _parent));
+        class: ["flex h-screen flex-col justify-between border-r-2 border-base-300 bg-base-200 p-4 font-sans", currentTheme.value]
+      }, _attrs))}><div class="space-y-6"><div class="rounded-lg border border-base-300 bg-base-100 p-4 shadow-sm"><div class="flex items-center justify-between"><div class="${ssrRenderClass([{ "w-full justify-center": __props.isCompact }, "flex items-center space-x-3"])}"><div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary"><span class="text-sm font-bold text-primary-content">${ssrInterpolate(appName.value.charAt(0))}</span></div>`);
+      if (!__props.isCompact) {
+        _push(`<div><h3 class="font-semibold text-base-content">${ssrInterpolate(appName.value)}</h3></div>`);
+      } else {
+        _push(`<!---->`);
+      }
+      _push(`</div></div></div>`);
+      if (!isLoggedIn.value) {
+        _push(`<div class="space-y-1"><a href="https://youtu.be/FPsx8xHLR1k?si=3dNFdwhk5s8LyqOe" target="_blank"><button class="w-full rounded-lg border border-base-300 bg-base-100 p-3 shadow-sm transition-colors hover:bg-base-200"><div class="${ssrRenderClass([{ "justify-center": __props.isCompact }, "flex items-center space-x-3"])}"><div class="flex h-5 w-5 items-center justify-center rounded bg-secondary"><svg class="h-3 w-3 text-secondary-content" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"></path></svg></div>`);
+        if (!__props.isCompact) {
+          _push(`<span class="text-sm font-medium text-base-content">Powered by : Notiriel</span>`);
+        } else {
+          _push(`<!---->`);
+        }
+        _push(`</div></button></a></div>`);
+      } else {
+        _push(`<!---->`);
+      }
+      _push(`<div class="${ssrRenderClass([{ "text-center": __props.isCompact }, "space-y-1"])}"><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">${ssrInterpolate(__props.isCompact ? "-----" : "Ana Navigasyon")}</h4>`);
+      _push(ssrRenderComponent(_sfc_main$6, {
+        href: "/",
+        icon: "home",
+        label: "Ana Sayfa",
+        "is-compact": __props.isCompact
+      }, null, _parent));
+      _push(ssrRenderComponent(_sfc_main$6, {
+        href: "/dashboard",
+        icon: "chart-bar",
+        label: "Dashboard",
+        "is-compact": __props.isCompact
+      }, null, _parent));
+      _push(`</div><div class="${ssrRenderClass([{ "text-center": __props.isCompact }, "space-y-1"])}"><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">${ssrInterpolate(__props.isCompact ? "-----" : "İçerik Yönetimi")}</h4>`);
+      _push(ssrRenderComponent(_sfc_main$6, {
+        href: "/writes",
+        icon: "fa-solid fa-pencil",
+        label: "Yazılar",
+        "is-compact": __props.isCompact
+      }, null, _parent));
+      _push(ssrRenderComponent(_sfc_main$6, {
+        href: "/categories",
+        icon: "fa-solid fa-book",
+        label: "Kategoriler",
+        "is-compact": __props.isCompact
+      }, null, _parent));
+      _push(`</div>`);
+      if (isLoggedIn.value) {
+        _push(`<div class="${ssrRenderClass([{ "text-center": __props.isCompact }, "space-y-1"])}"><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">${ssrInterpolate(__props.isCompact ? "-----" : "Dil & Çeviri")}</h4>`);
+        _push(ssrRenderComponent(_sfc_main$6, {
+          href: "/rendition/words",
+          icon: "fa-solid fa-globe",
+          label: "Kelimeler",
+          "is-compact": __props.isCompact
+        }, null, _parent));
+        _push(ssrRenderComponent(_sfc_main$6, {
+          href: "/rendition/language-packs",
+          icon: "fa-solid fa-language",
+          label: "Dil Paketleri",
+          "is-compact": __props.isCompact
+        }, null, _parent));
+        _push(`</div>`);
+      } else {
+        _push(`<!---->`);
+      }
+      if (isLoggedIn.value) {
+        _push(`<div class="${ssrRenderClass([{ "text-center": __props.isCompact }, "space-y-1"])}"><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">${ssrInterpolate(__props.isCompact ? "-----" : "Proje Yönetimi")}</h4>`);
+        _push(ssrRenderComponent(_sfc_main$6, {
+          href: "/projects",
+          icon: "fa-solid fa-project-diagram",
+          label: "Projeler",
+          "is-compact": __props.isCompact
+        }, null, _parent));
+        _push(`</div>`);
+      } else {
+        _push(`<!---->`);
+      }
+      if (isLoggedIn.value) {
+        _push(`<div class="${ssrRenderClass([{ "text-center": __props.isCompact }, "space-y-1"])}"><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">${ssrInterpolate(__props.isCompact ? "-----" : "Sistem & Araçlar")}</h4>`);
+        _push(ssrRenderComponent(_sfc_main$6, {
+          href: "/versions",
+          icon: "fa-solid fa-sync",
+          label: "Versiyonlar",
+          "is-compact": __props.isCompact
+        }, null, _parent));
+        _push(`</div>`);
+      } else {
+        _push(`<!---->`);
+      }
+      if (isLoggedIn.value) {
+        _push(`<div class="${ssrRenderClass([{ "text-center": __props.isCompact }, "space-y-1"])}"><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">${ssrInterpolate(__props.isCompact ? "-----" : "Media & Varlıklar")}</h4>`);
+        _push(ssrRenderComponent(_sfc_main$6, {
+          href: "/media",
+          icon: "fa-solid fa-photo-video",
+          label: "Medya",
+          "is-compact": __props.isCompact
+        }, null, _parent));
+        _push(ssrRenderComponent(_sfc_main$6, {
+          href: "/bookmarks",
+          icon: "fa-solid fa-bookmark",
+          label: "Yer İmleri",
+          "is-compact": __props.isCompact
+        }, null, _parent));
+        _push(ssrRenderComponent(_sfc_main$6, {
+          href: "/social-media",
+          icon: "fa-solid fa-share-alt",
+          label: "Sosyal Medya",
+          "is-compact": __props.isCompact
+        }, null, _parent));
+        _push(`</div>`);
+      } else {
+        _push(`<!---->`);
+      }
+      if (!isLoggedIn.value) {
+        _push(`<div class="${ssrRenderClass([{ "text-center": __props.isCompact }, "space-y-1"])}">`);
+        _push(ssrRenderComponent(_sfc_main$4, { "is-compact": __props.isCompact }, null, _parent));
+        _push(`</div>`);
+      } else {
+        _push(`<!---->`);
+      }
       _push(`</div><div class="absolute inset-x-0 bottom-0 py-4 text-center">`);
       _push(ssrRenderComponent(_sfc_main$3, { class: "mx-auto" }, null, _parent));
       if (!__props.isCompact) {
@@ -923,12 +1468,12 @@ const _sfc_main = {
     });
     const sidebarClass = computed(() => {
       const baseClass = "fixed inset-y-0 left-0 z-40 hidden overflow-hidden lg:block";
-      const widthClass = isCompactMode.value ? "lg:w-16" : "lg:w-52";
+      const widthClass = isCompactMode.value ? "lg:w-24" : "lg:w-64";
       return `${baseClass} ${widthClass}`;
     });
     const contentWrapperClass = computed(() => {
       const baseClass = "";
-      const paddingClass = isCompactMode.value ? "lg:pl-16" : "lg:pl-52";
+      const paddingClass = isCompactMode.value ? "lg:pl-24" : "lg:pl-64";
       return `${baseClass} ${paddingClass}`;
     });
     const writes = page.props.writes || [];
