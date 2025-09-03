@@ -1,1 +1,0 @@
-import{_ as e}from"./CheckScreen-DjR-lHVK.js";import{_ as r}from"./IntroScreen-BO5porW7.js";import{j as t,o as a,w as _,e as o}from"./ssr-DMiicSgz.js";const l={__name:"Screen",setup(s){return(c,m)=>(a(),t(e,null,{default:_(()=>[o(r,{title:"Sürümler"})]),_:1}))}};export{l as default};

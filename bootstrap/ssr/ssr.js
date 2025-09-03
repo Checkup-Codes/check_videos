@@ -1009,7 +1009,7 @@ const _sfc_main$4 = {
     return (_ctx, _push, _parent, _attrs) => {
       _push(`<div${ssrRenderAttrs(mergeProps({
         class: ["space-y-1", { "text-center": __props.isCompact }]
-      }, _attrs))}><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">${ssrInterpolate(__props.isCompact ? "-----" : "Sosyal Medya")}</h4><!--[-->`);
+      }, _attrs))}><!--[-->`);
       ssrRenderList(socialLinks.value, (link) => {
         _push(`<!--[-->`);
         if (link.is_active) {
@@ -1130,7 +1130,7 @@ const _sfc_main$2 = {
       document.body.classList.remove("menu-open");
     };
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<!--[--><header class="sticky top-0 z-40 flex h-12 items-center justify-between border-b border-base-200 bg-base-100 px-4 sm:px-5 lg:hidden" data-v-ca895dce>`);
+      _push(`<!--[--><header class="sticky top-0 z-40 flex h-12 items-center justify-between border-b border-base-200 bg-base-100 px-4 sm:px-5 lg:hidden" data-v-ded2eaa6>`);
       if (basePath.value) {
         _push(ssrRenderComponent(unref(Link), {
           href: `/${basePath.value}`,
@@ -1148,9 +1148,9 @@ const _sfc_main$2 = {
           _: 1
         }, _parent));
       } else {
-        _push(`<div class="w-8" data-v-ca895dce></div>`);
+        _push(`<div class="w-8" data-v-ded2eaa6></div>`);
       }
-      _push(`<div class="px-3 py-1 font-bold uppercase text-primary" data-v-ca895dce>`);
+      _push(`<div class="px-3 py-1 font-bold uppercase text-primary" data-v-ded2eaa6>`);
       _push(ssrRenderComponent(unref(Link), { href: "/" }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
@@ -1163,19 +1163,45 @@ const _sfc_main$2 = {
         }),
         _: 1
       }, _parent));
-      _push(`</div><button class="btn btn-ghost btn-sm px-2" data-v-ca895dce><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-v-ca895dce><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" data-v-ca895dce></path></svg></button></header>`);
+      _push(`</div><button class="btn btn-ghost btn-sm px-2" data-v-ded2eaa6><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-v-ded2eaa6><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" data-v-ded2eaa6></path></svg></button></header>`);
       if (isMenuOpen.value) {
-        _push(`<div class="${ssrRenderClass([isMenuOpen.value ? "opacity-100" : "opacity-0", "fixed inset-0 z-50 bg-black/50 transition-opacity duration-300"])}" data-v-ca895dce></div>`);
+        _push(`<div class="${ssrRenderClass([isMenuOpen.value ? "opacity-100" : "opacity-0", "fixed inset-0 z-50 bg-black/50 transition-opacity duration-300"])}" data-v-ded2eaa6></div>`);
       } else {
         _push(`<!---->`);
       }
-      _push(`<div class="${ssrRenderClass([isMenuOpen.value ? "translate-y-0" : "translate-y-full", "drawer-content drawer-end fixed inset-x-0 bottom-0 z-50 transform transition-all duration-300 ease-in-out"])}" data-v-ca895dce><div class="max-h-[90vh] overflow-y-auto rounded-t-xl border border-base-200 bg-base-100 pb-6 pt-4 shadow-lg" data-v-ca895dce><div class="mb-4 flex justify-center" data-v-ca895dce><div class="h-1 w-10 rounded-full bg-base-300" data-v-ca895dce></div></div><div class="px-4" data-v-ca895dce><div class="mb-4 rounded-lg border border-base-300 bg-base-100 p-4 shadow-sm" data-v-ca895dce><div class="flex items-center justify-between" data-v-ca895dce><div class="flex items-center space-x-3" data-v-ca895dce><div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary" data-v-ca895dce><span class="text-sm font-bold text-primary-content" data-v-ca895dce>${ssrInterpolate(appName.value.charAt(0))}</span></div><div data-v-ca895dce><h3 class="font-semibold text-base-content" data-v-ca895dce>${ssrInterpolate(appName.value)}</h3></div></div></div></div>`);
+      _push(`<div class="${ssrRenderClass([isMenuOpen.value ? "translate-y-0" : "translate-y-full", "drawer-content drawer-end fixed inset-x-0 bottom-0 z-50 transform transition-all duration-300 ease-in-out"])}" data-v-ded2eaa6><div class="max-h-[90vh] overflow-y-auto rounded-t-xl border border-base-200 bg-base-100 pb-6 pt-4 shadow-lg" data-v-ded2eaa6><div class="mb-4 flex justify-center" data-v-ded2eaa6><div class="h-1 w-10 rounded-full bg-base-300" data-v-ded2eaa6></div></div><div class="px-4" data-v-ded2eaa6>`);
+      _push(ssrRenderComponent(unref(Link), {
+        href: "/",
+        class: "block"
+      }, {
+        default: withCtx((_, _push2, _parent2, _scopeId) => {
+          if (_push2) {
+            _push2(`<div class="mb-4 rounded-lg border border-base-300 bg-base-100 p-4 shadow-sm" data-v-ded2eaa6${_scopeId}><div class="flex items-center justify-between" data-v-ded2eaa6${_scopeId}><div class="flex items-center space-x-3" data-v-ded2eaa6${_scopeId}><div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary" data-v-ded2eaa6${_scopeId}><span class="text-sm font-bold text-primary-content" data-v-ded2eaa6${_scopeId}>${ssrInterpolate(appName.value.charAt(0))}</span></div><div data-v-ded2eaa6${_scopeId}><h3 class="font-semibold text-base-content" data-v-ded2eaa6${_scopeId}>${ssrInterpolate(appName.value)}</h3></div></div></div></div>`);
+          } else {
+            return [
+              createVNode("div", { class: "mb-4 rounded-lg border border-base-300 bg-base-100 p-4 shadow-sm" }, [
+                createVNode("div", { class: "flex items-center justify-between" }, [
+                  createVNode("div", { class: "flex items-center space-x-3" }, [
+                    createVNode("div", { class: "flex h-8 w-8 items-center justify-center rounded-lg bg-primary" }, [
+                      createVNode("span", { class: "text-sm font-bold text-primary-content" }, toDisplayString(appName.value.charAt(0)), 1)
+                    ]),
+                    createVNode("div", null, [
+                      createVNode("h3", { class: "font-semibold text-base-content" }, toDisplayString(appName.value), 1)
+                    ])
+                  ])
+                ])
+              ])
+            ];
+          }
+        }),
+        _: 1
+      }, _parent));
       if (!isLoggedIn.value) {
-        _push(`<div class="mb-4" data-v-ca895dce><a href="https://youtu.be/FPsx8xHLR1k?si=3dNFdwhk5s8LyqOe" target="_blank" data-v-ca895dce><button class="w-full rounded-lg border border-base-300 bg-base-100 p-3 shadow-sm transition-colors hover:bg-base-200" data-v-ca895dce><div class="flex items-center space-x-3" data-v-ca895dce><div class="flex h-5 w-5 items-center justify-center rounded bg-secondary" data-v-ca895dce><svg class="h-3 w-3 text-secondary-content" fill="currentColor" viewBox="0 0 20 20" data-v-ca895dce><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" data-v-ca895dce></path></svg></div><span class="text-sm font-medium text-base-content" data-v-ca895dce>Powered by : Notiriel</span></div></button></a></div>`);
+        _push(`<div class="mb-4" data-v-ded2eaa6><a href="https://youtu.be/FPsx8xHLR1k?si=3dNFdwhk5s8LyqOe" target="_blank" data-v-ded2eaa6><button class="w-full rounded-lg border border-base-300 bg-base-100 p-3 shadow-sm transition-colors hover:bg-base-200" data-v-ded2eaa6><div class="flex items-center space-x-3" data-v-ded2eaa6><div class="flex h-5 w-5 items-center justify-center rounded bg-secondary" data-v-ded2eaa6><svg class="h-3 w-3 text-secondary-content" fill="currentColor" viewBox="0 0 20 20" data-v-ded2eaa6><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" data-v-ded2eaa6></path></svg></div><span class="text-sm font-medium text-base-content" data-v-ded2eaa6>Powered by : Notiriel</span></div></button></a></div>`);
       } else {
         _push(`<!---->`);
       }
-      _push(`<div class="mb-4 space-y-1" data-v-ca895dce><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider" data-v-ca895dce>Ana Navigasyon</h4>`);
+      _push(`<div class="mb-4 space-y-1" data-v-ded2eaa6><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider" data-v-ded2eaa6>Ana Navigasyon</h4>`);
       _push(ssrRenderComponent(_sfc_main$6, {
         href: "/",
         icon: "home",
@@ -1186,7 +1212,7 @@ const _sfc_main$2 = {
         icon: "chart-bar",
         label: "Dashboard"
       }, null, _parent));
-      _push(`</div><div class="mb-4 space-y-1" data-v-ca895dce><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider" data-v-ca895dce>İçerik Yönetimi</h4>`);
+      _push(`</div><div class="mb-4 space-y-1" data-v-ded2eaa6><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider" data-v-ded2eaa6>İçerik Yönetimi</h4>`);
       _push(ssrRenderComponent(_sfc_main$6, {
         href: "/writes",
         icon: "fa-solid fa-pencil",
@@ -1199,7 +1225,7 @@ const _sfc_main$2 = {
       }, null, _parent));
       _push(`</div>`);
       if (isLoggedIn.value) {
-        _push(`<div class="mb-4 space-y-1" data-v-ca895dce><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider" data-v-ca895dce>Dil &amp; Çeviri</h4>`);
+        _push(`<div class="mb-4 space-y-1" data-v-ded2eaa6><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider" data-v-ded2eaa6>Dil &amp; Çeviri</h4>`);
         _push(ssrRenderComponent(_sfc_main$6, {
           href: "/rendition/words",
           icon: "fa-solid fa-globe",
@@ -1215,7 +1241,7 @@ const _sfc_main$2 = {
         _push(`<!---->`);
       }
       if (isLoggedIn.value) {
-        _push(`<div class="mb-4 space-y-1" data-v-ca895dce><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider" data-v-ca895dce>Proje Yönetimi</h4>`);
+        _push(`<div class="mb-4 space-y-1" data-v-ded2eaa6><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider" data-v-ded2eaa6>Proje Yönetimi</h4>`);
         _push(ssrRenderComponent(_sfc_main$6, {
           href: "/projects",
           icon: "fa-solid fa-project-diagram",
@@ -1226,7 +1252,7 @@ const _sfc_main$2 = {
         _push(`<!---->`);
       }
       if (isLoggedIn.value) {
-        _push(`<div class="mb-4 space-y-1" data-v-ca895dce><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider" data-v-ca895dce>Sistem &amp; Araçlar</h4>`);
+        _push(`<div class="mb-4 space-y-1" data-v-ded2eaa6><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider" data-v-ded2eaa6>Sistem &amp; Araçlar</h4>`);
         _push(ssrRenderComponent(_sfc_main$6, {
           href: "/versions",
           icon: "fa-solid fa-sync",
@@ -1236,8 +1262,15 @@ const _sfc_main$2 = {
       } else {
         _push(`<!---->`);
       }
+      _push(`<div class="mb-4 space-y-1" data-v-ded2eaa6><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider" data-v-ded2eaa6>Ekipman &amp; Araçlar</h4>`);
+      _push(ssrRenderComponent(_sfc_main$6, {
+        href: "/equipments",
+        icon: "fa-solid fa-tools",
+        label: "Ekipmanlar"
+      }, null, _parent));
+      _push(`</div>`);
       if (isLoggedIn.value) {
-        _push(`<div class="mb-4 space-y-1" data-v-ca895dce><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider" data-v-ca895dce>Media &amp; Varlıklar</h4>`);
+        _push(`<div class="mb-4 space-y-1" data-v-ded2eaa6><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider" data-v-ded2eaa6>Media &amp; Varlıklar</h4>`);
         _push(ssrRenderComponent(_sfc_main$6, {
           href: "/media",
           icon: "fa-solid fa-photo-video",
@@ -1258,15 +1291,15 @@ const _sfc_main$2 = {
         _push(`<!---->`);
       }
       if (!isLoggedIn.value) {
-        _push(`<div class="mb-4" data-v-ca895dce>`);
+        _push(`<div class="mb-4" data-v-ded2eaa6>`);
         _push(ssrRenderComponent(_sfc_main$4, { "is-compact": false }, null, _parent));
         _push(`</div>`);
       } else {
         _push(`<!---->`);
       }
-      _push(`<div class="mt-6 flex flex-col items-center" data-v-ca895dce>`);
+      _push(`<div class="mt-6 flex flex-col items-center" data-v-ded2eaa6>`);
       _push(ssrRenderComponent(_sfc_main$3, null, null, _parent));
-      _push(`<p class="text-base-content/60 mt-2 text-xs" data-v-ca895dce>${ssrInterpolate(appName.value)} - Tüm Hakları Saklıdır</p></div></div></div></div><!--]-->`);
+      _push(`<p class="text-base-content/60 mt-2 text-xs" data-v-ded2eaa6>${ssrInterpolate(appName.value)} - Tüm Hakları Saklıdır</p></div></div></div></div><!--]-->`);
     };
   }
 };
@@ -1276,7 +1309,7 @@ _sfc_main$2.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/MainLayout/HeaderLayout.vue");
   return _sfc_setup$2 ? _sfc_setup$2(props, ctx) : void 0;
 };
-const HeaderLayout = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-ca895dce"]]);
+const HeaderLayout = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-ded2eaa6"]]);
 const _sfc_main$1 = {
   __name: "SidebarLayout",
   __ssrInlineRender: true,
@@ -1297,32 +1330,49 @@ const _sfc_main$1 = {
       var _a, _b;
       return ((_b = (_a = page.props) == null ? void 0 : _a.app) == null ? void 0 : _b.name) ?? "Check Videos";
     });
-    const seoTitle = computed(() => {
+    computed(() => {
       var _a, _b, _c;
       return ((_c = (_b = (_a = page.props) == null ? void 0 : _a.screen) == null ? void 0 : _b.seo) == null ? void 0 : _c.title) ?? "Check Videos";
     });
     return (_ctx, _push, _parent, _attrs) => {
       _push(`<aside${ssrRenderAttrs(mergeProps({
         class: ["flex h-screen flex-col justify-between border-r-2 border-base-300 bg-base-200 p-4 font-sans", currentTheme.value]
-      }, _attrs))}><div class="space-y-6"><div class="rounded-lg border border-base-300 bg-base-100 p-4 shadow-sm"><div class="flex items-center justify-between"><div class="${ssrRenderClass([{ "w-full justify-center": __props.isCompact }, "flex items-center space-x-3"])}"><div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary"><span class="text-sm font-bold text-primary-content">${ssrInterpolate(appName.value.charAt(0))}</span></div>`);
-      if (!__props.isCompact) {
-        _push(`<div><h3 class="font-semibold text-base-content">${ssrInterpolate(appName.value)}</h3></div>`);
-      } else {
-        _push(`<!---->`);
-      }
-      _push(`</div></div></div>`);
-      if (!isLoggedIn.value) {
-        _push(`<div class="space-y-1"><a href="https://youtu.be/FPsx8xHLR1k?si=3dNFdwhk5s8LyqOe" target="_blank"><button class="w-full rounded-lg border border-base-300 bg-base-100 p-3 shadow-sm transition-colors hover:bg-base-200"><div class="${ssrRenderClass([{ "justify-center": __props.isCompact }, "flex items-center space-x-3"])}"><div class="flex h-5 w-5 items-center justify-center rounded bg-secondary"><svg class="h-3 w-3 text-secondary-content" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"></path></svg></div>`);
-        if (!__props.isCompact) {
-          _push(`<span class="text-sm font-medium text-base-content">Powered by : Notiriel</span>`);
-        } else {
-          _push(`<!---->`);
-        }
-        _push(`</div></button></a></div>`);
-      } else {
-        _push(`<!---->`);
-      }
-      _push(`<div class="${ssrRenderClass([{ "text-center": __props.isCompact }, "space-y-1"])}"><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">${ssrInterpolate(__props.isCompact ? "-----" : "Ana Navigasyon")}</h4>`);
+      }, _attrs))}><div class="space-y-1">`);
+      _push(ssrRenderComponent(unref(Link), {
+        href: "/",
+        class: "block"
+      }, {
+        default: withCtx((_, _push2, _parent2, _scopeId) => {
+          if (_push2) {
+            _push2(`<div class="mb- rounded-lg border border-base-300 bg-base-100 px-4 py-3 shadow-sm"${_scopeId}><div class="flex items-center justify-between"${_scopeId}><div class="${ssrRenderClass([{ "w-full justify-center": __props.isCompact }, "flex items-center space-x-3"])}"${_scopeId}><div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary"${_scopeId}><span class="text-sm font-bold text-primary-content"${_scopeId}>${ssrInterpolate(appName.value.charAt(0))}</span></div>`);
+            if (!__props.isCompact) {
+              _push2(`<div${_scopeId}><h3 class="font-semibold text-base-content"${_scopeId}>${ssrInterpolate(appName.value)}</h3></div>`);
+            } else {
+              _push2(`<!---->`);
+            }
+            _push2(`</div></div></div>`);
+          } else {
+            return [
+              createVNode("div", { class: "mb- rounded-lg border border-base-300 bg-base-100 px-4 py-3 shadow-sm" }, [
+                createVNode("div", { class: "flex items-center justify-between" }, [
+                  createVNode("div", {
+                    class: ["flex items-center space-x-3", { "w-full justify-center": __props.isCompact }]
+                  }, [
+                    createVNode("div", { class: "flex h-8 w-8 items-center justify-center rounded-lg bg-primary" }, [
+                      createVNode("span", { class: "text-sm font-bold text-primary-content" }, toDisplayString(appName.value.charAt(0)), 1)
+                    ]),
+                    !__props.isCompact ? (openBlock(), createBlock("div", { key: 0 }, [
+                      createVNode("h3", { class: "font-semibold text-base-content" }, toDisplayString(appName.value), 1)
+                    ])) : createCommentVNode("", true)
+                  ], 2)
+                ])
+              ])
+            ];
+          }
+        }),
+        _: 1
+      }, _parent));
+      _push(`<div class="${ssrRenderClass({ "text-center": __props.isCompact })}">`);
       _push(ssrRenderComponent(_sfc_main$6, {
         href: "/",
         icon: "home",
@@ -1332,10 +1382,10 @@ const _sfc_main$1 = {
       _push(ssrRenderComponent(_sfc_main$6, {
         href: "/dashboard",
         icon: "chart-bar",
-        label: "Dashboard",
+        label: "Panel",
         "is-compact": __props.isCompact
       }, null, _parent));
-      _push(`</div><div class="${ssrRenderClass([{ "text-center": __props.isCompact }, "space-y-1"])}"><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">${ssrInterpolate(__props.isCompact ? "-----" : "İçerik Yönetimi")}</h4>`);
+      _push(`</div><div class="${ssrRenderClass({ "text-center": __props.isCompact })}">`);
       _push(ssrRenderComponent(_sfc_main$6, {
         href: "/writes",
         icon: "fa-solid fa-pencil",
@@ -1350,7 +1400,7 @@ const _sfc_main$1 = {
       }, null, _parent));
       _push(`</div>`);
       if (isLoggedIn.value) {
-        _push(`<div class="${ssrRenderClass([{ "text-center": __props.isCompact }, "space-y-1"])}"><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">${ssrInterpolate(__props.isCompact ? "-----" : "Dil & Çeviri")}</h4>`);
+        _push(`<div class="${ssrRenderClass({ "text-center": __props.isCompact })}">`);
         _push(ssrRenderComponent(_sfc_main$6, {
           href: "/rendition/words",
           icon: "fa-solid fa-globe",
@@ -1368,7 +1418,7 @@ const _sfc_main$1 = {
         _push(`<!---->`);
       }
       if (isLoggedIn.value) {
-        _push(`<div class="${ssrRenderClass([{ "text-center": __props.isCompact }, "space-y-1"])}"><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">${ssrInterpolate(__props.isCompact ? "-----" : "Proje Yönetimi")}</h4>`);
+        _push(`<div class="${ssrRenderClass({ "text-center": __props.isCompact })}">`);
         _push(ssrRenderComponent(_sfc_main$6, {
           href: "/projects",
           icon: "fa-solid fa-project-diagram",
@@ -1380,7 +1430,7 @@ const _sfc_main$1 = {
         _push(`<!---->`);
       }
       if (isLoggedIn.value) {
-        _push(`<div class="${ssrRenderClass([{ "text-center": __props.isCompact }, "space-y-1"])}"><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">${ssrInterpolate(__props.isCompact ? "-----" : "Sistem & Araçlar")}</h4>`);
+        _push(`<div class="${ssrRenderClass({ "text-center": __props.isCompact })}">`);
         _push(ssrRenderComponent(_sfc_main$6, {
           href: "/versions",
           icon: "fa-solid fa-sync",
@@ -1391,20 +1441,16 @@ const _sfc_main$1 = {
       } else {
         _push(`<!---->`);
       }
+      _push(`<div class="${ssrRenderClass({ "text-center": __props.isCompact })}">`);
+      _push(ssrRenderComponent(_sfc_main$6, {
+        href: "/equipments",
+        icon: "fa-solid fa-tools",
+        label: "Ekipmanlar",
+        "is-compact": __props.isCompact
+      }, null, _parent));
+      _push(`</div>`);
       if (isLoggedIn.value) {
-        _push(`<div class="${ssrRenderClass([{ "text-center": __props.isCompact }, "space-y-1"])}"><h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">${ssrInterpolate(__props.isCompact ? "-----" : "Media & Varlıklar")}</h4>`);
-        _push(ssrRenderComponent(_sfc_main$6, {
-          href: "/media",
-          icon: "fa-solid fa-photo-video",
-          label: "Medya",
-          "is-compact": __props.isCompact
-        }, null, _parent));
-        _push(ssrRenderComponent(_sfc_main$6, {
-          href: "/bookmarks",
-          icon: "fa-solid fa-bookmark",
-          label: "Yer İmleri",
-          "is-compact": __props.isCompact
-        }, null, _parent));
+        _push(`<div class="${ssrRenderClass({ "text-center": __props.isCompact })}">`);
         _push(ssrRenderComponent(_sfc_main$6, {
           href: "/social-media",
           icon: "fa-solid fa-share-alt",
@@ -1415,17 +1461,23 @@ const _sfc_main$1 = {
       } else {
         _push(`<!---->`);
       }
+      _push(`<div class="${ssrRenderClass([{ "text-center": __props.isCompact }, "space-y-1 border-t border-base-300 pt-4"])}">`);
+      _push(ssrRenderComponent(_sfc_main$4, { "is-compact": __props.isCompact }, null, _parent));
+      _push(`</div></div><div class="absolute inset-x-0 bottom-0 py-4 text-center">`);
+      _push(ssrRenderComponent(_sfc_main$3, { class: "mx-auto" }, null, _parent));
       if (!isLoggedIn.value) {
-        _push(`<div class="${ssrRenderClass([{ "text-center": __props.isCompact }, "space-y-1"])}">`);
-        _push(ssrRenderComponent(_sfc_main$4, { "is-compact": __props.isCompact }, null, _parent));
-        _push(`</div>`);
+        _push(`<div class="space-y-1 p-4"><a href="https://youtu.be/FPsx8xHLR1k?si=3dNFdwhk5s8LyqOe" target="_blank"><button class="w-full rounded-lg border border-base-300 bg-base-100 p-3 shadow-sm transition-colors hover:bg-base-200"><div class="${ssrRenderClass([{ "justify-center": __props.isCompact }, "flex items-center space-x-3"])}">`);
+        if (!__props.isCompact) {
+          _push(`<span class="mx-auto items-center text-sm font-medium text-base-content">Powered by : Notiriel</span>`);
+        } else {
+          _push(`<!---->`);
+        }
+        _push(`</div></button></a></div>`);
       } else {
         _push(`<!---->`);
       }
-      _push(`</div><div class="absolute inset-x-0 bottom-0 py-4 text-center">`);
-      _push(ssrRenderComponent(_sfc_main$3, { class: "mx-auto" }, null, _parent));
       if (!__props.isCompact) {
-        _push(`<p class="text-base-content/60 mt-2 text-xs">${ssrInterpolate(seoTitle.value)} - Tüm Hakları Saklıdır</p>`);
+        _push(`<p class="text-base-content/60 mt-2 text-xs">Notiriel - Tüm Hakları Saklıdır</p>`);
       } else {
         _push(`<!---->`);
       }
@@ -1836,7 +1888,7 @@ function render(page) {
   return createInertiaApp({
     page,
     resolve: async (name) => {
-      const page2 = (await resolvePageComponent(`./Pages/${name}.vue`, /* @__PURE__ */ Object.assign({ "./Pages/Auth/ConfirmPassword.vue": () => import("./assets/ConfirmPassword-Dtyi0Psq.js"), "./Pages/Auth/ForgotPassword.vue": () => import("./assets/ForgotPassword-CYn5tjWk.js"), "./Pages/Auth/Login.vue": () => import("./assets/Login-CWm06mam.js"), "./Pages/Auth/Register.vue": () => import("./assets/Register-BTVdWxKD.js"), "./Pages/Auth/ResetPassword.vue": () => import("./assets/ResetPassword-DMapKcwL.js"), "./Pages/Auth/VerifyEmail.vue": () => import("./assets/VerifyEmail-BuYpNThj.js"), "./Pages/Bookmarks/CreateBookmarks.vue": () => import("./assets/CreateBookmarks-oxJSX3Zs.js"), "./Pages/Bookmarks/EditBookmarks.vue": () => import("./assets/EditBookmarks-S8tvKBtq.js"), "./Pages/Bookmarks/IndexBookmarks.vue": () => import("./assets/IndexBookmarks-BH0g04d3.js"), "./Pages/Bookmarks/ShowBookmarks.vue": () => import("./assets/ShowBookmarks-B_Ty2lxF.js"), "./Pages/Bookmarks/SidebarLayoutBookmarks.vue": () => import("./assets/SidebarLayoutBookmarks-B16ebHBN.js"), "./Pages/Category/TypescriptTutorial.vue": () => import("./assets/TypescriptTutorial-BIFkOjAm.js"), "./Pages/Dashboard.vue": () => import("./assets/Dashboard-Ddcvqiaq.js"), "./Pages/Equipments/Create/Screen.vue": () => import("./assets/Screen-D1PJcqvP.js"), "./Pages/Equipments/CreateEquipment.vue": () => import("./assets/CreateEquipment-CxmoL0yv.js"), "./Pages/Equipments/Edit/Screen.vue": () => import("./assets/Screen-Ca5kb9UJ.js"), "./Pages/Equipments/EditEquipment.vue": () => import("./assets/EditEquipment-D2FCZljd.js"), "./Pages/Equipments/Index/Screen.vue": () => import("./assets/Screen-0oDP1m6D.js"), "./Pages/Equipments/IndexEquipment.vue": () => import("./assets/IndexEquipment-B5M-6hUX.js"), "./Pages/Excalidraw.vue": () => import("./assets/Excalidraw-CzTXdE6L.js"), "./Pages/FBVersions/Versions/Create/Screen.vue": () => import("./assets/Screen-DgH6DI7f.js"), "./Pages/FBVersions/Versions/CreateVersion.vue": () => import("./assets/CreateVersion-h8KKYEb1.js"), "./Pages/FBVersions/Versions/Edit/Screen.vue": () => import("./assets/Screen-BO1zHluN.js"), "./Pages/FBVersions/Versions/EditVersion.vue": () => import("./assets/EditVersion-Bs0796um.js"), "./Pages/FBVersions/Versions/Index/Screen.vue": () => import("./assets/Screen-Dm5Zz5vf.js"), "./Pages/FBVersions/Versions/IndexVersion.vue": () => import("./assets/IndexVersion-CFp6vxju.js"), "./Pages/FBVersions/Versions/Show/Screen.vue": () => import("./assets/Screen-AXGXfjnc.js"), "./Pages/FBVersions/Versions/ShowVersion.vue": () => import("./assets/ShowVersion-CG24Ol4f.js"), "./Pages/FBVersions/_components/VersionList.vue": () => import("./assets/VersionList-BfMi4ShN.js"), "./Pages/FBVersions/_layouts/LayoutFBVersions.vue": () => import("./assets/LayoutFBVersions-BTgyeXST.js"), "./Pages/FBVersions/_layouts/SidebarLayoutVersion.vue": () => import("./assets/SidebarLayoutVersion-CODwvLUq.js"), "./Pages/Index/Factory.vue": () => import("./assets/Factory-DmE-vk79.js"), "./Pages/Index/Index.vue": () => import("./assets/Index-Blx240Cy.js"), "./Pages/Lessons/Create/Screen.vue": () => import("./assets/Screen-Dwo-Tpw_.js"), "./Pages/Lessons/CreateLesson.vue": () => import("./assets/CreateLesson-DIaSWFL0.js"), "./Pages/Lessons/Edit/Screen.vue": () => import("./assets/Screen-DHB0fXpk.js"), "./Pages/Lessons/EditLesson.vue": () => import("./assets/EditLesson-DSw3l3wo.js"), "./Pages/Lessons/Index/Screen.vue": () => import("./assets/Screen-CTLysX6N.js"), "./Pages/Lessons/IndexLesson.vue": () => import("./assets/IndexLesson-DKTokM2_.js"), "./Pages/Lessons/Show/Screen.vue": () => import("./assets/Screen-CxkxT9UO.js"), "./Pages/Lessons/ShowLesson.vue": () => import("./assets/ShowLesson-C5uf7dAm.js"), "./Pages/Lessons/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-DfZzYfmn.js"), "./Pages/Lessons/_layouts/SidebarLayoutLesson.vue": () => import("./assets/SidebarLayoutLesson-jj_1q1DG.js"), "./Pages/Media/Index.vue": () => import("./assets/Index-DRS2ne7M.js"), "./Pages/Profile/Edit.vue": () => import("./assets/Edit-DuA2HZgp.js"), "./Pages/Profile/Partials/DeleteUserForm.vue": () => import("./assets/DeleteUserForm-Be_bBQG7.js"), "./Pages/Profile/Partials/UpdatePasswordForm.vue": () => import("./assets/UpdatePasswordForm-BQubgQVL.js"), "./Pages/Profile/Partials/UpdateProfileInformationForm.vue": () => import("./assets/UpdateProfileInformationForm-BdwUb7fq.js"), "./Pages/Projects/Customers/Create/Screen.vue": () => import("./assets/Screen-5FHnxqQb.js"), "./Pages/Projects/Customers/CreateCustomer.vue": () => import("./assets/CreateCustomer-C_qWD06n.js"), "./Pages/Projects/Customers/Edit/Screen.vue": () => import("./assets/Screen-hI5uRr7M.js"), "./Pages/Projects/Customers/EditCustomer.vue": () => import("./assets/EditCustomer-B3NIkDyS.js"), "./Pages/Projects/Customers/Index/Screen.vue": () => import("./assets/Screen-HqTvWdJS.js"), "./Pages/Projects/Customers/IndexCustomer.vue": () => import("./assets/IndexCustomer-Bfr1m2IG.js"), "./Pages/Projects/Customers/Show/Screen.vue": () => import("./assets/Screen-CKUyiJ5u.js"), "./Pages/Projects/Customers/ShowCustomer.vue": () => import("./assets/ShowCustomer-ciwDw4eM.js"), "./Pages/Projects/Index/Screen.vue": () => import("./assets/Screen-DZR-YK0d.js"), "./Pages/Projects/Project/Create/Screen.vue": () => import("./assets/Screen-DhiL3wst.js"), "./Pages/Projects/Project/CreateProject.vue": () => import("./assets/CreateProject-vNcKO-8i.js"), "./Pages/Projects/Project/Edit/Screen.vue": () => import("./assets/Screen-4f6ySIa6.js"), "./Pages/Projects/Project/EditProject.vue": () => import("./assets/EditProject-cbhybHdl.js"), "./Pages/Projects/Project/Index/Screen.vue": () => import("./assets/Screen-BH63YaNC.js"), "./Pages/Projects/Project/IndexProject.vue": () => import("./assets/IndexProject-D80_MW1R.js"), "./Pages/Projects/Project/Show/Screen.vue": () => import("./assets/Screen-Fp1RjbpB.js"), "./Pages/Projects/Project/ShowProject.vue": () => import("./assets/ShowProject-CEQqzf4q.js"), "./Pages/Projects/Services/Create/Screen.vue": () => import("./assets/Screen-D1jN7KYC.js"), "./Pages/Projects/Services/CreateService.vue": () => import("./assets/CreateService-TLlR-zkU.js"), "./Pages/Projects/Services/Edit/Screen.vue": () => import("./assets/Screen-DY3HAQWh.js"), "./Pages/Projects/Services/EditService.vue": () => import("./assets/EditService-CLqDfDIQ.js"), "./Pages/Projects/Services/Index/Screen.vue": () => import("./assets/Screen-D4Ajg8SU.js"), "./Pages/Projects/Services/Index/ServiceItem.vue": () => import("./assets/ServiceItem-B68mDLai.js"), "./Pages/Projects/Services/IndexService.vue": () => import("./assets/IndexService-CGczms4T.js"), "./Pages/Projects/Services/Show/Screen.vue": () => import("./assets/Screen-CkiAq9Qd.js"), "./Pages/Projects/Services/ShowService.vue": () => import("./assets/ShowService-UOZ51mz2.js"), "./Pages/Projects/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-LlIdInKJ.js"), "./Pages/Projects/_layouts/LayoutProjects.vue": () => import("./assets/LayoutProjects-DXAlsolR.js"), "./Pages/Projects/_layouts/SidebarLayoutProject.vue": () => import("./assets/SidebarLayoutProject-BcM3cXoB.js"), "./Pages/Rendition/LanguagePacks/Create/Screen.vue": () => import("./assets/Screen-8Qbhzv7K.js"), "./Pages/Rendition/LanguagePacks/CreateLanguagePacks.vue": () => import("./assets/CreateLanguagePacks-BjTgwtgX.js"), "./Pages/Rendition/LanguagePacks/Edit/Screen.vue": () => import("./assets/Screen-AzDno8VR.js"), "./Pages/Rendition/LanguagePacks/EditLanguagePacks.vue": () => import("./assets/EditLanguagePacks-CzCB1keO.js"), "./Pages/Rendition/LanguagePacks/Index/PacksTable.vue": () => import("./assets/PacksTable-Chjtq1NP.js"), "./Pages/Rendition/LanguagePacks/Index/Screen.vue": () => import("./assets/Screen-Ce6UTNC3.js"), "./Pages/Rendition/LanguagePacks/IndexLanguagePacks.vue": () => import("./assets/IndexLanguagePacks-wrSqlTxM.js"), "./Pages/Rendition/LanguagePacks/ShowLanguagePacks.vue": () => import("./assets/ShowLanguagePacks-CItbkrLm.js"), "./Pages/Rendition/LanguagePacks/Words.vue": () => import("./assets/Words-D5PGPaSM.js"), "./Pages/Rendition/LanguagePacks/Words/Screen.vue": () => import("./assets/Screen-Bwl2vb2P.js"), "./Pages/Rendition/Words/Create/Screen.vue": () => import("./assets/Screen-DQ2CAV8V.js"), "./Pages/Rendition/Words/CreateWord.vue": () => import("./assets/CreateWord-CRW4jL8q.js"), "./Pages/Rendition/Words/Edit/Screen.vue": () => import("./assets/Screen-B63b3ajU.js"), "./Pages/Rendition/Words/EditWord.vue": () => import("./assets/EditWord-_q9pZDlR.js"), "./Pages/Rendition/Words/Index/Screen.vue": () => import("./assets/Screen-BVyu7kS2.js"), "./Pages/Rendition/Words/IndexWord.vue": () => import("./assets/IndexWord-C-_vXn8k.js"), "./Pages/Rendition/Words/Show/Screen.vue": () => import("./assets/Screen-Cwj-MARC.js"), "./Pages/Rendition/Words/ShowWord.vue": () => import("./assets/ShowWord-CVSFOxYd.js"), "./Pages/Rendition/_components/MultipleChoice.vue": () => import("./assets/MultipleChoice-BJVRV-to.js"), "./Pages/Rendition/_components/TranslateWord.vue": () => import("./assets/TranslateWord-C_EqYf5d.js"), "./Pages/Rendition/_components/WordCompletion.vue": () => import("./assets/WordCompletion-CPGcKJBv.js"), "./Pages/Rendition/_components/WordsTable.vue": () => import("./assets/WordsTable-BqU-bMcA.js"), "./Pages/Rendition/_layouts/LayoutRendition.vue": () => import("./assets/LayoutRendition-CKb6q4Up.js"), "./Pages/Rendition/_layouts/SidebarPackGame.vue": () => import("./assets/SidebarPackGame-DwWxEN60.js"), "./Pages/Rendition/_layouts/SidebarRendition.vue": () => import("./assets/SidebarRendition-C1LymlEr.js"), "./Pages/Seo/Create.vue": () => import("./assets/Create-DRIx17Vb.js"), "./Pages/Seo/Edit.vue": () => import("./assets/Edit-DFLl9_TN.js"), "./Pages/Seo/Index.vue": () => import("./assets/Index-BeRjgPFN.js"), "./Pages/SocialMedia/Index.vue": () => import("./assets/Index-BVcEOUO_.js"), "./Pages/SoftwareProducts/Create.vue": () => import("./assets/Create-avQ24DMD.js"), "./Pages/SoftwareProducts/Edit.vue": () => import("./assets/Edit-CldSJyvx.js"), "./Pages/SoftwareProducts/Index.vue": () => import("./assets/Index-Be4cyEyz.js"), "./Pages/SoftwareProducts/Show.vue": () => import("./assets/Show-7XdlwgLi.js"), "./Pages/SoftwareProducts/component/Box.vue": () => import("./assets/Box-D23LJ2w_.js"), "./Pages/SoftwareProducts/component/ConfirmModal.vue": () => import("./assets/ConfirmModal-8bTg5PxV.js"), "./Pages/SoftwareProducts/component/SPAddress.vue": () => import("./assets/SPAddress-C4B-URBw.js"), "./Pages/SoftwareProducts/component/SPPrice.vue": () => import("./assets/SPPrice-DDe_ZJN3.js"), "./Pages/SoftwareProducts/component/SPSpaces.vue": () => import("./assets/SPSpaces-C-9fwGUn.js"), "./Pages/ThemeManagement.vue": () => import("./assets/ThemeManagement-CB7kPeDO.js"), "./Pages/Welcome.vue": () => import("./assets/Welcome-D6Jmvwhf.js"), "./Pages/WritesCategories/Categories/Create/CategoriesCreateFrom.vue": () => import("./assets/CategoriesCreateFrom-kQrBvJAp.js"), "./Pages/WritesCategories/Categories/Create/Screen.vue": () => import("./assets/Screen-Bm3r9KGn.js"), "./Pages/WritesCategories/Categories/CreateCategory.vue": () => import("./assets/CreateCategory-wQYqdGZM.js"), "./Pages/WritesCategories/Categories/Edit/CategoriesEditFrom.vue": () => import("./assets/CategoriesEditFrom-DKzwSiRi.js"), "./Pages/WritesCategories/Categories/Edit/Screen.vue": () => import("./assets/Screen-Cx_LmM4I.js"), "./Pages/WritesCategories/Categories/EditCategory.vue": () => import("./assets/EditCategory-Dwnvbk3b.js"), "./Pages/WritesCategories/Categories/Index/Screen.vue": () => import("./assets/Screen-pBXsE-TD.js"), "./Pages/WritesCategories/Categories/IndexCategory.vue": () => import("./assets/IndexCategory-DAb9sEHx.js"), "./Pages/WritesCategories/Categories/Show/Screen.vue": () => import("./assets/Screen-CK9PjhHa.js"), "./Pages/WritesCategories/Categories/ShowCategory.vue": () => import("./assets/ShowCategory-D5fjpKeF.js"), "./Pages/WritesCategories/Categories/WriteByCategory.vue": () => import("./assets/WriteByCategory-DubKv2RQ.js"), "./Pages/WritesCategories/Categories/WriteByCategory/Screen.vue": () => import("./assets/Screen-CmlBpHmQ.js"), "./Pages/WritesCategories/Writes/Create/FormField.vue": () => import("./assets/FormField-B5B8BMWT.js"), "./Pages/WritesCategories/Writes/Create/Screen.vue": () => import("./assets/Screen-DdeLh71H.js"), "./Pages/WritesCategories/Writes/Create/WriteCreateForm.vue": () => import("./assets/WriteCreateForm-DbyMOnrp.js"), "./Pages/WritesCategories/Writes/CreateWrite.vue": () => import("./assets/CreateWrite-OAWT1gmC.js"), "./Pages/WritesCategories/Writes/Edit/Screen.vue": () => import("./assets/Screen-CuUnp7yM.js"), "./Pages/WritesCategories/Writes/Edit/WriteUpdateForm.vue": () => import("./assets/WriteUpdateForm-BtNI_-dQ.js"), "./Pages/WritesCategories/Writes/EditWrite.vue": () => import("./assets/EditWrite-DZwbWGri.js"), "./Pages/WritesCategories/Writes/Index/Screen.vue": () => import("./assets/Screen-DVPwIO-t.js"), "./Pages/WritesCategories/Writes/IndexWrite.vue": () => import("./assets/IndexWrite-DwPwc5N4.js"), "./Pages/WritesCategories/Writes/Show/Screen.vue": () => import("./assets/Screen-DX0ztiUf.js"), "./Pages/WritesCategories/Writes/ShowWrite.vue": () => import("./assets/ShowWrite-OWHUiZad.js"), "./Pages/WritesCategories/_components/RichTextEditor.vue": () => import("./assets/RichTextEditor-DZBGhVV7.js"), "./Pages/WritesCategories/_composables/CategoryTree.vue": () => import("./assets/CategoryTree-CJ6HP-0T.js"), "./Pages/WritesCategories/_composables/WriteList.vue": () => import("./assets/WriteList-Cx8WJOoq.js"), "./Pages/WritesCategories/_layouts/LayoutWritesCategories.vue": () => import("./assets/LayoutWritesCategories-CUXssI9r.js"), "./Pages/WritesCategories/_layouts/SidebarLayoutCategory.vue": () => import("./assets/SidebarLayoutCategory-Dlhj1mYM.js"), "./Pages/WritesCategories/_layouts/SidebarLayoutWrite.vue": () => import("./assets/SidebarLayoutWrite-BkmvaQpI.js") }))).default;
+      const page2 = (await resolvePageComponent(`./Pages/${name}.vue`, /* @__PURE__ */ Object.assign({ "./Pages/Auth/ConfirmPassword.vue": () => import("./assets/ConfirmPassword-Dtyi0Psq.js"), "./Pages/Auth/ForgotPassword.vue": () => import("./assets/ForgotPassword-CYn5tjWk.js"), "./Pages/Auth/Login.vue": () => import("./assets/Login-CWm06mam.js"), "./Pages/Auth/Register.vue": () => import("./assets/Register-BTVdWxKD.js"), "./Pages/Auth/ResetPassword.vue": () => import("./assets/ResetPassword-DMapKcwL.js"), "./Pages/Auth/VerifyEmail.vue": () => import("./assets/VerifyEmail-BuYpNThj.js"), "./Pages/Bookmarks/CreateBookmarks.vue": () => import("./assets/CreateBookmarks-oxJSX3Zs.js"), "./Pages/Bookmarks/EditBookmarks.vue": () => import("./assets/EditBookmarks-S8tvKBtq.js"), "./Pages/Bookmarks/IndexBookmarks.vue": () => import("./assets/IndexBookmarks-BH0g04d3.js"), "./Pages/Bookmarks/ShowBookmarks.vue": () => import("./assets/ShowBookmarks-B_Ty2lxF.js"), "./Pages/Bookmarks/SidebarLayoutBookmarks.vue": () => import("./assets/SidebarLayoutBookmarks-B16ebHBN.js"), "./Pages/Category/TypescriptTutorial.vue": () => import("./assets/TypescriptTutorial-BIFkOjAm.js"), "./Pages/Dashboard.vue": () => import("./assets/Dashboard-Ddcvqiaq.js"), "./Pages/Equipments/Create/Screen.vue": () => import("./assets/Screen-D1PJcqvP.js"), "./Pages/Equipments/CreateEquipment.vue": () => import("./assets/CreateEquipment-CxmoL0yv.js"), "./Pages/Equipments/Edit/Screen.vue": () => import("./assets/Screen-Ca5kb9UJ.js"), "./Pages/Equipments/EditEquipment.vue": () => import("./assets/EditEquipment-D2FCZljd.js"), "./Pages/Equipments/Index/Screen.vue": () => import("./assets/Screen-Cuce7w9O.js"), "./Pages/Equipments/IndexEquipment.vue": () => import("./assets/IndexEquipment-BqyUdMbS.js"), "./Pages/Equipments/ShowEquipment.vue": () => import("./assets/ShowEquipment-Di6pVRrk.js"), "./Pages/Excalidraw.vue": () => import("./assets/Excalidraw-CzTXdE6L.js"), "./Pages/FBVersions/Versions/Create/Screen.vue": () => import("./assets/Screen-DgH6DI7f.js"), "./Pages/FBVersions/Versions/CreateVersion.vue": () => import("./assets/CreateVersion-h8KKYEb1.js"), "./Pages/FBVersions/Versions/Edit/Screen.vue": () => import("./assets/Screen-BO1zHluN.js"), "./Pages/FBVersions/Versions/EditVersion.vue": () => import("./assets/EditVersion-Bs0796um.js"), "./Pages/FBVersions/Versions/Index/Screen.vue": () => import("./assets/Screen-Dm5Zz5vf.js"), "./Pages/FBVersions/Versions/IndexVersion.vue": () => import("./assets/IndexVersion-CFp6vxju.js"), "./Pages/FBVersions/Versions/Show/Screen.vue": () => import("./assets/Screen-AXGXfjnc.js"), "./Pages/FBVersions/Versions/ShowVersion.vue": () => import("./assets/ShowVersion-CG24Ol4f.js"), "./Pages/FBVersions/_components/VersionList.vue": () => import("./assets/VersionList-BfMi4ShN.js"), "./Pages/FBVersions/_layouts/LayoutFBVersions.vue": () => import("./assets/LayoutFBVersions-BTgyeXST.js"), "./Pages/FBVersions/_layouts/SidebarLayoutVersion.vue": () => import("./assets/SidebarLayoutVersion-CODwvLUq.js"), "./Pages/Index/Factory.vue": () => import("./assets/Factory-DmE-vk79.js"), "./Pages/Index/Index.vue": () => import("./assets/Index-Blx240Cy.js"), "./Pages/Lessons/Create/Screen.vue": () => import("./assets/Screen-Dwo-Tpw_.js"), "./Pages/Lessons/CreateLesson.vue": () => import("./assets/CreateLesson-DIaSWFL0.js"), "./Pages/Lessons/Edit/Screen.vue": () => import("./assets/Screen-DHB0fXpk.js"), "./Pages/Lessons/EditLesson.vue": () => import("./assets/EditLesson-DSw3l3wo.js"), "./Pages/Lessons/Index/Screen.vue": () => import("./assets/Screen-CTLysX6N.js"), "./Pages/Lessons/IndexLesson.vue": () => import("./assets/IndexLesson-DKTokM2_.js"), "./Pages/Lessons/Show/Screen.vue": () => import("./assets/Screen-CxkxT9UO.js"), "./Pages/Lessons/ShowLesson.vue": () => import("./assets/ShowLesson-C5uf7dAm.js"), "./Pages/Lessons/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-DfZzYfmn.js"), "./Pages/Lessons/_layouts/SidebarLayoutLesson.vue": () => import("./assets/SidebarLayoutLesson-jj_1q1DG.js"), "./Pages/Media/Index.vue": () => import("./assets/Index-DRS2ne7M.js"), "./Pages/Profile/Edit.vue": () => import("./assets/Edit-DuA2HZgp.js"), "./Pages/Profile/Partials/DeleteUserForm.vue": () => import("./assets/DeleteUserForm-Be_bBQG7.js"), "./Pages/Profile/Partials/UpdatePasswordForm.vue": () => import("./assets/UpdatePasswordForm-BQubgQVL.js"), "./Pages/Profile/Partials/UpdateProfileInformationForm.vue": () => import("./assets/UpdateProfileInformationForm-BdwUb7fq.js"), "./Pages/Projects/Customers/Create/Screen.vue": () => import("./assets/Screen-5FHnxqQb.js"), "./Pages/Projects/Customers/CreateCustomer.vue": () => import("./assets/CreateCustomer-C_qWD06n.js"), "./Pages/Projects/Customers/Edit/Screen.vue": () => import("./assets/Screen-hI5uRr7M.js"), "./Pages/Projects/Customers/EditCustomer.vue": () => import("./assets/EditCustomer-B3NIkDyS.js"), "./Pages/Projects/Customers/Index/Screen.vue": () => import("./assets/Screen-HqTvWdJS.js"), "./Pages/Projects/Customers/IndexCustomer.vue": () => import("./assets/IndexCustomer-Bfr1m2IG.js"), "./Pages/Projects/Customers/Show/Screen.vue": () => import("./assets/Screen-CKUyiJ5u.js"), "./Pages/Projects/Customers/ShowCustomer.vue": () => import("./assets/ShowCustomer-ciwDw4eM.js"), "./Pages/Projects/Index/Screen.vue": () => import("./assets/Screen-DZR-YK0d.js"), "./Pages/Projects/Project/Create/Screen.vue": () => import("./assets/Screen-DhiL3wst.js"), "./Pages/Projects/Project/CreateProject.vue": () => import("./assets/CreateProject-vNcKO-8i.js"), "./Pages/Projects/Project/Edit/Screen.vue": () => import("./assets/Screen-4f6ySIa6.js"), "./Pages/Projects/Project/EditProject.vue": () => import("./assets/EditProject-cbhybHdl.js"), "./Pages/Projects/Project/Index/Screen.vue": () => import("./assets/Screen-BH63YaNC.js"), "./Pages/Projects/Project/IndexProject.vue": () => import("./assets/IndexProject-D80_MW1R.js"), "./Pages/Projects/Project/Show/Screen.vue": () => import("./assets/Screen-Fp1RjbpB.js"), "./Pages/Projects/Project/ShowProject.vue": () => import("./assets/ShowProject-CEQqzf4q.js"), "./Pages/Projects/Services/Create/Screen.vue": () => import("./assets/Screen-D1jN7KYC.js"), "./Pages/Projects/Services/CreateService.vue": () => import("./assets/CreateService-TLlR-zkU.js"), "./Pages/Projects/Services/Edit/Screen.vue": () => import("./assets/Screen-DY3HAQWh.js"), "./Pages/Projects/Services/EditService.vue": () => import("./assets/EditService-CLqDfDIQ.js"), "./Pages/Projects/Services/Index/Screen.vue": () => import("./assets/Screen-D4Ajg8SU.js"), "./Pages/Projects/Services/Index/ServiceItem.vue": () => import("./assets/ServiceItem-B68mDLai.js"), "./Pages/Projects/Services/IndexService.vue": () => import("./assets/IndexService-CGczms4T.js"), "./Pages/Projects/Services/Show/Screen.vue": () => import("./assets/Screen-CkiAq9Qd.js"), "./Pages/Projects/Services/ShowService.vue": () => import("./assets/ShowService-UOZ51mz2.js"), "./Pages/Projects/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-LlIdInKJ.js"), "./Pages/Projects/_layouts/LayoutProjects.vue": () => import("./assets/LayoutProjects-DXAlsolR.js"), "./Pages/Projects/_layouts/SidebarLayoutProject.vue": () => import("./assets/SidebarLayoutProject-BcM3cXoB.js"), "./Pages/Rendition/LanguagePacks/Create/Screen.vue": () => import("./assets/Screen-8Qbhzv7K.js"), "./Pages/Rendition/LanguagePacks/CreateLanguagePacks.vue": () => import("./assets/CreateLanguagePacks-BjTgwtgX.js"), "./Pages/Rendition/LanguagePacks/Edit/Screen.vue": () => import("./assets/Screen-AzDno8VR.js"), "./Pages/Rendition/LanguagePacks/EditLanguagePacks.vue": () => import("./assets/EditLanguagePacks-CzCB1keO.js"), "./Pages/Rendition/LanguagePacks/Index/PacksTable.vue": () => import("./assets/PacksTable-Chjtq1NP.js"), "./Pages/Rendition/LanguagePacks/Index/Screen.vue": () => import("./assets/Screen-Ce6UTNC3.js"), "./Pages/Rendition/LanguagePacks/IndexLanguagePacks.vue": () => import("./assets/IndexLanguagePacks-wrSqlTxM.js"), "./Pages/Rendition/LanguagePacks/ShowLanguagePacks.vue": () => import("./assets/ShowLanguagePacks-CItbkrLm.js"), "./Pages/Rendition/LanguagePacks/Words.vue": () => import("./assets/Words-D5PGPaSM.js"), "./Pages/Rendition/LanguagePacks/Words/Screen.vue": () => import("./assets/Screen-Bwl2vb2P.js"), "./Pages/Rendition/Words/Create/Screen.vue": () => import("./assets/Screen-DQ2CAV8V.js"), "./Pages/Rendition/Words/CreateWord.vue": () => import("./assets/CreateWord-CRW4jL8q.js"), "./Pages/Rendition/Words/Edit/Screen.vue": () => import("./assets/Screen-B63b3ajU.js"), "./Pages/Rendition/Words/EditWord.vue": () => import("./assets/EditWord-_q9pZDlR.js"), "./Pages/Rendition/Words/Index/Screen.vue": () => import("./assets/Screen-BVyu7kS2.js"), "./Pages/Rendition/Words/IndexWord.vue": () => import("./assets/IndexWord-C-_vXn8k.js"), "./Pages/Rendition/Words/Show/Screen.vue": () => import("./assets/Screen-Cwj-MARC.js"), "./Pages/Rendition/Words/ShowWord.vue": () => import("./assets/ShowWord-CVSFOxYd.js"), "./Pages/Rendition/_components/MultipleChoice.vue": () => import("./assets/MultipleChoice-BJVRV-to.js"), "./Pages/Rendition/_components/TranslateWord.vue": () => import("./assets/TranslateWord-C_EqYf5d.js"), "./Pages/Rendition/_components/WordCompletion.vue": () => import("./assets/WordCompletion-CPGcKJBv.js"), "./Pages/Rendition/_components/WordsTable.vue": () => import("./assets/WordsTable-BqU-bMcA.js"), "./Pages/Rendition/_layouts/LayoutRendition.vue": () => import("./assets/LayoutRendition-CKb6q4Up.js"), "./Pages/Rendition/_layouts/SidebarPackGame.vue": () => import("./assets/SidebarPackGame-DwWxEN60.js"), "./Pages/Rendition/_layouts/SidebarRendition.vue": () => import("./assets/SidebarRendition-C1LymlEr.js"), "./Pages/Seo/Create.vue": () => import("./assets/Create-DRIx17Vb.js"), "./Pages/Seo/Edit.vue": () => import("./assets/Edit-DFLl9_TN.js"), "./Pages/Seo/Index.vue": () => import("./assets/Index-BeRjgPFN.js"), "./Pages/SocialMedia/Index.vue": () => import("./assets/Index-BVcEOUO_.js"), "./Pages/SoftwareProducts/Create.vue": () => import("./assets/Create-avQ24DMD.js"), "./Pages/SoftwareProducts/Edit.vue": () => import("./assets/Edit-CldSJyvx.js"), "./Pages/SoftwareProducts/Index.vue": () => import("./assets/Index-Be4cyEyz.js"), "./Pages/SoftwareProducts/Show.vue": () => import("./assets/Show-7XdlwgLi.js"), "./Pages/SoftwareProducts/component/Box.vue": () => import("./assets/Box-D23LJ2w_.js"), "./Pages/SoftwareProducts/component/ConfirmModal.vue": () => import("./assets/ConfirmModal-8bTg5PxV.js"), "./Pages/SoftwareProducts/component/SPAddress.vue": () => import("./assets/SPAddress-C4B-URBw.js"), "./Pages/SoftwareProducts/component/SPPrice.vue": () => import("./assets/SPPrice-DDe_ZJN3.js"), "./Pages/SoftwareProducts/component/SPSpaces.vue": () => import("./assets/SPSpaces-C-9fwGUn.js"), "./Pages/ThemeManagement.vue": () => import("./assets/ThemeManagement-yJi7A9Wu.js"), "./Pages/Welcome.vue": () => import("./assets/Welcome-D6Jmvwhf.js"), "./Pages/WritesCategories/Categories/Create/CategoriesCreateFrom.vue": () => import("./assets/CategoriesCreateFrom-kQrBvJAp.js"), "./Pages/WritesCategories/Categories/Create/Screen.vue": () => import("./assets/Screen-Bm3r9KGn.js"), "./Pages/WritesCategories/Categories/CreateCategory.vue": () => import("./assets/CreateCategory-wQYqdGZM.js"), "./Pages/WritesCategories/Categories/Edit/CategoriesEditFrom.vue": () => import("./assets/CategoriesEditFrom-DKzwSiRi.js"), "./Pages/WritesCategories/Categories/Edit/Screen.vue": () => import("./assets/Screen-Cx_LmM4I.js"), "./Pages/WritesCategories/Categories/EditCategory.vue": () => import("./assets/EditCategory-Dwnvbk3b.js"), "./Pages/WritesCategories/Categories/Index/Screen.vue": () => import("./assets/Screen-pBXsE-TD.js"), "./Pages/WritesCategories/Categories/IndexCategory.vue": () => import("./assets/IndexCategory-DAb9sEHx.js"), "./Pages/WritesCategories/Categories/Show/Screen.vue": () => import("./assets/Screen-CK9PjhHa.js"), "./Pages/WritesCategories/Categories/ShowCategory.vue": () => import("./assets/ShowCategory-D5fjpKeF.js"), "./Pages/WritesCategories/Categories/WriteByCategory.vue": () => import("./assets/WriteByCategory-DubKv2RQ.js"), "./Pages/WritesCategories/Categories/WriteByCategory/Screen.vue": () => import("./assets/Screen-CmlBpHmQ.js"), "./Pages/WritesCategories/Writes/Create/FormField.vue": () => import("./assets/FormField-B5B8BMWT.js"), "./Pages/WritesCategories/Writes/Create/Screen.vue": () => import("./assets/Screen-DdeLh71H.js"), "./Pages/WritesCategories/Writes/Create/WriteCreateForm.vue": () => import("./assets/WriteCreateForm-DbyMOnrp.js"), "./Pages/WritesCategories/Writes/CreateWrite.vue": () => import("./assets/CreateWrite-OAWT1gmC.js"), "./Pages/WritesCategories/Writes/Edit/Screen.vue": () => import("./assets/Screen-CuUnp7yM.js"), "./Pages/WritesCategories/Writes/Edit/WriteUpdateForm.vue": () => import("./assets/WriteUpdateForm-BtNI_-dQ.js"), "./Pages/WritesCategories/Writes/EditWrite.vue": () => import("./assets/EditWrite-DZwbWGri.js"), "./Pages/WritesCategories/Writes/Index/Screen.vue": () => import("./assets/Screen-DVPwIO-t.js"), "./Pages/WritesCategories/Writes/IndexWrite.vue": () => import("./assets/IndexWrite-DwPwc5N4.js"), "./Pages/WritesCategories/Writes/Show/Screen.vue": () => import("./assets/Screen-DX0ztiUf.js"), "./Pages/WritesCategories/Writes/ShowWrite.vue": () => import("./assets/ShowWrite-OWHUiZad.js"), "./Pages/WritesCategories/_components/RichTextEditor.vue": () => import("./assets/RichTextEditor-DZBGhVV7.js"), "./Pages/WritesCategories/_composables/CategoryTree.vue": () => import("./assets/CategoryTree-CJ6HP-0T.js"), "./Pages/WritesCategories/_composables/WriteList.vue": () => import("./assets/WriteList-Cx8WJOoq.js"), "./Pages/WritesCategories/_layouts/LayoutWritesCategories.vue": () => import("./assets/LayoutWritesCategories-CUXssI9r.js"), "./Pages/WritesCategories/_layouts/SidebarLayoutCategory.vue": () => import("./assets/SidebarLayoutCategory-Dlhj1mYM.js"), "./Pages/WritesCategories/_layouts/SidebarLayoutWrite.vue": () => import("./assets/SidebarLayoutWrite-BkmvaQpI.js") }))).default;
       page2.layout = page2.layout || _sfc_main;
       return page2;
     },

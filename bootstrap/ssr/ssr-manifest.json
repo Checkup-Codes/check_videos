@@ -134,7 +134,7 @@
   ],
   "resources/js/Layouts/MainLayout.vue": [],
   "resources/js/Layouts/MainLayout/HeaderLayout.vue": [],
-  "resources/js/Layouts/MainLayout/HeaderLayout.vue?vue&type=style&index=0&scoped=ca895dce&lang.css": [],
+  "resources/js/Layouts/MainLayout/HeaderLayout.vue?vue&type=style&index=0&scoped=ded2eaa6&lang.css": [],
   "resources/js/Layouts/MainLayout/SidebarLayout.vue": [],
   "resources/js/Layouts/_components/NavItem.vue": [],
   "resources/js/Layouts/_components/SocialLink.vue": [],
@@ -218,10 +218,13 @@
     "/build/assets/EditEquipment-D2FCZljd.js"
   ],
   "resources/js/Pages/Equipments/Index/Screen.vue": [
-    "/build/assets/Screen-0oDP1m6D.js"
+    "/build/assets/Screen-Cuce7w9O.js"
   ],
   "resources/js/Pages/Equipments/IndexEquipment.vue": [
-    "/build/assets/IndexEquipment-B5M-6hUX.js"
+    "/build/assets/IndexEquipment-BqyUdMbS.js"
+  ],
+  "resources/js/Pages/Equipments/ShowEquipment.vue": [
+    "/build/assets/ShowEquipment-Di6pVRrk.js"
   ],
   "resources/js/Pages/Excalidraw.vue": [
     "/build/assets/Excalidraw-CzTXdE6L.js"
@@ -624,7 +627,7 @@
     "/build/assets/Show-7XdlwgLi.js"
   ],
   "resources/js/Pages/ThemeManagement.vue": [
-    "/build/assets/ThemeManagement-CB7kPeDO.js"
+    "/build/assets/ThemeManagement-yJi7A9Wu.js"
   ],
   "resources/js/Pages/Welcome.vue": [
     "/build/assets/Welcome-D6Jmvwhf.js"
