@@ -1,1 +1,0 @@
-import{_ as e}from"./CheckScreen-31M00tFG.js";import{_ as t}from"./IntroScreen-hTXh24f8.js";import{j as a,o as r,w as o,e as _}from"./ssr-BySCZBCh.js";const l={__name:"Screen",setup(s){return(c,m)=>(r(),a(e,null,{default:o(()=>[_(t,{title:"Kategoriler"})]),_:1}))}};export{l as default};
