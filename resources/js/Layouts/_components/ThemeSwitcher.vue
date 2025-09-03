@@ -15,47 +15,144 @@
       </svg>
     </template>
 
-    <template v-else-if="currentTheme === 'lotr'">
-      <svg class="h-6 w-6 fill-current text-yellow-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M12,2L13.09,8.26L20,9L13.09,9.74L12,16L10.91,9.74L4,9L10.91,8.26L12,2Z"/>
-        <path d="M12,18L13.09,24.26L20,25L13.09,25.74L12,32L10.91,25.74L4,25L10.91,24.26L12,18Z"/>
-      </svg>
-    </template>
-    <template v-else-if="currentTheme === 'neon'">
+    <!-- Neon Light Tema -->
+    <template v-else-if="currentTheme === 'neon-light'">
       <svg class="h-6 w-6 fill-current text-cyan-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z"/>
-        <path d="M12,6a6,6,0,1,0,6,6A6,6,0,0,0,12,6Zm0,10a4,4,0,1,1,4-4A4,4,0,0,1,12,16Z"/>
+        <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" />
+        <path d="M12,6a6,6,0,1,0,6,6A6,6,0,0,0,12,6Zm0,10a4,4,0,1,1,4-4A4,4,0,0,1,12,16Z" />
+        <circle cx="12" cy="12" r="2" fill="white" />
       </svg>
     </template>
-    <template v-else-if="currentTheme === 'cyberpunk'">
+
+    <!-- Neon Dark Tema -->
+    <template v-else-if="currentTheme === 'neon-dark'">
+      <svg class="h-6 w-6 fill-current text-cyan-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" />
+        <path d="M12,6a6,6,0,1,0,6,6A6,6,0,0,0,12,6Zm0,10a4,4,0,1,1,4-4A4,4,0,0,1,12,16Z" />
+        <circle cx="12" cy="12" r="2" fill="black" />
+      </svg>
+    </template>
+
+    <!-- LOTR Light Tema -->
+    <template v-else-if="currentTheme === 'lotr-light'">
+      <svg class="h-6 w-6 fill-current text-yellow-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M12,2L13.09,8.26L20,9L13.09,9.74L12,16L10.91,9.74L4,9L10.91,8.26L12,2Z" />
+        <circle cx="12" cy="12" r="3" fill="white" />
+      </svg>
+    </template>
+
+    <!-- LOTR Dark Tema -->
+    <template v-else-if="currentTheme === 'lotr-dark'">
+      <svg class="h-6 w-6 fill-current text-yellow-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M12,2L13.09,8.26L20,9L13.09,9.74L12,16L10.91,9.74L4,9L10.91,8.26L12,2Z" />
+        <circle cx="12" cy="12" r="3" fill="black" />
+      </svg>
+    </template>
+
+    <!-- Cyberpunk Light Tema -->
+    <template v-else-if="currentTheme === 'cyberpunk-light'">
       <svg class="h-6 w-6 fill-current text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M12,2L13.09,8.26L20,9L13.09,9.74L12,16L10.91,9.74L4,9L10.91,8.26L12,2Z"/>
-        <path d="M12,18L13.09,24.26L20,25L13.09,25.74L12,32L10.91,25.74L4,25L10.91,24.26L12,18Z"/>
-        <path d="M12,10L13.09,16.26L20,17L13.09,17.74L12,24L10.91,17.74L4,17L10.91,16.26L12,10Z"/>
+        <path d="M12,2L13.09,8.26L20,9L13.09,9.74L12,16L10.91,9.74L4,9L10.91,8.26L12,2Z" />
+        <path d="M12,18L13.09,24.26L20,25L13.09,25.74L12,32L10.91,25.74L4,25L10.91,24.26L12,18Z" />
+        <circle cx="12" cy="12" r="2" fill="white" />
       </svg>
     </template>
-    <template v-else-if="currentTheme === 'nature'">
+
+    <!-- Cyberpunk Dark Tema -->
+    <template v-else-if="currentTheme === 'cyberpunk-dark'">
+      <svg class="h-6 w-6 fill-current text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M12,2L13.09,8.26L20,9L13.09,9.74L12,16L10.91,9.74L4,9L10.91,8.26L12,2Z" />
+        <path d="M12,18L13.09,24.26L20,25L13.09,25.74L12,32L10.91,25.74L4,25L10.91,24.26L12,18Z" />
+        <circle cx="12" cy="12" r="2" fill="black" />
+      </svg>
+    </template>
+
+    <!-- Nature Light Tema -->
+    <template v-else-if="currentTheme === 'nature-light'">
       <svg class="h-6 w-6 fill-current text-green-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10,10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8,8,3.59,8,8S16.41,20,12,20z"/>
-        <path d="M12,6c-3.31,0-6,2.69-6,6s2.69,6,6,6,6-2.69,6-6S15.31,6,12,6z M12,16c-2.21,0-4-1.79-4-4s1.79-4,4-4,4,1.79,4,4S14.21,16,12,16z"/>
+        <path
+          d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10,10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8,8,3.59,8,8S16.41,20,12,20z"
+        />
+        <path
+          d="M12,6c-3.31,0-6,2.69-6,6s2.69,6,6,6,6-2.69,6-6S15.31,6,12,6z M12,16c-2.21,0-4-1.79-4-4s1.79-4,4-4,4,1.79,4,4S14.21,16,12,16z"
+        />
+        <circle cx="12" cy="12" r="2" fill="white" />
       </svg>
     </template>
-    <template v-else-if="currentTheme === 'ocean'">
+
+    <!-- Nature Dark Tema -->
+    <template v-else-if="currentTheme === 'nature-dark'">
+      <svg class="h-6 w-6 fill-current text-green-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path
+          d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10,10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8,8,3.59,8,8S16.41,20,12,20z"
+        />
+        <path
+          d="M12,6c-3.31,0-6,2.69-6,6s2.69,6,6,6,6-2.69,6-6S15.31,6,12,6z M12,16c-2.21,0-4-1.79-4-4s1.79-4,4-4,4,1.79,4,4S14.21,16,12,16z"
+        />
+        <circle cx="12" cy="12" r="2" fill="black" />
+      </svg>
+    </template>
+
+    <!-- Ocean Light Tema -->
+    <template v-else-if="currentTheme === 'ocean-light'">
       <svg class="h-6 w-6 fill-current text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10,10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8,8,3.59,8,8S16.41,20,12,20z"/>
-        <path d="M12,6c-3.31,0-6,2.69-6,6s2.69,6,6,6,6-2.69,6-6S15.31,6,12,6z M12,16c-2.21,0-4-1.79-4-4s1.79-4,4-4,4,1.79,4,4S14.21,16,12,16z"/>
+        <path
+          d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10,10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8,8,3.59,8,8S16.41,20,12,20z"
+        />
+        <path
+          d="M12,6c-3.31,0-6,2.69-6,6s2.69,6,6,6,6-2.69,6-6S15.31,6,12,6z M12,16c-2.21,0-4-1.79-4-4s1.79-4,4-4,4,1.79,4,4S14.21,16,12,16z"
+        />
+        <circle cx="12" cy="12" r="2" fill="white" />
       </svg>
     </template>
-    <template v-else-if="currentTheme === 'sunset'">
+
+    <!-- Ocean Dark Tema -->
+    <template v-else-if="currentTheme === 'ocean-dark'">
+      <svg class="h-6 w-6 fill-current text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path
+          d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10,10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8,8,3.59,8,8S16.41,20,12,20z"
+        />
+        <path
+          d="M12,6c-3.31,0-6,2.69-6,6s2.69,6,6,6,6-2.69,6-6S15.31,6,12,6z M12,16c-2.21,0-4-1.79-4-4s1.79-4,4-4,4,1.79,4,4S14.21,16,12,16z"
+        />
+        <circle cx="12" cy="12" r="2" fill="black" />
+      </svg>
+    </template>
+
+    <!-- Sunset Light Tema -->
+    <template v-else-if="currentTheme === 'sunset-light'">
       <svg class="h-6 w-6 fill-current text-orange-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10,10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8,8,3.59,8,8S16.41,20,12,20z"/>
-        <path d="M12,6c-3.31,0-6,2.69-6,6s2.69,6,6,6,6-2.69,6-6S15.31,6,12,6z M12,16c-2.21,0-4-1.79-4-4s1.79-4,4-4,4,1.79,4,4S14.21,16,12,16z"/>
+        <path
+          d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10,10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8,8,3.59,8,8S16.41,20,12,20z"
+        />
+        <path
+          d="M12,6c-3.31,0-6,2.69-6,6s2.69,6,6,6,6-2.69,6-6S15.31,6,12,6z M12,16c-2.21,0-4-1.79-4-4s1.79-4,4-4,4,1.79,4,4S14.21,16,12,16z"
+        />
+        <circle cx="12" cy="12" r="2" fill="white" />
       </svg>
     </template>
+
+    <!-- Sunset Dark Tema -->
+    <template v-else-if="currentTheme === 'sunset-dark'">
+      <svg class="h-6 w-6 fill-current text-orange-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path
+          d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10,10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8,8,3.59,8,8S16.41,20,12,20z"
+        />
+        <path
+          d="M12,6c-3.31,0-6,2.69-6,6s2.69,6,6,6,6-2.69,6-6S15.31,6,12,6z M12,16c-2.21,0-4-1.79-4-4s1.79-4,4-4,4,1.79,4,4S14.21,16,12,16z"
+        />
+        <circle cx="12" cy="12" r="2" fill="black" />
+      </svg>
+    </template>
+
     <template v-else-if="currentTheme === 'custom'">
       <svg class="h-6 w-6 fill-current text-purple-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10,10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8,8,3.59,8,8S16.41,20,12,20z"/>
-        <path d="M12,6c-3.31,0-6,2.69-6,6s2.69,6,6,6,6-2.69,6-6S15.31,6,12,6z M12,16c-2.21,0-4-1.79-4-4s1.79-4,4-4,4,1.79,4,4S14.21,16,12,16z"/>
+        <path
+          d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10,10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8,8,3.59,8,8S16.41,20,12,20z"
+        />
+        <path
+          d="M12,6c-3.31,0-6,2.69-6,6s2.69,6,6,6,6-2.69,6-6S15.31,6,12,6z M12,16c-2.21,0-4-1.79-4-4s1.79-4,4-4,4,1.79,4,4S14.21,16,12,16z"
+        />
       </svg>
     </template>
   </button>

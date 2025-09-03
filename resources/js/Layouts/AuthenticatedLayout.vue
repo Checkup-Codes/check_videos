@@ -32,7 +32,9 @@ const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
                   Sosyal Medya Yönetimi
                 </NavLink>
                 <NavLink :href="route('seo.edit')" :active="route().current('seo.edit')"> SEO Yönetimi </NavLink>
-                <NavLink :href="route('theme.management')" :active="route().current('theme.management')"> 🎨 Tema Yönetimi </NavLink>
+                <NavLink :href="route('theme.management')" :active="route().current('theme.management')"
+                  >Tema Yönetimi
+                </NavLink>
               </div>
             </div>
 
@@ -76,7 +78,7 @@ const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
             <div class="-me-2 flex items-center sm:hidden">
               <button
                 @click="showingNavigationDropdown = !showingNavigationDropdown"
-                class="inline-flex items-center justify-center rounded-md p-2 text-base-content/60 transition duration-150 ease-in-out hover:bg-base-300 hover:text-base-content focus:bg-base-300 focus:text-base-content focus:outline-none"
+                class="text-base-content/60 inline-flex items-center justify-center rounded-md p-2 transition duration-150 ease-in-out hover:bg-base-300 hover:text-base-content focus:bg-base-300 focus:text-base-content focus:outline-none"
               >
                 <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                   <path
@@ -137,7 +139,7 @@ const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
               <div class="text-base font-medium text-base-content">
                 {{ $page.props.auth.user.name }}
               </div>
-              <div class="text-sm font-medium text-base-content/70">
+              <div class="text-base-content/70 text-sm font-medium">
                 {{ $page.props.auth.user.email }}
               </div>
             </div>
@@ -162,7 +164,5 @@ const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
         <slot />
       </main>
     </div>
-
-
   </div>
 </template>

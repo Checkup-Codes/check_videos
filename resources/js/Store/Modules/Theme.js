@@ -5,8 +5,17 @@ export default {
   state: {
     // Default tema 'light' olarak ayarlanıyor
     currentTheme: localStorage.getItem('theme') || 'light',
-    // Mevcut temalar
-    availableThemes: ['light', 'dark', 'lotr', 'neon', 'cyberpunk', 'nature', 'ocean', 'sunset', 'custom'],
+    // Mevcut temalar - her temanın hem light hem dark versiyonu
+    availableThemes: [
+      'light', 'dark', 
+      'neon-light', 'neon-dark',
+      'lotr-light', 'lotr-dark',
+      'cyberpunk-light', 'cyberpunk-dark',
+      'nature-light', 'nature-dark',
+      'ocean-light', 'ocean-dark',
+      'sunset-light', 'sunset-dark',
+      'custom'
+    ],
     customTheme: JSON.parse(localStorage.getItem('customTheme')) || {
       primary: '#570df8',
       secondary: '#f000b8',
@@ -36,12 +45,8 @@ export default {
       // HTML'e tema sınıfını ekle (Özel CSS seçicileri için)
       document.documentElement.classList.add(theme);
 
-      // Dark mode özel işlemleri
-      if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
+      // Dark mode kontrolünü kaldırıyoruz - artık her tema kendi dark/light versiyonunu yönetiyor
+      // Sistem tercihi yerine sadece seçilen tema aktif olacak
     },
 
     // Custom tema güncelleme
@@ -131,8 +136,8 @@ export default {
     // Mevcut temayı döndürür
     getCurrentTheme: (state) => state.currentTheme,
 
-    // Mevcut temanın dark olup olmadığını kontrol eder
-    isDarkTheme: (state) => state.currentTheme === 'dark',
+    // Mevcut temanın dark olup olmadığını kontrol eder (tema adından)
+    isDarkTheme: (state) => state.currentTheme.includes('-dark'),
 
     // Tüm temaları döndürür
     getAvailableThemes: (state) => state.availableThemes,

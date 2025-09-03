@@ -1,49 +1,61 @@
 # 🎨 Tema Sistemi Dokümantasyonu
 
-Bu proje, çoklu tema desteği ile geliştirilmiştir. Kullanıcılar farklı temalar arasında geçiş yapabilir ve her tema kendine özgü renk paleti, tipografi ve stil özelliklerine sahiptir.
+Bu dokümantasyon, uygulamanın tema sistemini ve nasıl kullanılacağını açıklar.
 
-## 🧙‍♂️ Lord of the Rings Teması
+## 🌟 Özellikler
 
-Lord of the Rings teması, J.R.R. Tolkien'in efsanevi dünyasından ilham alınarak tasarlanmıştır.
-
-### Renk Paleti
-- **Primary**: Altın sarısı (#d4af37) - Yüzük'ün parıltısını temsil eder
-- **Secondary**: Kahverengi (#8b4513) - Orta Dünya'nın topraklarını temsil eder
-- **Accent**: Parlak altın (#ffd700) - Elflerin işçiliğini temsil eder
-- **Neutral**: Koyu kahve (#2d1810) - Mordor'un karanlığını temsil eder
-- **Base-100**: Açık bej (#f5f5dc) - Shire'ın huzurunu temsil eder
-
-### Özellikler
-- **Font**: Cinzel - Orta Çağ tarzı serif font
-- **Border Radius**: 0.75rem - Yumuşak köşeler
-- **Shadows**: Kahverengi tonlarında gölgeler
-- **Animations**: Hover efektleri ve geçişler
-- **Gradients**: Altın ve kahverengi tonlarında gradyanlar
+- **Her temanın hem light hem dark versiyonu** - Sistem tercihi yerine tam kontrol
+- **13 farklı tema seçeneği** - Light, Dark, Neon, LOTR, Cyberpunk, Nature, Ocean, Sunset ve Custom
+- **Gerçek zamanlı tema değiştirme** - Anında görsel geri bildirim
+- **LocalStorage desteği** - Tema tercihi tarayıcıda saklanır
+- **Responsive tasarım** - Tüm cihazlarda uyumlu
+- **Özelleştirilebilir temalar** - Custom tema ile kendi renklerinizi seçin
 
 ## 🎯 Mevcut Temalar
 
-1. **Light** - Varsayılan açık tema
-2. **Dark** - Koyu tema
-3. **LotR** - Lord of the Rings teması
+### Temel Temalar
+- **Light** ☀️ - Klasik açık tema
+- **Dark** 🌙 - Klasik koyu tema
 
-## 🎨 Tema Yönetimi
+### Neon Temalar
+- **Neon Light** 💡☀️ - Futuristik neon açık tema
+- **Neon Dark** 💡🌙 - Futuristik neon koyu tema
 
-Tema yönetimi, `/theme-management` route'unda ayrı bir sayfa olarak çalışır.
+### Lord of the Rings Temalar
+- **LOTR Light** 🧙‍♂️☀️ - Orta Çağ tarzı açık tema
+- **LOTR Dark** 🧙‍♂️🌙 - Orta Çağ tarzı koyu tema
 
-### Özellikler
-- **Ayrı Sayfa**: `/theme-management` route'unda normal sayfa
-- **Mevcut Tema Bilgisi**: Aktif temanın detayları
-- **Tema Paletleri**: Tüm temaların renk paleti önizlemesi
-- **Detay Modal**: Tema detaylarını gösteren modal
-- **Tema Değiştirme**: Tek tıkla tema değiştirme
-- **Renk Kodları**: Her rengin hex kodları
-- **Özellik Listesi**: Her temanın özellikleri
-- **Örnek Bileşenler**: Tema ile uyumlu bileşen örnekleri
+### Cyberpunk Temalar
+- **Cyberpunk Light** 🤖☀️ - Cyberpunk estetiği açık tema
+- **Cyberpunk Dark** 🤖🌙 - Cyberpunk estetiği koyu tema
 
-### Kullanım
-1. Navigation'da "🎨 Tema Yönetimi" linkine tıklayın
-2. `/theme-management` sayfasına yönlendirilirsiniz
-3. Tema kartlarından birini seçin (detay modalı açılır)
+### Nature Temalar
+- **Nature Light** 🌿☀️ - Doğa temalı açık tema
+- **Nature Dark** 🌿🌙 - Doğa temalı koyu tema
+
+### Ocean Temalar
+- **Ocean Light** 🌊☀️ - Okyanus temalı açık tema
+- **Ocean Dark** 🌊🌙 - Okyanus temalı koyu tema
+
+### Sunset Temalar
+- **Sunset Light** 🌅☀️ - Gün batımı temalı açık tema
+- **Sunset Dark** 🌅🌙 - Gün batımı temalı koyu tema
+
+### Özel Tema
+- **Custom** ⚙️ - Kendi renklerinizi ve ayarlarınızı özelleştirin
+
+## 🚀 Kullanım
+
+### Tema Değiştirme
+1. **ThemeSwitcher** butonuna tıklayın (header'da)
+2. **ThemeManagement** sayfasına gidin (`/theme-management`)
+3. İstediğiniz temayı seçin
+4. Tema anında uygulanır
+
+### Tema Yönetimi Sayfası
+1. Sol menüden "Tema Yönetimi" seçeneğine tıklayın
+2. Mevcut tema bilgisini görüntüleyin
+3. Tema kartlarından birini seçin
 4. Detay modalında tema özelliklerini inceleyin
 5. "Bu Temayı Seç" butonuna tıklayarak temayı değiştirin
 6. Modal'ı kapatmak için "Kapat" butonuna tıklayın
@@ -55,7 +67,7 @@ Temalar Vuex store üzerinden yönetilir:
 
 ```javascript
 // Tema değiştirme
-store.dispatch('Theme/changeTheme', 'lotr');
+store.dispatch('Theme/changeTheme', 'lotr-light');
 
 // Mevcut temayı alma
 const currentTheme = store.getters['Theme/getCurrentTheme'];
@@ -68,7 +80,7 @@ const availableThemes = store.getters['Theme/getAvailableThemes'];
 Her tema için CSS custom properties tanımlanmıştır:
 
 ```css
-html[data-theme='lotr'] {
+html[data-theme='lotr-light'] {
   --p: 25 70% 45%; /* primary */
   --s: 15 60% 35%; /* secondary */
   --a: 45 80% 55%; /* accent */
@@ -82,7 +94,7 @@ html[data-theme='lotr'] {
 ### LocalStorage
 Tema tercihi localStorage'da saklanır:
 - Key: `theme`
-- Value: Tema adı (örn: `lotr`, `dark`, `light`)
+- Value: Tema adı (örn: `lotr-light`, `neon-dark`, `dark`)
 
 ## 🎨 Yeni Tema Ekleme
 
@@ -90,12 +102,22 @@ Yeni bir tema eklemek için:
 
 1. **Theme Store'u güncelle** (`resources/js/Store/Modules/Theme.js`):
    ```javascript
-   availableThemes: ['light', 'dark', 'lotr', 'yeni-tema']
+   availableThemes: [
+     // ... mevcut temalar
+     'yeni-tema-light', 'yeni-tema-dark'
+   ]
    ```
 
 2. **CSS değişkenlerini ekle** (`resources/css/app.css`):
    ```css
-   html[data-theme='yeni-tema'] {
+   html[data-theme='yeni-tema-light'] {
+     --p: [primary-hsl];
+     --s: [secondary-hsl];
+     --a: [accent-hsl];
+     /* ... diğer değişkenler */
+   }
+   
+   html[data-theme='yeni-tema-dark'] {
      --p: [primary-hsl];
      --s: [secondary-hsl];
      --a: [accent-hsl];
@@ -108,7 +130,14 @@ Yeni bir tema eklemek için:
    themes: [
      // ... mevcut temalar
      {
-       'yeni-tema': {
+       'yeni-tema-light': {
+         primary: "#renk-kodu",
+         secondary: "#renk-kodu",
+         // ... diğer renkler
+       }
+     },
+     {
+       'yeni-tema-dark': {
          primary: "#renk-kodu",
          secondary: "#renk-kodu",
          // ... diğer renkler
@@ -120,48 +149,44 @@ Yeni bir tema eklemek için:
 4. **ThemeSwitcher'a ikon ekle** (`resources/js/Layouts/_components/ThemeSwitcher.vue`)
 
 5. **ThemeManagement.vue sayfasında tema yönetimi fonksiyonlarını güncelle**:
-   - `getThemeIcon()` fonksiyonuna ikon ekle
-   - `getThemeName()` fonksiyonuna isim ekle
-   - `getThemeDescription()` fonksiyonuna açıklama ekle
-   - `getThemeColors()` fonksiyonuna renkler ekle
-   - `getThemeColorDetails()` fonksiyonuna renk detayları ekle
-   - `getThemeFeatures()` fonksiyonuna özellikler ekle
+   - `getThemeIcon()`
+   - `getThemeName()`
+   - `getThemeDescription()`
+   - `getThemeColors()`
+   - `getThemeColorDetails()`
+   - `getThemeFeatures()`
 
-## 🧪 Test Etme
+## 🔒 Güvenlik ve Performans
 
-Tema değişikliklerini test etmek için:
+- **LocalStorage kullanımı** - Güvenli tema tercihi saklama
+- **CSS değişkenleri** - Performanslı tema değiştirme
+- **Vuex state management** - Merkezi tema yönetimi
+- **Lazy loading** - Sadece gerekli CSS yüklenir
 
-1. **Tema Yönetimi Sayfası**: `/theme-management` route'una gidin
-2. **ThemeSwitcher**: Sidebar'daki tema değiştirici
-3. **Navigation**: AuthenticatedLayout'ta tema yönetimi linki
+## 🐛 Bilinen Sorunlar
 
-## 📱 Responsive Tasarım
-
-Tüm temalar responsive tasarım prensiplerine uygun olarak geliştirilmiştir:
-- Mobile-first yaklaşım
-- Breakpoint'lere uygun renk geçişleri
-- Touch-friendly buton boyutları
-
-## 🎭 Animasyonlar
-
-Lord of the Rings teması özel animasyonlar içerir:
-- Hover efektleri
-- Geçiş animasyonları
-- Transform efektleri
-- Shadow animasyonları
-
-## 🔍 Browser Desteği
-
-- Chrome 88+
-- Firefox 85+
-- Safari 14+
-- Edge 88+
+- Sistem tercihi (prefers-color-scheme) artık kullanılmıyor
+- Her tema kendi light/dark versiyonunu yönetiyor
+- Tarayıcı ayarlarından gelen dark mode etkisiz
 
 ## 📝 Notlar
 
 - Tema değişiklikleri anında uygulanır
-- LocalStorage'da tema tercihi saklanır
-- Sayfa yenilendiğinde tema korunur
-- Tüm bileşenler tema sistemini destekler
-- Tema yönetimi sayfası modal kullanır
-- Renk paletleri görsel olarak gösterilir
+- Tüm temalar responsive tasarıma sahiptir
+- Custom tema ayarları localStorage'da saklanır
+- Tema geçişleri yumuşak animasyonlarla yapılır
+
+## 🤝 Katkıda Bulunma
+
+Yeni tema önerileri için:
+1. Issue açın
+2. Tema konseptini açıklayın
+3. Renk paleti önerin
+4. Özel özellikler belirtin
+
+## 📞 Destek
+
+Tema sistemi ile ilgili sorunlar için:
+- GitHub Issues kullanın
+- Detaylı hata açıklaması yapın
+- Tarayıcı ve işletim sistemi bilgisi ekleyin
