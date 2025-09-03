@@ -27,7 +27,11 @@
         </thead>
         <tbody>
           <tr v-for="equipment in equipments" :key="equipment.id" class="hover:bg-gray-100">
-            <td class="border-b px-6 py-4">{{ equipment.name }}</td>
+            <td class="border-b px-6 py-4">
+              <Link :href="`/equipments/${equipment.id}`" class="text-blue-600 hover:underline">
+                {{ equipment.name }}
+              </Link>
+            </td>
             <td class="border-b px-6 py-4">{{ equipment.specs }}</td>
             <td class="border-b px-6 py-4">
               <a :href="equipment.link" class="text-blue-600 hover:underline" target="_blank">Ziyaret Et</a>

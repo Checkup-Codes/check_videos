@@ -43,18 +43,20 @@
       <!-- Menu Content - Structured like SidebarLayout -->
       <div class="px-4" @click="handleMenuItemClick">
         <!-- Workspace Header -->
-        <div class="mb-4 rounded-lg border border-base-300 bg-base-100 p-4 shadow-sm">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-              <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <span class="text-sm font-bold text-primary-content">{{ appName.charAt(0) }}</span>
-              </div>
-              <div>
-                <h3 class="font-semibold text-base-content">{{ appName }}</h3>
+        <Link href="/" class="block">
+          <div class="mb-4 rounded-lg border border-base-300 bg-base-100 p-4 shadow-sm">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+                  <span class="text-sm font-bold text-primary-content">{{ appName.charAt(0) }}</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-base-content">{{ appName }}</h3>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </Link>
 
         <!-- Powered by Button for Non-Logged In Users -->
         <div v-if="!isLoggedIn" class="mb-4">
@@ -109,6 +111,12 @@
         <div v-if="isLoggedIn" class="mb-4 space-y-1">
           <h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">Sistem & Araçlar</h4>
           <NavItem href="/versions" icon="fa-solid fa-sync" label="Versiyonlar" />
+        </div>
+
+        <!-- Equipment & Tools (Public) -->
+        <div class="mb-4 space-y-1">
+          <h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">Ekipman & Araçlar</h4>
+          <NavItem href="/equipments" icon="fa-solid fa-tools" label="Ekipmanlar" />
         </div>
 
         <!-- Media & Assets -->

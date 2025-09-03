@@ -53,7 +53,9 @@ class EquipmentsController extends Controller
      */
     public function show(Equipment $equipment)
     {
-        //
+        return inertia('Equipments/ShowEquipment', [
+            'equipment' => $equipment
+        ]);
     }
 
     /**

@@ -37,6 +37,19 @@ Route::delete('/writes/{write}/draw/{version}', [WritesController::class, 'destr
 Route::resource('/categories', CategoriesController::class);
 Route::get('/categories/{category}/{slug}', [CategoriesController::class, 'showByCategory'])->name('categories.showByCategory');
 
+// Equipments Routes (Public - View Only)
+Route::get('/equipments', [EquipmentsController::class, 'index'])->name('equipments.index');
+Route::get('/equipments/{equipment}', [EquipmentsController::class, 'show'])->name('equipments.show');
+
+// Equipments CRUD Routes (Authenticated Only)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/equipments/create', [EquipmentsController::class, 'create'])->name('equipments.create');
+    Route::post('/equipments', [EquipmentsController::class, 'store'])->name('equipments.store');
+    Route::get('/equipments/{equipment}/edit', [EquipmentsController::class, 'edit'])->name('equipments.edit');
+    Route::put('/equipments/{equipment}', [EquipmentsController::class, 'update'])->name('equipments.update');
+    Route::delete('/equipments/{equipment}', [EquipmentsController::class, 'destroy'])->name('equipments.destroy');
+});
+
 // Welcome Page
 Route::get('/welcome', function () {
     return Inertia::render('Welcome', [
@@ -79,7 +92,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Other Resources
     Route::resource('/bookmarks', BookmarksController::class);
-    Route::resource('/equipments', EquipmentsController::class);
     Route::resource('/lessons', LessonsController::class);
     Route::resource('/software-products', SoftwareProductsController::class);
     Route::resource('/versions', VersionsController::class);
