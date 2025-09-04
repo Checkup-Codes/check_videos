@@ -232,13 +232,14 @@ function filterCategories(categories, search, status) {
       // Otherwise, don't include this category
       return null;
     })
-    .filter(Boolean);
+    .filter(Boolean)
+    .sort((a, b) => getTotalWriteCount(b) - getTotalWriteCount(a));
 }
 
 const parentCategories = computed(() =>
-  categories.filter(
-    (cat) => !cat.parent_id || cat.parent_id === null || cat.parent_id === 'null' || cat.parent_id === 0
-  )
+  categories
+    .filter((cat) => !cat.parent_id || cat.parent_id === null || cat.parent_id === 'null' || cat.parent_id === 0)
+    .sort((a, b) => getTotalWriteCount(b) - getTotalWriteCount(a))
 );
 
 const filteredParentCategories = computed(() =>
