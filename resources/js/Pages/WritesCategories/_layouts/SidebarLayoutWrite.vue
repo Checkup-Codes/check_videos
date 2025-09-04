@@ -1,10 +1,13 @@
 <template>
   <CheckSubsidebar :isNarrow="isNarrow" :class="currentTheme">
-    <!-- <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="collapseSidebar" /> -->
-    <TopSubsidebar title="YAZILAR" href="/writes/create" class="border-base-200" @toggle-width="handleWidthToggle">
-    </TopSubsidebar>
+    <TopSubsidebar
+      title="YAZILAR"
+      href="/writes/create"
+      class="border-base-200 bg-base-100"
+      @toggle-width="handleWidthToggle"
+    />
 
-    <SubSidebarScreen ref="scrollableRef">
+    <SubSidebarScreen ref="scrollableRef" class="bg-base-100">
       <WriteList ref="writeListRef" :writes="writes" :route="route" :isCollapsed="isNarrow" />
     </SubSidebarScreen>
   </CheckSubsidebar>
@@ -36,8 +39,8 @@ const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
 const { props } = usePage();
 const writes = inject('writes', []);
 const writeListRef = ref(null);
-const isNarrow = ref(store.getters['Writes/isCollapsed']);
 const scrollableRef = ref(null);
+const isNarrow = ref(store.getters['Writes/isCollapsed']);
 
 const emit = defineEmits(['update:isNarrow']);
 
@@ -51,22 +54,33 @@ watch(isNarrow, (newValue) => {
   emit('update:isNarrow', newValue);
 });
 
+/**
+ * Handle scroll events and save position to localStorage
+ */
 const handleScroll = (e) => {
   const scrollTop = e.target.scrollTop;
-  localStorage.setItem('writeSidebarScroll', scrollTop);
+  localStorage.setItem('writeSidebarScroll', scrollTop.toString());
 };
 
-// On mount, sync with store
+/**
+ * Initialize component and restore scroll position
+ */
 onMounted(() => {
+  // Sync with store state
   isNarrow.value = store.getters['Writes/isCollapsed'];
+
+  // Setup scroll handling
   if (scrollableRef.value) {
-    scrollableRef.value.addEventListener && scrollableRef.value.addEventListener('scroll', handleScroll);
-    if (scrollableRef.value.$el) {
-      scrollableRef.value.$el.addEventListener('scroll', handleScroll);
-      // Scroll pozisyonunu geri yükle
+    // Try both direct element and Vue component element
+    const element = scrollableRef.value.$el || scrollableRef.value;
+
+    if (element && element.addEventListener) {
+      element.addEventListener('scroll', handleScroll);
+
+      // Restore saved scroll position
       const savedScroll = localStorage.getItem('writeSidebarScroll');
       if (savedScroll) {
-        scrollableRef.value.$el.scrollTop = parseInt(savedScroll, 10);
+        element.scrollTop = parseInt(savedScroll, 10);
       }
     }
   }

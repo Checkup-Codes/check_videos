@@ -217,25 +217,78 @@
       </div>
     </div>
 
-    <!-- Virtual scrolling container -->
-    <div ref="virtualContainer" class="virtual-scroll-container" :style="{ height: totalHeight + 'px' }">
-      <div :style="{ transform: `translateY(${offsetY}px)` }">
-        <Link
-          v-for="write in visibleWrites"
-          :key="write.id"
-          :href="getWriteRoute(write)"
-          :class="[
-            'block items-center justify-between rounded-lg border px-1 py-2 backdrop-blur-md transition-all duration-200',
-            activeWrite === getActiveWritePath(write)
-              ? 'border-primary bg-primary text-primary-content shadow-md'
-              : 'border-base-200 bg-base-200 text-base-content hover:bg-base-300',
-          ]"
-          :style="{ height: itemHeight + 'px' }"
-        >
-          <!-- Başlık + Kilit -->
-          <div class="mb-1 flex items-center gap-2">
-            <span v-if="write.status === 'private'">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+    <!-- Write List -->
+    <div class="space-y-2">
+      <Link
+        v-for="write in filteredWrites"
+        :key="write.id"
+        :href="getWriteRoute(write)"
+        :class="[
+          'block rounded-lg p-3 transition-all duration-200 hover:shadow-md',
+          activeWrite === getActiveWritePath(write)
+            ? 'bg-primary text-primary-content shadow-lg'
+            : 'border border-base-300 bg-base-100 hover:bg-base-200',
+        ]"
+      >
+        <!-- Başlık -->
+        <div class="mb-1">
+          <h3 class="line-clamp-2 text-sm font-medium leading-tight text-base-content">
+            {{ write.title }}
+          </h3>
+        </div>
+
+        <!-- Meta bilgiler -->
+        <div class="text-base-content/70 flex flex-col gap-1 text-xs sm:flex-row sm:items-center sm:justify-between">
+          <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
+            <!-- Tarih -->
+            <span class="flex items-center gap-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-3 w-3 flex-shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              <span class="truncate">{{ formatDate(write.created_at) }}</span>
+            </span>
+
+            <!-- Görüntülenme sayısı -->
+            <span class="flex items-center gap-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-3 w-3 flex-shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                />
+              </svg>
+              <span class="truncate">{{ formatNumber(write.views_count) }} görüntülenme</span>
+            </span>
+          </div>
+
+          <!-- Status icons -->
+          <div class="flex items-center gap-1 self-start sm:self-center">
+            <span v-if="write.status === 'private'" class="text-warning" title="Gizli yazı">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fill-rule="evenodd"
                   d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
@@ -243,11 +296,8 @@
                 />
               </svg>
             </span>
-            <span
-              v-if="write.status === 'link_only'"
-              :class="[activeWrite === getActiveWritePath(write) ? 'text-primary-content' : 'text-primary']"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+            <span v-if="write.status === 'link_only'" class="text-info" title="Sadece link">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fill-rule="evenodd"
                   d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
@@ -255,30 +305,9 @@
                 />
               </svg>
             </span>
-            <span class="truncate">{{ write.title }}</span>
           </div>
-          <!-- Tarih ve view bilgisi -->
-          <div class="text-base-content/70 flex justify-between text-xs">
-            <span>{{ formatDate(write.created_at) }}</span>
-            <span class="flex items-center gap-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-[14px] w-[14px]"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-              {{ write.views_count }}
-            </span>
-          </div>
-        </Link>
-      </div>
+        </div>
+      </Link>
     </div>
 
     <!-- Boş durum -->
@@ -330,12 +359,7 @@ const debouncedSearchQuery = ref('');
 const adminFilter = ref('all');
 const showFilterMenu = ref(false);
 
-// Virtual scrolling state
-const itemHeight = 80; // Height of each write item
-const bufferSize = 5; // Number of items to render outside viewport
-const startIndex = ref(0);
-const endIndex = ref(0);
-const offsetY = ref(0);
+// Removed virtual scrolling for simpler design
 
 // Debounce search input
 let searchTimeout = null;
@@ -420,29 +444,7 @@ const filteredWrites = computed(() => {
   }
 });
 
-// Virtual scrolling computed properties
-const totalHeight = computed(() => filteredWrites.value.length * itemHeight);
-const visibleWrites = computed(() => {
-  return filteredWrites.value.slice(startIndex.value, endIndex.value);
-});
-
-/**
- * Update virtual scrolling indices based on scroll position
- */
-const updateVirtualScroll = () => {
-  if (!scrollContainer.value) return;
-
-  const scrollTop = scrollContainer.value.scrollTop;
-  const containerHeight = scrollContainer.value.clientHeight;
-
-  startIndex.value = Math.max(0, Math.floor(scrollTop / itemHeight) - bufferSize);
-  endIndex.value = Math.min(
-    filteredWrites.value.length,
-    Math.ceil((scrollTop + containerHeight) / itemHeight) + bufferSize
-  );
-
-  offsetY.value = startIndex.value * itemHeight;
-};
+// Removed virtual scrolling computed properties
 
 defineExpose({ filteredWrites, scrollContainer });
 
@@ -461,20 +463,7 @@ onDeactivated(() => {
   isActive = false;
 });
 
-/**
- * Watch for changes in the writes array
- */
-watch(
-  () => writes.value,
-  (newVal, oldVal) => {
-    if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-      nextTick(() => {
-        updateVirtualScroll();
-      });
-    }
-  },
-  { deep: true }
-);
+// Removed virtual scrolling watchers
 
 /**
  * Watch for route changes to update data
@@ -484,25 +473,11 @@ watch(
   () => {
     nextTick(() => {
       updateActiveWrite();
-      updateVirtualScroll();
     });
   }
 );
 
-/**
- * Watch for props changes
- */
-watch(
-  () => props.writes,
-  (newVal) => {
-    if (newVal && newVal.length > 0) {
-      nextTick(() => {
-        updateVirtualScroll();
-      });
-    }
-  },
-  { deep: true }
-);
+// Removed props watcher for virtual scrolling
 
 /**
  * Update active write based on current URL
@@ -517,7 +492,6 @@ const getScrollKey = () => {
 
 const handleScroll = (e) => {
   localStorage.setItem(getScrollKey(), e.target.scrollTop);
-  updateVirtualScroll();
 };
 
 onMounted(() => {
@@ -543,8 +517,7 @@ onMounted(() => {
       if (savedScroll) {
         scrollContainer.value.scrollTop = parseInt(savedScroll, 10);
       }
-      // Initialize virtual scrolling
-      updateVirtualScroll();
+      // Initialize scroll position
     }
   });
 
@@ -560,10 +533,6 @@ onMounted(() => {
   const handleNavigationEnd = () => {
     if (isActive) {
       updateActiveWrite();
-      // Route değişikliği sonrası veriyi yenile
-      nextTick(() => {
-        updateVirtualScroll();
-      });
     }
   };
 
@@ -588,11 +557,31 @@ onMounted(() => {
 });
 
 /**
- * Format date for display
+ * Format date for display in Turkish
  */
 const formatDate = (date) => {
-  const options = { year: 'numeric', month: 'short', day: 'numeric' };
-  return new Date(date).toLocaleDateString(undefined, options);
+  const options = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    locale: 'tr-TR',
+  };
+
+  const dateObj = new Date(date);
+  const monthNames = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+
+  const day = dateObj.getDate();
+  const month = monthNames[dateObj.getMonth()];
+  const year = dateObj.getFullYear();
+
+  return `${day} ${month} ${year}`;
+};
+
+/**
+ * Format number with thousand separators
+ */
+const formatNumber = (num) => {
+  return new Intl.NumberFormat('tr-TR').format(num);
 };
 
 // Filtre ve arama sorgusu değişince localStorage'a kaydet
@@ -608,13 +597,6 @@ watch(debouncedSearchQuery, (val) => {
 .write-list-container {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  /* Remove smooth scroll behavior */
-  /* scroll-behavior: smooth; */
-}
-
-.virtual-scroll-container {
-  position: relative;
-  width: 100%;
 }
 
 /* Custom scrollbar styling */
@@ -635,5 +617,13 @@ watch(debouncedSearchQuery, (val) => {
   .write-list-container::-webkit-scrollbar-thumb {
     background-color: rgba(var(--color-base-100), 0.5);
   }
+}
+
+/* Line clamp utility for title truncation */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>
