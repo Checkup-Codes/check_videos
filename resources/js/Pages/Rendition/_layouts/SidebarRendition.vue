@@ -4,24 +4,28 @@
     <TopSubsidebar title="DİL PAKETLERİ" :href="route('rendition.language-packs.create')" />
     <SubSidebarScreen>
       <div class="w-full overflow-y-auto">
-        <div class="min-h-full">
-          <ul class="menu w-full rounded-box bg-base-100">
-            <li v-for="languagePack in languagePacks" :key="languagePack.id" class="mb-1">
-              <div class="flex w-full items-center">
-                <Link
-                  :href="route('rendition.words.show', { word: languagePack.slug })"
-                  :class="[
-                    getLinkClasses(`/rendition/words/${languagePack.slug}`),
-                    'flex flex-grow items-center font-medium',
-                  ]"
-                >
-                  <span class="text-base">{{ languagePack.name }}</span>
-                  <span class="text-base-content/70 ml-2 text-xs uppercase">{{ languagePack.language }}</span>
-                </Link>
-                <div class="badge badge-outline badge-sm">{{ languagePack.word_count || 0 }}</div>
+        <div class="min-h-full space-y-1 p-3">
+          <div
+            v-for="languagePack in languagePacks"
+            :key="languagePack.id"
+            class="rounded-lg bg-base-100 p-3 transition-all duration-200 hover:shadow-sm"
+            :class="
+              getLinkClasses(`/rendition/words/${languagePack.slug}`)
+                ? 'bg-primary/10 border-primary/20 border text-primary'
+                : 'hover:bg-base-200'
+            "
+          >
+            <Link
+              :href="route('rendition.words.show', { word: languagePack.slug })"
+              class="flex w-full items-center justify-between"
+            >
+              <div class="flex-1">
+                <div class="text-sm font-medium text-base-content">{{ languagePack.name }}</div>
+                <div class="text-base-content/60 text-xs uppercase">{{ languagePack.language }}</div>
               </div>
-            </li>
-          </ul>
+              <div class="badge badge-sm">{{ languagePack.word_count || 0 }}</div>
+            </Link>
+          </div>
         </div>
       </div>
     </SubSidebarScreen>
@@ -64,28 +68,5 @@ const getLinkClasses = (href) => {
 </script>
 
 <style scoped>
-.menu :where(li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title)):not(.active):focus,
-.menu :where(li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title)):not(.active):hover {
-  background-color: hsl(var(--bc) / 0.05);
-}
-
-.menu :where(li:not(.menu-title):not(.disabled) > *:not(ul):not(details):not(.menu-title)).active {
-  background-color: hsl(var(--bc) / 0.1);
-  color: hsl(var(--bc));
-  font-weight: 600;
-  border-left: 3px solid hsl(var(--p));
-}
-
-.badge-outline {
-  background-color: transparent;
-  border-color: hsl(var(--bc) / 0.2);
-  color: hsl(var(--bc) / 0.7);
-  font-size: 0.65rem;
-  min-width: 1.5rem;
-  height: 1.25rem;
-  padding: 0 0.35rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/* Sade tasarım için minimal stiller */
 </style>

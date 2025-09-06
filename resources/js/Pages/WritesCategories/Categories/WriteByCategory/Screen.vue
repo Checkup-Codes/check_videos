@@ -1,34 +1,30 @@
 <template>
   <CheckScreen>
-    <div class="card border border-base-200 bg-base-100 shadow-md transition-all duration-200">
-      <div class="card-body p-4 sm:p-6">
-        <!-- Title and category section -->
-        <div class="mb-2 sm:mb-4">
-          <div v-if="isLoading" class="skeleton-wrapper">
-            <div class="skeleton h-8 w-3/4 rounded-lg"></div>
-            <div class="mt-2">
-              <div class="skeleton h-4 w-24 rounded-lg"></div>
+    <!-- Content view with max width -->
+    <div v-if="!showDraw" class="mx-auto max-w-4xl">
+      <div class="bg-base-100 transition-all duration-200">
+        <div class="p-6 pt-12 sm:p-8 sm:pt-16">
+          <!-- Title and date section -->
+          <div class="mb-8">
+            <div v-if="isLoading" class="space-y-3">
+              <div class="skeleton h-8 w-3/4 rounded"></div>
+              <div class="skeleton h-4 w-24 rounded"></div>
             </div>
+            <template v-else>
+              <h1 class="mb-3 text-2xl font-bold text-base-content">{{ write.title }}</h1>
+              <div class="text-base-content/60 text-sm">
+                {{ formatDate(write.created_at) }}
+              </div>
+            </template>
           </div>
-          <template v-else>
-            <h1 class="break-words text-xl font-bold sm:text-2xl">{{ write.title }}</h1>
-            <div class="mt-2">
-              <span v-if="write.category" class="badge badge-outline text-xs">
-                {{ write.category.name }}
-              </span>
-            </div>
-          </template>
-        </div>
 
-        <!-- Mobile action buttons (fixed at bottom on mobile) -->
-        <div class="sticky">
-          <div class="flex items-center justify-between">
-            <!-- Left side: Toggle content button -->
+          <!-- Action buttons -->
+          <div v-if="!isLoading" class="mb-6 flex items-center justify-between">
+            <!-- Toggle content button - visible for everyone -->
             <button
-              v-if="!isLoading"
               @click="toggleContent"
-              class="btn btn-sm grow-0 sm:grow-0"
-              :class="showDraw ? 'btn-primary' : 'btn-outline'"
+              class="flex items-center gap-2 rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-sm transition-all duration-200 hover:bg-base-200"
+              :class="showDraw ? 'border-primary bg-primary text-primary-content' : 'text-base-content'"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -36,7 +32,7 @@
                 viewBox="0 0 24 24"
                 stroke-width="1.5"
                 stroke="currentColor"
-                class="mr-1 h-4 w-4"
+                class="h-4 w-4"
               >
                 <path
                   v-if="showDraw"
@@ -54,16 +50,20 @@
               {{ showDraw ? 'Metni Göster' : 'Çizimi Göster' }}
             </button>
 
-            <!-- Right side: Admin actions -->
-            <div v-if="auth.user && !isLoading" class="flex gap-2">
-              <Link :href="route('writes.edit', write.slug)" class="btn btn-ghost btn-sm text-xs">
+            <!-- Admin actions - only for authenticated users -->
+            <div v-if="auth.user" class="flex items-center gap-2">
+              <Link
+                :href="route('writes.edit', write.slug)"
+                class="flex h-8 w-8 items-center justify-center rounded-lg bg-base-200 text-base-content transition-all duration-200 hover:bg-base-300"
+                title="Düzenle"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="mr-1 h-4 w-4"
+                  class="h-4 w-4"
                 >
                   <path
                     stroke-linecap="round"
@@ -73,14 +73,18 @@
                 </svg>
               </Link>
 
-              <button @click="deleteWrite(write.id)" class="btn btn-ghost btn-sm text-xs text-error">
+              <button
+                @click="deleteWrite(write.id)"
+                class="flex h-8 w-8 items-center justify-center rounded-lg bg-base-200 text-error transition-all duration-200 hover:bg-error hover:text-error-content"
+                title="Sil"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="mr-1 h-4 w-4"
+                  class="h-4 w-4"
                 >
                   <path
                     stroke-linecap="round"
@@ -91,107 +95,80 @@
               </button>
             </div>
           </div>
-        </div>
 
-        <div class="divider my-1"></div>
-
-        <!-- Main content area -->
-        <div v-if="isLoading" class="space-y-4">
-          <div class="skeleton h-4 w-full rounded-lg"></div>
-          <div class="skeleton h-4 w-5/6 rounded-lg"></div>
-          <div class="skeleton h-4 w-4/6 rounded-lg"></div>
-          <div class="skeleton h-4 w-full rounded-lg"></div>
-          <div class="skeleton h-4 w-3/4 rounded-lg"></div>
-          <div class="skeleton h-4 w-5/6 rounded-lg"></div>
-          <div class="skeleton h-32 w-full rounded-lg"></div>
-          <div class="skeleton h-4 w-2/3 rounded-lg"></div>
-          <div class="skeleton h-4 w-full rounded-lg"></div>
-        </div>
-        <div v-else>
-          <div v-if="showDraw" class="min-h-[500px]">
-            <ExcalidrawComponent :write="write" />
+          <!-- Main content area -->
+          <div v-if="isLoading" class="space-y-3">
+            <div class="skeleton h-4 w-full rounded"></div>
+            <div class="skeleton h-4 w-5/6 rounded"></div>
+            <div class="skeleton h-4 w-4/6 rounded"></div>
+            <div class="skeleton h-4 w-full rounded"></div>
+            <div class="skeleton h-4 w-3/4 rounded"></div>
+            <div class="skeleton h-4 w-5/6 rounded"></div>
+            <div class="skeleton h-32 w-full rounded"></div>
+            <div class="skeleton h-4 w-2/3 rounded"></div>
+            <div class="skeleton h-4 w-full rounded"></div>
           </div>
-          <div v-else class="content-container">
-            <div v-if="write.summary" class="alert alert-info mb-4 px-3 py-2 text-sm sm:mb-6 sm:p-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                class="h-5 w-5 shrink-0 stroke-current"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                ></path>
-              </svg>
-              <span>{{ write.summary }}</span>
-            </div>
+          <div v-else>
+            <div class="content-container">
+              <!-- Summary removed for cleaner design -->
 
-            <!-- Lazy load content with intersection observer -->
-            <div
-              v-if="contentShouldLoad"
-              class="article-content ql-editor"
-              ref="contentRef"
-              v-html="processedContent"
-            ></div>
-            <div v-else class="content-placeholder">
-              <div class="skeleton-wrapper space-y-3">
-                <div class="skeleton h-4 w-full rounded-lg"></div>
-                <div class="skeleton h-4 w-5/6 rounded-lg"></div>
-                <div class="skeleton h-4 w-4/6 rounded-lg"></div>
-                <div class="skeleton h-4 w-full rounded-lg"></div>
-                <div class="skeleton h-4 w-3/4 rounded-lg"></div>
+              <!-- Lazy load content with intersection observer -->
+              <div
+                v-if="contentShouldLoad"
+                class="article-content ql-editor"
+                ref="contentRef"
+                v-html="processedContent"
+              ></div>
+              <div v-else class="content-placeholder">
+                <div class="space-y-3">
+                  <div class="skeleton h-4 w-full rounded"></div>
+                  <div class="skeleton h-4 w-5/6 rounded"></div>
+                  <div class="skeleton h-4 w-4/6 rounded"></div>
+                  <div class="skeleton h-4 w-full rounded"></div>
+                  <div class="skeleton h-4 w-3/4 rounded"></div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Footer metadata -->
-        <div
-          v-if="!isLoading"
-          class="text-base-content/70 mt-4 flex flex-col space-y-2 p-2 text-xs sm:mt-6 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 sm:p-3 sm:text-sm"
-        >
-          <div>Oluşturma: {{ formatDate(write.created_at) }}</div>
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="flex items-center gap-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                class="h-3.5 w-3.5 sm:h-4 sm:w-4"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                />
-              </svg>
-              {{ write.views_count }} görüntüleme
-            </span>
-            <span v-if="write.updated_at !== write.created_at" class="whitespace-nowrap">
-              Son güncelleme: {{ formatDate(write.updated_at) }}
-            </span>
+          <!-- Footer metadata - simplified -->
+          <div v-if="!isLoading" class="text-base-content/60 mt-8 text-sm">
+            {{ formatNumber(write.views_count) }} görüntülenme
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Fixed Table of Contents Button -->
+    <!-- Draw view with full width -->
+    <div v-else class="relative h-screen w-full">
+      <!-- Back button for draw view -->
+      <div class="absolute left-4 top-4 z-10">
+        <button
+          @click="toggleContent"
+          class="flex items-center gap-2 rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-sm text-base-content shadow-lg transition-all duration-200 hover:bg-base-200"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="h-4 w-4"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+          Metne Dön
+        </button>
+      </div>
+      <ExcalidrawComponent :write="write" />
+    </div>
+
+    <!-- Fixed Table of Contents Button (only for content view) -->
     <button
-      v-if="!isLoading && showTableOfContents"
+      v-if="!isLoading && showTableOfContents && !showDraw"
       @click="toggleTableOfContents"
-      class="btn btn-primary btn-circle fixed right-4 top-1/2 z-50 -translate-y-1/2 transform shadow-lg transition-all duration-200 hover:shadow-xl"
-      :class="{ 'btn-active': isTableOfContentsOpen }"
+      class="hover:bg-primary-focus fixed right-4 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-primary text-primary-content shadow-lg transition-all duration-200 hover:shadow-xl"
+      :class="{ 'bg-primary-focus': isTableOfContentsOpen }"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -205,17 +182,20 @@
       </svg>
     </button>
 
-    <!-- Table of Contents Sidebar -->
+    <!-- Table of Contents Sidebar (only for content view) -->
     <div
-      v-if="!isLoading && showTableOfContents"
+      v-if="!isLoading && showTableOfContents && !showDraw"
       class="fixed right-0 top-0 z-40 h-full w-80 transform bg-base-100 shadow-2xl transition-transform duration-300"
       :class="{ 'translate-x-full': !isTableOfContentsOpen }"
     >
       <div class="flex h-full flex-col">
         <!-- Header -->
-        <div class="flex items-center justify-between border-b border-base-200 p-4">
-          <h3 class="text-lg font-semibold">İçindekiler</h3>
-          <button @click="toggleTableOfContents" class="btn btn-ghost btn-sm btn-circle">
+        <div class="flex items-center justify-between border-b border-base-300 p-4">
+          <h3 class="text-lg font-semibold text-base-content">İçindekiler</h3>
+          <button
+            @click="toggleTableOfContents"
+            class="flex h-8 w-8 items-center justify-center rounded-lg bg-base-200 text-base-content transition-all duration-200 hover:bg-base-300"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -267,9 +247,9 @@
       </div>
     </div>
 
-    <!-- Backdrop -->
+    <!-- Backdrop (only for content view) -->
     <div
-      v-if="!isLoading && showTableOfContents && isTableOfContentsOpen"
+      v-if="!isLoading && showTableOfContents && isTableOfContentsOpen && !showDraw"
       @click="toggleTableOfContents"
       class="fixed inset-0 z-30 bg-black/20"
     ></div>
@@ -321,13 +301,21 @@ const processedContent = useProcessedQuillContent(
  */
 const formatDate = (dateString) => {
   if (!dateString) return '';
-
   const date = new Date(dateString);
-  return date.toLocaleDateString('tr-TR', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
+  const monthNames = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+  const day = date.getDate();
+  const month = monthNames[date.getMonth()];
+  const year = date.getFullYear();
+  return `${day} ${month} ${year}`;
+};
+
+/**
+ * Format number for display
+ * @param {number} num - Number to format
+ * @returns {string} Formatted number
+ */
+const formatNumber = (num) => {
+  return new Intl.NumberFormat('tr-TR').format(num);
 };
 
 /**
@@ -629,6 +617,36 @@ watch(showDraw, (newValue) => {
 .article-content {
   contain: layout style paint;
   will-change: auto;
+  line-height: 1.8;
+  color: hsl(var(--bc));
+  font-size: 16px;
+}
+
+/* Clean typography for better readability */
+.article-content p {
+  margin-bottom: 1.5rem;
+}
+
+.article-content h1,
+.article-content h2,
+.article-content h3,
+.article-content h4,
+.article-content h5,
+.article-content h6 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.article-content a {
+  color: hsl(var(--p));
+  text-decoration: underline;
+  text-decoration-color: hsl(var(--p) / 0.3);
+  transition: all 0.2s ease;
+}
+
+.article-content a:hover {
+  text-decoration-color: hsl(var(--p));
 }
 
 /* Reduce layout thrashing */
@@ -640,6 +658,7 @@ watch(showDraw, (newValue) => {
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -654,5 +673,11 @@ html {
   .fixed.right-4 {
     right: 1rem;
   }
+}
+
+/* Draw view full height */
+.h-screen {
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height for mobile */
 }
 </style>

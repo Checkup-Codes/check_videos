@@ -1,45 +1,239 @@
 <template>
-  <div ref="scrollContainer" class="space-y-1 p-3">
+  <div ref="scrollContainer" class="category-tree-container space-y-1 overflow-y-auto p-3">
     <!-- Search bar for all users -->
     <div class="mb-3">
-      <input v-model="searchQuery" type="text" class="input-bordered input w-full" placeholder="Kategori ara..." />
+      <input
+        v-model="searchQuery"
+        type="text"
+        class="input-bordered input w-full"
+        placeholder="Kategori ara..."
+        @input="handleSearchInput"
+      />
     </div>
-    <!-- Filter buttons for logged-in users -->
-    <div v-if="isAdmin" class="mb-3 flex gap-2">
-      <button class="btn btn-xs" :class="{ 'btn-primary': adminFilter === 'all' }" @click="adminFilter = 'all'">
-        Tümü
-      </button>
-      <button class="btn btn-xs" :class="{ 'btn-primary': adminFilter === 'public' }" @click="adminFilter = 'public'">
-        Herkese Açık
-      </button>
-      <button
-        class="btn btn-xs"
-        :class="{ 'btn-primary': adminFilter === 'link_only' }"
-        @click="adminFilter = 'link_only'"
-      >
-        Sadece Link
-      </button>
-      <button class="btn btn-xs" :class="{ 'btn-primary': adminFilter === 'hidden' }" @click="adminFilter = 'hidden'">
-        Gizli
-      </button>
+    <!-- Responsive filter buttons for logged-in users -->
+    <div v-if="isAdmin" class="mb-3">
+      <div class="hidden gap-2 sm:flex">
+        <button
+          class="btn btn-outline btn-xs flex items-center justify-center"
+          :class="{ 'btn-primary': adminFilter === 'all' }"
+          @click="adminFilter = 'all'"
+        >
+          <span v-if="props.isCollapsed">
+            <!-- List icon -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </span>
+          <span v-else>Tümü</span>
+        </button>
+        <button
+          class="btn btn-outline btn-xs flex items-center justify-center"
+          :class="{ 'btn-primary': adminFilter === 'public' }"
+          @click="adminFilter = 'public'"
+        >
+          <span v-if="props.isCollapsed">
+            <!-- Globe icon -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <circle cx="12" cy="12" r="10" stroke-width="2" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"
+              />
+            </svg>
+          </span>
+          <span v-else>Herkese Açık</span>
+        </button>
+        <button
+          class="btn btn-outline btn-xs flex items-center justify-center"
+          :class="{ 'btn-primary': adminFilter === 'link_only' }"
+          @click="adminFilter = 'link_only'"
+        >
+          <span v-if="props.isCollapsed">
+            <!-- Link icon -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13.828 10.172a4 4 0 010 5.656l-3 3a4 4 0 01-5.656-5.656l1.5-1.5M10.172 13.828a4 4 0 010-5.656l3-3a4 4 0 015.656 5.656l-1.5 1.5"
+              />
+            </svg>
+          </span>
+          <span v-else>Sadece Link</span>
+        </button>
+        <button
+          class="btn btn-outline btn-xs flex items-center justify-center"
+          :class="{ 'btn-primary': adminFilter === 'hidden' }"
+          @click="adminFilter = 'hidden'"
+        >
+          <span v-if="props.isCollapsed">
+            <!-- Lock icon -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 11c1.104 0 2-.896 2-2V7a2 2 0 10-4 0v2c0 1.104.896 2 2 2zm6 2v5a2 2 0 01-2 2H8a2 2 0 01-2-2v-5a2 2 0 012-2h8a2 2 0 012 2z"
+              />
+            </svg>
+          </span>
+          <span v-else>Gizli</span>
+        </button>
+      </div>
+      <!-- Mobile: show filter icon -->
+      <div class="relative inline-block sm:hidden">
+        <button @click="showFilterMenu = !showFilterMenu" class="btn btn-ghost btn-xs">
+          <!-- Heroicons funnel icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A2 2 0 0013 14.586V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-3.414a2 2 0 00-.293-1.172L2.293 6.707A1 1 0 012 6V4z"
+            />
+          </svg>
+        </button>
+        <div
+          v-if="showFilterMenu"
+          class="absolute z-10 mt-2 w-40 rounded-md bg-base-100 shadow-lg ring-1 ring-black ring-opacity-5"
+        >
+          <div class="flex flex-col gap-1 py-1">
+            <button
+              class="btn btn-outline btn-xs btn-block flex items-center justify-center"
+              :class="{ 'btn-primary': adminFilter === 'all' }"
+              @click="
+                adminFilter = 'all';
+                showFilterMenu = false;
+              "
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <button
+              class="btn btn-outline btn-xs btn-block flex items-center justify-center"
+              :class="{ 'btn-primary': adminFilter === 'public' }"
+              @click="
+                adminFilter = 'public';
+                showFilterMenu = false;
+              "
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <circle cx="12" cy="12" r="10" stroke-width="2" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"
+                />
+              </svg>
+            </button>
+            <button
+              class="btn btn-outline btn-xs btn-block flex items-center justify-center"
+              :class="{ 'btn-primary': adminFilter === 'link_only' }"
+              @click="
+                adminFilter = 'link_only';
+                showFilterMenu = false;
+              "
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13.828 10.172a4 4 0 010 5.656l-3 3a4 4 0 01-5.656-5.656l1.5-1.5M10.172 13.828a4 4 0 010-5.656l3-3a4 4 0 015.656 5.656l-1.5 1.5"
+                />
+              </svg>
+            </button>
+            <button
+              class="btn btn-outline btn-xs btn-block flex items-center justify-center"
+              :class="{ 'btn-primary': adminFilter === 'hidden' }"
+              @click="
+                adminFilter = 'hidden';
+                showFilterMenu = false;
+              "
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 11c1.104 0 2-.896 2-2V7a2 2 0 10-4 0v2c0 1.104.896 2 2 2zm6 2v5a2 2 0 01-2 2H8a2 2 0 01-2-2v-5a2 2 0 012-2h8a2 2 0 012 2z"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-    <ul class="">
-      <li v-for="category in filteredParentCategories" :key="category.id" class="mb-1">
-        <div class="flex w-full items-center">
-          <Link
-            :href="route('categories.show', { category: category.slug })"
-            :class="[
-              'block flex-grow items-center rounded-lg border px-3 py-2 backdrop-blur-md transition-all duration-200',
-              url === `/categories/${category.slug}`
-                ? 'border-primary bg-primary text-primary-content shadow-md'
-                : 'border-base-200 bg-base-200 text-base-content hover:bg-base-300',
-            ]"
-          >
+    <!-- Category List -->
+    <div class="space-y-2">
+      <div v-for="category in filteredParentCategories" :key="category.id">
+        <div
+          :class="[
+            'rounded-lg bg-base-100 transition-all duration-200 hover:shadow-sm',
+            url === `/categories/${category.slug}`
+              ? 'bg-primary/10 border-primary/20 border text-primary shadow-md'
+              : 'hover:bg-base-200',
+          ]"
+        >
+          <!-- Ana kategori başlığı -->
+          <Link :href="route('categories.show', { category: category.slug })" class="block p-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <!-- Lock icon for hidden category -->
-                <span v-if="category.status === 'hidden'" class="opacity-70">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <!-- Status icons -->
+                <span v-if="category.status === 'hidden'" class="text-warning" title="Gizli kategori">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fill-rule="evenodd"
                       d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
@@ -47,11 +241,8 @@
                     />
                   </svg>
                 </span>
-                <span
-                  v-if="hasLinkOnlyWrites(category)"
-                  :class="[url === `/categories/${category.slug}` ? 'text-primary-content' : 'text-primary']"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <span v-if="hasLinkOnlyWrites(category)" class="text-info" title="Sadece link yazıları">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fill-rule="evenodd"
                       d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
@@ -59,15 +250,22 @@
                     />
                   </svg>
                 </span>
-                <span class="font-medium">{{ category.name }}</span>
+                <h3
+                  class="max-w-[120px] truncate text-sm font-medium leading-tight text-base-content"
+                  :title="category.name"
+                >
+                  {{ category.name }}
+                </h3>
+              </div>
+              <div class="flex items-center gap-2">
                 <button
                   v-if="category.children.length"
                   @click.prevent.stop="toggleCollapse(category.id)"
-                  class="btn btn-ghost btn-sm btn-square"
+                  class="btn btn-ghost btn-xs btn-square"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-4 w-4 transition-transform"
+                    class="h-3 w-3 transition-transform"
                     :class="{ 'rotate-180': !isCollapsed(category.id) }"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -76,89 +274,45 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
-              </div>
-              <div class="flex items-center gap-2">
                 <div class="badge badge-sm">{{ getTotalWriteCount(category) }}</div>
               </div>
             </div>
           </Link>
-        </div>
 
-        <!-- Subcategories -->
-        <ul v-if="category.children.length" class="mt-1 pl-4" v-show="!isCollapsed(category.id)">
-          <li v-for="child in category.children" :key="child.id" class="mb-1">
-            <div class="flex w-full items-center">
-              <Link
-                :href="route('categories.show', { category: child.slug })"
-                :class="[
-                  'block flex-grow items-center rounded-lg border px-3 py-2 backdrop-blur-md transition-all duration-200',
-                  url === `/categories/${child.slug}`
-                    ? 'border-primary bg-primary text-primary-content shadow-md'
-                    : 'border-base-200 bg-base-200 text-base-content hover:bg-base-300',
-                ]"
-              >
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-2">
-                    <!-- Lock icon for hidden category -->
-                    <span v-if="child.status === 'hidden' || child.parent_hidden" class="opacity-70">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-3.5 w-3.5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                          clip-rule="evenodd"
-                        />
-                      </svg>
-                    </span>
-                    <span>{{ child.name }}</span>
-                    <button
-                      v-if="child.children.length"
-                      @click.prevent.stop="toggleCollapse(child.id)"
-                      class="btn btn-ghost btn-xs btn-square"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-3 w-3 transition-transform"
-                        :class="{ 'rotate-180': !isCollapsed(child.id) }"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-                  </div>
-                  <div class="badge badge-xs">{{ getTotalWriteCount(child) }}</div>
-                </div>
-              </Link>
-            </div>
+          <!-- Alt kategoriler - dal mantığı ile -->
+          <div v-if="category.children.length" class="relative px-3 pb-3" v-show="!isCollapsed(category.id)">
+            <!-- Ana dikey çizgi -->
+            <div class="absolute left-6 top-0 h-full w-px bg-base-300"></div>
 
-            <!-- Third-level categories -->
-            <ul v-if="child.children.length" class="mt-1 pl-3" v-show="!isCollapsed(child.id)">
-              <li v-for="subChild in child.children" :key="subChild.id" class="mt-1">
-                <div class="flex w-full items-center">
+            <div class="space-y-1">
+              <div v-for="(child, index) in category.children" :key="child.id" class="relative">
+                <!-- Yatay çizgi alt kategoriye -->
+                <div class="absolute left-6 top-3 h-px w-4 bg-base-300"></div>
+
+                <!-- Alt kategori -->
+                <div class="ml-8">
                   <Link
-                    :href="route('categories.show', { category: subChild.slug })"
+                    :href="route('categories.show', { category: child.slug })"
                     :class="[
-                      'block flex-grow items-center rounded-lg border px-3 py-1.5 text-xs backdrop-blur-md transition-all duration-200',
-                      url === `/categories/${subChild.slug}`
-                        ? 'border-primary bg-primary text-primary-content shadow-md'
-                        : 'border-base-200 bg-base-200 text-base-content hover:bg-base-300',
+                      'block rounded-md p-2 transition-all duration-200',
+                      url === `/categories/${child.slug}`
+                        ? 'bg-primary/10 border-primary/20 border text-primary'
+                        : 'hover:bg-base-200',
                     ]"
                   >
                     <div class="flex items-center justify-between">
                       <div class="flex items-center gap-2">
-                        <!-- Lock icon for hidden category -->
-                        <span v-if="subChild.status === 'hidden' || subChild.parent_hidden" class="opacity-70">
+                        <!-- Status icons -->
+                        <span
+                          v-if="child.status === 'hidden' || child.parent_hidden"
+                          class="text-warning"
+                          title="Gizli kategori"
+                        >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             class="h-3 w-3"
-                            viewBox="0 0 20 20"
                             fill="currentColor"
+                            viewBox="0 0 20 20"
                           >
                             <path
                               fill-rule="evenodd"
@@ -167,22 +321,101 @@
                             />
                           </svg>
                         </span>
-                        <span>{{ subChild.name }}</span>
+                        <span
+                          class="max-w-[100px] truncate text-sm font-medium text-base-content"
+                          :title="child.name"
+                          >{{ child.name }}</span
+                        >
                       </div>
-                      <div class="badge badge-xs">{{ getTotalWriteCount(subChild) }}</div>
+                      <div class="flex items-center gap-2">
+                        <button
+                          v-if="child.children.length"
+                          @click.prevent.stop="toggleCollapse(child.id)"
+                          class="btn btn-ghost btn-xs btn-square"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-3 w-3 transition-transform"
+                            :class="{ 'rotate-180': !isCollapsed(child.id) }"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                        <div class="badge badge-xs">{{ getTotalWriteCount(child) }}</div>
+                      </div>
                     </div>
                   </Link>
-                </div>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-    </ul>
 
-    <!-- Boş durum -->
-    <div v-if="parentCategories.length === 0" class="flex h-32 items-center justify-center text-center opacity-50">
-      <div>Henüz kategori bulunmuyor</div>
+                  <!-- Üçüncü seviye kategoriler - dal mantığı ile -->
+                  <div v-if="child.children.length" class="relative mt-1" v-show="!isCollapsed(child.id)">
+                    <!-- Alt kategoriden dikey çizgi -->
+                    <div class="absolute left-4 top-0 h-full w-px bg-base-300"></div>
+
+                    <div v-for="(subChild, subIndex) in child.children" :key="subChild.id" class="relative">
+                      <!-- Yatay çizgi üçüncü seviyeye -->
+                      <div class="absolute left-4 top-3 h-px w-4 bg-base-300"></div>
+
+                      <!-- Üçüncü seviye kategori -->
+                      <div class="ml-8">
+                        <Link
+                          :href="route('categories.show', { category: subChild.slug })"
+                          :class="[
+                            'block rounded-md p-2 transition-all duration-200',
+                            url === `/categories/${subChild.slug}`
+                              ? 'bg-primary/10 border-primary/20 border text-primary'
+                              : 'hover:bg-base-200',
+                          ]"
+                        >
+                          <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                              <!-- Status icons -->
+                              <span
+                                v-if="subChild.status === 'hidden' || subChild.parent_hidden"
+                                class="text-warning"
+                                title="Gizli kategori"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  class="h-3 w-3"
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path
+                                    fill-rule="evenodd"
+                                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                                    clip-rule="evenodd"
+                                  />
+                                </svg>
+                              </span>
+                              <span
+                                class="max-w-[80px] truncate text-xs font-medium text-base-content"
+                                :title="subChild.name"
+                                >{{ subChild.name }}</span
+                              >
+                            </div>
+                            <div class="badge badge-xs">{{ getTotalWriteCount(subChild) }}</div>
+                          </div>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Boş durum -->
+      <div
+        v-if="filteredParentCategories.length === 0"
+        class="flex h-32 items-center justify-center text-center opacity-50"
+      >
+        <div>Henüz kategori bulunmuyor</div>
+      </div>
     </div>
   </div>
 </template>
@@ -204,7 +437,9 @@ const props = defineProps({
 const categories = inject('categories', []);
 const isAdmin = inject('isAdmin', false);
 const searchQuery = ref('');
+const debouncedSearchQuery = ref('');
 const adminFilter = ref('all');
+const showFilterMenu = ref(false);
 
 // Recursive filter for search and status
 function filterCategories(categories, search, status) {
@@ -242,8 +477,17 @@ const parentCategories = computed(() =>
     .sort((a, b) => getTotalWriteCount(b) - getTotalWriteCount(a))
 );
 
+// Debounce search input
+let searchTimeout = null;
+const handleSearchInput = () => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    debouncedSearchQuery.value = searchQuery.value;
+  }, 300);
+};
+
 const filteredParentCategories = computed(() =>
-  filterCategories(parentCategories.value, searchQuery.value, adminFilter.value)
+  filterCategories(parentCategories.value, debouncedSearchQuery.value, adminFilter.value)
 );
 
 const emit = defineEmits(['update:expandAll']);
@@ -314,31 +558,37 @@ defineExpose({
 </script>
 
 <style scoped>
-.overflow-y-auto {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(128, 128, 128, 0.2) transparent;
+.category-tree-container {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-.overflow-y-auto::-webkit-scrollbar {
-  width: 4px;
+/* Custom scrollbar styling */
+.category-tree-container::-webkit-scrollbar {
+  width: 6px;
 }
 
-.overflow-y-auto::-webkit-scrollbar-track {
+.category-tree-container::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.overflow-y-auto::-webkit-scrollbar-thumb {
-  background-color: rgba(128, 128, 128, 0.2);
-  border-radius: 4px;
+.category-tree-container::-webkit-scrollbar-thumb {
+  background-color: rgba(var(--color-base-300), 0.5);
+  border-radius: 3px;
 }
 
 @media (prefers-color-scheme: dark) {
-  .overflow-y-auto {
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  .category-tree-container::-webkit-scrollbar-thumb {
+    background-color: rgba(var(--color-base-100), 0.5);
   }
+}
 
-  .overflow-y-auto::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
-  }
+/* Line clamp utility for title truncation */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>

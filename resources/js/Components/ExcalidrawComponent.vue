@@ -1,14 +1,39 @@
 <template>
-  <div v-if="flashMessage" class="rounded bg-green-200 p-3 text-green-800">
-    {{ flashMessage }}
-  </div>
-  <div class="bg-base-100">
-    <div class="flex justify-between rounded-md px-1 py-2 text-base-content">
-      <div class="ml-auto flex items-center justify-end space-x-2">
-        <button v-if="props.auth.user" @click="saveDrawToServer" class="btn btn-primary btn-sm">Kaydet</button>
-      </div>
+  <div class="relative h-full w-full">
+    <!-- Save button - only for authenticated users -->
+    <div v-if="props.auth.user" class="absolute right-4 top-4 z-10">
+      <button
+        @click="saveDrawToServer"
+        class="flex items-center gap-2 rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-sm text-base-content shadow-lg transition-all duration-200 hover:bg-base-200"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="h-4 w-4"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9"
+          />
+        </svg>
+        Kaydet
+      </button>
     </div>
-    <div id="excalidraw-container" class="h-[800px] w-full overflow-hidden rounded-lg border-2 border-base-300">
+
+    <!-- Flash message -->
+    <div
+      v-if="flashMessage"
+      class="absolute right-4 top-16 z-20 rounded-lg border border-green-300 bg-green-100 px-3 py-2 text-sm text-green-800 shadow-lg"
+    >
+      {{ flashMessage }}
+    </div>
+
+    <!-- Excalidraw container -->
+    <div id="excalidraw-container" class="h-full w-full">
       <div id="excali" class="h-full w-full"></div>
     </div>
   </div>
