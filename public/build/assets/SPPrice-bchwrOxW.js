@@ -1,0 +1,1 @@
+import{p as c,c as n,o,t as a}from"./ssr-CSuglFIc.js";const m={__name:"SPPrice",props:{price:[Number,String]},setup(e){const r=e,t=c(()=>Number(r.price).toLocaleString("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0}));return(s,i)=>(o(),n("span",null,a(t.value),1))}};export{m as default};
