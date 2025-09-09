@@ -163,12 +163,12 @@
       <ExcalidrawComponent :write="write" />
     </div>
 
-    <!-- Fixed Table of Contents Button (only for content view) -->
+    <!-- Table of Contents - Sade Tasarım -->
+    <!-- Mobile: Fixed sidebar with toggle button -->
     <button
       v-if="!isLoading && showTableOfContents && !showDraw"
       @click="toggleTableOfContents"
-      class="hover:bg-primary-focus fixed right-4 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-primary text-primary-content shadow-lg transition-all duration-200 hover:shadow-xl"
-      :class="{ 'bg-primary-focus': isTableOfContentsOpen }"
+      class="fixed right-4 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-primary text-primary-content shadow-lg transition-all duration-200 hover:shadow-xl 2xl:hidden"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -176,82 +176,83 @@
         viewBox="0 0 24 24"
         stroke-width="1.5"
         stroke="currentColor"
-        class="h-6 w-6"
+        class="h-5 w-5"
       >
         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
       </svg>
     </button>
 
-    <!-- Table of Contents Sidebar (only for content view) -->
+    <!-- Mobile: Fixed sidebar -->
     <div
       v-if="!isLoading && showTableOfContents && !showDraw"
-      class="fixed right-0 top-0 z-40 h-full w-80 transform bg-base-100 shadow-2xl transition-transform duration-300"
+      class="fixed right-0 top-0 z-40 h-full w-80 transform bg-base-100 shadow-2xl transition-transform duration-300 2xl:hidden"
       :class="{ 'translate-x-full': !isTableOfContentsOpen }"
     >
       <div class="flex h-full flex-col">
-        <!-- Header -->
         <div class="flex items-center justify-between border-b border-base-300 p-4">
           <h3 class="text-lg font-semibold text-base-content">İçindekiler</h3>
-          <button
-            @click="toggleTableOfContents"
-            class="flex h-8 w-8 items-center justify-center rounded-lg bg-base-200 text-base-content transition-all duration-200 hover:bg-base-300"
-          >
+          <button @click="toggleTableOfContents" class="btn btn-ghost btn-sm">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class="h-5 w-5"
+              class="h-4 w-4"
             >
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
-
-        <!-- Content -->
         <div class="flex-1 overflow-y-auto p-4">
-          <div v-if="tableOfContents.length === 0" class="text-base-content/60 py-8 text-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="mx-auto mb-4 h-12 w-12 opacity-50"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            <p>İçindekiler bulunamadı</p>
+          <div v-if="tableOfContents.length === 0" class="text-base-content/60 py-8 text-center text-sm">
+            İçindekiler bulunamadı
           </div>
-
-          <div v-else class="space-y-2">
+          <div v-else class="space-y-1">
             <div
               v-for="(item, index) in tableOfContents"
               :key="index"
               @click="scrollToHeading(item.id)"
-              class="cursor-pointer rounded-lg p-3 transition-colors duration-200 hover:bg-base-200"
-              :class="getHeadingClass(item.level)"
+              class="cursor-pointer rounded-lg p-2 text-sm transition-colors hover:bg-base-200"
+              :class="[getTreeHeadingClass(item.level), getActiveHeadingClass(item.id)]"
             >
-              <div class="flex items-center gap-2">
-                <span class="text-base-content/50 font-mono text-xs">{{ index + 1 }}</span>
-                <span class="line-clamp-2 text-sm font-medium">{{ item.text }}</span>
-              </div>
+              <span class="text-base-content">{{ item.text }}</span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Backdrop (only for content view) -->
+    <!-- Desktop: Fixed sidebar on the right (15.6 inch and above) -->
+    <div v-if="!isLoading && showTableOfContents && !showDraw" class="fixed right-4 top-4 z-30 hidden w-64 2xl:block">
+      <div class="rounded-lg border border-base-300 bg-base-100 shadow-lg">
+        <div class="border-b border-base-300 p-3">
+          <h3 class="text-sm font-semibold text-base-content">İçindekiler</h3>
+        </div>
+        <div class="overflow-y-auto p-3" style="max-height: calc(100vh - 120px)">
+          <div v-if="tableOfContents.length === 0" class="text-base-content/60 py-4 text-center text-xs">
+            İçindekiler bulunamadı
+          </div>
+          <div v-else class="space-y-1">
+            <div
+              v-for="(item, index) in tableOfContents"
+              :key="index"
+              @click="scrollToHeading(item.id)"
+              class="cursor-pointer rounded p-2 text-xs transition-colors hover:bg-base-200"
+              :class="[getTreeHeadingClass(item.level), getActiveHeadingClass(item.id)]"
+            >
+              <span class="text-base-content">{{ item.text }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile backdrop -->
     <div
       v-if="!isLoading && showTableOfContents && isTableOfContentsOpen && !showDraw"
       @click="toggleTableOfContents"
-      class="fixed inset-0 z-30 bg-black/20"
+      class="fixed inset-0 z-30 bg-black/20 2xl:hidden"
     ></div>
   </CheckScreen>
 </template>
@@ -285,6 +286,7 @@ const contentShouldLoad = ref(false);
 const showTableOfContents = ref(false);
 const isTableOfContentsOpen = ref(false);
 const tableOfContents = ref([]);
+const activeHeadingId = ref(null);
 
 /**
  * Use the centralized Quill content processor with lazy loading
@@ -355,6 +357,10 @@ onMounted(() => {
                 // Generate table of contents after content is loaded
                 setTimeout(() => {
                   generateTableOfContents();
+                  // Setup active heading tracker after TOC is generated
+                  setTimeout(() => {
+                    setupActiveHeadingTracker();
+                  }, 200);
                 }, 100);
               });
             }
@@ -375,6 +381,10 @@ onMounted(() => {
         // Generate table of contents after content is loaded
         setTimeout(() => {
           generateTableOfContents();
+          // Setup active heading tracker after TOC is generated
+          setTimeout(() => {
+            setupActiveHeadingTracker();
+          }, 200);
         }, 100);
       });
     }
@@ -557,6 +567,66 @@ const getHeadingClass = (level) => {
 };
 
 /**
+ * Get CSS class for tree-style heading level (ağaç dal tasarımı)
+ */
+const getTreeHeadingClass = (level) => {
+  switch (level) {
+    case 1:
+      return 'pl-0';
+    case 2:
+      return 'pl-4 relative before:absolute before:left-0 before:top-1/2 before:h-px before:w-3 before:bg-base-300 before:-translate-y-1/2';
+    case 3:
+      return 'pl-8 relative before:absolute before:left-0 before:top-1/2 before:h-px before:w-3 before:bg-base-300 before:-translate-y-1/2 after:absolute after:left-0 after:top-0 after:h-full after:w-px after:bg-base-300';
+    case 4:
+      return 'pl-12 relative before:absolute before:left-0 before:top-1/2 before:h-px before:w-3 before:bg-base-300 before:-translate-y-1/2 after:absolute after:left-0 after:top-0 after:h-full after:w-px after:bg-base-300';
+    case 5:
+      return 'pl-16 relative before:absolute before:left-0 before:top-1/2 before:h-px before:w-3 before:bg-base-300 before:-translate-y-1/2 after:absolute after:left-0 after:top-0 after:h-full after:w-px after:bg-base-300';
+    case 6:
+      return 'pl-20 relative before:absolute before:left-0 before:top-1/2 before:h-px before:w-3 before:bg-base-300 before:-translate-y-1/2 after:absolute after:left-0 after:top-0 after:h-full after:w-px after:bg-base-300';
+    default:
+      return 'pl-0';
+  }
+};
+
+/**
+ * Get CSS class for active heading (sade tasarım)
+ */
+const getActiveHeadingClass = (headingId) => {
+  return activeHeadingId.value === headingId ? 'bg-primary/10 text-primary border-l-2 border-primary' : '';
+};
+
+/**
+ * Track active heading with Intersection Observer
+ */
+const setupActiveHeadingTracker = () => {
+  if (!tableOfContents.value.length) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          activeHeadingId.value = entry.target.id;
+        }
+      });
+    },
+    {
+      rootMargin: '-20% 0px -70% 0px',
+      threshold: 0.1,
+    }
+  );
+
+  // Observe all headings
+  tableOfContents.value.forEach((item) => {
+    const element = document.getElementById(item.id);
+    if (element) {
+      observer.observe(element);
+    }
+  });
+
+  return observer;
+};
+
+/**
  * Toggle the visibility of the table of contents sidebar
  */
 const toggleTableOfContents = () => {
@@ -572,6 +642,10 @@ watch(
     if (contentShouldLoad.value && processedContent.value) {
       nextTick(() => {
         generateTableOfContents();
+        // Setup active heading tracker after TOC is generated
+        setTimeout(() => {
+          setupActiveHeadingTracker();
+        }, 200);
       });
     }
   },
@@ -613,43 +687,7 @@ watch(showDraw, (newValue) => {
   min-height: 200px;
 }
 
-/* Optimize content rendering */
-.article-content {
-  contain: layout style paint;
-  will-change: auto;
-  line-height: 1.8;
-  color: hsl(var(--bc));
-  font-size: 16px;
-}
-
-/* Clean typography for better readability */
-.article-content p {
-  margin-bottom: 1.5rem;
-}
-
-.article-content h1,
-.article-content h2,
-.article-content h3,
-.article-content h4,
-.article-content h5,
-.article-content h6 {
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-  font-weight: 600;
-}
-
-.article-content a {
-  color: hsl(var(--p));
-  text-decoration: underline;
-  text-decoration-color: hsl(var(--p) / 0.3);
-  transition: all 0.2s ease;
-}
-
-.article-content a:hover {
-  text-decoration-color: hsl(var(--p));
-}
-
-/* Reduce layout thrashing */
+/* Content container - minimal */
 .content-container {
   contain: layout;
 }

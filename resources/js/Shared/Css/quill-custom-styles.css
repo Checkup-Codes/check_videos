@@ -1,75 +1,62 @@
 @import 'quill/dist/quill.snow.css';
 
-/* QuillJS Global Styles */
-.ql-editor {
-  @apply p-4;
-  min-height: 300px;
-  line-height: 1.6;
+/* QuillJS Sade Tasarım - Tema Uyumlu */
+.ql-editor,
+.article-content {
+  @apply p-0;
+  line-height: 1.8;
+  color: hsl(var(--bc));
+  font-size: 16px;
 }
 
+/* Başlık Stilleri - Sade */
 .ql-editor h1,
 .article-content h1 {
-  @apply my-6 text-4xl font-bold;
+  @apply mt-8 mb-4 text-2xl font-semibold;
   color: hsl(var(--bc));
 }
 
 .ql-editor h2,
 .article-content h2 {
-  @apply my-5 text-3xl font-semibold;
+  @apply mt-6 mb-3 text-xl font-semibold;
   color: hsl(var(--bc));
 }
 
 .ql-editor h3,
 .article-content h3 {
-  @apply my-4 text-2xl font-semibold;
+  @apply mt-5 mb-3 text-lg font-semibold;
   color: hsl(var(--bc));
 }
 
 .ql-editor h4,
 .article-content h4 {
-  @apply my-4 text-xl font-semibold;
+  @apply mt-4 mb-2 text-base font-semibold;
   color: hsl(var(--bc));
 }
 
 .ql-editor h5,
 .article-content h5 {
-  @apply my-3 text-lg font-semibold;
+  @apply mt-4 mb-2 text-base font-medium;
   color: hsl(var(--bc));
 }
 
 .ql-editor h6,
 .article-content h6 {
-  @apply my-3 text-base font-semibold;
+  @apply mt-4 mb-2 text-sm font-medium;
   color: hsl(var(--bc));
 }
 
-/* Fix spacing between paragraphs */
+/* Paragraf Stilleri - Sade */
 .ql-editor p,
 .article-content p {
-  @apply mb-4 text-base leading-relaxed;
+  @apply mb-4 text-base;
   color: hsl(var(--bc));
 }
 
-/* Space between paragraphs */
-.ql-editor p + p,
-.article-content p + p {
-  @apply mt-4;
-}
-
-/* Empty paragraphs should show as line breaks */
-.ql-editor p:empty,
-.article-content p:empty,
-.ql-editor p:has(br:only-child),
-.article-content p:has(br:only-child) {
-  @apply my-4 h-6;
-  min-height: 1.5rem;
-  content: ' ';
-  display: block;
-}
-
+/* Metin Formatları - Minimal */
 .ql-editor strong,
 .article-content strong {
-  @apply font-bold;
+  @apply font-semibold;
 }
 
 .ql-editor em,
@@ -79,7 +66,7 @@
 
 .ql-editor u,
 .article-content u {
-  @apply underline decoration-2;
+  @apply underline;
 }
 
 .ql-editor s,
@@ -87,409 +74,95 @@
   @apply line-through;
 }
 
-/* Override QuillJS default styles */
-.ql-snow .ql-editor blockquote {
-  border-left: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-/* Blockquote style - tema uyumlu, light/dark için özel renkler */
+/* Blockquote - Sade Tasarım */
 .ql-editor blockquote,
 .article-content blockquote {
-  border-left: 3px solid hsl(var(--p));
-  border-radius: 0.5rem;
-  padding: 1rem 1.5rem;
-  margin: 1.5rem 0;
+  @apply border-l-4 border-primary p-4 my-4 rounded-r-lg;
+  background-color: hsl(var(--p) / 0.1);
+  color: hsl(var(--bc));
   font-style: italic;
-  color: hsl(var(--bc));
-  box-shadow: none;
-  position: relative;
-  font-size: 1.05em;
-  line-height: 1.7;
-  background: #f3f4f6; /* varsayılan: light gri */
 }
 
-[data-theme~='dark'] .ql-editor blockquote,
-[data-theme~='dark'] .article-content blockquote {
-  background: #23272f; /* dark mod: açık koyu gri */
-}
-
-.article-content blockquote::before,
-.article-content blockquote::after {
-  content: none;
-  display: none;
-}
-
-/* Code blocks - DaisyUI uyumlu */
+/* Code - Sade Tasarım */
 .ql-editor code,
-.article-content code:not(.mockup-code *) {
-  @apply mx-0.5 px-2 py-0.5;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-  background-color: hsl(var(--b2));
-  color: hsl(var(--bc));
-  border-radius: 0.25rem;
-  border: 1px solid hsl(var(--b3));
-  font-size: 0.9em;
-  display: inline;
-  white-space: pre-wrap;
-  word-break: normal;
+.article-content code {
+  @apply bg-base-200 text-base-content px-2 py-1 rounded text-sm;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  line-height: 1.4;
 }
 
-/* Fix spacing after code blocks and blockquotes */
-.ql-editor blockquote + p,
-.article-content blockquote + p,
-.ql-editor code + p,
-.article-content code + p,
-.ql-editor pre + p,
-.article-content pre + p {
-  @apply mt-4;
-}
-
-/* Fix spacing before code blocks and blockquotes */
-.ql-editor p + blockquote,
-.article-content p + blockquote,
-.ql-editor p + code,
-.article-content p + code,
-.ql-editor p + pre,
-.article-content p + pre {
-  @apply mt-4;
-}
-
-/* DaisyUI mockup-code styling enhancement */
-.article-content .mockup-code,
-.ql-editor .mockup-code {
-  margin: 1.5rem 0;
-  font-size: 0.9em;
-  background-color: hsl(var(--n));
-  max-width: 100%;
-  overflow: hidden;
-}
-
-/* Uzun kod blokları için özel stil */
-.article-content .mockup-code.whitespace-pre-wrap pre,
-.ql-editor .mockup-code.whitespace-pre-wrap pre {
-  padding: 0.75rem 1rem !important;
-  margin: 0 !important;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-/* Normal satır prefix'leri için */
-.article-content .mockup-code pre,
-.ql-editor .mockup-code pre {
-  padding-left: 0.75rem !important;
-  margin: 0 !important;
-}
-
-.article-content .mockup-code pre:before,
-.ql-editor .mockup-code pre:before {
-  margin-right: 1rem !important;
-}
-
-/* Doğrudan mockup-code içindeki pre elementleri için */
-.article-content .mockup-code > pre,
-.ql-editor .mockup-code > pre {
-  display: block;
-  width: 100%;
-  padding: 0.75rem 1rem !important;
+.ql-editor pre,
+.article-content pre {
+  @apply bg-base-200 text-base-content p-4 my-4 rounded overflow-x-auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  line-height: 1.8;
+  font-size: 15px;
   white-space: pre-wrap;
   word-wrap: break-word;
+  border: 1px solid hsl(var(--bc) / 0.1);
 }
 
-.article-content .mockup-code code,
-.ql-editor .mockup-code code {
-  display: block;
-  background: transparent;
-  color: hsl(var(--nc));
-  border: none;
-  padding: 0;
-  margin: 0;
-  border-radius: 0;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+/* Code block içindeki satırlar için ekstra padding */
+.ql-editor pre code,
+.article-content pre code {
+  @apply bg-transparent p-0;
+  font-size: inherit;
+  line-height: inherit;
   white-space: inherit;
+  word-wrap: inherit;
+  display: block;
+  min-height: 1.5em;
 }
 
-/* Fallback for older code blocks that may not be converted */
-.ql-editor pre.ql-syntax,
-.article-content pre.ql-syntax {
-  @apply my-4 px-4 py-3;
-  overflow-x: auto;
-  border-radius: 0.25rem;
-  border: 1px solid hsl(var(--b3));
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  line-height: 1.4;
-  font-size: 0.9em;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-  background-color: hsl(var(--b2));
-  color: hsl(var(--bc));
-  max-width: 100%;
+/* Satır arası boşlukları için */
+.ql-editor pre br,
+.article-content pre br {
+  line-height: 1.8;
+  display: block;
+  content: "";
+  margin-top: 0.2em;
 }
 
-/* Lists - Fix spacing and padding */
-.ql-editor ol,
-.article-content ol {
-  @apply my-4 pl-8;
-  list-style-type: none;
-  counter-reset: list-0;
-}
-
+/* Lists - Sade Tasarım */
 .ql-editor ul,
 .article-content ul {
-  @apply my-4 pl-8;
-  list-style-type: none;
+  @apply my-4 pl-6;
+  list-style-type: disc;
+}
+
+.ql-editor ol,
+.article-content ol {
+  @apply my-4 pl-6;
+  list-style-type: decimal;
 }
 
 .ql-editor li,
 .article-content li {
-  @apply my-2;
-  min-height: 1.5rem;
-  padding-left: 0.5rem;
-}
-
-/* Fix for duplicated numbers in ordered lists */
-.ql-editor li[data-list='ordered'],
-.article-content li[data-list='ordered'] {
-  list-style-type: none !important;
-  display: block !important;
-  counter-increment: list-0;
-  position: relative !important;
-  padding-left: 0.5rem !important;
-}
-
-.ql-editor li[data-list='ordered']::before,
-.article-content li[data-list='ordered']::before {
-  content: counter(list-0) '.';
-  position: absolute;
-  left: -2em;
-  width: 2em;
-  text-align: right;
-}
-
-/* Completely hide the span.ql-ui in lists */
-.ql-editor .ql-ui,
-.article-content .ql-ui {
-  display: none !important;
-  visibility: hidden !important;
-  width: 0 !important;
-  height: 0 !important;
-  overflow: hidden !important;
-}
-
-/* Bullet list styling */
-.ql-editor li[data-list='bullet'],
-.article-content li[data-list='bullet'] {
-  list-style-type: none !important;
-  display: block !important;
-  position: relative !important;
-  padding-left: 0.5rem !important;
-}
-
-.ql-editor li[data-list='bullet']::before,
-.article-content li[data-list='bullet']::before {
-  content: '•';
-  position: absolute;
-  left: -1.5em;
-  width: 1.5em;
-  text-align: center;
-}
-
-/* Hizalama sınıfları */
-.ql-editor .ql-align-right,
-.article-content .ql-align-right {
-  @apply text-right;
-}
-
-.ql-editor .ql-align-center,
-.article-content .ql-align-center {
-  @apply text-center;
-}
-
-.ql-editor .ql-align-justify,
-.article-content .ql-align-justify {
-  @apply text-justify;
-}
-
-/* Font sınıfları */
-.ql-editor .ql-font-serif,
-.article-content .ql-font-serif {
-  @apply font-serif;
-}
-
-.ql-editor .ql-font-monospace,
-.article-content .ql-font-monospace {
-  @apply font-mono;
-}
-
-/* Girinti sınıfları */
-.ql-editor .ql-indent-1,
-.article-content .ql-indent-1 {
-  padding-left: 3em;
-}
-
-.ql-editor .ql-indent-2,
-.article-content .ql-indent-2 {
-  padding-left: 6em;
-}
-
-.ql-editor .ql-indent-3,
-.article-content .ql-indent-3 {
-  padding-left: 9em;
-}
-
-/* Inline styles for color and background */
-.ql-editor [style*='color:'],
-.article-content [style*='color:'] {
-  color: inherit; /* Will be overridden by inline style */
-}
-
-.ql-editor [style*='background-color:'],
-.article-content [style*='background-color:'] {
-  padding: 0.1em 0.3em;
-  border-radius: 0.25em;
-}
-
-/* Görseller için stil */
-.ql-editor img,
-.article-content img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: 1rem auto;
-  border-radius: 0.5rem;
-  border: 1px solid hsl(var(--b3));
-}
-
-/* Additional spacing and general content styling */
-.ql-editor > :first-child,
-.article-content > :first-child {
-  @apply mt-0;
-}
-
-.ql-editor > :last-child,
-.article-content > :last-child {
-  @apply mb-0;
-}
-
-/* Mobile compatibility */
-@media (max-width: 640px) {
-  .ql-editor,
-  .article-content {
-    font-size: 0.95rem;
-  }
-
-  .ql-editor h1,
-  .article-content h1 {
-    font-size: 1.75rem;
-  }
-
-  .ql-editor h2,
-  .article-content h2 {
-    font-size: 1.5rem;
-  }
-
-  .ql-editor h3,
-  .article-content h3 {
-    font-size: 1.25rem;
-  }
-
-  .ql-editor .mockup-code,
-  .article-content .mockup-code {
-    font-size: 0.8em;
-  }
-
-  .ql-editor .mockup-code pre,
-  .article-content .mockup-code pre {
-    padding-top: 0.3rem;
-    padding-bottom: 0.3rem;
-  }
-}
-
-/* Quill code block container fallback */
-.ql-code-block-container {
-  background-color: hsl(var(--n));
-  border-radius: 0.5rem;
-  margin: 1.5rem 0;
-  overflow: hidden;
-}
-
-.ql-code-block {
-  padding: 1rem;
-  color: hsl(var(--nc));
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-/* Skeleton style animation for images */
-@keyframes shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-.skeleton {
-  background: linear-gradient(90deg, hsl(var(--b3)) 25%, hsl(var(--b2)) 50%, hsl(var(--b3)) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-.img-skeleton {
-  min-height: 200px;
-}
-
-/* Renkli metin ve arka plan stilleri */
-.ql-editor .ql-color-picker .ql-picker-options [data-value]:hover {
-  border-color: hsl(var(--p)) !important;
-}
-
-.ql-editor .ql-color-picker .ql-picker-options [data-selected='true'] {
-  border-color: hsl(var(--p)) !important;
-}
-
-.ql-editor [style*='color:'] {
-  color: inherit; /* Inline stil tarafından geçersiz kılınacak */
-}
-
-.ql-editor [style*='background-color:'] {
-  padding: 0.1em 0.3em;
-  border-radius: 0.25em;
-}
-
-/* Toolbar renk butonları için özel stiller */
-.ql-snow .ql-color-picker .ql-picker-label,
-.ql-snow .ql-background .ql-picker-label {
-  padding: 0 4px;
-  border: 1px solid transparent;
-}
-
-.ql-snow .ql-color-picker .ql-picker-label:hover,
-.ql-snow .ql-background .ql-picker-label:hover {
-  border-color: hsl(var(--bc) / 0.2);
-}
-
-.ql-snow .ql-color-picker .ql-picker-options,
-.ql-snow .ql-background .ql-picker-options {
-  background-color: hsl(var(--b1));
-  border: 1px solid hsl(var(--bc) / 0.2);
-  box-shadow: 0 2px 8px hsl(var(--bc) / 0.1);
-}
-
-/* Renk seçici hover efektleri */
-.ql-snow .ql-picker.ql-color-picker:hover .ql-picker-label,
-.ql-snow .ql-picker.ql-background:hover .ql-picker-label {
+  @apply my-1;
   color: hsl(var(--bc));
 }
 
-.ql-snow .ql-picker.ql-color-picker .ql-picker-label:hover,
-.ql-snow .ql-picker.ql-background .ql-picker-label:hover {
-  border-color: hsl(var(--bc) / 0.2);
+/* Görseller - Sade Tasarım */
+.ql-editor img,
+.article-content img {
+  @apply max-w-full h-auto block mx-auto my-4 rounded;
+  border: 1px solid hsl(var(--bc) / 0.2);
 }
 
-/* Fix toolbar spacing */
+/* Linkler - Sade Tasarım */
+.ql-editor a,
+.article-content a {
+  @apply text-primary underline;
+  text-decoration-color: hsl(var(--p) / 0.3);
+  transition: all 0.2s ease;
+}
+
+.ql-editor a:hover,
+.article-content a:hover {
+  text-decoration-color: hsl(var(--p));
+}
+
+/* Toolbar - Sade Tasarım */
 .ql-toolbar.ql-snow {
   @apply border-b border-base-300 p-2;
 }
