@@ -1,7 +1,7 @@
 <template>
   <div :class="computedClass">
     <div class="h-screen-minus-12 overflow-y-auto overscroll-none lg:h-screen-minus">
-      <div class="container mx-auto max-w-[920px]">
+      <div class="container mx-auto max-w-[920px] xl:ml-8 xl:mr-auto" :class="{ 'xl:mx-auto': isWideScreen }">
         <slot />
       </div>
     </div>
@@ -9,13 +9,28 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 
 const props = defineProps({
   infoClass: {
     type: String,
     default: '',
   },
+});
+
+const isWideScreen = ref(false);
+
+const checkScreenWidth = () => {
+  isWideScreen.value = window.innerWidth >= 1800;
+};
+
+onMounted(() => {
+  checkScreenWidth();
+  window.addEventListener('resize', checkScreenWidth);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkScreenWidth);
 });
 
 const computedClass = computed(() => {
