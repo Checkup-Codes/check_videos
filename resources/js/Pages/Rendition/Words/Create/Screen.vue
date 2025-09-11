@@ -12,20 +12,44 @@
           <!-- Temel Bilgiler -->
           <div class="space-y-4">
             <!-- Kelime -->
-            <div class="form-control w-full">
-              <label class="label">
-                <span class="label-text font-semibold">Kelime</span>
-              </label>
-              <input
-                type="text"
-                v-model="form.word"
-                class="input-bordered input input-lg w-full"
-                placeholder="Kelimeyi girin..."
-                required
-              />
-              <label v-if="errors.word" class="label">
-                <span class="label-text-alt text-error">{{ errors.word }}</span>
-              </label>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div class="form-control w-full">
+                <label class="label">
+                  <span class="label-text font-semibold">Kelime</span>
+                </label>
+                <input
+                  type="text"
+                  v-model="form.word"
+                  class="input-bordered input w-full"
+                  placeholder="Kelimeyi girin..."
+                  required
+                />
+                <label v-if="errors.word" class="label">
+                  <span class="label-text-alt text-error">{{ errors.word }}</span>
+                </label>
+              </div>
+
+              <!-- Tür -->
+              <div class="form-control w-full">
+                <label class="label">
+                  <span class="label-text font-semibold">Tür</span>
+                </label>
+                <select v-model="form.type" class="select-bordered select w-full">
+                  <option value="">Tür seçiniz</option>
+                  <option value="noun">İsim (Noun)</option>
+                  <option value="verb">Fiil (Verb)</option>
+                  <option value="adjective">Sıfat (Adjective)</option>
+                  <option value="adverb">Zarf (Adverb)</option>
+                  <option value="pronoun">Zamir (Pronoun)</option>
+                  <option value="preposition">Edat (Preposition)</option>
+                  <option value="conjunction">Bağlaç (Conjunction)</option>
+                  <option value="interjection">Ünlem (Interjection)</option>
+                  <option value="phrase">Deyim (Phrase)</option>
+                </select>
+                <label v-if="errors.type" class="label">
+                  <span class="label-text-alt text-error">{{ errors.type }}</span>
+                </label>
+              </div>
             </div>
 
             <!-- Anlamlar -->
@@ -41,6 +65,8 @@
                     v-model="meaning.meaning"
                     class="input-bordered input w-full"
                     :placeholder="`${index + 1}. anlam`"
+                    :data-index="index"
+                    @keydown.enter.prevent="addMeaningAndFocus(index)"
                     required
                   />
                   <div class="form-control">
@@ -144,28 +170,6 @@
             <div class="collapse-title font-semibold text-base-content">Daha Fazla Seçenek</div>
             <div class="collapse-content">
               <div class="grid grid-cols-1 gap-4 pt-4 md:grid-cols-2">
-                <!-- Tür -->
-                <div class="form-control w-full">
-                  <label class="label">
-                    <span class="label-text">Tür</span>
-                  </label>
-                  <select v-model="form.type" class="select-bordered select w-full">
-                    <option value="">Tür seçiniz</option>
-                    <option value="noun">İsim (Noun)</option>
-                    <option value="verb">Fiil (Verb)</option>
-                    <option value="adjective">Sıfat (Adjective)</option>
-                    <option value="adverb">Zarf (Adverb)</option>
-                    <option value="pronoun">Zamir (Pronoun)</option>
-                    <option value="preposition">Edat (Preposition)</option>
-                    <option value="conjunction">Bağlaç (Conjunction)</option>
-                    <option value="interjection">Ünlem (Interjection)</option>
-                    <option value="phrase">Deyim (Phrase)</option>
-                  </select>
-                  <label v-if="errors.type" class="label">
-                    <span class="label-text-alt text-error">{{ errors.type }}</span>
-                  </label>
-                </div>
-
                 <!-- Dil -->
                 <div class="form-control w-full">
                   <label class="label">
@@ -310,6 +314,7 @@
                     class="input-bordered input w-full"
                     placeholder="Yeni eş anlamlı kelime"
                     @keyup.enter.prevent="addSynonym"
+                    @keydown.enter.prevent="addSynonym"
                   />
                   <button type="button" @click="addSynonym" class="btn btn-outline">
                     <svg class="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -337,12 +342,17 @@
               </svg>
               İptal
             </Link>
-            <button type="submit" class="btn btn-primary btn-lg" :disabled="processing">
+            <button
+              type="submit"
+              class="btn btn-primary tooltip tooltip-top shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl active:scale-95"
+              data-tip="Shift + Enter ile kaydet"
+              @keydown.shift.enter.prevent="submitForm"
+              :disabled="processing"
+            >
               <span v-if="processing" class="loading loading-spinner loading-sm"></span>
-              <svg v-else class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-              Kelimeyi Kaydet
+
+              <span v-if="!processing">Kelimeyi Kaydet</span>
+              <span v-else>Kaydediliyor...</span>
             </button>
           </div>
         </form>
@@ -352,7 +362,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 import { useForm, usePage, Link } from '@inertiajs/vue3';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
@@ -415,6 +425,22 @@ const removeSynonym = (index) => {
 
 const addMeaning = () => {
   form.meanings.push({ meaning: '', is_primary: false });
+};
+
+const addMeaningAndFocus = async (currentIndex) => {
+  // Add new meaning
+  form.meanings.push({ meaning: '', is_primary: false });
+
+  // Wait for Vue to update the DOM
+  await nextTick();
+
+  // Focus on the newly added meaning
+  const nextIndex = currentIndex + 1;
+  const nextMeaningInput = document.querySelector(`input[data-index="${nextIndex}"]`);
+  if (nextMeaningInput) {
+    nextMeaningInput.focus();
+    nextMeaningInput.select(); // Select the input content
+  }
 };
 
 const removeMeaning = (index) => {

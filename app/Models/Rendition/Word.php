@@ -24,6 +24,13 @@ class Word extends Model
                 $model->{$model->getKeyName()} = (string) Str::uuid();
             }
         });
+
+        // Kelime silindiğinde ilişkili verileri de sil
+        static::deleting(function ($model) {
+            $model->meanings()->delete();
+            $model->synonyms()->delete();
+            $model->exampleSentences()->delete();
+        });
     }
 
     protected $fillable = [

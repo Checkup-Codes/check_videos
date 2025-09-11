@@ -1,6 +1,5 @@
 <template>
   <CheckSubsidebar>
-    <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="collapseSidebar" />
     <TopSubsidebar title="VERSİYONLAR" href="/versions/create/" class="border-base-200" />
     <SubSidebarScreen>
       <VersionsList :versions="versions" :currentUrl="url" />
@@ -12,7 +11,6 @@
 import { ref, computed } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
-import ToggleSubSidebarButtonClose from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 import TopSubsidebar from '@/Components/CekapUI/Typography/TopSubsidebar.vue';
 import VersionsList from '@/Pages/FBVersions/_components/VersionList.vue';
 import SubSidebarScreen from '@/Components/CekapUI/Slots/SubSidebarScreen.vue';
@@ -24,9 +22,4 @@ const versions = computed(() => props.value.versions || []);
 
 const isCollapsed = ref(true);
 const emit = defineEmits(['update:isCollapsed']);
-
-const collapseSidebar = () => {
-  isCollapsed.value = !isCollapsed.value;
-  emit('update:isCollapsed', isCollapsed.value);
-};
 </script>

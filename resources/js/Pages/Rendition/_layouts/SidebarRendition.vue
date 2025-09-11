@@ -1,6 +1,5 @@
 <template>
   <CheckSubsidebar :class="currentTheme">
-    <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="collapseSidebar" />
     <TopSubsidebar title="DİL PAKETLERİ" :href="route('rendition.language-packs.create')" />
     <SubSidebarScreen>
       <div class="w-full overflow-y-auto">
@@ -37,7 +36,6 @@ import { ref, computed } from 'vue';
 import { usePage, Link } from '@inertiajs/vue3';
 import { useStore } from 'vuex';
 import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
-import ToggleSubSidebarButtonClose from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 import TopSubsidebar from '@/Components/CekapUI/Typography/TopSubsidebar.vue';
 import SubSidebarScreen from '@/Components/CekapUI/Slots/SubSidebarScreen.vue';
 
@@ -56,11 +54,6 @@ const auth = props.auth;
 
 const isCollapsed = ref(true);
 const emit = defineEmits(['update:isCollapsed']);
-
-const collapseSidebar = () => {
-  isCollapsed.value = !isCollapsed.value;
-  emit('update:isCollapsed', isCollapsed.value);
-};
 
 const getLinkClasses = (href) => {
   return url === href ? 'active' : '';

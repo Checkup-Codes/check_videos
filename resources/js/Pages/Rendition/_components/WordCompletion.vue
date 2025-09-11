@@ -408,7 +408,7 @@ const handleHint = () => {
 };
 
 // Oyunu başlat
-const startGameWithConfig = async () => {
+const startGameWithConfig = () => {
   if (!props.words || props.words.length < 2) {
     alert('Oyunu başlatmak için en az 2 kelime gereklidir.');
     return;
@@ -472,14 +472,15 @@ const startGameWithConfig = async () => {
   // Son olarak rastgele karıştır
   gameWords = gameWords.sort(() => Math.random() - 0.5);
 
+  // Soru sayısını sınırla
+  const questionCount = Math.min(props.gameConfig.questionCount, gameWords.length);
+  gameWords = gameWords.slice(0, questionCount);
+
   // Kelimeleri yükle
-  await new Promise((resolve) => {
-    words.value = gameWords;
-    gameState.value.totalQuestions = words.value.length;
-    gameState.value.currentIndex = 0;
-    gameState.value.userResponses = [];
-    resolve();
-  });
+  words.value = gameWords;
+  gameState.value.totalQuestions = words.value.length;
+  gameState.value.currentIndex = 0;
+  gameState.value.userResponses = [];
 
   gameState.value.isLoading = false;
   gameState.value.isPlaying = true;

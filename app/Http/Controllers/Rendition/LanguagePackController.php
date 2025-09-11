@@ -195,10 +195,12 @@ class LanguagePackController extends Controller
     public function destroy($id)
     {
         $languagePack = LanguagePack::findOrFail($id);
+
+        // Model seviyesindeki cascade delete otomatik olarak çalışacak
         $languagePack->delete();
 
         return Redirect::route('rendition.language-packs.index')
-            ->with('success', 'Dil paketi başarıyla silindi.');
+            ->with('success', 'Dil paketi ve tüm ilişkili veriler başarıyla silindi.');
     }
 
     public function words($id)

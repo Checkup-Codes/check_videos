@@ -225,7 +225,7 @@
 
     <!-- Desktop: Fixed sidebar on the right (15.6 inch and above) -->
     <div v-if="!isLoading && showTableOfContents && !showDraw" class="fixed right-4 top-4 z-30 hidden w-64 2xl:block">
-      <div class="rounded-lg border border-base-300 bg-base-100 shadow-lg">
+      <div class="rounded-lg bg-base-100">
         <div class="border-b border-base-300 p-3">
           <h3 class="text-sm font-semibold text-base-content">İçindekiler</h3>
         </div>

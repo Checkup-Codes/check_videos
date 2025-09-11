@@ -24,6 +24,18 @@ class LanguagePack extends Model
                 $model->{$model->getKeyName()} = (string) Str::uuid();
             }
         });
+
+        // Paket silindiğinde ilişkili kelimeleri de sil
+        static::deleting(function ($model) {
+            // Pakete bağlı tüm kelimeleri al ve sil
+            $words = $model->words;
+            foreach ($words as $word) {
+                $word->delete(); // Word modelindeki cascade delete çalışacak
+            }
+
+            // Pivot table ilişkilerini temizle
+            $model->words()->detach();
+        });
     }
 
     protected $fillable = [

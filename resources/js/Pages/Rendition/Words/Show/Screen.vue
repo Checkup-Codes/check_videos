@@ -309,12 +309,15 @@
     </div>
 
     <!-- Word Detail Modal -->
-    <div v-if="selectedWord" class="fixed inset-0 z-50 bg-white/80 dark:bg-black/80">
+    <div v-if="selectedWord" class="fixed inset-0 z-50 bg-white/80 dark:bg-black/80" @click="selectedWord = null">
       <div
-        class="fixed left-[50%] top-[50%] z-50 grid w-full max-w-2xl translate-x-[-50%] translate-y-[-50%] gap-4 border bg-white p-6 shadow-xl duration-200 dark:bg-gray-900 sm:rounded-xl"
+        class="fixed left-[50%] top-[50%] z-50 flex grid max-h-[80vh] w-full max-w-2xl translate-x-[-50%] translate-y-[-50%] flex-col gap-4 border bg-white shadow-xl duration-200 dark:bg-gray-900 sm:rounded-xl"
+        @click.stop
       >
         <!-- Modal Header -->
-        <div class="flex flex-col space-y-1.5 text-center sm:text-left">
+        <div
+          class="flex flex-shrink-0 flex-col space-y-1.5 border-b bg-white p-6 pb-4 text-center dark:bg-gray-900 sm:text-left"
+        >
           <div class="flex items-center justify-between">
             <h3 class="text-lg font-semibold leading-none tracking-tight">{{ selectedWord.word }}</h3>
             <button
@@ -332,106 +335,108 @@
         </div>
 
         <!-- Modal Content -->
-        <div class="space-y-4">
-          <!-- Meanings -->
-          <div>
-            <h4 class="text-sm font-medium leading-none">Anlamlar</h4>
-            <div class="mt-2 space-y-2">
-              <div
-                v-for="(meaning, index) in selectedWord.meanings"
-                :key="index"
-                class="flex items-start gap-3 rounded-md border p-3"
-                :class="meaning.is_primary ? 'border-primary/20 bg-primary/5' : ''"
-              >
-                <span
-                  class="bg-muted flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-medium"
+        <div class="flex-1 overflow-y-auto p-6 pt-4">
+          <div class="space-y-4">
+            <!-- Meanings -->
+            <div>
+              <h4 class="text-sm font-medium leading-none">Anlamlar</h4>
+              <div class="mt-2 space-y-2">
+                <div
+                  v-for="(meaning, index) in selectedWord.meanings"
+                  :key="index"
+                  class="flex items-start gap-3 rounded-md border p-3"
+                  :class="meaning.is_primary ? 'border-primary/20 bg-primary/5' : ''"
                 >
-                  {{ index + 1 }}
-                </span>
-                <div class="min-w-0 flex-1">
-                  <span class="text-sm">{{ meaning.meaning }}</span>
                   <span
-                    v-if="meaning.is_primary"
-                    class="text-primary-foreground ml-2 inline-flex items-center rounded-full bg-primary px-2 py-1 text-xs font-medium"
-                  >
-                    Birincil
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Stats -->
-          <div class="grid grid-cols-2 gap-4">
-            <div class="rounded-md border p-3">
-              <h4 class="text-sm font-medium leading-none">Öğrenme Durumu</h4>
-              <div class="text-muted-foreground mt-2 space-y-1 text-sm">
-                <div class="flex justify-between">
-                  <span>Durum:</span>
-                  <span class="font-medium">{{ getLearningStatusLabel(selectedWord.learning_status) }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span>Toplam:</span>
-                  <span class="font-medium">{{ selectedWord.review_count || 0 }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span>Yanlış:</span>
-                  <span class="font-medium">{{ selectedWord.incorrect_count || 0 }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span>Başarı:</span>
-                  <span class="font-medium">{{ calculateSuccessRate(selectedWord).label }}</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="rounded-md border p-3">
-              <h4 class="text-sm font-medium leading-none">Diğer Bilgiler</h4>
-              <div class="text-muted-foreground mt-2 space-y-1 text-sm">
-                <div v-if="selectedWord.synonyms && selectedWord.synonyms.length > 0">
-                  <span class="font-medium">Eş Anlamlılar:</span>
-                  <div class="mt-1 flex flex-wrap gap-1">
-                    <span
-                      v-for="synonym in selectedWord.synonyms"
-                      :key="synonym"
-                      class="bg-muted inline-flex items-center rounded-md px-2 py-1 text-xs"
-                    >
-                      {{ typeof synonym === 'object' ? synonym.synonym : synonym }}
-                    </span>
-                  </div>
-                </div>
-                <div v-if="selectedWord.flag" class="flex items-center gap-1">
-                  <svg class="h-4 w-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                    />
-                  </svg>
-                  <span class="font-medium">Öne çıkarılmış</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Example Sentences -->
-          <div v-if="selectedWord.example_sentences && selectedWord.example_sentences.length > 0">
-            <h4 class="text-sm font-medium leading-none">Örnek Cümleler</h4>
-            <div class="mt-2 space-y-2">
-              <div
-                v-for="(sentence, index) in selectedWord.example_sentences"
-                :key="index"
-                class="rounded-md border p-3"
-              >
-                <div class="flex items-start gap-3">
-                  <span
-                    class="bg-primary/20 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-medium text-primary"
+                    class="bg-muted flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-medium"
                   >
                     {{ index + 1 }}
                   </span>
                   <div class="min-w-0 flex-1">
-                    <p class="text-sm font-medium">{{ getSentenceText(sentence) }}</p>
-                    <p v-if="getSentenceTranslation(sentence)" class="text-muted-foreground mt-1 text-xs">
-                      {{ getSentenceTranslation(sentence) }}
-                    </p>
+                    <span class="text-sm">{{ meaning.meaning }}</span>
+                    <span
+                      v-if="meaning.is_primary"
+                      class="text-primary-foreground ml-2 inline-flex items-center rounded-full bg-primary px-2 py-1 text-xs font-medium"
+                    >
+                      Birincil
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 gap-4">
+              <div class="rounded-md border p-3">
+                <h4 class="text-sm font-medium leading-none">Öğrenme Durumu</h4>
+                <div class="text-muted-foreground mt-2 space-y-1 text-sm">
+                  <div class="flex justify-between">
+                    <span>Durum:</span>
+                    <span class="font-medium">{{ getLearningStatusLabel(selectedWord.learning_status) }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Toplam:</span>
+                    <span class="font-medium">{{ selectedWord.review_count || 0 }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Yanlış:</span>
+                    <span class="font-medium">{{ selectedWord.incorrect_count || 0 }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Başarı:</span>
+                    <span class="font-medium">{{ calculateSuccessRate(selectedWord).label }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-md border p-3">
+                <h4 class="text-sm font-medium leading-none">Diğer Bilgiler</h4>
+                <div class="text-muted-foreground mt-2 space-y-1 text-sm">
+                  <div v-if="selectedWord.synonyms && selectedWord.synonyms.length > 0">
+                    <span class="font-medium">Eş Anlamlılar:</span>
+                    <div class="mt-1 flex flex-wrap gap-1">
+                      <span
+                        v-for="synonym in selectedWord.synonyms"
+                        :key="synonym"
+                        class="bg-muted inline-flex items-center rounded-md px-2 py-1 text-xs"
+                      >
+                        {{ typeof synonym === 'object' ? synonym.synonym : synonym }}
+                      </span>
+                    </div>
+                  </div>
+                  <div v-if="selectedWord.flag" class="flex items-center gap-1">
+                    <svg class="h-4 w-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                      />
+                    </svg>
+                    <span class="font-medium">Öne çıkarılmış</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Example Sentences -->
+            <div v-if="selectedWord.example_sentences && selectedWord.example_sentences.length > 0">
+              <h4 class="text-sm font-medium leading-none">Örnek Cümleler</h4>
+              <div class="mt-2 space-y-2">
+                <div
+                  v-for="(sentence, index) in selectedWord.example_sentences"
+                  :key="index"
+                  class="rounded-md border p-3"
+                >
+                  <div class="flex items-start gap-3">
+                    <span
+                      class="bg-primary/20 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-medium text-primary"
+                    >
+                      {{ index + 1 }}
+                    </span>
+                    <div class="min-w-0 flex-1">
+                      <p class="text-sm font-medium">{{ getSentenceText(sentence) }}</p>
+                      <p v-if="getSentenceTranslation(sentence)" class="text-muted-foreground mt-1 text-xs">
+                        {{ getSentenceTranslation(sentence) }}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -440,7 +445,9 @@
         </div>
 
         <!-- Modal Footer -->
-        <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">
+        <div
+          class="flex flex-shrink-0 flex-col-reverse border-t bg-white p-6 pt-4 dark:bg-gray-900 sm:flex-row sm:justify-end sm:space-x-2"
+        >
           <button
             @click="selectedWord = null"
             class="ring-offset-background focus-visible:ring-ring border-input bg-background hover:text-accent-foreground inline-flex h-9 items-center justify-center rounded-md border px-3 text-sm font-medium transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
@@ -649,8 +656,8 @@ const filterWords = () => {
 
 // Filtered words for game (oyun için rastgele karıştırılmış)
 const filteredWords = computed(() => {
-  // filteredWordsForGame'i kullan ve rastgele karıştır
-  let wordsToUse = [...filteredWordsForGame.value];
+  // Eğer filteredWordsForGame boşsa, props.words'u kullan
+  let wordsToUse = filteredWordsForGame.value.length > 0 ? [...filteredWordsForGame.value] : [...(props.words || [])];
 
   // Son olarak rastgele karıştır
   wordsToUse = wordsToUse.sort(() => Math.random() - 0.5);

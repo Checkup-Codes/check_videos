@@ -1,6 +1,5 @@
 <template>
   <FlashMessage :message="flashMessage" />
-  <ToggleSubSidebarButtonOpen v-if="!isCollapsed" :isCollapsed="true" :toggle="toggleSidebar" />
   <CheckLayout :isCollapsed="true" :class="currentTheme">
     <template #sidebar>
       <KeepAlive :max="5" :include="['SidebarLayoutWrite', 'SidebarLayoutCategory']">
@@ -25,7 +24,6 @@ import CheckLayout from '@/Components/CekapUI/Slots/CheckLayout.vue';
 import SidebarLayoutWrite from './SidebarLayoutWrite.vue';
 import SidebarLayoutCategory from './SidebarLayoutCategory.vue';
 import FlashMessage from '@/Components/CekapUI/Notifications/FlashMessage.vue';
-import ToggleSubSidebarButtonOpen from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 import { useSidebar } from '../_utils/useSidebar';
 import { useFlashMessage } from '../_utils/useFlashMessage';
 import { useStore } from 'vuex';

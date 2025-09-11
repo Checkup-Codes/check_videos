@@ -597,17 +597,24 @@ class WordController extends Controller
                 ]);
             }
 
-            // Kelimeyi bul
+            // Kelimeyi bul - önce tam eşleşme, sonra kısmi eşleşme
             $word = Word::with([
                 'meanings',
                 'exampleSentences',
                 'synonyms',
                 'languagePacks'
             ])
-                ->where('word', 'like', "%{$searchTerm}%")
-                ->orWhereHas('meanings', function ($query) use ($searchTerm) {
-                    $query->where('meaning', 'like', "%{$searchTerm}%");
+                ->where(function ($query) use ($searchTerm) {
+                    // Önce tam eşleşme (büyük/küçük harf duyarsız)
+                    $query->whereRaw('LOWER(word) = ?', [strtolower($searchTerm)])
+                        // Sonra kısmi eşleşme (büyük/küçük harf duyarsız)
+                        ->orWhereRaw('LOWER(word) LIKE ?', ['%' . strtolower($searchTerm) . '%'])
+                        // Anlamlarda arama (büyük/küçük harf duyarsız)
+                        ->orWhereHas('meanings', function ($q) use ($searchTerm) {
+                            $q->whereRaw('LOWER(meaning) LIKE ?', ['%' . strtolower($searchTerm) . '%']);
+                        });
                 })
+                ->orderByRaw('CASE WHEN LOWER(word) = ? THEN 1 ELSE 2 END', [strtolower($searchTerm)])
                 ->first();
 
             if (!$word) {

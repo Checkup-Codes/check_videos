@@ -1,7 +1,6 @@
 <template>
   <Head :title="titleName" />
   <FlashMessage :message="flashSuccess" />
-  <ToggleSubSidebarButtonOpen v-if="!isSidebarCollapsed" :isCollapsed="true" :toggle="collapseSidebar" />
   <CheckLayout :isCollapsed="isSidebarCollapsed">
     <SidebarLayoutProject v-if="isSidebarCollapsed" @update:isCollapsed="handleSidebarCollapse" :class="sidebarStyle" />
     <div :class="isMobile ? 'hidden lg:block' : 'block'">
@@ -14,7 +13,6 @@
 import CheckLayout from '@/Components/CekapUI/Slots/CheckLayout.vue';
 import SidebarLayoutProject from '@/Pages/Projects/_layouts/SidebarLayoutProject.vue';
 import FlashMessage from '@/Components/CekapUI/Notifications/FlashMessage.vue';
-import ToggleSubSidebarButtonOpen from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 import { usePage, Head } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 
@@ -30,9 +28,5 @@ const isSidebarCollapsed = ref(true);
 
 const handleSidebarCollapse = (newState) => {
   isSidebarCollapsed.value = newState;
-};
-
-const collapseSidebar = () => {
-  isSidebarCollapsed.value = !isSidebarCollapsed.value;
 };
 </script>

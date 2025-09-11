@@ -1,6 +1,5 @@
 <template>
   <CheckSubsidebar>
-    <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="collapseSidebar" />
     <TopSubsidebar title="PAKETLER" href="versions/create" />
     <div ref="scrollContainer" class="h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain lg:h-[calc(100vh-5rem)]">
       <div class="min-h-full">
@@ -21,17 +20,11 @@
 import { ref } from 'vue';
 import { usePage, Link, router } from '@inertiajs/vue3';
 import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
-import ToggleSubSidebarButtonClose from '@/Components/CekapUI/Buttons/ToggleSubSidebarButton.vue';
 import TopSubsidebar from '@/Components/CekapUI/Typography/TopSubsidebar.vue';
 
 const page = usePage();
 const isCollapsed = ref(true);
 const emit = defineEmits(['update:isCollapsed']);
-
-const collapseSidebar = () => {
-  isCollapsed.value = !isCollapsed.value;
-  emit('update:isCollapsed', isCollapsed.value);
-};
 
 // Oyun listesi
 const games = ref([
