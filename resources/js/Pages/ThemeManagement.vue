@@ -454,18 +454,8 @@ const getThemeIcon = (theme) => {
   const icons = {
     light: '☀️',
     dark: '🌙',
-    'neon-light': '💡☀️',
-    'neon-dark': '💡🌙',
     'lotr-light': '🧙‍♂️☀️',
     'lotr-dark': '🧙‍♂️🌙',
-    'cyberpunk-light': '🤖☀️',
-    'cyberpunk-dark': '🤖🌙',
-    'nature-light': '🌿☀️',
-    'nature-dark': '🌿🌙',
-    'ocean-light': '🌊☀️',
-    'ocean-dark': '🌊🌙',
-    'sunset-light': '🌅☀️',
-    'sunset-dark': '🌅🌙',
     custom: '⚙️',
   };
   return icons[theme] || '🎨';
@@ -475,18 +465,8 @@ const getThemeName = (theme) => {
   const names = {
     light: 'Açık Tema',
     dark: 'Koyu Tema',
-    'neon-light': 'Neon Açık',
-    'neon-dark': 'Neon Koyu',
     'lotr-light': 'LOTR Açık',
     'lotr-dark': 'LOTR Koyu',
-    'cyberpunk-light': 'Cyberpunk Açık',
-    'cyberpunk-dark': 'Cyberpunk Koyu',
-    'nature-light': 'Doğa Açık',
-    'nature-dark': 'Doğa Koyu',
-    'ocean-light': 'Okyanus Açık',
-    'ocean-dark': 'Okyanus Koyu',
-    'sunset-light': 'Gün Batımı Açık',
-    'sunset-dark': 'Gün Batımı Koyu',
     custom: 'Özel Tema',
   };
   return names[theme] || theme;
@@ -494,20 +474,10 @@ const getThemeName = (theme) => {
 
 const getThemeDescription = (theme) => {
   const descriptions = {
-    light: 'Klasik açık tema, günlük kullanım için ideal',
-    dark: 'Göz yormayan koyu tema, gece kullanımı için mükemmel',
-    'neon-light': 'Neon ışıklar ve parlak renklerle dolu futuristik açık tema',
-    'neon-dark': 'Neon ışıklar ve parlak renklerle dolu futuristik koyu tema',
+    light: 'Sadelik odaklı beyaz tonları, minimalist ve profesyonel tasarım',
+    dark: 'Sadelik odaklı siyah tonları, modern ve şık görünüm',
     'lotr-light': "J.R.R. Tolkien'in efsanevi dünyasından ilham alınmış açık tema",
     'lotr-dark': "J.R.R. Tolkien'in efsanevi dünyasından ilham alınmış koyu tema",
-    'cyberpunk-light': 'Cyberpunk dünyasından ilham alınmış neon ve açık tema',
-    'cyberpunk-dark': 'Cyberpunk dünyasından ilham alınmış neon ve koyu tema',
-    'nature-light': 'Doğanın huzur verici yeşil ve kahverengi tonları - açık versiyon',
-    'nature-dark': 'Doğanın huzur verici yeşil ve kahverengi tonları - koyu versiyon',
-    'ocean-light': 'Okyanusun derinliklerinden ilham alınmış mavi tonlar - açık versiyon',
-    'ocean-dark': 'Okyanusun derinliklerinden ilham alınmış mavi tonlar - koyu versiyon',
-    'sunset-light': 'Gün batımının sıcak turuncu ve pembe tonları - açık versiyon',
-    'sunset-dark': 'Gün batımının sıcak turuncu ve pembe tonları - koyu versiyon',
     custom: 'Kendi renklerinizi ve ayarlarınızı özelleştirin',
   };
   return descriptions[theme] || 'Tema açıklaması';
@@ -515,20 +485,10 @@ const getThemeDescription = (theme) => {
 
 const getThemeColors = (theme) => {
   const colors = {
-    light: ['#570df8', '#f000b8', '#37cdbe', '#3d4451', '#ffffff'],
-    dark: ['#570df8', '#f000b8', '#37cdbe', '#ffffff', '#1f2937'],
-    'neon-light': ['#00ffff', '#ff00ff', '#00ff00', '#e5e5e5', '#ffffff'],
-    'neon-dark': ['#00ffff', '#ff00ff', '#00ff00', '#1a1a1a', '#0d0d0d'],
+    light: ['#333333', '#666666', '#999999', '#4d4d4d', '#ffffff'],
+    dark: ['#e5e5e5', '#b3b3b3', '#808080', '#cccccc', '#0a0a0a'],
     'lotr-light': ['#d4af37', '#8b4513', '#ffd700', '#2d1810', '#f5f5dc'],
     'lotr-dark': ['#ffd700', '#d4af37', '#8b4513', '#2d1810', '#1a0f0a'],
-    'cyberpunk-light': ['#ff0000', '#ffff00', '#0000ff', '#d9d9d9', '#ffffff'],
-    'cyberpunk-dark': ['#ff0000', '#ffff00', '#0000ff', '#262626', '#141414'],
-    'nature-light': ['#22c55e', '#f97316', '#eab308', '#365314', '#f0fdf4'],
-    'nature-dark': ['#22c55e', '#f97316', '#eab308', '#365314', '#0a1f0a'],
-    'ocean-light': ['#3b82f6', '#06b6d4', '#1d4ed8', '#1e3a8a', '#f0f9ff'],
-    'ocean-dark': ['#3b82f6', '#06b6d4', '#1d4ed8', '#1e3a8a', '#0a0f1a'],
-    'sunset-light': ['#fb923c', '#ec4899', '#fbbf24', '#9a3412', '#fff7ed'],
-    'sunset-dark': ['#fb923c', '#ec4899', '#fbbf24', '#9a3412', '#1a0f0a'],
     custom: ['#570df8', '#f000b8', '#37cdbe', '#3d4451', '#ffffff'],
   };
   return colors[theme] || ['#000000', '#ffffff', '#cccccc', '#999999', '#666666'];
@@ -537,18 +497,18 @@ const getThemeColors = (theme) => {
 const getThemeColorDetails = (theme) => {
   const colorDetails = {
     light: {
-      primary: { name: 'Primary', value: '#570df8' },
-      secondary: { name: 'Secondary', value: '#f000b8' },
-      accent: { name: 'Accent', value: '#37cdbe' },
-      neutral: { name: 'Neutral', value: '#3d4451' },
-      'base-100': { name: 'Base 100', value: '#ffffff' },
+      primary: { name: 'Primary (Koyu Gri)', value: '#333333' },
+      secondary: { name: 'Secondary (Orta Gri)', value: '#666666' },
+      accent: { name: 'Accent (Açık Gri)', value: '#999999' },
+      neutral: { name: 'Neutral (Koyu Gri)', value: '#4d4d4d' },
+      'base-100': { name: 'Base 100 (Saf Beyaz)', value: '#ffffff' },
     },
     dark: {
-      primary: { name: 'Primary', value: '#570df8' },
-      secondary: { name: 'Secondary', value: '#f000b8' },
-      accent: { name: 'Accent', value: '#37cdbe' },
-      neutral: { name: 'Neutral', value: '#ffffff' },
-      'base-100': { name: 'Base 100', value: '#1f2937' },
+      primary: { name: 'Primary (Açık Gri)', value: '#e5e5e5' },
+      secondary: { name: 'Secondary (Orta Gri)', value: '#b3b3b3' },
+      accent: { name: 'Accent (Koyu Gri)', value: '#808080' },
+      neutral: { name: 'Neutral (Açık Gri)', value: '#cccccc' },
+      'base-100': { name: 'Base 100 (Çok Koyu Gri)', value: '#0a0a0a' },
     },
     'lotr-light': {
       primary: { name: 'Primary (Altın)', value: '#d4af37' },
@@ -564,28 +524,26 @@ const getThemeColorDetails = (theme) => {
       neutral: { name: 'Neutral (Koyu Kahve)', value: '#2d1810' },
       'base-100': { name: 'Base 100 (Çok Koyu Kahve)', value: '#1a0f0a' },
     },
-    'neon-light': {
-      primary: { name: 'Primary (Cyan)', value: '#00ffff' },
-      secondary: { name: 'Secondary (Magenta)', value: '#ff00ff' },
-      accent: { name: 'Accent (Lime)', value: '#00ff00' },
-      neutral: { name: 'Neutral (Açık Gri)', value: '#e5e5e5' },
-      'base-100': { name: 'Base 100 (Beyaz)', value: '#ffffff' },
-    },
-    'neon-dark': {
-      primary: { name: 'Primary (Cyan)', value: '#00ffff' },
-      secondary: { name: 'Secondary (Magenta)', value: '#ff00ff' },
-      accent: { name: 'Accent (Lime)', value: '#00ff00' },
-      neutral: { name: 'Neutral (Koyu Gri)', value: '#1a1a1a' },
-      'base-100': { name: 'Base 100 (Neredeyse Siyah)', value: '#0d0d0d' },
-    },
   };
   return colorDetails[theme] || {};
 };
 
 const getThemeFeatures = (theme) => {
   const features = {
-    light: ['Klasik açık tasarım', 'Yüksek kontrast', 'Günlük kullanım için optimize', 'Hızlı okuma deneyimi'],
-    dark: ['Göz yormayan koyu arka plan', 'Gece kullanımı için ideal', 'Enerji tasarrufu', 'Modern görünüm'],
+    light: [
+      'Sadelik odaklı beyaz tonları',
+      'Minimalist tasarım',
+      'Yüksek okunabilirlik',
+      'Profesyonel görünüm',
+      'Göz yormayan açık renkler',
+    ],
+    dark: [
+      'Sadelik odaklı siyah tonları',
+      'Minimalist tasarım',
+      'Gece kullanımı için ideal',
+      'Modern ve şık görünüm',
+      'Göz yormayan koyu renkler',
+    ],
     'lotr-light': [
       'Orta Çağ tarzı font (Cinzel)',
       'Altın ve kahverengi renk paleti',
@@ -602,34 +560,6 @@ const getThemeFeatures = (theme) => {
       'Gradient arka planlar',
       'Altın tonlarında gölgeler',
       'Yumuşak border radius',
-      'Koyu tema uyumlu',
-    ],
-    'neon-light': [
-      'Futuristik neon ışıklar',
-      'Parlak renk paleti',
-      'Glow efektleri',
-      'Hızlı animasyonlar',
-      'Açık tema uyumlu',
-    ],
-    'neon-dark': [
-      'Futuristik neon ışıklar',
-      'Parlak renk paleti',
-      'Glow efektleri',
-      'Hızlı animasyonlar',
-      'Koyu tema uyumlu',
-    ],
-    'cyberpunk-light': [
-      'Cyberpunk estetiği',
-      'Neon renkler',
-      'Keskin köşeler',
-      'Hızlı animasyonlar',
-      'Açık tema uyumlu',
-    ],
-    'cyberpunk-dark': [
-      'Cyberpunk estetiği',
-      'Neon renkler',
-      'Keskin köşeler',
-      'Hızlı animasyonlar',
       'Koyu tema uyumlu',
     ],
   };

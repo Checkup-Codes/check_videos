@@ -15,7 +15,7 @@
       <div class="hidden gap-2 sm:flex">
         <button
           class="btn btn-outline btn-xs flex items-center justify-center"
-          :class="{ 'btn-primary': adminFilter === 'all' }"
+          :class="{ 'btn-neutral': adminFilter === 'all' }"
           @click="adminFilter = 'all'"
         >
           <span v-if="props.isCollapsed">
@@ -34,7 +34,7 @@
         </button>
         <button
           class="btn btn-outline btn-xs flex items-center justify-center"
-          :class="{ 'btn-primary': adminFilter === 'public' }"
+          :class="{ 'btn-neutral': adminFilter === 'public' }"
           @click="adminFilter = 'public'"
         >
           <span v-if="props.isCollapsed">
@@ -59,7 +59,7 @@
         </button>
         <button
           class="btn btn-outline btn-xs flex items-center justify-center"
-          :class="{ 'btn-primary': adminFilter === 'link_only' }"
+          :class="{ 'btn-neutral': adminFilter === 'link_only' }"
           @click="adminFilter = 'link_only'"
         >
           <span v-if="props.isCollapsed">
@@ -83,7 +83,7 @@
         </button>
         <button
           class="btn btn-outline btn-xs flex items-center justify-center"
-          :class="{ 'btn-primary': adminFilter === 'hidden' }"
+          :class="{ 'btn-neutral': adminFilter === 'hidden' }"
           @click="adminFilter = 'hidden'"
         >
           <span v-if="props.isCollapsed">
@@ -126,7 +126,7 @@
           <div class="flex flex-col gap-1 py-1">
             <button
               class="btn btn-outline btn-xs btn-block flex items-center justify-center"
-              :class="{ 'btn-primary': adminFilter === 'all' }"
+              :class="{ 'btn-neutral': adminFilter === 'all' }"
               @click="
                 adminFilter = 'all';
                 showFilterMenu = false;
@@ -144,7 +144,7 @@
             </button>
             <button
               class="btn btn-outline btn-xs btn-block flex items-center justify-center"
-              :class="{ 'btn-primary': adminFilter === 'public' }"
+              :class="{ 'btn-neutral': adminFilter === 'public' }"
               @click="
                 adminFilter = 'public';
                 showFilterMenu = false;
@@ -168,7 +168,7 @@
             </button>
             <button
               class="btn btn-outline btn-xs btn-block flex items-center justify-center"
-              :class="{ 'btn-primary': adminFilter === 'link_only' }"
+              :class="{ 'btn-neutral': adminFilter === 'link_only' }"
               @click="
                 adminFilter = 'link_only';
                 showFilterMenu = false;
@@ -191,7 +191,7 @@
             </button>
             <button
               class="btn btn-outline btn-xs btn-block flex items-center justify-center"
-              :class="{ 'btn-primary': adminFilter === 'hidden' }"
+              :class="{ 'btn-neutral': adminFilter === 'hidden' }"
               @click="
                 adminFilter = 'hidden';
                 showFilterMenu = false;
@@ -221,10 +221,8 @@
       <div v-for="category in filteredParentCategories" :key="category.id">
         <div
           :class="[
-            'rounded-lg bg-base-100 transition-all duration-200 hover:shadow-sm',
-            url === `/categories/${category.slug}`
-              ? 'bg-primary/10 border-primary/20 border text-primary shadow-md'
-              : 'hover:bg-base-200',
+            'rounded-lg bg-base-100 transition-all duration-200',
+            url === `/categories/${category.slug}` ? 'bg-base-content text-base-100' : 'hover:bg-base-300',
           ]"
         >
           <!-- Ana kategori başlığı -->
@@ -251,7 +249,8 @@
                   </svg>
                 </span>
                 <h3
-                  class="max-w-[120px] truncate text-sm font-medium leading-tight text-base-content"
+                  class="max-w-[120px] truncate text-sm font-medium leading-tight"
+                  :class="url === `/categories/${category.slug}` ? 'text-base-100' : 'text-base-content'"
                   :title="category.name"
                 >
                   {{ category.name }}
@@ -295,9 +294,7 @@
                     :href="route('categories.show', { category: child.slug })"
                     :class="[
                       'block rounded-md p-2 transition-all duration-200',
-                      url === `/categories/${child.slug}`
-                        ? 'bg-primary/10 border-primary/20 border text-primary'
-                        : 'hover:bg-base-200',
+                      url === `/categories/${child.slug}` ? 'bg-base-content text-base-100' : 'hover:bg-base-300',
                     ]"
                   >
                     <div class="flex items-center justify-between">
@@ -322,7 +319,12 @@
                           </svg>
                         </span>
                         <span
-                          class="max-w-[100px] truncate text-sm font-medium text-base-content"
+                          class="max-w-[100px] truncate text-sm font-medium"
+                          :class="
+                            url === `/categories/${child.slug}` || url === `/categories/${category.slug}`
+                              ? 'text-base-100'
+                              : 'text-base-content'
+                          "
                           :title="child.name"
                           >{{ child.name }}</span
                         >
@@ -365,8 +367,8 @@
                           :class="[
                             'block rounded-md p-2 transition-all duration-200',
                             url === `/categories/${subChild.slug}`
-                              ? 'bg-primary/10 border-primary/20 border text-primary'
-                              : 'hover:bg-base-200',
+                              ? 'bg-base-content text-base-100'
+                              : 'hover:bg-base-300',
                           ]"
                         >
                           <div class="flex items-center justify-between">
@@ -391,7 +393,12 @@
                                 </svg>
                               </span>
                               <span
-                                class="max-w-[80px] truncate text-xs font-medium text-base-content"
+                                class="max-w-[80px] truncate text-xs font-medium"
+                                :class="
+                                  url === `/categories/${subChild.slug}` || url === `/categories/${category.slug}`
+                                    ? 'text-base-100'
+                                    : 'text-base-content'
+                                "
                                 :title="subChild.name"
                                 >{{ subChild.name }}</span
                               >

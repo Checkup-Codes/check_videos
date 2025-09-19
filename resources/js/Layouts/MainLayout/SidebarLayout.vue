@@ -1,19 +1,19 @@
 <template>
   <aside
-    class="flex h-screen flex-col justify-between border-r-2 border-base-300 bg-base-200 p-4 font-sans"
+    class="flex h-screen flex-col justify-between border-r-2 border-base-300 bg-base-200 px-4 font-sans"
     :class="currentTheme"
   >
     <div class="space-y-1">
       <!-- Workspace Header -->
       <Link href="/" class="block">
-        <div class="mb- rounded-lg border border-base-300 bg-base-100 px-4 py-3 shadow-sm">
+        <div class="px-2 py-5">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-3" :class="{ 'w-full justify-center': isCompact }">
-              <div class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg bg-primary">
+              <div class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg bg-neutral">
                 <template v-if="logoPath && !isLoading">
                   <img :src="logoPath" :alt="logoAlt" class="h-full w-full object-cover" @error="handleImageError" />
                 </template>
-                <span v-else class="text-sm font-bold text-primary-content">{{ appName.charAt(0) }}</span>
+                <span v-else class="text-sm font-bold text-neutral-content">{{ appName.charAt(0) }}</span>
               </div>
               <div v-if="!isCompact">
                 <h3 class="font-semibold text-base-content">{{ appName }}</h3>
@@ -210,18 +210,8 @@ const currentThemeName = computed(() => {
   const themeMap = {
     light: 'Light',
     dark: 'Dark',
-    'neon-light': 'Neon Light',
-    'neon-dark': 'Neon Dark',
     'lotr-light': 'LOTR Light',
     'lotr-dark': 'LOTR Dark',
-    'cyberpunk-light': 'Cyberpunk Light',
-    'cyberpunk-dark': 'Cyberpunk Dark',
-    'nature-light': 'Nature Light',
-    'nature-dark': 'Nature Dark',
-    'ocean-light': 'Ocean Light',
-    'ocean-dark': 'Ocean Dark',
-    'sunset-light': 'Sunset Light',
-    'sunset-dark': 'Sunset Dark',
     custom: 'Custom',
   };
   return themeMap[theme] || theme;

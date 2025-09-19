@@ -1,10 +1,10 @@
 <template>
   <Link
     :href="href"
-    class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-200 hover:bg-base-100 hover:shadow-sm"
+    class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-200"
     :class="{
-      'bg-primary/10 text-primary': isActive,
-      'text-base-content hover:text-base-content': !isActive,
+      'bg-base-content text-base-100': isActive,
+      'text-base-content hover:bg-base-300': !isActive,
       'justify-center px-2': isCompact,
     }"
     :title="isCompact ? label : ''"

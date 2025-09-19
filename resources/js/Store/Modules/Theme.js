@@ -5,15 +5,10 @@ export default {
   state: {
     // Default tema 'light' olarak ayarlanıyor
     currentTheme: localStorage.getItem('theme') || 'light',
-    // Mevcut temalar - her temanın hem light hem dark versiyonu
+    // Mevcut temalar - sadece 4 tema
     availableThemes: [
       'light', 'dark', 
-      'neon-light', 'neon-dark',
       'lotr-light', 'lotr-dark',
-      'cyberpunk-light', 'cyberpunk-dark',
-      'nature-light', 'nature-dark',
-      'ocean-light', 'ocean-dark',
-      'sunset-light', 'sunset-dark',
       'custom'
     ],
     customTheme: JSON.parse(localStorage.getItem('customTheme')) || {

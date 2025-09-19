@@ -3,7 +3,7 @@
     <div class="flex h-12 items-center justify-between px-4 text-sm font-semibold text-base-content">
       <span
         @click="toggleWidth"
-        class="cursor-pointer transition-colors duration-200 hover:text-primary"
+        class="hover:text-base-content/70 cursor-pointer transition-colors duration-200"
         :title="isNarrow ? 'Genişlet' : 'Daralt'"
       >
         {{ title }}
@@ -34,7 +34,7 @@
         <Link
           v-if="userName && href"
           :href="href"
-          class="hover:bg-primary-focus group flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-content transition-all duration-200"
+          class="group flex h-6 w-6 items-center justify-center rounded-full bg-base-content text-base-100 transition-all duration-200 hover:bg-base-300"
           :title="`Yeni ${title?.toLowerCase() || 'öğe'} ekle`"
           @click.stop
         >

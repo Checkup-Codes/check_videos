@@ -15,7 +15,7 @@
       <div class="hidden gap-2 sm:flex">
         <button
           class="btn btn-outline btn-xs flex items-center justify-center"
-          :class="{ 'btn-primary': adminFilter === 'all' }"
+          :class="{ 'bg-base-content text-base-100': adminFilter === 'all' }"
           @click="adminFilter = 'all'"
         >
           <span v-if="props.isCollapsed">
@@ -34,7 +34,7 @@
         </button>
         <button
           class="btn btn-outline btn-xs flex items-center justify-center"
-          :class="{ 'btn-primary': adminFilter === 'published' }"
+          :class="{ 'bg-base-content text-base-100': adminFilter === 'published' }"
           @click="adminFilter = 'published'"
         >
           <span v-if="props.isCollapsed">
@@ -59,7 +59,7 @@
         </button>
         <button
           class="btn btn-outline btn-xs flex items-center justify-center"
-          :class="{ 'btn-primary': adminFilter === 'link_only' }"
+          :class="{ 'bg-base-content text-base-100': adminFilter === 'link_only' }"
           @click="adminFilter = 'link_only'"
         >
           <span v-if="props.isCollapsed">
@@ -83,7 +83,7 @@
         </button>
         <button
           class="btn btn-outline btn-xs flex items-center justify-center"
-          :class="{ 'btn-primary': adminFilter === 'private' }"
+          :class="{ 'bg-base-content text-base-100': adminFilter === 'private' }"
           @click="adminFilter = 'private'"
         >
           <span v-if="props.isCollapsed">
@@ -126,7 +126,7 @@
           <div class="flex flex-col gap-1 py-1">
             <button
               class="btn btn-outline btn-xs btn-block flex items-center justify-center"
-              :class="{ 'btn-primary': adminFilter === 'all' }"
+              :class="{ 'bg-base-content text-base-100': adminFilter === 'all' }"
               @click="
                 adminFilter = 'all';
                 showFilterMenu = false;
@@ -144,7 +144,7 @@
             </button>
             <button
               class="btn btn-outline btn-xs btn-block flex items-center justify-center"
-              :class="{ 'btn-primary': adminFilter === 'published' }"
+              :class="{ 'bg-base-content text-base-100': adminFilter === 'published' }"
               @click="
                 adminFilter = 'published';
                 showFilterMenu = false;
@@ -168,7 +168,7 @@
             </button>
             <button
               class="btn btn-outline btn-xs btn-block flex items-center justify-center"
-              :class="{ 'btn-primary': adminFilter === 'link_only' }"
+              :class="{ 'bg-base-content text-base-100': adminFilter === 'link_only' }"
               @click="
                 adminFilter = 'link_only';
                 showFilterMenu = false;
@@ -191,7 +191,7 @@
             </button>
             <button
               class="btn btn-outline btn-xs btn-block flex items-center justify-center"
-              :class="{ 'btn-primary': adminFilter === 'private' }"
+              :class="{ 'bg-base-content text-base-100': adminFilter === 'private' }"
               @click="
                 adminFilter = 'private';
                 showFilterMenu = false;
@@ -224,21 +224,27 @@
         :key="write.id"
         :href="getWriteRoute(write)"
         :class="[
-          'block rounded-lg p-3 transition-all duration-200 hover:shadow-md',
+          'block rounded-lg p-3 transition-all duration-200',
           activeWrite === getActiveWritePath(write)
-            ? 'bg-primary text-primary-content shadow-lg'
-            : 'border border-base-300 bg-base-100 hover:bg-base-200',
+            ? 'bg-base-content text-base-100'
+            : 'border border-base-300 bg-base-100 hover:bg-base-300',
         ]"
       >
         <!-- Başlık -->
         <div class="mb-1">
-          <h3 class="line-clamp-2 text-sm font-medium leading-tight text-base-content">
+          <h3
+            class="line-clamp-2 text-sm font-medium leading-tight"
+            :class="activeWrite === getActiveWritePath(write) ? 'text-base-100' : 'text-base-content'"
+          >
             {{ write.title }}
           </h3>
         </div>
 
         <!-- Meta bilgiler -->
-        <div class="text-base-content/70 flex flex-col gap-1 text-xs sm:flex-row sm:items-center sm:justify-between">
+        <div
+          class="flex flex-col gap-1 text-xs sm:flex-row sm:items-center sm:justify-between"
+          :class="activeWrite === getActiveWritePath(write) ? 'text-base-100/70' : 'text-base-content/70'"
+        >
           <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
             <!-- Tarih -->
             <span class="flex items-center gap-1">

@@ -46,11 +46,11 @@
         <Link href="/" class="block">
           <div class="mb-4 rounded-lg border border-base-300 bg-base-100 px-4 py-3 shadow-sm">
             <div class="flex items-center space-x-3">
-              <div class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg bg-primary">
+              <div class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg bg-neutral">
                 <template v-if="logoPath && !isLoading">
                   <img :src="logoPath" :alt="logoAlt" class="h-full w-full object-cover" @error="handleImageError" />
                 </template>
-                <span v-else class="text-sm font-bold text-primary-content">{{ appName.charAt(0) }}</span>
+                <span v-else class="text-sm font-bold text-neutral-content">{{ appName.charAt(0) }}</span>
               </div>
               <div>
                 <h3 class="font-semibold text-base-content">{{ appName }}</h3>
@@ -182,14 +182,6 @@ const currentThemeName = computed(() => {
     'neon-dark': 'Neon Dark',
     'lotr-light': 'LOTR Light',
     'lotr-dark': 'LOTR Dark',
-    'cyberpunk-light': 'Cyberpunk Light',
-    'cyberpunk-dark': 'Cyberpunk Dark',
-    'nature-light': 'Nature Light',
-    'nature-dark': 'Nature Dark',
-    'ocean-light': 'Ocean Light',
-    'ocean-dark': 'Ocean Dark',
-    'sunset-light': 'Sunset Light',
-    'sunset-dark': 'Sunset Dark',
     custom: 'Custom',
   };
   return themeMap[theme] || theme;

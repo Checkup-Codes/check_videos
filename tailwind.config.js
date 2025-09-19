@@ -54,32 +54,36 @@ export default {
     plugins: [forms, daisyui],
     daisyui: {
         themes: [
-            "light",
-            "dark",
             {
-                'neon-light': {
-                    primary: "#00ffff", /* cyan */
-                    secondary: "#ff00ff", /* magenta */
-                    accent: "#00ff00", /* lime */
-                    neutral: "#e5e5e5", /* açık gri */
-                    "base-100": "#ffffff", /* beyaz */
-                    info: "#00ffff",
-                    success: "#00ff00",
-                    warning: "#ffff00",
-                    error: "#ff0000",
+                'light': {
+                    primary: "#333333", /* koyu gri */
+                    secondary: "#666666", /* orta gri */
+                    accent: "#999999", /* açık gri */
+                    neutral: "#4d4d4d", /* koyu gri */
+                    "base-100": "#ffffff", /* saf beyaz */
+                    "base-200": "#fafafa", /* çok açık gri */
+                    "base-300": "#f0f0f0", /* açık gri */
+                    "base-content": "#333333", /* koyu gri */
+                    info: "#666666",
+                    success: "#4d4d4d",
+                    warning: "#666666",
+                    error: "#333333",
                 }
             },
             {
-                'neon-dark': {
-                    primary: "#00ffff", /* cyan */
-                    secondary: "#ff00ff", /* magenta */
-                    accent: "#00ff00", /* lime */
-                    neutral: "#1a1a1a", /* koyu gri */
-                    "base-100": "#0d0d0d", /* neredeyse siyah */
-                    info: "#00ffff",
-                    success: "#00ff00",
-                    warning: "#ffff00",
-                    error: "#ff0000",
+                'dark': {
+                    primary: "#e5e5e5", /* açık gri */
+                    secondary: "#b3b3b3", /* orta gri */
+                    accent: "#808080", /* koyu gri */
+                    neutral: "#cccccc", /* açık gri */
+                    "base-100": "#0a0a0a", /* çok koyu gri */
+                    "base-200": "#1a1a1a", /* koyu gri */
+                    "base-300": "#2a2a2a", /* orta koyu gri */
+                    "base-content": "#e5e5e5", /* açık gri */
+                    info: "#b3b3b3",
+                    success: "#cccccc",
+                    warning: "#b3b3b3",
+                    error: "#e5e5e5",
                 }
             },
             {
@@ -89,10 +93,13 @@ export default {
                     accent: "#ffd700", /* parlak altın */
                     neutral: "#2d1810", /* koyu kahve */
                     "base-100": "#f5f5dc", /* açık bej */
-                    info: "#3ABFF8",
-                    success: "#36D399",
-                    warning: "#FBBD23",
-                    error: "#F87272",
+                    "base-200": "#f0f0e6", /* çok açık bej */
+                    "base-300": "#e6e6d1", /* açık bej */
+                    "base-content": "#2d1810", /* koyu kahve */
+                    info: "#d4af37",
+                    success: "#8b4513",
+                    warning: "#ffd700",
+                    error: "#8b4513",
                 }
             },
             {
@@ -102,114 +109,13 @@ export default {
                     accent: "#8b4513", /* kahverengi */
                     neutral: "#2d1810", /* koyu kahve */
                     "base-100": "#1a0f0a", /* çok koyu kahve */
-                    info: "#3ABFF8",
-                    success: "#36D399",
-                    warning: "#FBBD23",
-                    error: "#F87272",
-                }
-            },
-            {
-                'cyberpunk-light': {
-                    primary: "#ff0000", /* kırmızı */
-                    secondary: "#ffff00", /* sarı */
-                    accent: "#0000ff", /* mavi */
-                    neutral: "#d9d9d9", /* açık gri */
-                    "base-100": "#ffffff", /* beyaz */
-                    info: "#00ffff",
-                    success: "#00ff00",
-                    warning: "#ffff00",
-                    error: "#ff0000",
-                }
-            },
-            {
-                'cyberpunk-dark': {
-                    primary: "#ff0000", /* kırmızı */
-                    secondary: "#ffff00", /* sarı */
-                    accent: "#0000ff", /* mavi */
-                    neutral: "#262626", /* koyu gri */
-                    "base-100": "#141414", /* çok koyu */
-                    info: "#00ffff",
-                    success: "#00ff00",
-                    warning: "#ffff00",
-                    error: "#ff0000",
-                }
-            },
-            {
-                'nature-light': {
-                    primary: "#22c55e", /* yeşil */
-                    secondary: "#f97316", /* turuncu */
-                    accent: "#eab308", /* sarı */
-                    neutral: "#365314", /* koyu yeşil */
-                    "base-100": "#f0fdf4", /* açık yeşil */
-                    info: "#3ABFF8",
-                    success: "#22c55e",
-                    warning: "#f97316",
-                    error: "#ef4444",
-                }
-            },
-            {
-                'nature-dark': {
-                    primary: "#22c55e", /* yeşil */
-                    secondary: "#f97316", /* turuncu */
-                    accent: "#eab308", /* sarı */
-                    neutral: "#365314", /* koyu yeşil */
-                    "base-100": "#0a1f0a", /* çok koyu yeşil */
-                    info: "#3ABFF8",
-                    success: "#22c55e",
-                    warning: "#f97316",
-                    error: "#ef4444",
-                }
-            },
-            {
-                'ocean-light': {
-                    primary: "#3b82f6", /* mavi */
-                    secondary: "#06b6d4", /* turkuaz */
-                    accent: "#1d4ed8", /* koyu mavi */
-                    neutral: "#1e3a8a", /* çok koyu mavi */
-                    "base-100": "#f0f9ff", /* açık mavi */
-                    info: "#3b82f6",
-                    success: "#06b6d4",
-                    warning: "#f59e0b",
-                    error: "#ef4444",
-                }
-            },
-            {
-                'ocean-dark': {
-                    primary: "#3b82f6", /* mavi */
-                    secondary: "#06b6d4", /* turkuaz */
-                    accent: "#1d4ed8", /* koyu mavi */
-                    neutral: "#1e3a8a", /* çok koyu mavi */
-                    "base-100": "#0a0f1a", /* çok koyu mavi */
-                    info: "#3b82f6",
-                    success: "#06b6d4",
-                    warning: "#f59e0b",
-                    error: "#ef4444",
-                }
-            },
-            {
-                'sunset-light': {
-                    primary: "#fb923c", /* turuncu */
-                    secondary: "#ec4899", /* pembe */
-                    accent: "#fbbf24", /* sarı */
-                    neutral: "#9a3412", /* koyu turuncu */
-                    "base-100": "#fff7ed", /* açık turuncu */
-                    info: "#fb923c",
-                    success: "#fbbf24",
-                    warning: "#ec4899",
-                    error: "#ef4444",
-                }
-            },
-            {
-                'sunset-dark': {
-                    primary: "#fb923c", /* turuncu */
-                    secondary: "#ec4899", /* pembe */
-                    accent: "#fbbf24", /* sarı */
-                    neutral: "#9a3412", /* koyu turuncu */
-                    "base-100": "#1a0f0a", /* çok koyu turuncu */
-                    info: "#fb923c",
-                    success: "#fbbf24",
-                    warning: "#ec4899",
-                    error: "#ef4444",
+                    "base-200": "#2a1f1a", /* koyu kahve */
+                    "base-300": "#3a2f2a", /* orta koyu kahve */
+                    "base-content": "#ffd700", /* parlak altın */
+                    info: "#ffd700",
+                    success: "#d4af37",
+                    warning: "#8b4513",
+                    error: "#d4af37",
                 }
             }
         ],

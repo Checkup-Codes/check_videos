@@ -8,10 +8,10 @@
       :isExpanded="areAllCategoriesExpanded"
       @toggle-expand="toggleAllCategories"
       @toggle-width="handleWidthToggle"
-      class="border-base-200"
+      class="border-base-200 bg-base-200"
     >
     </TopSubsidebar>
-    <SubSidebarScreen ref="scrollableRef">
+    <SubSidebarScreen ref="scrollableRef" class="bg-base-200">
       <CategoryTree
         v-if="showCategories"
         ref="categoryTreeRef"

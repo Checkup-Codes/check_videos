@@ -3,11 +3,11 @@
     <TopSubsidebar
       title="YAZILAR"
       href="/writes/create"
-      class="border-base-200 bg-base-100"
+      class="border-base-200 bg-base-200"
       @toggle-width="handleWidthToggle"
     />
 
-    <SubSidebarScreen ref="scrollableRef" class="bg-base-100">
+    <SubSidebarScreen ref="scrollableRef" class="bg-base-200">
       <WriteList ref="writeListRef" :writes="writes" :route="route" :isCollapsed="isNarrow" />
     </SubSidebarScreen>
   </CheckSubsidebar>
