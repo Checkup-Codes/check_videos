@@ -224,7 +224,7 @@
         :key="write.id"
         :href="getWriteRoute(write)"
         :class="[
-          'block rounded-lg p-3 transition-all duration-200',
+          'block rounded-lg p-3',
           activeWrite === getActiveWritePath(write)
             ? 'bg-base-content text-base-100'
             : 'border border-base-300 bg-base-100 hover:bg-base-300',
@@ -628,7 +628,6 @@ watch(debouncedSearchQuery, (val) => {
 /* Line clamp utility for title truncation */
 .line-clamp-2 {
   display: -webkit-box;
-  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

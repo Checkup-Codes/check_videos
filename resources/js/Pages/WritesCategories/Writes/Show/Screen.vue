@@ -1,7 +1,32 @@
 <template>
-  <CheckScreen>
+  <!-- Draw view with full width - bypass CheckScreen -->
+  <div v-if="showDraw" class="relative h-screen w-full">
+    <!-- Back button for draw view -->
+    <div class="absolute left-4 top-4 z-10">
+      <button
+        @click="toggleContent"
+        class="flex items-center gap-2 rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-sm text-base-content shadow-lg transition-all duration-200 hover:bg-base-200"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="h-4 w-4"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+        Metne Dön
+      </button>
+    </div>
+    <ExcalidrawComponent :write="write" />
+  </div>
+
+  <!-- Content view with CheckScreen wrapper -->
+  <CheckScreen v-else>
     <!-- Content view with max width -->
-    <div v-if="!showDraw" class="mx-auto max-w-4xl">
+    <div class="mx-auto max-w-4xl">
       <div class="bg-base-100 transition-all duration-200">
         <div class="p-6 pt-12 sm:p-8 sm:pt-16">
           <!-- Title and date section -->
@@ -139,36 +164,12 @@
       </div>
     </div>
 
-    <!-- Draw view with full width -->
-    <div v-else class="relative h-screen w-full">
-      <!-- Back button for draw view -->
-      <div class="absolute left-4 top-4 z-10">
-        <button
-          @click="toggleContent"
-          class="flex items-center gap-2 rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-sm text-base-content shadow-lg transition-all duration-200 hover:bg-base-200"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="h-4 w-4"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-          </svg>
-          Metne Dön
-        </button>
-      </div>
-      <ExcalidrawComponent :write="write" />
-    </div>
-
     <!-- Table of Contents - Sade Tasarım -->
     <!-- Mobile & Small screens: Toggle button (up to 15.6 inch) -->
     <button
       v-if="!isLoading && showTableOfContents && !showDraw"
       @click="toggleTableOfContents"
-      class="fixed right-4 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-primary text-primary-content shadow-lg transition-all duration-200 hover:shadow-xl 2xl:hidden"
+      class="fixed right-4 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-base-content text-base-100 shadow-lg transition-all duration-200 hover:bg-base-300 2xl:hidden"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -223,11 +224,45 @@
       </div>
     </div>
 
+    <!-- Desktop: Toggle button for large screens -->
+    <button
+      v-if="!isLoading && showTableOfContents && !showDraw"
+      @click="toggleTableOfContents"
+      class="fixed right-4 top-4 z-50 flex hidden h-10 w-10 items-center justify-center rounded-full bg-base-content text-base-100 shadow-lg transition-all duration-200 hover:bg-base-300 2xl:flex"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="h-5 w-5"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+      </svg>
+    </button>
+
     <!-- Desktop: Fixed sidebar on the right (15.6 inch and above) -->
-    <div v-if="!isLoading && showTableOfContents && !showDraw" class="fixed right-4 top-4 z-30 hidden w-64 2xl:block">
-      <div class="rounded-lg bg-base-100">
-        <div class="border-b border-base-300 p-3">
+    <div
+      v-if="!isLoading && showTableOfContents && !showDraw"
+      class="fixed right-4 top-4 z-30 hidden w-64 transition-all duration-300 ease-in-out 2xl:block"
+      :class="isTableOfContentsOpen ? 'translate-x-0 opacity-100' : 'pointer-events-none translate-x-full opacity-0'"
+    >
+      <div class="rounded-lg bg-base-100 shadow-lg">
+        <div class="flex items-center justify-between border-b border-base-300 p-3">
           <h3 class="text-sm font-semibold text-base-content">İçindekiler</h3>
+          <button @click="toggleTableOfContents" class="btn btn-ghost btn-xs">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="h-4 w-4"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
         <div class="overflow-y-auto p-3" style="max-height: calc(100vh - 120px)">
           <div v-if="tableOfContents.length === 0" class="text-base-content/60 py-4 text-center text-xs">
@@ -293,6 +328,9 @@ const isTableOfContentsOpen = ref(false);
 const tableOfContents = ref([]);
 const showTableOfContents = ref(false);
 const activeHeadingId = ref(null);
+
+// Check if screen is large enough for auto-open
+const isLargeScreen = ref(false);
 
 // isLoading'i dinamik ve computed yap
 const isLoading = computed(() => !write.value.title);
@@ -402,6 +440,9 @@ const toggleTableOfContents = () => {
 const scrollToHeading = (headingId) => {
   const element = document.getElementById(headingId);
   if (element) {
+    // Set active heading immediately for better UX
+    activeHeadingId.value = headingId;
+
     element.scrollIntoView({
       behavior: 'smooth',
       block: 'start',
@@ -412,37 +453,6 @@ const scrollToHeading = (headingId) => {
       isTableOfContentsOpen.value = false;
     }
   }
-};
-
-/**
- * Track active heading with Intersection Observer
- */
-const setupActiveHeadingTracker = () => {
-  if (!tableOfContents.value.length) return;
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          activeHeadingId.value = entry.target.id;
-        }
-      });
-    },
-    {
-      rootMargin: '-20% 0px -70% 0px',
-      threshold: 0.1,
-    }
-  );
-
-  // Observe all headings
-  tableOfContents.value.forEach((item) => {
-    const element = document.getElementById(item.id);
-    if (element) {
-      observer.observe(element);
-    }
-  });
-
-  return observer;
 };
 
 /**
@@ -493,7 +503,9 @@ const getTreeHeadingClass = (level) => {
  * Get CSS class for active heading (sade tasarım)
  */
 const getActiveHeadingClass = (headingId) => {
-  return activeHeadingId.value === headingId ? 'bg-primary/10 text-primary border-l-2 border-primary' : '';
+  return activeHeadingId.value === headingId
+    ? 'bg-base-content/10 text-base-content border-l-2 border-base-content'
+    : '';
 };
 
 /**
@@ -520,6 +532,9 @@ let contentObserver = null;
  * Apply GSAP animation on mount and restore write list scroll position
  */
 onMounted(() => {
+  // Check screen size for auto-open
+  isLargeScreen.value = window.innerWidth >= 1536; // 2xl breakpoint
+
   // Start with content loading disabled for better initial performance
   contentShouldLoad.value = false;
 
@@ -537,10 +552,10 @@ onMounted(() => {
               // Generate table of contents after content is loaded
               setTimeout(() => {
                 generateTableOfContents();
-                // Setup active heading tracker after TOC is generated
-                setTimeout(() => {
-                  setupActiveHeadingTracker();
-                }, 200);
+                // Auto-open on large screens
+                if (isLargeScreen.value && tableOfContents.value.length > 0) {
+                  isTableOfContentsOpen.value = true;
+                }
               }, 100);
             });
           }
@@ -561,10 +576,10 @@ onMounted(() => {
       // Generate table of contents after content is loaded
       setTimeout(() => {
         generateTableOfContents();
-        // Setup active heading tracker after TOC is generated
-        setTimeout(() => {
-          setupActiveHeadingTracker();
-        }, 200);
+        // Auto-open on large screens
+        if (isLargeScreen.value && tableOfContents.value.length > 0) {
+          isTableOfContentsOpen.value = true;
+        }
       }, 100);
     });
   }

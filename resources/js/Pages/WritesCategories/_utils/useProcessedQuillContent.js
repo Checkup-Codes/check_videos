@@ -297,25 +297,8 @@ export function useProcessedQuillContent(contentRef, contentString) {
             const code = doc.createElement('code');
             let content = line.textContent || line.innerText;
 
-            // Basic syntax highlighting
-            content = content
-              // Comments
-              .replace(/(\/\/.*$|\/\*[\s\S]*?\*\/)/gm, '<span class="comment">$1</span>')
-              // Keywords
-              .replace(
-                /\b(function|return|if|else|for|while|var|let|const|class|import|export|default|from|async|await)\b/g,
-                '<span class="keyword">$1</span>'
-              )
-              // Strings
-              .replace(/(['"`])(.*?)\1/g, '<span class="string">$1$2$1</span>')
-              // Numbers
-              .replace(/\b(\d+(\.\d+)?)\b/g, '<span class="number">$1</span>')
-              // Functions
-              .replace(/\b([a-zA-Z_]\w*)\s*\(/g, '<span class="function">$1</span>(')
-              // Operators
-              .replace(/([+\-*/%=<>!&|])/g, '<span class="operator">$1</span>');
-
-            code.innerHTML = content;
+            // Set content as plain text without syntax highlighting
+            code.textContent = content;
 
             codeLine.appendChild(lineNumber);
             codeLine.appendChild(code);

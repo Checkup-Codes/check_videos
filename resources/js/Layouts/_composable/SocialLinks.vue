@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-1" :class="{ 'text-center': isCompact }">
+  <div class="space-y-1 transition-all duration-500 ease-out" :class="{ 'text-center': isCompact }">
     <!-- <h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">
       {{ isCompact ? '-----' : 'Sosyal Medya' }}
     </h4>

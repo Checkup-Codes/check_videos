@@ -52,13 +52,13 @@ const isCompactMode = computed(() => {
 });
 
 const sidebarClass = computed(() => {
-  const baseClass = 'fixed inset-y-0 left-0 z-40 hidden overflow-hidden lg:block';
+  const baseClass = 'fixed inset-y-0 left-0 z-40 hidden overflow-hidden lg:block transition-all duration-500 ease-out';
   const widthClass = isCompactMode.value ? 'lg:w-24' : 'lg:w-64';
   return `${baseClass} ${widthClass}`;
 });
 
 const contentWrapperClass = computed(() => {
-  const baseClass = '';
+  const baseClass = 'transition-all duration-500 ease-out';
   const paddingClass = isCompactMode.value ? 'lg:pl-24' : 'lg:pl-64';
   return `${baseClass} ${paddingClass}`;
 });

@@ -92,14 +92,14 @@
             <button
               @click="statusFilter = 'all'"
               class="btn btn-sm"
-              :class="statusFilter === 'all' ? 'btn-primary' : 'btn-ghost'"
+              :class="statusFilter === 'all' ? 'bg-base-content text-base-100' : 'btn-ghost'"
             >
               Tümü
             </button>
             <button
               @click="statusFilter = 'published'"
               class="btn btn-sm"
-              :class="statusFilter === 'published' ? 'btn-primary' : 'btn-ghost'"
+              :class="statusFilter === 'published' ? 'bg-base-content text-base-100' : 'btn-ghost'"
             >
               Yayında
             </button>
@@ -107,7 +107,7 @@
               v-if="auth.user"
               @click="statusFilter = 'private'"
               class="btn btn-sm"
-              :class="statusFilter === 'private' ? 'btn-primary' : 'btn-ghost'"
+              :class="statusFilter === 'private' ? 'bg-base-content text-base-100' : 'btn-ghost'"
             >
               Gizli
             </button>
@@ -115,7 +115,7 @@
               v-if="auth.user"
               @click="statusFilter = 'link_only'"
               class="btn btn-sm"
-              :class="statusFilter === 'link_only' ? 'btn-primary' : 'btn-ghost'"
+              :class="statusFilter === 'link_only' ? 'bg-base-content text-base-100' : 'btn-ghost'"
             >
               Sadece Link
             </button>
@@ -170,11 +170,11 @@
           <div
             v-for="write in paginatedWrites"
             :key="write.id"
-            class="rounded-lg bg-base-100 p-4 transition-all duration-200 hover:shadow-sm"
+            class="rounded-lg bg-base-100 p-4 transition-all duration-200 hover:bg-base-200"
           >
             <div class="flex items-center gap-3">
               <!-- Write icon/status indicator -->
-              <div class="bg-primary/10 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-primary">
+              <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-base-300 text-base-content">
                 <svg
                   v-if="write.status === 'private'"
                   xmlns="http://www.w3.org/2000/svg"

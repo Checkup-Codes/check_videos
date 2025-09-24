@@ -1,7 +1,7 @@
 <template>
   <Link
     :href="href"
-    class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-200"
+    class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-500 ease-out"
     :class="{
       'bg-base-content text-base-100': isActive,
       'text-base-content hover:bg-base-300': !isActive,
@@ -10,8 +10,11 @@
     :title="isCompact ? label : ''"
   >
     <!-- Sol kısım: İkon + Label -->
-    <div class="flex items-center gap-3" :class="{ 'mx-auto gap-0': isCompact }">
-      <div class="flex h-5 w-5 items-center justify-center">
+    <div
+      class="flex items-center transition-all duration-500 ease-out"
+      :class="{ 'mx-auto gap-0': isCompact, 'gap-3': !isCompact }"
+    >
+      <div class="flex h-5 w-5 flex-shrink-0 items-center justify-center">
         <svg v-if="icon === 'home'" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             stroke-linecap="round"
@@ -352,11 +355,14 @@
             d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
           ></path>
         </svg>
-        <font-awesome-icon v-else :icon="dynamicIcon" class="h-5 w-5 transition-colors duration-200" />
+        <font-awesome-icon v-else :icon="dynamicIcon" class="h-5 w-5 transition-all duration-500 ease-out" />
       </div>
-      <span v-if="!isCompact" class="text-sm font-medium transition-colors duration-200">
-        {{ label }}
-      </span>
+      <div
+        class="overflow-hidden transition-all duration-500 ease-out"
+        :class="{ 'w-0 opacity-0': isCompact, 'w-auto opacity-100': !isCompact }"
+      >
+        <span class="whitespace-nowrap text-sm font-medium">{{ label }}</span>
+      </div>
     </div>
   </Link>
 </template>

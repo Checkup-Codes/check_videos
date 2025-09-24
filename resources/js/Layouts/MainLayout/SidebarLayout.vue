@@ -1,6 +1,6 @@
 <template>
   <aside
-    class="flex h-screen flex-col justify-between border-r-2 border-base-300 bg-base-200 px-4 font-sans"
+    class="flex h-screen flex-col justify-between border-r-2 border-base-300 bg-base-200 px-4 font-sans transition-all duration-500 ease-out"
     :class="currentTheme"
   >
     <div class="space-y-1">
@@ -8,15 +8,21 @@
       <Link href="/" class="block">
         <div class="px-2 py-5">
           <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-3" :class="{ 'w-full justify-center': isCompact }">
-              <div class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg bg-neutral">
+            <div
+              class="flex items-center transition-all duration-500 ease-out"
+              :class="{ 'w-full justify-center space-x-0': isCompact, 'space-x-3': !isCompact }"
+            >
+              <div class="flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-neutral">
                 <template v-if="logoPath && !isLoading">
                   <img :src="logoPath" :alt="logoAlt" class="h-full w-full object-cover" @error="handleImageError" />
                 </template>
                 <span v-else class="text-sm font-bold text-neutral-content">{{ appName.charAt(0) }}</span>
               </div>
-              <div v-if="!isCompact">
-                <h3 class="font-semibold text-base-content">{{ appName }}</h3>
+              <div
+                class="overflow-hidden transition-all duration-500 ease-out"
+                :class="{ 'w-0 opacity-0': isCompact, 'w-auto opacity-100': !isCompact }"
+              >
+                <h3 class="whitespace-nowrap font-semibold text-base-content">{{ appName }}</h3>
               </div>
             </div>
             <!-- 
@@ -144,7 +150,12 @@
           </template>
         </button>
         <!-- Tema bilgisi -->
-        <p v-if="!isCompact" class="text-base-content/40 mt-1 text-xs">{{ currentThemeName }}</p>
+        <div
+          class="overflow-hidden transition-all duration-500 ease-out"
+          :class="{ 'h-0 opacity-0': isCompact, 'h-auto opacity-100': !isCompact }"
+        >
+          <p class="text-base-content/40 mt-1 whitespace-nowrap text-xs">{{ currentThemeName }}</p>
+        </div>
       </div>
       <!-- Powered by Button / Profile Link -->
       <div v-if="!isLoggedIn" class="space-y-1 p-4">
@@ -152,15 +163,26 @@
           <button
             class="w-full rounded-lg border border-base-300 bg-base-100 p-3 shadow-sm transition-colors hover:bg-base-200"
           >
-            <div class="flex items-center space-x-3" :class="{ 'justify-center': isCompact }">
-              <span v-if="!isCompact" class="mx-auto items-center text-sm font-medium text-base-content"
-                >Powered by : Notiriel</span
+            <div
+              class="flex items-center transition-all duration-500 ease-out"
+              :class="{ 'justify-center space-x-0': isCompact, 'space-x-3': !isCompact }"
+            >
+              <div
+                class="overflow-hidden transition-all duration-500 ease-out"
+                :class="{ 'w-0 opacity-0': isCompact, 'w-auto opacity-100': !isCompact }"
               >
+                <span class="whitespace-nowrap text-sm font-medium text-base-content">Powered by : Notiriel</span>
+              </div>
             </div>
           </button>
         </a>
       </div>
-      <p v-if="!isCompact" class="text-base-content/60 mt-2 text-xs">Notiriel - Tüm Hakları Saklıdır</p>
+      <div
+        class="overflow-hidden transition-all duration-500 ease-out"
+        :class="{ 'h-0 opacity-0': isCompact, 'h-auto opacity-100': !isCompact }"
+      >
+        <p class="text-base-content/60 mt-2 whitespace-nowrap text-xs">Notiriel - Tüm Hakları Saklıdır</p>
+      </div>
     </div>
   </aside>
 </template>

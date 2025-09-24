@@ -34,7 +34,7 @@
         <Link
           v-if="userName && href"
           :href="href"
-          class="group flex h-6 w-6 items-center justify-center rounded-full bg-base-content text-base-100 transition-all duration-200 hover:bg-base-300"
+          class="group flex h-6 w-6 items-center justify-center rounded-md bg-base-content text-base-100 transition-all duration-200 hover:bg-base-300"
           :title="`Yeni ${title?.toLowerCase() || 'öğe'} ekle`"
           @click.stop
         >
