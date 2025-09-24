@@ -18,6 +18,49 @@ $host = preg_replace('/^www\./', '', $host);
 // Get port information
 $port = $_SERVER['SERVER_PORT'] ?? '8000';
 
+// Domain-specific .env dosyasını yükle
+if (strpos($host, 'localhost') === 0) {
+    // Localhost için varsayılan .env dosyasını kullan
+    $envFile = __DIR__ . '/.env';
+} else {
+    // Domain-specific .env dosyasını config/domains/ klasöründen yükle
+    $envFile = __DIR__ . '/config/domains/.env.' . $host;
+
+    // Eğer domain-specific .env dosyası yoksa, varsayılan .env dosyasını kullan
+    if (!file_exists($envFile)) {
+        $envFile = __DIR__ . '/.env';
+        error_log(":{$port} [env] Domain-specific .env not found for {$host}, using default .env");
+    } else {
+        error_log(":{$port} [env] Loading domain-specific .env for {$host}");
+    }
+}
+
+// .env dosyasını yükle
+if (file_exists($envFile)) {
+    $envContent = file_get_contents($envFile);
+    $lines = explode("\n", $envContent);
+
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if (empty($line) || strpos($line, '#') === 0) {
+            continue;
+        }
+
+        if (strpos($line, '=') !== false) {
+            list($key, $value) = explode('=', $line, 2);
+            $key = trim($key);
+            $value = trim($value);
+
+            // Environment variable'ı set et
+            if (!getenv($key)) {
+                putenv("{$key}={$value}");
+                $_ENV[$key] = $value;
+                $_SERVER[$key] = $value;
+            }
+        }
+    }
+}
+
 // Eklenen kod: /storage/ URL'lerini domain bazlı dizine yönlendirme
 if (strpos($uri, '/storage/') === 0) {
     // Eğer localhost ise eski mantığı kullan
