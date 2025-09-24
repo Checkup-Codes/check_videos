@@ -3,85 +3,106 @@
     <!-- Quiz Tamamlandıysa -->
     <div
       v-if="!gameState.isPlaying && gameState.userResponses.length > 0"
-      class="game-summary w-full max-w-md rounded-2xl border border-gray-200 bg-white px-6 shadow-sm"
+      class="w-full max-w-2xl rounded-lg border border-base-300 bg-base-100 p-6"
     >
-      <h2 class="mb-2 text-2xl font-semibold text-gray-900">Test Özeti</h2>
+      <!-- Başlık ve Puan -->
       <div class="mb-4 text-center">
-        <p class="text-4xl font-bold text-gray-900">{{ calculateScore }} / 100</p>
-        <p class="text-sm text-gray-600">Puan</p>
-      </div>
-      <div class="mb-4 grid grid-cols-2 gap-4 rounded-lg bg-gray-50 p-4">
-        <div class="text-center">
-          <p class="text-2xl font-bold text-green-600">{{ correctCount }}</p>
-          <p class="text-sm text-gray-600">Doğru</p>
+        <h2 class="mb-2 text-xl font-semibold text-base-content">Test Tamamlandı</h2>
+        <div class="inline-flex items-center gap-2 rounded bg-base-200 px-3 py-1">
+          <span class="text-base-content/70 text-sm">Puan:</span>
+          <span class="text-lg font-bold text-base-content">{{ calculateScore }} / 100</span>
         </div>
-        <div class="text-center">
-          <p class="text-2xl font-bold text-red-600">{{ incorrectCount }}</p>
-          <p class="text-sm text-gray-600">Yanlış</p>
+      </div>
+
+      <!-- İstatistikler -->
+      <div class="mb-4 grid grid-cols-2 gap-4">
+        <div class="rounded border border-base-300 bg-base-200 p-3 text-center">
+          <div class="mb-1">
+            <div class="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
+              <span class="text-sm font-bold text-green-600">{{ correctCount }}</span>
+            </div>
+          </div>
+          <p class="text-base-content/70 text-xs">Doğru</p>
+        </div>
+        <div class="rounded border border-base-300 bg-base-200 p-3 text-center">
+          <div class="mb-1">
+            <div class="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-red-100">
+              <span class="text-sm font-bold text-red-600">{{ incorrectCount }}</span>
+            </div>
+          </div>
+          <p class="text-base-content/70 text-xs">Yanlış</p>
         </div>
       </div>
 
       <!-- Toplam Puan -->
       <div class="mb-4 text-center">
-        <p class="text-3xl font-bold text-blue-600">{{ gameState.totalPoints }}</p>
-        <p class="text-sm text-gray-600">Toplam Puan</p>
+        <div class="inline-flex items-center gap-2 rounded bg-base-200 px-3 py-1">
+          <span class="text-base-content/70 text-sm">Toplam Puan:</span>
+          <span class="text-lg font-bold text-base-content">{{ gameState.totalPoints }}</span>
+        </div>
       </div>
 
       <!-- Cevap Listesi -->
-      <div class="mb-4 max-h-60 overflow-y-auto">
-        <h3 class="mb-2 font-medium text-gray-700">Cevaplarınız:</h3>
-        <ul class="space-y-2 text-left text-sm text-gray-800">
-          <li
+      <div class="mb-4">
+        <h3 class="mb-2 text-sm font-medium text-base-content">Cevaplarınız</h3>
+        <div class="max-h-48 space-y-2 overflow-y-auto">
+          <div
             v-for="response in gameState.userResponses"
             :key="response.word_id"
-            class="flex items-center justify-between rounded-md bg-gray-50 px-4 py-2"
+            class="flex items-center justify-between rounded border border-base-300 bg-base-200 p-2"
           >
-            <div class="flex flex-col">
-              <span :class="response.correct ? 'font-medium text-green-600' : 'font-medium text-red-600'">
-                {{ wordsMap[response.word_id]?.word || 'Unknown' }}
-              </span>
-              <span class="text-xs text-gray-500">
-                {{ wordsMap[response.word_id]?.meaning || '' }}
-              </span>
-              <span v-if="response.correct" class="text-xs text-blue-600">
-                {{ response.points }} puan
-                {{ response.hintsUsed > 0 ? `(${response.hintsUsed} ipucu kullanıldı)` : '' }}
-              </span>
+            <div class="flex items-center gap-2">
+              <div
+                class="flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold"
+                :class="response.correct ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'"
+              >
+                {{ response.correct ? '✓' : '✗' }}
+              </div>
+              <div class="flex flex-col">
+                <span class="text-sm font-medium text-base-content">
+                  {{ wordsMap[response.word_id]?.word || 'Unknown' }}
+                </span>
+                <span class="text-base-content/70 text-xs">
+                  {{ wordsMap[response.word_id]?.meaning || '' }}
+                </span>
+                <span v-if="response.correct" class="text-base-content/70 text-xs">
+                  {{ response.points }} puan
+                  {{ response.hintsUsed > 0 ? `(${response.hintsUsed} ipucu)` : '' }}
+                </span>
+              </div>
             </div>
-            <span :class="response.correct ? 'text-lg text-green-600' : 'text-lg text-red-600'">
-              {{ response.correct ? '✓' : '✗' }}
+            <span
+              class="inline-flex items-center rounded px-2 py-1 text-xs font-medium"
+              :class="response.correct ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+            >
+              {{ response.correct ? 'Doğru' : 'Yanlış' }}
             </span>
-          </li>
-        </ul>
+          </div>
+        </div>
       </div>
 
+      <!-- Butonlar -->
       <div class="space-y-2">
         <!-- İstatistik Güncelleme Butonu -->
         <button
-          v-if="hasUser && !isUpdating"
+          v-if="hasUser"
           @click="updateWordStats"
-          class="w-full rounded-lg bg-blue-600 px-4 py-2 text-center text-sm font-medium text-white transition hover:bg-blue-700"
+          class="w-full rounded border border-base-300 bg-base-content px-4 py-2 text-center text-sm font-medium text-base-100 transition hover:bg-base-300 hover:text-base-content"
+          :disabled="isUpdating"
         >
-          Kelime İstatistiklerini Güncelle ve Pakete Dön
-        </button>
-        <button
-          v-if="hasUser && isUpdating"
-          disabled
-          class="w-full rounded-lg bg-blue-400 px-4 py-2 text-center text-sm font-medium text-white"
-        >
-          Güncelleniyor...
+          {{ isUpdating ? 'Güncelleniyor...' : 'İstatistikleri Güncelle' }}
         </button>
 
         <div class="flex gap-2">
           <button
             @click="emit('game-completed')"
-            class="flex-1 rounded-lg bg-black px-4 py-2 text-center text-sm font-medium text-white transition hover:bg-gray-700"
+            class="flex-1 rounded border border-base-300 bg-base-content px-4 py-2 text-center text-sm font-medium text-base-100 transition hover:bg-base-300 hover:text-base-content"
           >
             Pakete Dön
           </button>
           <button
             @click="restartGame"
-            class="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
+            class="flex-1 rounded border border-base-300 px-4 py-2 text-sm font-medium text-base-content transition hover:bg-base-200"
           >
             Tekrar Başla
           </button>
@@ -92,16 +113,16 @@
     <!-- Quiz Devam Ediyorsa -->
     <div
       v-else
-      class="relative w-full max-w-md rounded-2xl border border-gray-200 p-6 shadow-sm transition-colors duration-500"
+      class="relative w-full max-w-2xl rounded-lg border border-base-300 bg-base-100 p-6 transition-colors duration-500"
       :class="{
-        'bg-white': !gameState.showAnswer,
+        'bg-base-100': !gameState.showAnswer,
         'bg-green-50': gameState.showAnswer && gameState.isCorrect,
         'bg-red-50': gameState.showAnswer && !gameState.isCorrect,
       }"
     >
       <!-- Progress Bar -->
-      <div class="relative mb-4 h-1 w-full overflow-hidden rounded-full bg-gray-200">
-        <div ref="progressBar" class="h-full w-0 bg-black"></div>
+      <div class="relative mb-4 h-1 w-full overflow-hidden rounded-full bg-base-200">
+        <div ref="progressBar" class="h-full w-0 bg-base-content"></div>
         <div
           ref="progressBarGlow"
           class="absolute left-0 top-0 h-full w-[50px] bg-gradient-to-r from-transparent via-white/30 to-transparent"
@@ -109,15 +130,15 @@
       </div>
 
       <!-- Soru Sayacı ve Puan -->
-      <div class="mb-4 flex items-center justify-between text-sm text-gray-500">
+      <div class="text-base-content/70 mb-4 flex items-center justify-between text-sm">
         <div>Soru {{ gameState.currentIndex + 1 }} / {{ gameState.totalQuestions }}</div>
         <div class="flex flex-col items-end gap-1">
           <div class="flex items-center gap-2">
-            <span class="font-medium text-blue-600">{{ gameState.totalPoints }}</span>
+            <span class="font-medium text-base-content">{{ gameState.totalPoints }}</span>
             <span>toplam puan</span>
           </div>
           <div class="flex items-center gap-2 text-xs">
-            <span class="font-medium text-gray-600">{{ currentQuestionPoints }}</span>
+            <span class="text-base-content/70 font-medium">{{ currentQuestionPoints }}</span>
             <span>mevcut soru puanı</span>
           </div>
         </div>
@@ -126,22 +147,31 @@
       <!-- Soru -->
       <div v-if="gameState.currentQuestion" class="space-y-4" ref="questionContainer">
         <div>
+          <h2 class="mb-2 text-2xl font-semibold text-base-content">"{{ gameState.currentQuestion.meaning }}"</h2>
+          <p class="text-base-content/70 mb-3">Bu kelimenin İngilizce anlamını yazın</p>
           <div class="flex items-center justify-between">
-            <h2 class="text-xl font-semibold text-gray-900">Eksik harfleri tamamlayın:</h2>
+            <span
+              class="inline-flex items-center rounded border border-base-300 bg-base-200 px-2 py-1 text-xs text-base-content"
+            >
+              {{ getWordType(gameState.currentQuestion.type) }}
+            </span>
           </div>
-          <p class="mt-1 text-sm text-gray-500">Anlam: {{ gameState.currentQuestion.meaning }}</p>
         </div>
 
         <!-- Kelime Gösterimi -->
         <div class="space-y-2">
-          <div class="flex justify-center space-x-2" ref="selectedLettersContainer">
+          <div
+            v-if="gameState.currentQuestion && gameState.currentQuestion.word"
+            class="flex justify-center space-x-2"
+            ref="selectedLettersContainer"
+          >
             <div
               v-for="(letter, index) in gameState.currentQuestion.word.split('')"
               :key="`${gameState.currentIndex}-${index}`"
-              class="flex h-12 w-12 items-center justify-center rounded-lg border text-xl font-semibold transition-all"
+              class="flex h-12 w-12 items-center justify-center rounded border text-xl font-semibold transition-all"
               :class="{
-                'border-gray-300': !gameState.selectedLetters[index],
-                'border-black bg-gray-50': !gameState.selectedLetters[index] && index === getNextEmptyIndex(),
+                'border-base-300 bg-base-100': !gameState.selectedLetters[index],
+                'border-base-content bg-base-200': !gameState.selectedLetters[index] && index === getNextEmptyIndex(),
                 'border-green-500 bg-green-50': gameState.showAnswer && gameState.isCorrect,
                 'border-red-500 bg-red-50': gameState.showAnswer && !gameState.isCorrect,
                 'border-blue-500': gameState.hintLetterIndices.includes(index) && !gameState.isHintAnimating,
@@ -158,12 +188,17 @@
             </div>
           </div>
 
+          <!-- Loading state -->
+          <div v-else class="text-base-content/70 text-center">
+            <p>Harf kutuları yükleniyor...</p>
+          </div>
+
           <!-- Doğru Cevap Önizlemesi -->
           <div v-if="gameState.showAnswer && !gameState.isCorrect" class="flex justify-center space-x-2">
             <div
               v-for="(letter, index) in gameState.currentQuestion.word.split('')"
               :key="index"
-              class="flex h-8 w-8 items-center justify-center rounded-lg border border-green-500 bg-green-50 text-sm font-medium text-green-700"
+              class="flex h-8 w-8 items-center justify-center rounded border border-green-500 bg-green-50 text-sm font-medium text-green-700"
             >
               {{ letter.toLowerCase() }}
             </div>
@@ -174,7 +209,7 @@
         <button
           @click="checkAnswer"
           :disabled="gameState.showAnswer || !isAnswerComplete"
-          class="w-full rounded-lg bg-black px-4 py-2 text-center text-sm font-medium text-white transition hover:bg-gray-700 disabled:opacity-50"
+          class="w-full rounded border border-base-300 bg-base-content px-4 py-2 text-center text-sm font-medium text-base-100 transition hover:bg-base-300 hover:text-base-content disabled:opacity-50"
         >
           Kontrol Et
         </button>
@@ -182,14 +217,14 @@
 
       <!-- Sanal Klavye -->
       <div v-if="showVirtualKeyboard" class="mt-4">
-        <div class="flex flex-col gap-1 rounded-lg border border-gray-200 bg-gray-100 p-2">
+        <div class="flex flex-col gap-1 rounded border border-base-300 bg-base-200 p-2">
           <!-- Üst Sıra -->
           <div class="flex gap-1">
             <button
               v-for="letter in ['q', 'w', 'e', 'r', 't', 'y', 'u', 'ı', 'o', 'p', 'ğ', 'ü']"
               :key="letter"
               @click="selectLetter(letter)"
-              class="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 active:bg-gray-100"
+              class="flex h-10 w-10 items-center justify-center rounded bg-base-100 text-sm font-medium text-base-content transition hover:bg-base-300 active:bg-base-content active:text-base-100"
             >
               {{ letter }}
             </button>
@@ -200,7 +235,7 @@
               v-for="letter in ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ş', 'i']"
               :key="letter"
               @click="selectLetter(letter)"
-              class="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 active:bg-gray-100"
+              class="flex h-10 w-10 items-center justify-center rounded bg-base-100 text-sm font-medium text-base-content transition hover:bg-base-300 active:bg-base-content active:text-base-100"
             >
               {{ letter }}
             </button>
@@ -211,7 +246,7 @@
               v-for="letter in ['z', 'x', 'c', 'v', 'b', 'n', 'm', 'ö', 'ç']"
               :key="letter"
               @click="selectLetter(letter)"
-              class="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 active:bg-gray-100"
+              class="flex h-10 w-10 items-center justify-center rounded bg-base-100 text-sm font-medium text-base-content transition hover:bg-base-300 active:bg-base-content active:text-base-100"
             >
               {{ letter }}
             </button>
@@ -220,13 +255,13 @@
           <div class="flex gap-1">
             <button
               @click="handleBackspace"
-              class="flex h-10 flex-1 items-center justify-center rounded-lg bg-white text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 active:bg-gray-100"
+              class="flex h-10 flex-1 items-center justify-center rounded bg-base-100 text-sm font-medium text-base-content transition hover:bg-base-300 active:bg-base-content active:text-base-100"
             >
               ←
             </button>
             <button
               @click="handleHint"
-              class="flex h-10 flex-1 items-center justify-center rounded-lg bg-blue-100 text-sm font-medium text-blue-700 shadow-sm transition hover:bg-blue-200 active:bg-blue-300"
+              class="flex h-10 flex-1 items-center justify-center rounded bg-base-content text-sm font-medium text-base-100 transition hover:bg-base-300 hover:text-base-content"
             >
               İpucu
             </button>
@@ -238,7 +273,7 @@
       <button
         v-if="!showVirtualKeyboard"
         @click="toggleVirtualKeyboard"
-        class="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+        class="mt-4 flex w-full items-center justify-center gap-2 rounded border border-base-300 bg-base-100 px-4 py-2 text-sm font-medium text-base-content transition hover:bg-base-200"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
           <path
@@ -250,7 +285,7 @@
       <button
         v-else
         @click="toggleVirtualKeyboard"
-        class="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+        class="mt-4 flex w-full items-center justify-center gap-2 rounded border border-base-300 bg-base-100 px-4 py-2 text-sm font-medium text-base-content transition hover:bg-base-200"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
           <path
@@ -407,6 +442,25 @@ const handleHint = () => {
   }
 };
 
+// İpucu göster (örnek cümle için)
+const showHint = () => {
+  if (
+    !gameState.value.currentQuestion.example_sentences ||
+    gameState.value.currentQuestion.example_sentences.length === 0
+  ) {
+    gameState.value.hintShown = true;
+    return;
+  }
+
+  if (!gameState.value.hintShown) {
+    gameState.value.hintShown = true;
+    gameState.value.currentHintIndex = 0;
+  } else {
+    gameState.value.currentHintIndex =
+      (gameState.value.currentHintIndex + 1) % gameState.value.currentQuestion.example_sentences.length;
+  }
+};
+
 // Oyunu başlat
 const startGameWithConfig = () => {
   if (!props.words || props.words.length < 2) {
@@ -420,17 +474,17 @@ const startGameWithConfig = () => {
   let gameWords = [...props.words];
 
   // Kelime türüne göre filtrele
-  if (props.gameConfig.wordType) {
+  if (props.gameConfig.wordType && props.gameConfig.wordType !== '') {
     gameWords = gameWords.filter((word) => word.type === props.gameConfig.wordType);
   }
 
   // Öğrenme durumuna göre filtrele
-  if (props.gameConfig.learningStatus !== '') {
+  if (props.gameConfig.learningStatus && props.gameConfig.learningStatus !== '') {
     gameWords = gameWords.filter((word) => word.learning_status === parseInt(props.gameConfig.learningStatus));
   }
 
   // Zorluk seviyesine göre filtrele
-  if (props.gameConfig.difficultyLevel) {
+  if (props.gameConfig.difficultyLevel && props.gameConfig.difficultyLevel !== '') {
     gameWords = gameWords.filter((word) => word.difficulty_level === props.gameConfig.difficultyLevel);
   }
 
@@ -473,8 +527,14 @@ const startGameWithConfig = () => {
   gameWords = gameWords.sort(() => Math.random() - 0.5);
 
   // Soru sayısını sınırla
-  const questionCount = Math.min(props.gameConfig.questionCount, gameWords.length);
+  const questionCount = Math.min(props.gameConfig.questionCount || 10, gameWords.length);
   gameWords = gameWords.slice(0, questionCount);
+
+  // Eğer hiç kelime kalmadıysa hata ver
+  if (gameWords.length === 0) {
+    alert('Filtreleme sonucu hiç kelime kalmadı. Lütfen filtreleri kontrol edin.');
+    return;
+  }
 
   // Kelimeleri yükle
   words.value = gameWords;
@@ -524,81 +584,58 @@ const loadNextQuestion = () => {
     return;
   }
 
+  if (!words.value[gameState.value.currentIndex]) {
+    return;
+  }
+
   const currentWord = words.value[gameState.value.currentIndex].word;
   const wordLength = currentWord.length;
 
-  console.log('Yeni soru yükleniyor:', {
-    currentIndex: gameState.value.currentIndex,
-    word: currentWord,
-    wordLength: wordLength,
-  });
+  // Mevcut state'i koruyarak sadece gerekli alanları güncelle
+  gameState.value.currentQuestion = words.value[gameState.value.currentIndex];
+  gameState.value.showAnswer = false;
+  gameState.value.hintShown = false;
+  gameState.value.currentHintIndex = 0;
+  gameState.value.hintsUsed = 0;
+  gameState.value.hintLetterIndices = [];
+  gameState.value.isHintAnimating = false;
+  gameState.value.progress = 0;
 
-  // Önce mevcut state'i tamamen sıfırla
-  const baseState = {
-    isLoading: gameState.value.isLoading,
-    isPlaying: gameState.value.isPlaying,
-    currentIndex: gameState.value.currentIndex,
-    totalQuestions: gameState.value.totalQuestions,
-    userResponses: gameState.value.userResponses,
-    totalPoints: gameState.value.totalPoints,
-    displayPoints: gameState.value.displayPoints,
-  };
-
-  // Yeni soru için state'i oluştur
-  const newState = {
-    ...baseState,
-    currentQuestion: words.value[gameState.value.currentIndex],
-    selectedLetters: [], // Boş dizi olarak başlat
-    showAnswer: false,
-    hintShown: false,
-    currentHintIndex: 0,
-    hintsUsed: 0,
-    hintLetterIndices: [], // Boş dizi olarak başlat
-    isHintAnimating: false,
-    progress: 0,
-    maskedIndices: [], // Boş dizi olarak başlat
-  };
-
-  // State'i güncelle
-  gameState.value = newState;
+  // Eğer örnek cümle varsa otomatik olarak ipucunu göster
+  if (
+    gameState.value.currentQuestion.example_sentences &&
+    gameState.value.currentQuestion.example_sentences.length > 0
+  ) {
+    gameState.value.hintShown = true;
+    gameState.value.currentHintIndex = 0;
+  }
 
   // Dizileri manuel olarak doldur
   gameState.value.selectedLetters = Array(wordLength).fill('');
-  gameState.value.hintLetterIndices = [];
   gameState.value.maskedIndices = Array.from({ length: wordLength }, (_, i) => i);
-
-  console.log('Yeni state:', {
-    selectedLetters: gameState.value.selectedLetters,
-    hintLetterIndices: gameState.value.hintLetterIndices,
-    maskedIndices: gameState.value.maskedIndices,
-  });
 
   // DOM güncellemesinden sonra animasyonu başlat
   nextTick(() => {
-    console.log('DOM güncellendi, harf kutuları:', {
-      selectedLetters: gameState.value.selectedLetters,
-      hintLetterIndices: gameState.value.hintLetterIndices,
-      maskedIndices: gameState.value.maskedIndices,
-    });
-
     // Harf kutularını yukarıdan aşağı kaydır
-    const letterBoxes = selectedLettersContainer.value.children;
-    gsap.fromTo(
-      letterBoxes,
-      {
-        y: -50,
-        opacity: 0,
-        scale: 0.8,
-      },
-      {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        duration: 0.5,
-        stagger: 0.05,
-        ease: 'back.out(1.7)',
-      }
-    );
+    if (selectedLettersContainer.value && selectedLettersContainer.value.children) {
+      const letterBoxes = selectedLettersContainer.value.children;
+      gsap.fromTo(
+        letterBoxes,
+        {
+          y: -50,
+          opacity: 0,
+          scale: 0.8,
+        },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 0.5,
+          stagger: 0.05,
+          ease: 'back.out(1.7)',
+        }
+      );
+    }
   });
 };
 
@@ -657,6 +694,22 @@ const getMaxHints = (wordLength) => {
   if (wordLength <= 4) return 2;
   if (wordLength <= 5) return 3;
   return 4; // 6 ve üzeri harfler için
+};
+
+// Kelime türü metni
+const getWordType = (type) => {
+  switch (type) {
+    case 'noun':
+      return 'İsim';
+    case 'verb':
+      return 'Fiil';
+    case 'adjective':
+      return 'Sıfat';
+    case 'adverb':
+      return 'Zarf';
+    default:
+      return 'Bilinmiyor';
+  }
 };
 
 // Handle keyboard input

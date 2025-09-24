@@ -6,8 +6,8 @@
       <div class="mb-4 flex justify-between">
         <div>
           <h2 class="text-xl font-bold text-base-content">{{ languagePack.name }}</h2>
-          <p class="text-sm text-base-content/70">{{ languagePack.description }}</p>
-          <p class="mt-1 text-sm text-base-content/70">
+          <p class="text-base-content/70 text-sm">{{ languagePack.description }}</p>
+          <p class="text-base-content/70 mt-1 text-sm">
             <span class="font-medium">Dil:</span> {{ getLanguageName(languagePack.language) }}
           </p>
         </div>
@@ -15,19 +15,19 @@
           <button
             v-if="isLoggedIn"
             @click="fetchAvailableWords"
-            class="btn btn-primary"
+            class="rounded border border-base-300 bg-base-content px-4 py-2 text-sm font-medium text-base-100 transition hover:bg-base-300 hover:text-base-content"
           >
             Kelime Ekle
           </button>
           <a
             :href="route('rendition.language-packs.export', languagePack.id)"
-            class="btn btn-success"
+            class="rounded border border-base-300 bg-base-100 px-4 py-2 text-sm font-medium text-base-content transition hover:bg-base-200"
           >
             Dışa Aktar
           </a>
           <a
             :href="route('rendition.language-packs.index')"
-            class="btn btn-outline"
+            class="rounded border border-base-300 bg-base-100 px-4 py-2 text-sm font-medium text-base-content transition hover:bg-base-200"
           >
             Geri Dön
           </a>
@@ -47,7 +47,7 @@
           </thead>
           <tbody>
             <tr v-if="!languagePack.words || languagePack.words.length === 0">
-              <td colspan="5" class="text-center py-6 text-base-content/70">
+              <td colspan="5" class="text-base-content/70 py-6 text-center">
                 Bu dil paketinde henüz kelime bulunmamaktadır. Kelime ekleyin.
               </td>
             </tr>
@@ -60,7 +60,7 @@
                 <button
                   v-if="isLoggedIn"
                   @click="removeWord(word)"
-                  class="btn btn-error btn-xs"
+                  class="rounded border border-red-300 bg-red-50 px-2 py-1 text-xs font-medium text-red-700 transition hover:bg-red-100"
                 >
                   Kaldır
                 </button>
@@ -72,11 +72,14 @@
     </div>
 
     <!-- Kelime Ekleme Modal -->
-    <div v-if="showAddWordsModal" class="modal modal-open">
+    <div v-if="showAddWordsModal" class="modal-open modal">
       <div class="modal-box max-w-2xl">
         <div class="mb-4 flex items-center justify-between">
           <h3 class="text-lg font-bold">Kelime Ekle</h3>
-          <button @click="showAddWordsModal = false" class="btn btn-ghost btn-sm">
+          <button
+            @click="showAddWordsModal = false"
+            class="rounded border border-base-300 bg-base-100 p-1 text-base-content transition hover:bg-base-200"
+          >
             <svg
               class="h-5 w-5"
               fill="none"
@@ -91,28 +94,24 @@
 
         <!-- Arama Filtresi -->
         <div class="mb-4">
-          <label class="label">
-            <span class="label-text">Kelime Ara</span>
-          </label>
+          <label class="text-sm font-medium text-base-content">Kelime Ara</label>
           <input
             v-model="searchQuery"
             type="text"
             placeholder="Kelime veya anlam ara..."
-            class="input input-bordered w-full"
+            class="placeholder-base-content/50 mt-1 w-full rounded border border-base-300 bg-base-100 px-3 py-2 text-base-content focus:border-base-content focus:outline-none focus:ring-1 focus:ring-base-content"
           />
         </div>
 
         <div class="mb-4">
-          <label class="label">
-            <span class="label-text">Kelimeler</span>
-          </label>
+          <label class="text-sm font-medium text-base-content">Kelimeler</label>
           <div v-if="loading" class="flex justify-center py-4">
             <div class="loading loading-spinner loading-md"></div>
           </div>
-          <div v-else-if="availableWords.length === 0" class="py-4 text-center text-base-content/70">
+          <div v-else-if="availableWords.length === 0" class="text-base-content/70 py-4 text-center">
             Eklenebilecek kelime bulunamadı. Önce yeni kelimeler ekleyin.
           </div>
-          <div v-else class="max-h-60 overflow-y-auto border border-base-300 rounded-lg p-2">
+          <div v-else class="max-h-60 overflow-y-auto rounded-lg border border-base-300 p-2">
             <div
               v-for="word in filteredAvailableWords"
               :key="word.id"
@@ -123,7 +122,7 @@
                 v-model="selectedWords"
                 :value="word.id"
                 type="checkbox"
-                class="checkbox checkbox-primary"
+                class="h-4 w-4 rounded border border-base-300 bg-base-100 text-base-content focus:ring-1 focus:ring-base-content"
               />
               <label :for="`word-${word.id}`" class="ml-2 block text-sm text-base-content">
                 {{ word.word }} - {{ word.meaning }} ({{ getLanguageName(word.language) }})
@@ -135,13 +134,13 @@
         <div class="modal-action">
           <button
             @click="showAddWordsModal = false"
-            class="btn btn-outline"
+            class="rounded border border-base-300 bg-base-100 px-4 py-2 text-sm font-medium text-base-content transition hover:bg-base-200"
           >
             İptal
           </button>
           <button
             @click="addWords"
-            class="btn btn-primary"
+            class="rounded bg-base-content px-4 py-2 text-sm font-medium text-base-100 transition hover:bg-base-300 hover:text-base-content disabled:opacity-50"
             :disabled="selectedWords.length === 0 || processing"
           >
             {{ processing ? 'Ekleniyor...' : 'Ekle' }}

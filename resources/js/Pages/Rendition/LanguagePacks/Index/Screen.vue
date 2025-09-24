@@ -6,8 +6,13 @@
           <h1 class="text-2xl font-bold">Dil Paketleri</h1>
         </div>
         <div class="flex gap-2">
-          <button @click="exportAllPacks" class="btn btn-success btn-sm">Tümünü Dışa Aktar</button>
-          <Link :href="route('rendition.language-packs.create')" class="btn btn-primary btn-sm"> Yeni Paket </Link>
+          <button @click="exportAllPacks" class="btn btn-outline">Tümünü Dışa Aktar</button>
+          <Link
+            :href="route('rendition.language-packs.create')"
+            class="btn bg-base-content text-base-100 hover:bg-base-300 hover:text-base-content"
+          >
+            Yeni Paket
+          </Link>
         </div>
       </div>
 
@@ -21,25 +26,30 @@
         >
           <div class="card-body">
             <div class="flex items-center justify-between">
-              <h2 class="card-title">{{ pack.name }}</h2>
-              <div class="badge badge-outline">{{ pack.language }}</div>
+              <h2 class="card-title text-base-content">{{ pack.name }}</h2>
+              <div class="badge bg-base-300 text-base-content">{{ pack.language }}</div>
             </div>
-            <p class="text-sm opacity-80">{{ truncateDescription(pack.description) }}</p>
+            <p class="text-base-content/70 text-sm">{{ truncateDescription(pack.description) }}</p>
             <div class="card-actions mt-3 justify-between">
               <div class="flex gap-2">
-                <Link :href="route('rendition.words.show', { word: pack.slug })" class="btn btn-outline btn-sm">
+                <Link :href="route('rendition.words.show', { word: pack.slug })" class="btn btn-outline">
                   Kelimeleri Göster
                 </Link>
-                <button @click="exportPack(pack)" class="btn btn-success btn-sm">Dışa Aktar</button>
+                <button @click="exportPack(pack)" class="btn btn-outline">Dışa Aktar</button>
               </div>
-              <div class="badge badge-lg">{{ pack.word_count || 0 }} kelime</div>
+              <div class="badge bg-base-200 text-base-content">{{ pack.word_count || 0 }} kelime</div>
             </div>
           </div>
         </div>
       </div>
 
-      <div v-if="languagePacks.length === 0" class="alert alert-info mt-6">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
+      <div v-if="languagePacks.length === 0" class="alert mt-6 border-base-300 bg-base-200">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          class="h-6 w-6 shrink-0 stroke-current text-base-content"
+        >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -47,7 +57,7 @@
             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
           ></path>
         </svg>
-        <span>Hiç dil paketi bulunmamaktadır.</span>
+        <span class="text-base-content">Hiç dil paketi bulunmamaktadır.</span>
       </div>
     </div>
   </CheckScreen>

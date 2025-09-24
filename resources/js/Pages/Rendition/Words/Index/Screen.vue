@@ -4,44 +4,54 @@
       <!-- Header - sade tasarım -->
       <div class="mb-8">
         <h1 class="text-2xl font-semibold text-base-content sm:text-3xl">Kelime Sözlüğü</h1>
-        <p class="text-base-content/60 mt-2 text-sm">Kelime arayın, anlamlarını öğrenin</p>
+        <p class="text-base-content/70 mt-2 text-sm">Kelime arayın, anlamlarını öğrenin</p>
       </div>
 
       <!-- Search Box - sade tasarım -->
       <div class="mb-8">
-        <div class="relative">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Kelime arayın..."
-            class="input-bordered input w-full pl-10"
-            @keyup.enter="searchWord"
-            @input="onSearchInput"
-          />
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="text-base-content/50 absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+        <div class="flex gap-3">
+          <div class="flex-1">
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Kelime arayın..."
+              class="input-bordered input w-full"
+              @keyup.enter="searchWord"
+              @input="onSearchInput"
             />
-          </svg>
+          </div>
           <button
             @click="searchWord"
             :disabled="isSearching || !searchQuery.trim()"
-            class="btn btn-primary absolute right-2 top-1/2 -translate-y-1/2"
+            class="btn"
+            :class="[
+              isSearching || !searchQuery.trim()
+                ? 'btn-disabled'
+                : 'bg-base-content text-base-100 hover:bg-base-300 hover:text-base-content',
+            ]"
+            :title="isSearching ? 'Arama yapılıyor...' : 'Kelime ara'"
           >
             <span v-if="isSearching" class="flex items-center">
               <div class="loading loading-spinner loading-xs mr-2"></div>
               Aranıyor...
             </span>
-            <span v-else>Ara</span>
+            <span v-else class="flex items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="mr-1 h-4 w-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                />
+              </svg>
+              Kelime Ara
+            </span>
           </button>
         </div>
       </div>
@@ -56,10 +66,10 @@
               <div class="mb-3 flex items-center gap-3">
                 <h2 class="text-2xl font-semibold text-base-content">{{ searchResult.word }}</h2>
                 <div class="flex gap-2">
-                  <span class="badge badge-outline badge-sm">
+                  <span class="badge badge-sm bg-base-content text-base-100">
                     {{ getWordTypeLabel(searchResult.type) }}
                   </span>
-                  <span class="badge badge-outline badge-sm">
+                  <span class="badge badge-sm bg-base-300 text-base-content">
                     {{ getLanguageLabel(searchResult.language) }}
                   </span>
                 </div>
@@ -95,30 +105,38 @@
                 v-for="(meaning, index) in searchResult.meanings"
                 :key="index"
                 class="flex items-start gap-3 rounded-lg p-3"
-                :class="meaning.is_primary ? 'bg-primary/10 border-primary/20 border' : 'bg-base-200/50'"
+                :class="meaning.is_primary ? 'bg-base-content text-base-100' : 'bg-base-200'"
               >
-                <span v-if="meaning.is_primary" class="badge badge-primary badge-sm"> Ana </span>
-                <span class="text-sm text-base-content">{{ meaning.meaning }}</span>
+                <span
+                  v-if="meaning.is_primary"
+                  class="badge badge-sm"
+                  :class="meaning.is_primary ? 'bg-base-100 text-base-content' : 'badge-outline'"
+                >
+                  Ana
+                </span>
+                <span class="text-sm" :class="meaning.is_primary ? 'text-base-100' : 'text-base-content'">{{
+                  meaning.meaning
+                }}</span>
               </div>
             </div>
           </div>
 
           <!-- Learning Stats - sade tasarım -->
           <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-            <div class="bg-base-200/50 rounded-lg p-4">
-              <div class="text-base-content/60 text-sm">Öğrenme Durumu</div>
+            <div class="rounded-lg bg-base-200 p-4">
+              <div class="text-base-content/70 text-sm">Öğrenme Durumu</div>
               <div class="text-lg font-semibold text-base-content">
                 {{ getLearningStatusLabel(searchResult.learning_status) }}
               </div>
             </div>
-            <div class="bg-base-200/50 rounded-lg p-4">
-              <div class="text-base-content/60 text-sm">Tekrar Sayısı</div>
+            <div class="rounded-lg bg-base-200 p-4">
+              <div class="text-base-content/70 text-sm">Tekrar Sayısı</div>
               <div class="text-lg font-semibold text-base-content">
                 {{ searchResult.review_count || 0 }}
               </div>
             </div>
-            <div class="bg-base-200/50 rounded-lg p-4">
-              <div class="text-base-content/60 text-sm">Yanlış Sayısı</div>
+            <div class="rounded-lg bg-base-200 p-4">
+              <div class="text-base-content/70 text-sm">Yanlış Sayısı</div>
               <div class="text-lg font-semibold text-base-content">
                 {{ searchResult.incorrect_count || 0 }}
               </div>
@@ -129,7 +147,11 @@
           <div v-if="searchResult.language_packs && searchResult.language_packs.length > 0" class="mb-6">
             <h3 class="mb-3 text-lg font-semibold text-base-content">Bulunduğu Paketler</h3>
             <div class="flex flex-wrap gap-2">
-              <span v-for="pack in searchResult.language_packs" :key="pack.id" class="badge badge-outline badge-sm">
+              <span
+                v-for="pack in searchResult.language_packs"
+                :key="pack.id"
+                class="badge badge-sm bg-base-200 text-base-content"
+              >
                 {{ pack.name }}
               </span>
             </div>
@@ -142,10 +164,10 @@
               <div
                 v-for="(sentence, index) in searchResult.example_sentences"
                 :key="index"
-                class="bg-base-200/50 rounded-lg p-4"
+                class="rounded-lg bg-base-200 p-4"
               >
                 <div class="mb-1 font-medium text-base-content">{{ sentence.sentence }}</div>
-                <div v-if="sentence.translation" class="text-base-content/60 text-sm">
+                <div v-if="sentence.translation" class="text-base-content/70 text-sm">
                   {{ sentence.translation }}
                 </div>
               </div>
@@ -156,7 +178,11 @@
           <div v-if="searchResult.synonyms && searchResult.synonyms.length > 0">
             <h3 class="mb-3 text-lg font-semibold text-base-content">Eş Anlamlılar</h3>
             <div class="flex flex-wrap gap-2">
-              <span v-for="synonym in searchResult.synonyms" :key="synonym.id" class="badge badge-outline badge-sm">
+              <span
+                v-for="synonym in searchResult.synonyms"
+                :key="synonym.id"
+                class="badge badge-sm bg-base-300 text-base-content"
+              >
                 {{ synonym.synonym }}
               </span>
             </div>
@@ -183,14 +209,14 @@
           </svg>
         </div>
         <h3 class="mb-2 text-lg font-semibold text-base-content">Kelime bulunamadı</h3>
-        <p class="text-base-content/60 text-sm">
+        <p class="text-base-content/70 text-sm">
           "{{ searchQuery }}" kelimesi sözlüğümüzde bulunamadı. Farklı bir kelime deneyin.
         </p>
       </div>
 
       <!-- Quick Actions - sade tasarım -->
       <div v-if="isLoggedIn" class="mt-8 text-center">
-        <Link :href="route('rendition.words.create')" class="btn btn-primary">
+        <Link :href="route('rendition.words.create')" class="btn btn-outline">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

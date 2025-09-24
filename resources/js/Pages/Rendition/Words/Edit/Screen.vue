@@ -117,7 +117,7 @@
                         name="primaryMeaning"
                         :checked="meaning.is_primary"
                         @change="setPrimaryMeaning(index)"
-                        class="radio radio-primary radio-sm"
+                        class="h-4 w-4 border border-base-300 bg-base-100 text-base-content focus:ring-1 focus:ring-base-content"
                       />
                     </label>
                   </div>
@@ -125,7 +125,7 @@
                     v-if="form.meanings.length > 1"
                     type="button"
                     @click="removeMeaning(index)"
-                    class="btn btn-error btn-outline btn-sm btn-circle"
+                    class="rounded border border-red-300 bg-red-50 p-1 text-red-700 transition hover:bg-red-100"
                   >
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -140,7 +140,11 @@
 
               <!-- Anlam Ekleme Butonu -->
               <div class="mt-3">
-                <button type="button" @click="addMeaning" class="btn btn-outline btn-sm w-full">
+                <button
+                  type="button"
+                  @click="addMeaning"
+                  class="w-full rounded border border-base-300 bg-base-100 px-3 py-2 text-sm font-medium text-base-content transition hover:bg-base-200"
+                >
                   <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       stroke-linecap="round"
@@ -183,7 +187,7 @@
                 v-for="pack in props.languagePacks"
                 :key="pack.id"
                 class="card cursor-pointer bg-base-200 transition-colors hover:bg-base-300"
-                :class="{ 'ring-2 ring-primary': form.language_pack_ids.includes(pack.id) }"
+                :class="{ 'ring-2 ring-base-content': form.language_pack_ids.includes(pack.id) }"
                 @click="togglePack(pack.id)"
               >
                 <div class="card-body p-4">
@@ -192,7 +196,11 @@
                       <h3 class="font-semibold text-base-content">{{ pack.name }}</h3>
                       <p class="text-base-content/70 text-sm">{{ pack.description }}</p>
                     </div>
-                    <div class="badge badge-primary">{{ pack.language.toUpperCase() }}</div>
+                    <div
+                      class="rounded border border-base-300 bg-base-content px-2 py-1 text-xs font-medium text-base-100"
+                    >
+                      {{ pack.language.toUpperCase() }}
+                    </div>
                   </div>
                   <div class="text-base-content/60 mt-2 text-xs">{{ pack.word_count || 0 }} kelime</div>
                 </div>
@@ -262,7 +270,11 @@
                 <div class="form-control">
                   <label class="label cursor-pointer">
                     <span class="label-text">Öne Çıkar</span>
-                    <input type="checkbox" v-model="form.flag" class="checkbox checkbox-primary" />
+                    <input
+                      type="checkbox"
+                      v-model="form.flag"
+                      class="h-4 w-4 rounded border border-base-300 bg-base-100 text-base-content focus:ring-1 focus:ring-base-content"
+                    />
                   </label>
                 </div>
               </div>
@@ -316,7 +328,7 @@
                     <button
                       type="button"
                       @click="removeExampleSentence(index)"
-                      class="btn btn-error btn-outline btn-sm btn-circle mb-2"
+                      class="mb-2 rounded border border-red-300 bg-red-50 p-1 text-red-700 transition hover:bg-red-100"
                     >
                       <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
@@ -329,7 +341,11 @@
                     </button>
                   </div>
                 </div>
-                <button type="button" @click="addExampleSentence" class="btn btn-outline btn-sm">
+                <button
+                  type="button"
+                  @click="addExampleSentence"
+                  class="rounded border border-base-300 bg-base-100 px-3 py-2 text-sm font-medium text-base-content transition hover:bg-base-200"
+                >
                   <svg class="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       stroke-linecap="round"
@@ -349,10 +365,14 @@
                   <div
                     v-for="(synonym, index) in form.synonyms"
                     :key="index"
-                    class="badge badge-outline badge-lg gap-1"
+                    class="flex items-center gap-1 rounded border border-base-300 bg-base-200 px-2 py-1 text-sm text-base-content"
                   >
                     {{ synonym }}
-                    <button type="button" @click="removeSynonym(index)" class="btn btn-ghost btn-xs btn-circle">
+                    <button
+                      type="button"
+                      @click="removeSynonym(index)"
+                      class="rounded border border-base-300 bg-base-100 p-1 text-base-content transition hover:bg-base-200"
+                    >
                       <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           stroke-linecap="round"
@@ -373,7 +393,11 @@
                     @keyup.enter.prevent="addSynonym"
                     @keydown.enter.prevent="addSynonym"
                   />
-                  <button type="button" @click="addSynonym" class="btn btn-outline">
+                  <button
+                    type="button"
+                    @click="addSynonym"
+                    class="rounded border border-base-300 bg-base-100 px-3 py-2 text-sm font-medium text-base-content transition hover:bg-base-200"
+                  >
                     <svg class="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         stroke-linecap="round"
@@ -393,7 +417,10 @@
           <div class="divider"></div>
 
           <div class="flex justify-end gap-3">
-            <Link :href="route('rendition.words.index')" class="btn btn-outline">
+            <Link
+              :href="route('rendition.words.index')"
+              class="rounded border border-base-300 bg-base-100 px-4 py-2 text-sm font-medium text-base-content transition hover:bg-base-200"
+            >
               <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
@@ -401,12 +428,13 @@
             </Link>
             <button
               type="submit"
-              class="btn btn-primary tooltip tooltip-top shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl active:scale-95"
-              data-tip="Shift + Enter ile kaydet"
-              @keydown.shift.enter.prevent="submitForm"
+              class="rounded bg-base-content px-4 py-2 text-sm font-medium text-base-100 transition hover:bg-base-300 hover:text-base-content disabled:opacity-50"
               :disabled="processing"
             >
-              <span v-if="processing" class="loading loading-spinner loading-sm"></span>
+              <span
+                v-if="processing"
+                class="mr-2 inline-block h-3 w-3 animate-spin rounded-full border-2 border-base-100 border-t-transparent"
+              ></span>
               <span v-if="!processing">Değişiklikleri Kaydet</span>
               <span v-else>Kaydediliyor...</span>
             </button>

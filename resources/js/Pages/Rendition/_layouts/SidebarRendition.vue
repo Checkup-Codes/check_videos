@@ -7,11 +7,11 @@
           <div
             v-for="languagePack in languagePacks"
             :key="languagePack.id"
-            class="rounded-lg bg-base-100 p-3 transition-all duration-200 hover:shadow-sm"
+            class="rounded-lg bg-base-100 p-3 transition-all duration-200"
             :class="
               getLinkClasses(`/rendition/words/${languagePack.slug}`)
-                ? 'bg-primary/10 border-primary/20 border text-primary'
-                : 'hover:bg-base-200'
+                ? 'bg-base-content text-base-100'
+                : 'border border-base-300 hover:bg-base-300'
             "
           >
             <Link
@@ -19,8 +19,24 @@
               class="flex w-full items-center justify-between"
             >
               <div class="flex-1">
-                <div class="text-sm font-medium text-base-content">{{ languagePack.name }}</div>
-                <div class="text-base-content/60 text-xs uppercase">{{ languagePack.language }}</div>
+                <div
+                  class="text-sm font-medium leading-tight"
+                  :class="
+                    getLinkClasses(`/rendition/words/${languagePack.slug}`) ? 'text-base-100' : 'text-base-content'
+                  "
+                >
+                  {{ languagePack.name }}
+                </div>
+                <div
+                  class="text-xs uppercase"
+                  :class="
+                    getLinkClasses(`/rendition/words/${languagePack.slug}`)
+                      ? 'text-base-100/70'
+                      : 'text-base-content/70'
+                  "
+                >
+                  {{ languagePack.language }}
+                </div>
               </div>
               <div class="badge badge-sm">{{ languagePack.word_count || 0 }}</div>
             </Link>
