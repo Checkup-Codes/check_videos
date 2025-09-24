@@ -19,12 +19,12 @@ $host = preg_replace('/^www\./', '', $host);
 // Define custom .env file path based on domain
 $envFile = __DIR__ . '/../config/domains/.env.' . $host;
 
-// Bootstrap the application
-$app = require_once __DIR__ . '/../bootstrap/app.php';
-
 // Load domain-specific .env file if exists, otherwise fallback to default .env
 if (file_exists($envFile)) {
-    $app->loadEnvironmentFrom('config/domains/.env.' . $host);
+    $app = require_once __DIR__ . '/../bootstrap/app.php';
+    $app->loadEnvironmentFrom('.env.' . $host);
+} else {
+    $app = require_once __DIR__ . '/../bootstrap/app.php';
 }
 
 // Bootstrap Laravel and handle the request...
