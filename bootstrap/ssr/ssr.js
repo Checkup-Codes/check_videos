@@ -1,4 +1,4 @@
-import { mergeProps, useSSRContext, computed, unref, withCtx, createVNode, createBlock, createCommentVNode, openBlock, toDisplayString, ref, onMounted, watch, createTextVNode, provide, createSSRApp, h as h$1 } from "vue";
+import { mergeProps, useSSRContext, computed, unref, withCtx, createVNode, createBlock, openBlock, toDisplayString, ref, onMounted, watch, createTextVNode, provide, createSSRApp, h as h$1 } from "vue";
 import { usePage, Link, Head, createInertiaApp } from "@inertiajs/vue3";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { ssrRenderAttrs, ssrRenderComponent, ssrRenderClass, ssrInterpolate, ssrRenderList, ssrRenderAttr, ssrRenderSlot } from "vue/server-renderer";
@@ -399,7 +399,7 @@ const _sfc_main$5 = {
     return (_ctx, _push, _parent, _attrs) => {
       _push(ssrRenderComponent(unref(Link), mergeProps({
         href: __props.href,
-        class: ["flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-200", {
+        class: ["flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-500 ease-out", {
           "bg-base-content text-base-100": isActive.value,
           "text-base-content hover:bg-base-300": !isActive.value,
           "justify-center px-2": __props.isCompact
@@ -408,7 +408,7 @@ const _sfc_main$5 = {
       }, _attrs), {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(`<div class="${ssrRenderClass([{ "mx-auto gap-0": __props.isCompact }, "flex items-center gap-3"])}"${_scopeId}><div class="flex h-5 w-5 items-center justify-center"${_scopeId}>`);
+            _push2(`<div class="${ssrRenderClass([{ "mx-auto gap-0": __props.isCompact, "gap-3": !__props.isCompact }, "flex items-center transition-all duration-500 ease-out"])}"${_scopeId}><div class="flex h-5 w-5 flex-shrink-0 items-center justify-center"${_scopeId}>`);
             if (__props.icon === "home") {
               _push2(`<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"${_scopeId}></path></svg>`);
             } else if (__props.icon === "grid") {
@@ -470,22 +470,16 @@ const _sfc_main$5 = {
             } else {
               _push2(ssrRenderComponent(unref(FontAwesomeIcon), {
                 icon: dynamicIcon.value,
-                class: "h-5 w-5 transition-colors duration-200"
+                class: "h-5 w-5 transition-all duration-500 ease-out"
               }, null, _parent2, _scopeId));
             }
-            _push2(`</div>`);
-            if (!__props.isCompact) {
-              _push2(`<span class="text-sm font-medium transition-colors duration-200"${_scopeId}>${ssrInterpolate(__props.label)}</span>`);
-            } else {
-              _push2(`<!---->`);
-            }
-            _push2(`</div>`);
+            _push2(`</div><div class="${ssrRenderClass([{ "w-0 opacity-0": __props.isCompact, "w-auto opacity-100": !__props.isCompact }, "overflow-hidden transition-all duration-500 ease-out"])}"${_scopeId}><span class="whitespace-nowrap text-sm font-medium"${_scopeId}>${ssrInterpolate(__props.label)}</span></div></div>`);
           } else {
             return [
               createVNode("div", {
-                class: ["flex items-center gap-3", { "mx-auto gap-0": __props.isCompact }]
+                class: ["flex items-center transition-all duration-500 ease-out", { "mx-auto gap-0": __props.isCompact, "gap-3": !__props.isCompact }]
               }, [
-                createVNode("div", { class: "flex h-5 w-5 items-center justify-center" }, [
+                createVNode("div", { class: "flex h-5 w-5 flex-shrink-0 items-center justify-center" }, [
                   __props.icon === "home" ? (openBlock(), createBlock("svg", {
                     key: 0,
                     class: "h-5 w-5",
@@ -878,13 +872,14 @@ const _sfc_main$5 = {
                   ])) : (openBlock(), createBlock(unref(FontAwesomeIcon), {
                     key: 29,
                     icon: dynamicIcon.value,
-                    class: "h-5 w-5 transition-colors duration-200"
+                    class: "h-5 w-5 transition-all duration-500 ease-out"
                   }, null, 8, ["icon"]))
                 ]),
-                !__props.isCompact ? (openBlock(), createBlock("span", {
-                  key: 0,
-                  class: "text-sm font-medium transition-colors duration-200"
-                }, toDisplayString(__props.label), 1)) : createCommentVNode("", true)
+                createVNode("div", {
+                  class: ["overflow-hidden transition-all duration-500 ease-out", { "w-0 opacity-0": __props.isCompact, "w-auto opacity-100": !__props.isCompact }]
+                }, [
+                  createVNode("span", { class: "whitespace-nowrap text-sm font-medium" }, toDisplayString(__props.label), 1)
+                ], 2)
               ], 2)
             ];
           }
@@ -927,21 +922,16 @@ const _sfc_main$4 = {
         href: __props.href,
         target: "_blank",
         rel: "noopener noreferrer",
-        class: ["flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-200 hover:bg-base-100 hover:shadow-sm", {
+        class: ["flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-500 ease-out hover:bg-base-100 hover:shadow-sm", {
           "justify-center px-2": __props.isCompact
         }],
         title: __props.isCompact ? __props.label : ""
-      }, _attrs))}><div class="${ssrRenderClass([{ "mx-auto gap-0": __props.isCompact }, "flex items-center gap-3"])}">`);
+      }, _attrs))}><div class="${ssrRenderClass([{ "mx-auto gap-0": __props.isCompact, "gap-3": !__props.isCompact }, "flex items-center transition-all duration-500 ease-out"])}">`);
       _push(ssrRenderComponent(unref(FontAwesomeIcon), {
         icon: __props.icon,
-        class: "h-5 w-5 text-base-content"
+        class: "h-5 w-5 flex-shrink-0 text-base-content"
       }, null, _parent));
-      if (!__props.isCompact) {
-        _push(`<span class="text-sm font-medium text-base-content">${ssrInterpolate(__props.label)}</span>`);
-      } else {
-        _push(`<!---->`);
-      }
-      _push(`</div></a>`);
+      _push(`<div class="${ssrRenderClass([{ "w-0 opacity-0": __props.isCompact, "w-auto opacity-100": !__props.isCompact }, "overflow-hidden transition-all duration-500 ease-out"])}"><span class="whitespace-nowrap text-sm font-medium text-base-content">${ssrInterpolate(__props.label)}</span></div></div></a>`);
     };
   }
 };
@@ -1008,7 +998,7 @@ const _sfc_main$3 = {
     });
     return (_ctx, _push, _parent, _attrs) => {
       _push(`<div${ssrRenderAttrs(mergeProps({
-        class: ["space-y-1", { "text-center": __props.isCompact }]
+        class: ["space-y-1 transition-all duration-500 ease-out", { "text-center": __props.isCompact }]
       }, _attrs))}><!--[-->`);
       ssrRenderList(socialLinks.value, (link) => {
         _push(`<!--[-->`);
@@ -1315,7 +1305,7 @@ const _sfc_main$1 = {
     });
     return (_ctx, _push, _parent, _attrs) => {
       _push(`<aside${ssrRenderAttrs(mergeProps({
-        class: ["flex h-screen flex-col justify-between border-r-2 border-base-300 bg-base-200 px-4 font-sans", currentTheme.value]
+        class: ["flex h-screen flex-col justify-between border-r-2 border-base-300 bg-base-200 px-4 font-sans transition-all duration-500 ease-out", currentTheme.value]
       }, _attrs))}><div class="space-y-1">`);
       _push(ssrRenderComponent(unref(Link), {
         href: "/",
@@ -1323,27 +1313,21 @@ const _sfc_main$1 = {
       }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(`<div class="px-2 py-5"${_scopeId}><div class="flex items-center justify-between"${_scopeId}><div class="${ssrRenderClass([{ "w-full justify-center": __props.isCompact }, "flex items-center space-x-3"])}"${_scopeId}><div class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg bg-neutral"${_scopeId}>`);
+            _push2(`<div class="px-2 py-5"${_scopeId}><div class="flex items-center justify-between"${_scopeId}><div class="${ssrRenderClass([{ "w-full justify-center space-x-0": __props.isCompact, "space-x-3": !__props.isCompact }, "flex items-center transition-all duration-500 ease-out"])}"${_scopeId}><div class="flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-neutral"${_scopeId}>`);
             if (logoPath.value && !isLoading.value) {
               _push2(`<img${ssrRenderAttr("src", logoPath.value)}${ssrRenderAttr("alt", logoAlt.value)} class="h-full w-full object-cover"${_scopeId}>`);
             } else {
               _push2(`<span class="text-sm font-bold text-neutral-content"${_scopeId}>${ssrInterpolate(appName.value.charAt(0))}</span>`);
             }
-            _push2(`</div>`);
-            if (!__props.isCompact) {
-              _push2(`<div${_scopeId}><h3 class="font-semibold text-base-content"${_scopeId}>${ssrInterpolate(appName.value)}</h3></div>`);
-            } else {
-              _push2(`<!---->`);
-            }
-            _push2(`</div></div></div>`);
+            _push2(`</div><div class="${ssrRenderClass([{ "w-0 opacity-0": __props.isCompact, "w-auto opacity-100": !__props.isCompact }, "overflow-hidden transition-all duration-500 ease-out"])}"${_scopeId}><h3 class="whitespace-nowrap font-semibold text-base-content"${_scopeId}>${ssrInterpolate(appName.value)}</h3></div></div></div></div>`);
           } else {
             return [
               createVNode("div", { class: "px-2 py-5" }, [
                 createVNode("div", { class: "flex items-center justify-between" }, [
                   createVNode("div", {
-                    class: ["flex items-center space-x-3", { "w-full justify-center": __props.isCompact }]
+                    class: ["flex items-center transition-all duration-500 ease-out", { "w-full justify-center space-x-0": __props.isCompact, "space-x-3": !__props.isCompact }]
                   }, [
-                    createVNode("div", { class: "flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg bg-neutral" }, [
+                    createVNode("div", { class: "flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-neutral" }, [
                       logoPath.value && !isLoading.value ? (openBlock(), createBlock("img", {
                         key: 0,
                         src: logoPath.value,
@@ -1355,9 +1339,11 @@ const _sfc_main$1 = {
                         class: "text-sm font-bold text-neutral-content"
                       }, toDisplayString(appName.value.charAt(0)), 1))
                     ]),
-                    !__props.isCompact ? (openBlock(), createBlock("div", { key: 0 }, [
-                      createVNode("h3", { class: "font-semibold text-base-content" }, toDisplayString(appName.value), 1)
-                    ])) : createCommentVNode("", true)
+                    createVNode("div", {
+                      class: ["overflow-hidden transition-all duration-500 ease-out", { "w-0 opacity-0": __props.isCompact, "w-auto opacity-100": !__props.isCompact }]
+                    }, [
+                      createVNode("h3", { class: "whitespace-nowrap font-semibold text-base-content" }, toDisplayString(appName.value), 1)
+                    ], 2)
                   ], 2)
                 ])
               ])
@@ -1430,30 +1416,13 @@ const _sfc_main$1 = {
       } else {
         _push(`<svg class="h-4 w-4 fill-current text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"></path></svg>`);
       }
-      _push(`</button>`);
-      if (!__props.isCompact) {
-        _push(`<p class="text-base-content/40 mt-1 text-xs">${ssrInterpolate(currentThemeName.value)}</p>`);
-      } else {
-        _push(`<!---->`);
-      }
-      _push(`</div>`);
+      _push(`</button><div class="${ssrRenderClass([{ "h-0 opacity-0": __props.isCompact, "h-auto opacity-100": !__props.isCompact }, "overflow-hidden transition-all duration-500 ease-out"])}"><p class="text-base-content/40 mt-1 whitespace-nowrap text-xs">${ssrInterpolate(currentThemeName.value)}</p></div></div>`);
       if (!isLoggedIn.value) {
-        _push(`<div class="space-y-1 p-4"><a href="https://youtu.be/FPsx8xHLR1k?si=3dNFdwhk5s8LyqOe" target="_blank"><button class="w-full rounded-lg border border-base-300 bg-base-100 p-3 shadow-sm transition-colors hover:bg-base-200"><div class="${ssrRenderClass([{ "justify-center": __props.isCompact }, "flex items-center space-x-3"])}">`);
-        if (!__props.isCompact) {
-          _push(`<span class="mx-auto items-center text-sm font-medium text-base-content">Powered by : Notiriel</span>`);
-        } else {
-          _push(`<!---->`);
-        }
-        _push(`</div></button></a></div>`);
+        _push(`<div class="space-y-1 p-4"><a href="https://youtu.be/FPsx8xHLR1k?si=3dNFdwhk5s8LyqOe" target="_blank"><button class="w-full rounded-lg border border-base-300 bg-base-100 p-3 shadow-sm transition-colors hover:bg-base-200"><div class="${ssrRenderClass([{ "justify-center space-x-0": __props.isCompact, "space-x-3": !__props.isCompact }, "flex items-center transition-all duration-500 ease-out"])}"><div class="${ssrRenderClass([{ "w-0 opacity-0": __props.isCompact, "w-auto opacity-100": !__props.isCompact }, "overflow-hidden transition-all duration-500 ease-out"])}"><span class="whitespace-nowrap text-sm font-medium text-base-content">Powered by : Notiriel</span></div></div></button></a></div>`);
       } else {
         _push(`<!---->`);
       }
-      if (!__props.isCompact) {
-        _push(`<p class="text-base-content/60 mt-2 text-xs">Notiriel - Tüm Hakları Saklıdır</p>`);
-      } else {
-        _push(`<!---->`);
-      }
-      _push(`</div></aside>`);
+      _push(`<div class="${ssrRenderClass([{ "h-0 opacity-0": __props.isCompact, "h-auto opacity-100": !__props.isCompact }, "overflow-hidden transition-all duration-500 ease-out"])}"><p class="text-base-content/60 mt-2 whitespace-nowrap text-xs">Notiriel - Tüm Hakları Saklıdır</p></div></div></aside>`);
     };
   }
 };
@@ -1491,12 +1460,12 @@ const _sfc_main = {
       return false;
     });
     const sidebarClass = computed(() => {
-      const baseClass = "fixed inset-y-0 left-0 z-40 hidden overflow-hidden lg:block";
+      const baseClass = "fixed inset-y-0 left-0 z-40 hidden overflow-hidden lg:block transition-all duration-500 ease-out";
       const widthClass = isCompactMode.value ? "lg:w-24" : "lg:w-64";
       return `${baseClass} ${widthClass}`;
     });
     const contentWrapperClass = computed(() => {
-      const baseClass = "";
+      const baseClass = "transition-all duration-500 ease-out";
       const paddingClass = isCompactMode.value ? "lg:pl-24" : "lg:pl-64";
       return `${baseClass} ${paddingClass}`;
     });
@@ -1861,7 +1830,7 @@ function render(page) {
   return createInertiaApp({
     page,
     resolve: async (name) => {
-      const page2 = (await resolvePageComponent(`./Pages/${name}.vue`, /* @__PURE__ */ Object.assign({ "./Pages/Auth/ConfirmPassword.vue": () => import("./assets/ConfirmPassword-Diprr4J0.js"), "./Pages/Auth/ForgotPassword.vue": () => import("./assets/ForgotPassword-SBqO7rhx.js"), "./Pages/Auth/Login.vue": () => import("./assets/Login-CWm06mam.js"), "./Pages/Auth/Register.vue": () => import("./assets/Register-B4pUEFUM.js"), "./Pages/Auth/ResetPassword.vue": () => import("./assets/ResetPassword-CcBdQgyd.js"), "./Pages/Auth/VerifyEmail.vue": () => import("./assets/VerifyEmail-C7XCA-UH.js"), "./Pages/Bookmarks/CreateBookmarks.vue": () => import("./assets/CreateBookmarks-DVJTJcy3.js"), "./Pages/Bookmarks/EditBookmarks.vue": () => import("./assets/EditBookmarks-DZrKHk0d.js"), "./Pages/Bookmarks/IndexBookmarks.vue": () => import("./assets/IndexBookmarks-BH0g04d3.js"), "./Pages/Bookmarks/ShowBookmarks.vue": () => import("./assets/ShowBookmarks-B_Ty2lxF.js"), "./Pages/Bookmarks/SidebarLayoutBookmarks.vue": () => import("./assets/SidebarLayoutBookmarks-B16ebHBN.js"), "./Pages/Category/TypescriptTutorial.vue": () => import("./assets/TypescriptTutorial-BIFkOjAm.js"), "./Pages/Dashboard.vue": () => import("./assets/Dashboard-DcObxRRZ.js"), "./Pages/Equipments/Create/Screen.vue": () => import("./assets/Screen-D1PJcqvP.js"), "./Pages/Equipments/CreateEquipment.vue": () => import("./assets/CreateEquipment-CxmoL0yv.js"), "./Pages/Equipments/Edit/Screen.vue": () => import("./assets/Screen-Ca5kb9UJ.js"), "./Pages/Equipments/EditEquipment.vue": () => import("./assets/EditEquipment-D2FCZljd.js"), "./Pages/Equipments/Index/Screen.vue": () => import("./assets/Screen-Cuce7w9O.js"), "./Pages/Equipments/IndexEquipment.vue": () => import("./assets/IndexEquipment-BqyUdMbS.js"), "./Pages/Equipments/ShowEquipment.vue": () => import("./assets/ShowEquipment-Di6pVRrk.js"), "./Pages/Excalidraw.vue": () => import("./assets/Excalidraw-COkoWgJA.js"), "./Pages/FBVersions/Versions/Create/Screen.vue": () => import("./assets/Screen-B1aKMe3o.js"), "./Pages/FBVersions/Versions/CreateVersion.vue": () => import("./assets/CreateVersion-CypGIztQ.js"), "./Pages/FBVersions/Versions/Edit/Screen.vue": () => import("./assets/Screen-B7-Opera.js"), "./Pages/FBVersions/Versions/EditVersion.vue": () => import("./assets/EditVersion-DOZjXRPN.js"), "./Pages/FBVersions/Versions/Index/Screen.vue": () => import("./assets/Screen-DF-Z5rTm.js"), "./Pages/FBVersions/Versions/IndexVersion.vue": () => import("./assets/IndexVersion-A0RWc5qc.js"), "./Pages/FBVersions/Versions/Show/Screen.vue": () => import("./assets/Screen-p6Xr2R5v.js"), "./Pages/FBVersions/Versions/ShowVersion.vue": () => import("./assets/ShowVersion-B3X-W3Jf.js"), "./Pages/FBVersions/_components/VersionList.vue": () => import("./assets/VersionList-nzCJkvRK.js"), "./Pages/FBVersions/_layouts/LayoutFBVersions.vue": () => import("./assets/LayoutFBVersions-C9YQcVkT.js"), "./Pages/FBVersions/_layouts/SidebarLayoutVersion.vue": () => import("./assets/SidebarLayoutVersion-DXZV6XKO.js"), "./Pages/Index/Factory.vue": () => import("./assets/Factory-2ZHSsfDx.js"), "./Pages/Index/Index.vue": () => import("./assets/Index-BPBSSKKK.js"), "./Pages/Lessons/Create/Screen.vue": () => import("./assets/Screen-BHpRgc6f.js"), "./Pages/Lessons/CreateLesson.vue": () => import("./assets/CreateLesson-DznJMyr9.js"), "./Pages/Lessons/Edit/Screen.vue": () => import("./assets/Screen-C1fuSFiJ.js"), "./Pages/Lessons/EditLesson.vue": () => import("./assets/EditLesson-BvkF_0LS.js"), "./Pages/Lessons/Index/Screen.vue": () => import("./assets/Screen-A0T4iGRk.js"), "./Pages/Lessons/IndexLesson.vue": () => import("./assets/IndexLesson-CiC9hvQY.js"), "./Pages/Lessons/Show/Screen.vue": () => import("./assets/Screen-mCCOGiqB.js"), "./Pages/Lessons/ShowLesson.vue": () => import("./assets/ShowLesson-BkYbjaDK.js"), "./Pages/Lessons/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-DfZzYfmn.js"), "./Pages/Lessons/_layouts/SidebarLayoutLesson.vue": () => import("./assets/SidebarLayoutLesson-jj_1q1DG.js"), "./Pages/Media/Index.vue": () => import("./assets/Index-D7zwUoij.js"), "./Pages/Profile/Edit.vue": () => import("./assets/Edit-0kVD1Nk8.js"), "./Pages/Profile/Partials/DeleteUserForm.vue": () => import("./assets/DeleteUserForm-DVCHwD4r.js"), "./Pages/Profile/Partials/UpdatePasswordForm.vue": () => import("./assets/UpdatePasswordForm-DUxQgeJZ.js"), "./Pages/Profile/Partials/UpdateProfileInformationForm.vue": () => import("./assets/UpdateProfileInformationForm--eQ_BEVm.js"), "./Pages/Projects/Customers/Create/Screen.vue": () => import("./assets/Screen-C-SZSGJW.js"), "./Pages/Projects/Customers/CreateCustomer.vue": () => import("./assets/CreateCustomer-g2IIVNbI.js"), "./Pages/Projects/Customers/Edit/Screen.vue": () => import("./assets/Screen-1rnCPCA3.js"), "./Pages/Projects/Customers/EditCustomer.vue": () => import("./assets/EditCustomer-DkN6YEzm.js"), "./Pages/Projects/Customers/Index/Screen.vue": () => import("./assets/Screen-lKIRc-Lq.js"), "./Pages/Projects/Customers/IndexCustomer.vue": () => import("./assets/IndexCustomer-DmCLcWGR.js"), "./Pages/Projects/Customers/Show/Screen.vue": () => import("./assets/Screen-CKUyiJ5u.js"), "./Pages/Projects/Customers/ShowCustomer.vue": () => import("./assets/ShowCustomer-Bj6G47SX.js"), "./Pages/Projects/Index/Screen.vue": () => import("./assets/Screen-B6t5PWcV.js"), "./Pages/Projects/Project/Create/Screen.vue": () => import("./assets/Screen-Dvuemb7K.js"), "./Pages/Projects/Project/CreateProject.vue": () => import("./assets/CreateProject-CikUDj7Y.js"), "./Pages/Projects/Project/Edit/Screen.vue": () => import("./assets/Screen-zybByy8c.js"), "./Pages/Projects/Project/EditProject.vue": () => import("./assets/EditProject-DSNi1xHJ.js"), "./Pages/Projects/Project/Index/Screen.vue": () => import("./assets/Screen-C5ierOhU.js"), "./Pages/Projects/Project/IndexProject.vue": () => import("./assets/IndexProject-B5iJ4J14.js"), "./Pages/Projects/Project/Show/Screen.vue": () => import("./assets/Screen-zh9Qj1HZ.js"), "./Pages/Projects/Project/ShowProject.vue": () => import("./assets/ShowProject-DLWRBjvw.js"), "./Pages/Projects/Services/Create/Screen.vue": () => import("./assets/Screen-CZpNBDDn.js"), "./Pages/Projects/Services/CreateService.vue": () => import("./assets/CreateService-DVVkBOHf.js"), "./Pages/Projects/Services/Edit/Screen.vue": () => import("./assets/Screen-zkayUJT1.js"), "./Pages/Projects/Services/EditService.vue": () => import("./assets/EditService-74OuDAQI.js"), "./Pages/Projects/Services/Index/Screen.vue": () => import("./assets/Screen-BT4SHy7Y.js"), "./Pages/Projects/Services/Index/ServiceItem.vue": () => import("./assets/ServiceItem-Ihxuygsp.js"), "./Pages/Projects/Services/IndexService.vue": () => import("./assets/IndexService-DoI91aqv.js"), "./Pages/Projects/Services/Show/Screen.vue": () => import("./assets/Screen-CkiAq9Qd.js"), "./Pages/Projects/Services/ShowService.vue": () => import("./assets/ShowService-CFa_KzHu.js"), "./Pages/Projects/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-LlIdInKJ.js"), "./Pages/Projects/_layouts/LayoutProjects.vue": () => import("./assets/LayoutProjects-C54SUwEv.js"), "./Pages/Projects/_layouts/SidebarLayoutProject.vue": () => import("./assets/SidebarLayoutProject-BcM3cXoB.js"), "./Pages/Rendition/LanguagePacks/Create/Screen.vue": () => import("./assets/Screen-D1VpNqa4.js"), "./Pages/Rendition/LanguagePacks/CreateLanguagePacks.vue": () => import("./assets/CreateLanguagePacks-BAgiGG5f.js"), "./Pages/Rendition/LanguagePacks/Edit/Screen.vue": () => import("./assets/Screen-DWy3GIJo.js"), "./Pages/Rendition/LanguagePacks/EditLanguagePacks.vue": () => import("./assets/EditLanguagePacks-CPHcoHaY.js"), "./Pages/Rendition/LanguagePacks/Index/PacksTable.vue": () => import("./assets/PacksTable-bEZMX89U.js"), "./Pages/Rendition/LanguagePacks/Index/Screen.vue": () => import("./assets/Screen-BE8gahWk.js"), "./Pages/Rendition/LanguagePacks/IndexLanguagePacks.vue": () => import("./assets/IndexLanguagePacks-D8A-V6bI.js"), "./Pages/Rendition/LanguagePacks/ShowLanguagePacks.vue": () => import("./assets/ShowLanguagePacks-D7zRo3XZ.js"), "./Pages/Rendition/LanguagePacks/Words.vue": () => import("./assets/Words-059BKp-B.js"), "./Pages/Rendition/LanguagePacks/Words/Screen.vue": () => import("./assets/Screen-DXzPtFXl.js"), "./Pages/Rendition/Words/Create/Screen.vue": () => import("./assets/Screen-CLKTaeXz.js"), "./Pages/Rendition/Words/CreateWord.vue": () => import("./assets/CreateWord-BqmkbIwS.js"), "./Pages/Rendition/Words/Edit/Screen.vue": () => import("./assets/Screen-BlUbMlMy.js"), "./Pages/Rendition/Words/EditWord.vue": () => import("./assets/EditWord-DuBlvZj9.js"), "./Pages/Rendition/Words/Index/Screen.vue": () => import("./assets/Screen-DnbsER8W.js"), "./Pages/Rendition/Words/IndexWord.vue": () => import("./assets/IndexWord-CGba-BcL.js"), "./Pages/Rendition/Words/Show/Screen.vue": () => import("./assets/Screen-Cw6u8Ga2.js"), "./Pages/Rendition/Words/ShowWord.vue": () => import("./assets/ShowWord-Uc5fpGuI.js"), "./Pages/Rendition/_components/MultipleChoice.vue": () => import("./assets/MultipleChoice-B9iPBUYP.js"), "./Pages/Rendition/_components/TranslateWord.vue": () => import("./assets/TranslateWord-BZUIwaCp.js"), "./Pages/Rendition/_components/WordCompletion.vue": () => import("./assets/WordCompletion-D6EQHJ8m.js"), "./Pages/Rendition/_components/WordsTable.vue": () => import("./assets/WordsTable-BqU-bMcA.js"), "./Pages/Rendition/_layouts/LayoutRendition.vue": () => import("./assets/LayoutRendition-BRzErygV.js"), "./Pages/Rendition/_layouts/SidebarPackGame.vue": () => import("./assets/SidebarPackGame-Dv4IIZA0.js"), "./Pages/Rendition/_layouts/SidebarRendition.vue": () => import("./assets/SidebarRendition-CXz13BDA.js"), "./Pages/Seo/Create.vue": () => import("./assets/Create-BRdXUaxN.js"), "./Pages/Seo/Edit.vue": () => import("./assets/Edit-DTfkQryQ.js"), "./Pages/Seo/Index.vue": () => import("./assets/Index-DYcxatp1.js"), "./Pages/SocialMedia/Index.vue": () => import("./assets/Index-CbGmwi4q.js"), "./Pages/SoftwareProducts/Create.vue": () => import("./assets/Create-B4Oi8qLw.js"), "./Pages/SoftwareProducts/Edit.vue": () => import("./assets/Edit-DJ-sG-Av.js"), "./Pages/SoftwareProducts/Index.vue": () => import("./assets/Index-CifLqXBt.js"), "./Pages/SoftwareProducts/Show.vue": () => import("./assets/Show-C4u6lUfx.js"), "./Pages/SoftwareProducts/component/Box.vue": () => import("./assets/Box-CvUfE-UW.js"), "./Pages/SoftwareProducts/component/ConfirmModal.vue": () => import("./assets/ConfirmModal-8bTg5PxV.js"), "./Pages/SoftwareProducts/component/SPAddress.vue": () => import("./assets/SPAddress-C4B-URBw.js"), "./Pages/SoftwareProducts/component/SPPrice.vue": () => import("./assets/SPPrice-DDe_ZJN3.js"), "./Pages/SoftwareProducts/component/SPSpaces.vue": () => import("./assets/SPSpaces-C-9fwGUn.js"), "./Pages/ThemeManagement.vue": () => import("./assets/ThemeManagement-D-YHl4nd.js"), "./Pages/Welcome.vue": () => import("./assets/Welcome-D6Jmvwhf.js"), "./Pages/WritesCategories/Categories/Create/CategoriesCreateFrom.vue": () => import("./assets/CategoriesCreateFrom-kQrBvJAp.js"), "./Pages/WritesCategories/Categories/Create/Screen.vue": () => import("./assets/Screen-DqU9EWtn.js"), "./Pages/WritesCategories/Categories/CreateCategory.vue": () => import("./assets/CreateCategory-CCS4blEU.js"), "./Pages/WritesCategories/Categories/Edit/CategoriesEditFrom.vue": () => import("./assets/CategoriesEditFrom-DKzwSiRi.js"), "./Pages/WritesCategories/Categories/Edit/Screen.vue": () => import("./assets/Screen-CnkxkABc.js"), "./Pages/WritesCategories/Categories/EditCategory.vue": () => import("./assets/EditCategory-CHwaS-F0.js"), "./Pages/WritesCategories/Categories/Index/Screen.vue": () => import("./assets/Screen-BuKk7A2L.js"), "./Pages/WritesCategories/Categories/IndexCategory.vue": () => import("./assets/IndexCategory-D8jQ8ZCg.js"), "./Pages/WritesCategories/Categories/Show/Screen.vue": () => import("./assets/Screen-B2GrieGw.js"), "./Pages/WritesCategories/Categories/ShowCategory.vue": () => import("./assets/ShowCategory-rmbKvgSK.js"), "./Pages/WritesCategories/Categories/WriteByCategory.vue": () => import("./assets/WriteByCategory-CU7JmYq0.js"), "./Pages/WritesCategories/Categories/WriteByCategory/Screen.vue": () => import("./assets/Screen-DacBQccN.js"), "./Pages/WritesCategories/Writes/Create/FormField.vue": () => import("./assets/FormField-B5B8BMWT.js"), "./Pages/WritesCategories/Writes/Create/Screen.vue": () => import("./assets/Screen-iVhxR6Ca.js"), "./Pages/WritesCategories/Writes/Create/WriteCreateForm.vue": () => import("./assets/WriteCreateForm-BZ2VoCCz.js"), "./Pages/WritesCategories/Writes/CreateWrite.vue": () => import("./assets/CreateWrite-C6BpF4zP.js"), "./Pages/WritesCategories/Writes/Edit/Screen.vue": () => import("./assets/Screen-dPy19pcZ.js"), "./Pages/WritesCategories/Writes/Edit/WriteUpdateForm.vue": () => import("./assets/WriteUpdateForm-Cpua6oKE.js"), "./Pages/WritesCategories/Writes/EditWrite.vue": () => import("./assets/EditWrite-DHxwKL7i.js"), "./Pages/WritesCategories/Writes/Index/Screen.vue": () => import("./assets/Screen-DUfwpacl.js"), "./Pages/WritesCategories/Writes/IndexWrite.vue": () => import("./assets/IndexWrite-BAfzf8d0.js"), "./Pages/WritesCategories/Writes/Show/Screen.vue": () => import("./assets/Screen-dvrVPQPw.js"), "./Pages/WritesCategories/Writes/ShowWrite.vue": () => import("./assets/ShowWrite-4hvAfBCk.js"), "./Pages/WritesCategories/_components/RichTextEditor.vue": () => import("./assets/RichTextEditor-OP0dOd6Z.js"), "./Pages/WritesCategories/_composables/CategoryTree.vue": () => import("./assets/CategoryTree-Bt1TVaOS.js"), "./Pages/WritesCategories/_composables/WriteList.vue": () => import("./assets/WriteList-CC4IW1P8.js"), "./Pages/WritesCategories/_layouts/LayoutWritesCategories.vue": () => import("./assets/LayoutWritesCategories-BZIx0N8k.js"), "./Pages/WritesCategories/_layouts/SidebarLayoutCategory.vue": () => import("./assets/SidebarLayoutCategory-txDEUcg-.js"), "./Pages/WritesCategories/_layouts/SidebarLayoutWrite.vue": () => import("./assets/SidebarLayoutWrite-Di0mqd82.js") }))).default;
+      const page2 = (await resolvePageComponent(`./Pages/${name}.vue`, /* @__PURE__ */ Object.assign({ "./Pages/Auth/ConfirmPassword.vue": () => import("./assets/ConfirmPassword-Diprr4J0.js"), "./Pages/Auth/ForgotPassword.vue": () => import("./assets/ForgotPassword-SBqO7rhx.js"), "./Pages/Auth/Login.vue": () => import("./assets/Login-CWm06mam.js"), "./Pages/Auth/Register.vue": () => import("./assets/Register-B4pUEFUM.js"), "./Pages/Auth/ResetPassword.vue": () => import("./assets/ResetPassword-CcBdQgyd.js"), "./Pages/Auth/VerifyEmail.vue": () => import("./assets/VerifyEmail-C7XCA-UH.js"), "./Pages/Bookmarks/CreateBookmarks.vue": () => import("./assets/CreateBookmarks-DVJTJcy3.js"), "./Pages/Bookmarks/EditBookmarks.vue": () => import("./assets/EditBookmarks-DZrKHk0d.js"), "./Pages/Bookmarks/IndexBookmarks.vue": () => import("./assets/IndexBookmarks-BH0g04d3.js"), "./Pages/Bookmarks/ShowBookmarks.vue": () => import("./assets/ShowBookmarks-B_Ty2lxF.js"), "./Pages/Bookmarks/SidebarLayoutBookmarks.vue": () => import("./assets/SidebarLayoutBookmarks-B16ebHBN.js"), "./Pages/Category/TypescriptTutorial.vue": () => import("./assets/TypescriptTutorial-BIFkOjAm.js"), "./Pages/Dashboard.vue": () => import("./assets/Dashboard-DcObxRRZ.js"), "./Pages/Equipments/Create/Screen.vue": () => import("./assets/Screen-D1PJcqvP.js"), "./Pages/Equipments/CreateEquipment.vue": () => import("./assets/CreateEquipment-CxmoL0yv.js"), "./Pages/Equipments/Edit/Screen.vue": () => import("./assets/Screen-Ca5kb9UJ.js"), "./Pages/Equipments/EditEquipment.vue": () => import("./assets/EditEquipment-D2FCZljd.js"), "./Pages/Equipments/Index/Screen.vue": () => import("./assets/Screen-Cuce7w9O.js"), "./Pages/Equipments/IndexEquipment.vue": () => import("./assets/IndexEquipment-BqyUdMbS.js"), "./Pages/Equipments/ShowEquipment.vue": () => import("./assets/ShowEquipment-Di6pVRrk.js"), "./Pages/Excalidraw.vue": () => import("./assets/Excalidraw-COkoWgJA.js"), "./Pages/FBVersions/Versions/Create/Screen.vue": () => import("./assets/Screen-B1aKMe3o.js"), "./Pages/FBVersions/Versions/CreateVersion.vue": () => import("./assets/CreateVersion-C-T7wh8J.js"), "./Pages/FBVersions/Versions/Edit/Screen.vue": () => import("./assets/Screen-B7-Opera.js"), "./Pages/FBVersions/Versions/EditVersion.vue": () => import("./assets/EditVersion-CCO77uPv.js"), "./Pages/FBVersions/Versions/Index/Screen.vue": () => import("./assets/Screen-DF-Z5rTm.js"), "./Pages/FBVersions/Versions/IndexVersion.vue": () => import("./assets/IndexVersion-C-gZhaQQ.js"), "./Pages/FBVersions/Versions/Show/Screen.vue": () => import("./assets/Screen-p6Xr2R5v.js"), "./Pages/FBVersions/Versions/ShowVersion.vue": () => import("./assets/ShowVersion-BlU8oLeY.js"), "./Pages/FBVersions/_components/VersionList.vue": () => import("./assets/VersionList-nzCJkvRK.js"), "./Pages/FBVersions/_layouts/LayoutFBVersions.vue": () => import("./assets/LayoutFBVersions-Diap9lYs.js"), "./Pages/FBVersions/_layouts/SidebarLayoutVersion.vue": () => import("./assets/SidebarLayoutVersion-B_loPd4S.js"), "./Pages/Index/Factory.vue": () => import("./assets/Factory-2ZHSsfDx.js"), "./Pages/Index/Index.vue": () => import("./assets/Index-BPBSSKKK.js"), "./Pages/Lessons/Create/Screen.vue": () => import("./assets/Screen-BHpRgc6f.js"), "./Pages/Lessons/CreateLesson.vue": () => import("./assets/CreateLesson-DznJMyr9.js"), "./Pages/Lessons/Edit/Screen.vue": () => import("./assets/Screen-C1fuSFiJ.js"), "./Pages/Lessons/EditLesson.vue": () => import("./assets/EditLesson-BvkF_0LS.js"), "./Pages/Lessons/Index/Screen.vue": () => import("./assets/Screen-A0T4iGRk.js"), "./Pages/Lessons/IndexLesson.vue": () => import("./assets/IndexLesson-CiC9hvQY.js"), "./Pages/Lessons/Show/Screen.vue": () => import("./assets/Screen-mCCOGiqB.js"), "./Pages/Lessons/ShowLesson.vue": () => import("./assets/ShowLesson-BkYbjaDK.js"), "./Pages/Lessons/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-DfZzYfmn.js"), "./Pages/Lessons/_layouts/SidebarLayoutLesson.vue": () => import("./assets/SidebarLayoutLesson-jj_1q1DG.js"), "./Pages/Media/Index.vue": () => import("./assets/Index-D7zwUoij.js"), "./Pages/Profile/Edit.vue": () => import("./assets/Edit-0kVD1Nk8.js"), "./Pages/Profile/Partials/DeleteUserForm.vue": () => import("./assets/DeleteUserForm-DVCHwD4r.js"), "./Pages/Profile/Partials/UpdatePasswordForm.vue": () => import("./assets/UpdatePasswordForm-DUxQgeJZ.js"), "./Pages/Profile/Partials/UpdateProfileInformationForm.vue": () => import("./assets/UpdateProfileInformationForm--eQ_BEVm.js"), "./Pages/Projects/Customers/Create/Screen.vue": () => import("./assets/Screen-C-SZSGJW.js"), "./Pages/Projects/Customers/CreateCustomer.vue": () => import("./assets/CreateCustomer-g2IIVNbI.js"), "./Pages/Projects/Customers/Edit/Screen.vue": () => import("./assets/Screen-1rnCPCA3.js"), "./Pages/Projects/Customers/EditCustomer.vue": () => import("./assets/EditCustomer-DkN6YEzm.js"), "./Pages/Projects/Customers/Index/Screen.vue": () => import("./assets/Screen-lKIRc-Lq.js"), "./Pages/Projects/Customers/IndexCustomer.vue": () => import("./assets/IndexCustomer-DmCLcWGR.js"), "./Pages/Projects/Customers/Show/Screen.vue": () => import("./assets/Screen-CKUyiJ5u.js"), "./Pages/Projects/Customers/ShowCustomer.vue": () => import("./assets/ShowCustomer-Bj6G47SX.js"), "./Pages/Projects/Index/Screen.vue": () => import("./assets/Screen-B6t5PWcV.js"), "./Pages/Projects/Project/Create/Screen.vue": () => import("./assets/Screen-Dvuemb7K.js"), "./Pages/Projects/Project/CreateProject.vue": () => import("./assets/CreateProject-CikUDj7Y.js"), "./Pages/Projects/Project/Edit/Screen.vue": () => import("./assets/Screen-zybByy8c.js"), "./Pages/Projects/Project/EditProject.vue": () => import("./assets/EditProject-DSNi1xHJ.js"), "./Pages/Projects/Project/Index/Screen.vue": () => import("./assets/Screen-C5ierOhU.js"), "./Pages/Projects/Project/IndexProject.vue": () => import("./assets/IndexProject-B5iJ4J14.js"), "./Pages/Projects/Project/Show/Screen.vue": () => import("./assets/Screen-zh9Qj1HZ.js"), "./Pages/Projects/Project/ShowProject.vue": () => import("./assets/ShowProject-DLWRBjvw.js"), "./Pages/Projects/Services/Create/Screen.vue": () => import("./assets/Screen-CZpNBDDn.js"), "./Pages/Projects/Services/CreateService.vue": () => import("./assets/CreateService-DVVkBOHf.js"), "./Pages/Projects/Services/Edit/Screen.vue": () => import("./assets/Screen-zkayUJT1.js"), "./Pages/Projects/Services/EditService.vue": () => import("./assets/EditService-74OuDAQI.js"), "./Pages/Projects/Services/Index/Screen.vue": () => import("./assets/Screen-BT4SHy7Y.js"), "./Pages/Projects/Services/Index/ServiceItem.vue": () => import("./assets/ServiceItem-Ihxuygsp.js"), "./Pages/Projects/Services/IndexService.vue": () => import("./assets/IndexService-DoI91aqv.js"), "./Pages/Projects/Services/Show/Screen.vue": () => import("./assets/Screen-CkiAq9Qd.js"), "./Pages/Projects/Services/ShowService.vue": () => import("./assets/ShowService-CFa_KzHu.js"), "./Pages/Projects/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-LlIdInKJ.js"), "./Pages/Projects/_layouts/LayoutProjects.vue": () => import("./assets/LayoutProjects-C54SUwEv.js"), "./Pages/Projects/_layouts/SidebarLayoutProject.vue": () => import("./assets/SidebarLayoutProject-BcM3cXoB.js"), "./Pages/Rendition/LanguagePacks/Create/Screen.vue": () => import("./assets/Screen-D1VpNqa4.js"), "./Pages/Rendition/LanguagePacks/CreateLanguagePacks.vue": () => import("./assets/CreateLanguagePacks-BeZivqit.js"), "./Pages/Rendition/LanguagePacks/Edit/Screen.vue": () => import("./assets/Screen-DWy3GIJo.js"), "./Pages/Rendition/LanguagePacks/EditLanguagePacks.vue": () => import("./assets/EditLanguagePacks-BLBlhP4a.js"), "./Pages/Rendition/LanguagePacks/Index/PacksTable.vue": () => import("./assets/PacksTable-bEZMX89U.js"), "./Pages/Rendition/LanguagePacks/Index/Screen.vue": () => import("./assets/Screen-BE8gahWk.js"), "./Pages/Rendition/LanguagePacks/IndexLanguagePacks.vue": () => import("./assets/IndexLanguagePacks-DXVTOgFy.js"), "./Pages/Rendition/LanguagePacks/ShowLanguagePacks.vue": () => import("./assets/ShowLanguagePacks-C5E_Q8eQ.js"), "./Pages/Rendition/LanguagePacks/Words.vue": () => import("./assets/Words-Csj64PG4.js"), "./Pages/Rendition/LanguagePacks/Words/Screen.vue": () => import("./assets/Screen-DXzPtFXl.js"), "./Pages/Rendition/Words/Create/Screen.vue": () => import("./assets/Screen-CLKTaeXz.js"), "./Pages/Rendition/Words/CreateWord.vue": () => import("./assets/CreateWord-DdrTXo-t.js"), "./Pages/Rendition/Words/Edit/Screen.vue": () => import("./assets/Screen-BlUbMlMy.js"), "./Pages/Rendition/Words/EditWord.vue": () => import("./assets/EditWord-BO6nzK8G.js"), "./Pages/Rendition/Words/Index/Screen.vue": () => import("./assets/Screen-DnbsER8W.js"), "./Pages/Rendition/Words/IndexWord.vue": () => import("./assets/IndexWord-DxaA5rKx.js"), "./Pages/Rendition/Words/Show/Screen.vue": () => import("./assets/Screen-Cw6u8Ga2.js"), "./Pages/Rendition/Words/ShowWord.vue": () => import("./assets/ShowWord-CORi6bF8.js"), "./Pages/Rendition/_components/MultipleChoice.vue": () => import("./assets/MultipleChoice-B9iPBUYP.js"), "./Pages/Rendition/_components/TranslateWord.vue": () => import("./assets/TranslateWord-BZUIwaCp.js"), "./Pages/Rendition/_components/WordCompletion.vue": () => import("./assets/WordCompletion-D6EQHJ8m.js"), "./Pages/Rendition/_components/WordsTable.vue": () => import("./assets/WordsTable-BqU-bMcA.js"), "./Pages/Rendition/_layouts/LayoutRendition.vue": () => import("./assets/LayoutRendition-pM9_BIpB.js"), "./Pages/Rendition/_layouts/SidebarPackGame.vue": () => import("./assets/SidebarPackGame-OgkRrWgl.js"), "./Pages/Rendition/_layouts/SidebarRendition.vue": () => import("./assets/SidebarRendition-BVqsl3XP.js"), "./Pages/Seo/Create.vue": () => import("./assets/Create-BRdXUaxN.js"), "./Pages/Seo/Edit.vue": () => import("./assets/Edit-DTfkQryQ.js"), "./Pages/Seo/Index.vue": () => import("./assets/Index-DYcxatp1.js"), "./Pages/SocialMedia/Index.vue": () => import("./assets/Index-CbGmwi4q.js"), "./Pages/SoftwareProducts/Create.vue": () => import("./assets/Create-B4Oi8qLw.js"), "./Pages/SoftwareProducts/Edit.vue": () => import("./assets/Edit-DJ-sG-Av.js"), "./Pages/SoftwareProducts/Index.vue": () => import("./assets/Index-CifLqXBt.js"), "./Pages/SoftwareProducts/Show.vue": () => import("./assets/Show-C4u6lUfx.js"), "./Pages/SoftwareProducts/component/Box.vue": () => import("./assets/Box-CvUfE-UW.js"), "./Pages/SoftwareProducts/component/ConfirmModal.vue": () => import("./assets/ConfirmModal-8bTg5PxV.js"), "./Pages/SoftwareProducts/component/SPAddress.vue": () => import("./assets/SPAddress-C4B-URBw.js"), "./Pages/SoftwareProducts/component/SPPrice.vue": () => import("./assets/SPPrice-DDe_ZJN3.js"), "./Pages/SoftwareProducts/component/SPSpaces.vue": () => import("./assets/SPSpaces-C-9fwGUn.js"), "./Pages/ThemeManagement.vue": () => import("./assets/ThemeManagement-D-YHl4nd.js"), "./Pages/Welcome.vue": () => import("./assets/Welcome-D6Jmvwhf.js"), "./Pages/WritesCategories/Categories/Create/CategoriesCreateFrom.vue": () => import("./assets/CategoriesCreateFrom-kQrBvJAp.js"), "./Pages/WritesCategories/Categories/Create/Screen.vue": () => import("./assets/Screen-DqU9EWtn.js"), "./Pages/WritesCategories/Categories/CreateCategory.vue": () => import("./assets/CreateCategory-C1OYoz6F.js"), "./Pages/WritesCategories/Categories/Edit/CategoriesEditFrom.vue": () => import("./assets/CategoriesEditFrom-DKzwSiRi.js"), "./Pages/WritesCategories/Categories/Edit/Screen.vue": () => import("./assets/Screen-CnkxkABc.js"), "./Pages/WritesCategories/Categories/EditCategory.vue": () => import("./assets/EditCategory-DfLKgXqU.js"), "./Pages/WritesCategories/Categories/Index/Screen.vue": () => import("./assets/Screen-BuKk7A2L.js"), "./Pages/WritesCategories/Categories/IndexCategory.vue": () => import("./assets/IndexCategory-AvD5CCCy.js"), "./Pages/WritesCategories/Categories/Show/Screen.vue": () => import("./assets/Screen-yf9mUsYo.js"), "./Pages/WritesCategories/Categories/ShowCategory.vue": () => import("./assets/ShowCategory-dbLCd0DL.js"), "./Pages/WritesCategories/Categories/WriteByCategory.vue": () => import("./assets/WriteByCategory-BIt7CVN5.js"), "./Pages/WritesCategories/Categories/WriteByCategory/Screen.vue": () => import("./assets/Screen-B8_r_bQ8.js"), "./Pages/WritesCategories/Writes/Create/FormField.vue": () => import("./assets/FormField-B5B8BMWT.js"), "./Pages/WritesCategories/Writes/Create/Screen.vue": () => import("./assets/Screen-rGWcLgPG.js"), "./Pages/WritesCategories/Writes/Create/WriteCreateForm.vue": () => import("./assets/WriteCreateForm-CfsQH6ij.js"), "./Pages/WritesCategories/Writes/CreateWrite.vue": () => import("./assets/CreateWrite-D0iK_3co.js"), "./Pages/WritesCategories/Writes/Edit/Screen.vue": () => import("./assets/Screen-CGMGOGSa.js"), "./Pages/WritesCategories/Writes/Edit/WriteUpdateForm.vue": () => import("./assets/WriteUpdateForm-BIM8B_gd.js"), "./Pages/WritesCategories/Writes/EditWrite.vue": () => import("./assets/EditWrite-DprJ5NcJ.js"), "./Pages/WritesCategories/Writes/Index/Screen.vue": () => import("./assets/Screen-DUfwpacl.js"), "./Pages/WritesCategories/Writes/IndexWrite.vue": () => import("./assets/IndexWrite-XMDXqw84.js"), "./Pages/WritesCategories/Writes/Show/Screen.vue": () => import("./assets/Screen-C03KQVMj.js"), "./Pages/WritesCategories/Writes/ShowWrite.vue": () => import("./assets/ShowWrite-RO9FslLX.js"), "./Pages/WritesCategories/_components/RichTextEditor.vue": () => import("./assets/RichTextEditor-DfD55EZp.js"), "./Pages/WritesCategories/_composables/CategoryTree.vue": () => import("./assets/CategoryTree-Bt1TVaOS.js"), "./Pages/WritesCategories/_composables/WriteList.vue": () => import("./assets/WriteList-C2BOxrBv.js"), "./Pages/WritesCategories/_layouts/LayoutWritesCategories.vue": () => import("./assets/LayoutWritesCategories-875xcYp5.js"), "./Pages/WritesCategories/_layouts/SidebarLayoutCategory.vue": () => import("./assets/SidebarLayoutCategory-Bz4nuT89.js"), "./Pages/WritesCategories/_layouts/SidebarLayoutWrite.vue": () => import("./assets/SidebarLayoutWrite-CNoj0B7g.js") }))).default;
       page2.layout = page2.layout || _sfc_main;
       return page2;
     },
