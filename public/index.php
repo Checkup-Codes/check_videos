@@ -17,7 +17,7 @@ $host = $_SERVER['HTTP_HOST'] ?? '';
 $host = preg_replace('/^www\./', '', $host);
 
 // Define custom .env file path based on domain
-$envFile = __DIR__ . '/../config/domains/.env.' . $host;
+$envFile = __DIR__ . '/../.env.' . $host;
 
 // Load domain-specific .env file if exists, otherwise fallback to default .env
 if (file_exists($envFile)) {
