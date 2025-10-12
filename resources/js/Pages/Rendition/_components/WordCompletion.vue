@@ -54,7 +54,7 @@
             <div class="flex items-center gap-2">
               <div
                 class="flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold"
-                :class="response.correct ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'"
+                :class="response.correct ? 'bg-success/20 text-success' : 'bg-error/20 text-error'"
               >
                 {{ response.correct ? '✓' : '✗' }}
               </div>
@@ -73,7 +73,7 @@
             </div>
             <span
               class="inline-flex items-center rounded px-2 py-1 text-xs font-medium"
-              :class="response.correct ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+              :class="response.correct ? 'bg-success/20 text-success' : 'bg-error/20 text-error'"
             >
               {{ response.correct ? 'Doğru' : 'Yanlış' }}
             </span>
@@ -116,8 +116,8 @@
       class="relative w-full max-w-2xl rounded-lg border border-base-300 bg-base-100 p-6 transition-colors duration-500"
       :class="{
         'bg-base-100': !gameState.showAnswer,
-        'bg-green-50': gameState.showAnswer && gameState.isCorrect,
-        'bg-red-50': gameState.showAnswer && !gameState.isCorrect,
+        'bg-success/5': gameState.showAnswer && gameState.isCorrect,
+        'bg-error/5': gameState.showAnswer && !gameState.isCorrect,
       }"
     >
       <!-- Progress Bar -->
@@ -172,13 +172,13 @@
               :class="{
                 'border-base-300 bg-base-100': !gameState.selectedLetters[index],
                 'border-base-content bg-base-200': !gameState.selectedLetters[index] && index === getNextEmptyIndex(),
-                'border-green-500 bg-green-50': gameState.showAnswer && gameState.isCorrect,
-                'border-red-500 bg-red-50': gameState.showAnswer && !gameState.isCorrect,
-                'border-blue-500': gameState.hintLetterIndices.includes(index) && !gameState.isHintAnimating,
+                'bg-success/10 border-success text-success': gameState.showAnswer && gameState.isCorrect,
+                'bg-error/10 border-error text-error': gameState.showAnswer && !gameState.isCorrect,
+                'border-info': gameState.hintLetterIndices.includes(index) && !gameState.isHintAnimating,
               }"
             >
               <template v-if="gameState.maskedIndices.includes(index)">
-                <span :class="{ 'text-blue-600': gameState.hintLetterIndices.includes(index) }">
+                <span :class="{ 'text-info': gameState.hintLetterIndices.includes(index) }">
                   {{ gameState.selectedLetters[index] || '' }}
                 </span>
               </template>
@@ -198,7 +198,7 @@
             <div
               v-for="(letter, index) in gameState.currentQuestion.word.split('')"
               :key="index"
-              class="flex h-8 w-8 items-center justify-center rounded border border-green-500 bg-green-50 text-sm font-medium text-green-700"
+              class="bg-success/10 flex h-8 w-8 items-center justify-center rounded border border-success text-sm font-medium text-success"
             >
               {{ letter.toLowerCase() }}
             </div>
@@ -1007,8 +1007,8 @@ onUnmounted(() => {
 }
 
 /* Hint harfleri için özel stil */
-.border-blue-500 {
-  box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+.border-info {
+  box-shadow: 0 0 10px hsl(var(--info) / 0.3);
 }
 
 /* Mobil cihazlar için özel stiller */
