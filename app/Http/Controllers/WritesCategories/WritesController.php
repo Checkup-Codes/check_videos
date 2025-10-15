@@ -234,9 +234,10 @@ class WritesController extends Controller
         try {
             $query = $request->get('q', '');
             $type = $request->get('type', 'articles,categories');
+            $includeAll = (bool) $request->get('include_all', '0');
             $isLoggedIn = Auth::check();
 
-            Log::info('Search request', ['query' => $query, 'type' => $type, 'is_logged_in' => $isLoggedIn]);
+            Log::info('Search request', ['query' => $query, 'type' => $type, 'is_logged_in' => $isLoggedIn, 'include_all' => $includeAll]);
 
             if (strlen($query) < 2) {
                 return response()->json([
@@ -259,9 +260,12 @@ class WritesController extends Controller
                         ->orWhere('tags', 'LIKE', "%{$query}%");
                 });
 
-                // Filter by status based on login status
-                if ($isLoggedIn) {
-                    // Logged in users can see all articles (published, draft, etc.)
+                // Filter by status based on login status and include_all parameter
+                if ($isLoggedIn && $includeAll) {
+                    // Logged in users with include_all can see ALL articles including link_only
+                    $articlesQuery->whereIn('status', ['published', 'draft', 'private', 'link_only']);
+                } elseif ($isLoggedIn) {
+                    // Logged in users can see most articles (published, draft, private) but not link_only
                     $articlesQuery->whereIn('status', ['published', 'draft', 'private']);
                 } else {
                     // Non-logged in users can only see published articles
@@ -289,9 +293,12 @@ class WritesController extends Controller
             if (str_contains($type, 'categories')) {
                 $categoriesQuery = Category::where('name', 'LIKE', "%{$query}%");
 
-                // Filter by status based on login status
-                if ($isLoggedIn) {
-                    // Logged in users can see all categories (public, private, etc.)
+                // Filter by status based on login status and include_all parameter
+                if ($isLoggedIn && $includeAll) {
+                    // Logged in users with include_all can see ALL categories including link_only
+                    $categoriesQuery->whereIn('status', ['public', 'private', 'link_only']);
+                } elseif ($isLoggedIn) {
+                    // Logged in users can see most categories (public, private) but not link_only
                     $categoriesQuery->whereIn('status', ['public', 'private']);
                 } else {
                     // Non-logged in users can only see public categories
@@ -316,7 +323,8 @@ class WritesController extends Controller
             Log::info('Search results', [
                 'articles_count' => count($results['articles']),
                 'categories_count' => count($results['categories']),
-                'is_logged_in' => $isLoggedIn
+                'is_logged_in' => $isLoggedIn,
+                'include_all' => $includeAll
             ]);
 
             return response()->json($results);

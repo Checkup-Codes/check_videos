@@ -731,6 +731,8 @@ const performSearch = () => {
         params: {
           q: searchQuery.value,
           type: 'articles,categories',
+          // Giriş yapmış kullanıcılar için tüm yazıları dahil et
+          include_all: isLoggedIn.value ? '1' : '0',
         },
       });
       console.log('Search response:', response.data);
