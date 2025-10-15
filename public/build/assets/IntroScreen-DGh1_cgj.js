@@ -1,0 +1,1 @@
+import{c as s,a as e,t as c,o}from"./ssr-21H53JUc.js";const n={class:"flex h-screen items-center justify-center"},r={class:"text-center"},a={class:"text-4xl font-bold"},d={__name:"IntroScreen",props:{title:String},setup(t){return(i,_)=>(o(),s("header",n,[e("div",r,[e("h2",a,c(t.title),1)])]))}};export{d as _};
