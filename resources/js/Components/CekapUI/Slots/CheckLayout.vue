@@ -1,6 +1,6 @@
 <template>
-  <div :class="isCollapsed ? infoClass : ''">
-    <slot name="sidebar"></slot>
+  <div :class="isCollapsed ? infoClass : 'h-screen overflow-hidden'">
+    <slot name="sidebar" v-if="isCollapsed"></slot>
     <slot />
   </div>
 </template>

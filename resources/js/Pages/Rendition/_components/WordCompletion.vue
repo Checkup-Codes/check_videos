@@ -168,7 +168,7 @@
             <div
               v-for="(letter, index) in gameState.currentQuestion.word.split('')"
               :key="`${gameState.currentIndex}-${index}`"
-              class="flex h-12 w-12 items-center justify-center rounded border text-xl font-semibold transition-all"
+              class="letter-box flex h-12 w-12 items-center justify-center rounded border text-xl font-semibold transition-all"
               :class="{
                 'border-base-300 bg-base-100': !gameState.selectedLetters[index],
                 'border-base-content bg-base-200': !gameState.selectedLetters[index] && index === getNextEmptyIndex(),
@@ -179,7 +179,7 @@
             >
               <template v-if="gameState.maskedIndices.includes(index)">
                 <span :class="{ 'text-info': gameState.hintLetterIndices.includes(index) }">
-                  {{ gameState.selectedLetters[index] || '' }}
+                  {{ gameState.selectedLetters[index] === ' ' ? '␣' : gameState.selectedLetters[index] || '' }}
                 </span>
               </template>
               <template v-else>
@@ -198,7 +198,7 @@
             <div
               v-for="(letter, index) in gameState.currentQuestion.word.split('')"
               :key="index"
-              class="bg-success/10 flex h-8 w-8 items-center justify-center rounded border border-success text-sm font-medium text-success"
+              class="letter-box bg-success/10 flex h-8 w-8 items-center justify-center rounded border border-success text-sm font-medium text-success"
             >
               {{ letter.toLowerCase() }}
             </div>
@@ -216,7 +216,7 @@
       </div>
 
       <!-- Sanal Klavye -->
-      <div v-if="showVirtualKeyboard" class="mt-4">
+      <div v-if="showVirtualKeyboard" class="virtual-keyboard mt-4">
         <div class="flex flex-col gap-1 rounded border border-base-300 bg-base-200 p-2">
           <!-- Üst Sıra -->
           <div class="flex gap-1">
@@ -258,6 +258,12 @@
               class="flex h-10 flex-1 items-center justify-center rounded bg-base-100 text-sm font-medium text-base-content transition hover:bg-base-300 active:bg-base-content active:text-base-100"
             >
               ←
+            </button>
+            <button
+              @click="selectLetter(' ')"
+              class="flex h-10 flex-1 items-center justify-center rounded bg-base-100 text-sm font-medium text-base-content transition hover:bg-base-300 active:bg-base-content active:text-base-100"
+            >
+              ␣
             </button>
             <button
               @click="handleHint"
@@ -371,7 +377,7 @@ const toggleVirtualKeyboard = () => {
 const handleBackspace = () => {
   const lastFilledIndex = [...gameState.value.selectedLetters].reverse().findIndex((letter, index) => {
     const actualIndex = gameState.value.selectedLetters.length - 1 - index;
-    return letter && !gameState.value.hintLetterIndices.includes(actualIndex);
+    return letter && letter !== '' && !gameState.value.hintLetterIndices.includes(actualIndex);
   });
 
   if (lastFilledIndex !== -1) {
@@ -678,7 +684,12 @@ const selectLetter = (letter) => {
 
   // Eğer boş yer varsa harfi ekle
   if (emptyIndex !== -1) {
-    gameState.value.selectedLetters[emptyIndex] = letter.toLowerCase();
+    // Boşluk karakteri için özel işlem
+    if (letter === ' ') {
+      gameState.value.selectedLetters[emptyIndex] = ' ';
+    } else {
+      gameState.value.selectedLetters[emptyIndex] = letter.toLowerCase();
+    }
     animateLetterSelection(letter);
   }
 };
@@ -793,13 +804,17 @@ const handleKeyPress = (event) => {
     // Boş bir yere harf ekle
     const emptyIndex = gameState.value.selectedLetters.findIndex((letter) => !letter);
     if (emptyIndex !== -1) {
-      gameState.value.selectedLetters[emptyIndex] = key;
+      if (key === ' ') {
+        gameState.value.selectedLetters[emptyIndex] = ' ';
+      } else {
+        gameState.value.selectedLetters[emptyIndex] = key;
+      }
     }
   } else if (event.key === 'Backspace') {
     // Son eklenen harfi sil (eğer hint ile gelmediyse)
     const lastFilledIndex = [...gameState.value.selectedLetters].reverse().findIndex((letter, index) => {
       const actualIndex = gameState.value.selectedLetters.length - 1 - index;
-      return letter && !gameState.value.hintLetterIndices.includes(actualIndex);
+      return letter && letter !== '' && !gameState.value.hintLetterIndices.includes(actualIndex);
     });
 
     if (lastFilledIndex !== -1) {
@@ -827,7 +842,8 @@ const checkAnswer = () => {
 
   for (let i = 0; i < gameState.value.maskedIndices.length; i++) {
     const correctChar = word[gameState.value.maskedIndices[i]];
-    const userChar = gameState.value.selectedLetters[i].toLowerCase();
+    const userChar =
+      gameState.value.selectedLetters[i] === ' ' ? ' ' : gameState.value.selectedLetters[i].toLowerCase();
 
     if (correctChar !== userChar) {
       isCorrect = false;
@@ -1053,5 +1069,34 @@ onUnmounted(() => {
   .flex-col > .flex:last-child > button:last-child {
     border-bottom-right-radius: 0.5rem;
   }
+}
+
+/* Çift tıklama zoom'unu engelle */
+.virtual-keyboard button {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Tüm sanal klavye alanı için zoom engelleme */
+.virtual-keyboard {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Harf kutuları için de zoom engelleme */
+.letter-box {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 </style>

@@ -1,8 +1,8 @@
 <template>
   <FlashMessage :message="flashMessage" />
-  <CheckLayout :isCollapsed="true" :class="currentTheme">
+  <CheckLayout :isCollapsed="!shouldHideSidebarContent" :class="currentTheme">
     <template #sidebar>
-      <KeepAlive :max="5" :include="['SidebarLayoutWrite', 'SidebarLayoutCategory']">
+      <KeepAlive v-if="!shouldHideSidebarContent" :max="5" :include="['SidebarLayoutWrite', 'SidebarLayoutCategory']">
         <component
           :is="sidebarComponent"
           :key="screenName"
@@ -42,7 +42,8 @@ const store = useStore();
 const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
 
 // Get screen name from props
-const { props } = usePage();
+const page = usePage();
+const { props } = page;
 const screenName = props.screen?.name || '';
 
 // Sidebar component mapping
@@ -51,9 +52,68 @@ const sidebarComponents = {
   categories: SidebarLayoutCategory,
 };
 
+// Check if user is logged in
+const isLoggedIn = computed(() => {
+  return !!(props.auth && props.auth.user);
+});
+
+// Check if current write is link-only and user is not logged in
+const shouldHideSidebarContent = computed(() => {
+  // Debug logging
+  console.log('LayoutWritesCategories Debug:', {
+    isLoggedIn: isLoggedIn.value,
+    currentUrl: props.url,
+    currentWrite: props.write,
+    writeStatus: props.write?.status,
+    screenName: screenName,
+  });
+
+  // If user is logged in, always show sidebar content
+  if (isLoggedIn.value) {
+    console.log('User is logged in, showing sidebar');
+    return false;
+  }
+
+  // Check if we're on a write show page and the write is link-only
+  const currentUrl = page.url || props.url || '';
+  const isWriteShowPage =
+    currentUrl.includes('/writes/') && !currentUrl.includes('/writes/create') && !currentUrl.includes('/writes/edit');
+
+  // Also check for categories with link-only writes
+  const isCategoryShowPage =
+    currentUrl.includes('/categories/') &&
+    !currentUrl.includes('/categories/create') &&
+    !currentUrl.includes('/categories/edit');
+
+  console.log('Page check:', { currentUrl, isWriteShowPage, isCategoryShowPage });
+
+  if (isWriteShowPage || isCategoryShowPage) {
+    // Check if the current write has link_only status
+    const currentWrite = props.write;
+    console.log('Current write status:', currentWrite?.status);
+
+    if (currentWrite && currentWrite.status === 'link_only') {
+      console.log('Hiding sidebar for link-only write');
+      return true;
+    }
+  }
+
+  console.log('Showing sidebar (default)');
+  return false;
+});
+
+// Debug shouldHideSidebarContent value
+watch(
+  shouldHideSidebarContent,
+  (newValue) => {
+    console.log('shouldHideSidebarContent changed:', newValue);
+  },
+  { immediate: true }
+);
+
 // Determine which sidebar component to display based on screen name
 const sidebarComponent = computed(() => {
-  if (isCollapsed.value && screenName) {
+  if (isCollapsed.value && screenName && !shouldHideSidebarContent.value) {
     return sidebarComponents[screenName] || null;
   }
   return null;
@@ -73,8 +133,9 @@ watch(
 
 const mainContentClass = computed(() => ({
   'transition-all duration-300': true,
-  'lg:ml-[-200px]': isSidebarNarrow.value,
-  'lg:ml-[00px]': !isSidebarNarrow.value,
+  'lg:ml-[-200px]': isSidebarNarrow.value && !shouldHideSidebarContent.value,
+  'lg:ml-[00px]': !isSidebarNarrow.value && !shouldHideSidebarContent.value,
+  'lg:ml-0': shouldHideSidebarContent.value, // Full width when sidebar is hidden
 }));
 
 const handleSidebarWidthChange = (isNarrow) => {

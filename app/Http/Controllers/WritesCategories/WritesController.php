@@ -234,7 +234,7 @@ class WritesController extends Controller
         try {
             $query = $request->get('q', '');
             $type = $request->get('type', 'articles,categories');
-            $isLoggedIn = auth()->check();
+            $isLoggedIn = Auth::check();
 
             Log::info('Search request', ['query' => $query, 'type' => $type, 'is_logged_in' => $isLoggedIn]);
 

@@ -22,7 +22,7 @@
           <template v-if="logoPath && !isLoading">
             <img :src="logoPath" :alt="logoAlt" class="h-full w-full object-cover" @error="handleImageError" />
           </template>
-          <span v-else class="text-xs font-bold text-primary">{{ seoTitle.charAt(0) }}</span>
+          <span v-else class="text-xs font-bold text-primary">{{ seoTitle.charAt(0).toUpperCase() }}</span>
         </div>
         <Link
           href="/"
@@ -54,7 +54,7 @@
             <template v-if="logoPath && !isLoading">
               <img :src="logoPath" :alt="logoAlt" class="h-full w-full object-cover" @error="handleImageError" />
             </template>
-            <span v-else class="text-sm font-bold text-primary">{{ seoTitle.charAt(0) }}</span>
+            <span v-else class="text-sm font-bold text-primary">{{ seoTitle.charAt(0).toUpperCase() }}</span>
           </div>
           <Link
             href="/"
@@ -426,7 +426,7 @@
                   <template v-if="logoPath && !isLoading">
                     <img :src="logoPath" :alt="logoAlt" class="h-full w-full object-cover" @error="handleImageError" />
                   </template>
-                  <span v-else class="text-sm font-bold text-primary">{{ seoTitle.charAt(0) }}</span>
+                  <span v-else class="text-sm font-bold text-primary">{{ seoTitle.charAt(0).toUpperCase() }}</span>
                 </div>
                 <div>
                   <h3 class="text-base font-semibold text-base-content">{{ seoTitle }}</h3>
@@ -443,6 +443,7 @@
 
               <!-- Conditional items for logged in users -->
               <template v-if="isLoggedIn">
+                <NavItem href="/dashboard" icon="fa-solid fa-tachometer-alt" label="Panel" />
                 <NavItem href="/rendition/words" icon="fa-solid fa-globe" label="Kelimeler" />
                 <NavItem href="/versions" icon="fa-solid fa-sync" label="Versiyonlar" />
               </template>
@@ -604,20 +605,33 @@ const currentThemeName = computed(() => {
 });
 
 const toggleDarkLight = () => {
-  const current = currentTheme.value;
-  let newTheme;
+  try {
+    const current = currentTheme.value;
+    let newTheme;
 
-  if (current.includes('dark')) {
-    newTheme = current.replace('-dark', '-light');
-  } else {
-    newTheme = current.replace('-light', '-dark');
+    // Basit light/dark toggle
+    if (current === 'light' || current.includes('light')) {
+      newTheme = current.replace('light', 'dark');
+    } else if (current === 'dark' || current.includes('dark')) {
+      newTheme = current.replace('dark', 'light');
+    } else {
+      // Fallback: default light/dark toggle
+      newTheme = current === 'light' ? 'dark' : 'light';
+    }
+
+    // Eğer değişiklik olmadıysa, basit toggle yap
+    if (newTheme === current) {
+      newTheme = current === 'light' ? 'dark' : 'light';
+    }
+
+    console.log('Theme toggle:', current, '->', newTheme);
+    store.dispatch('Theme/changeTheme', newTheme);
+  } catch (error) {
+    console.error('Theme toggle error:', error);
+    // Fallback: basit light/dark toggle
+    const fallbackTheme = currentTheme.value === 'light' ? 'dark' : 'light';
+    store.dispatch('Theme/changeTheme', fallbackTheme);
   }
-
-  if (newTheme === current) {
-    newTheme = current === 'light' ? 'dark' : 'light';
-  }
-
-  store.dispatch('Theme/changeTheme', newTheme);
 };
 
 // Authentication status

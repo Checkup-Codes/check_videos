@@ -2,10 +2,18 @@
   <Head>
     <title>{{ title }}</title>
   </Head>
-  <SidebarLayout :class="sidebarClass" :is-compact="isCompactMode" @link-clicked="toggleSidebar" />
-  <div :class="contentWrapperClass">
+  <div class="flex h-screen flex-col">
+    <!-- Header - En üstte -->
     <HeaderLayout @toggle-sidebar="toggleSidebar" />
-    <slot />
+
+    <!-- Alt kısım - Sidebar ve Content -->
+    <div class="flex flex-1">
+      <SidebarLayout :class="sidebarClass" :is-compact="isCompactMode" @link-clicked="toggleSidebar" />
+
+      <div :class="contentWrapperClass">
+        <slot />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -52,14 +60,13 @@ const isCompactMode = computed(() => {
 });
 
 const sidebarClass = computed(() => {
-  const baseClass = 'fixed inset-y-0 left-0 z-40 overflow-hidden transition-all duration-500 ease-out';
-  const widthClass = isCompactMode.value ? 'lg:w-24' : 'lg:w-64';
+  const baseClass = 'hidden lg:flex flex-col transition-all duration-500 ease-out';
+  const widthClass = isCompactMode.value ? 'w-24' : 'w-64';
   return `${baseClass} ${widthClass}`;
 });
 
 const contentWrapperClass = computed(() => {
-  const baseClass = 'transition-all duration-500 ease-out';
-  const paddingClass = isCompactMode.value ? 'lg:pl-24' : 'lg:pl-64';
+  const baseClass = 'flex-1 transition-all duration-500 ease-out';
 
   // Check if we're on the index page
   const isIndexPage = page.url === '/' || page.url === '';
@@ -108,10 +115,10 @@ const contentWrapperClass = computed(() => {
     isSeoPage ||
     isThemeManagementPage
   ) {
-    return `${baseClass} ${paddingClass} h-screen overflow-hidden`;
+    return `${baseClass} overflow-hidden`;
   }
 
-  return `${baseClass} ${paddingClass}`;
+  return baseClass;
 });
 
 // Yazı listesini inertia'dan al ve provide et

@@ -1,6 +1,6 @@
 <template>
   <aside
-    class="border-base-300/40 bg-base-200/90 hidden h-[calc(100vh-4rem)] flex-col justify-between border-r-2 px-4 font-sans backdrop-blur-xl transition-all duration-500 ease-out lg:flex"
+    class="border-base-300/40 bg-base-200/90 h-[calc(100vh-4rem)] flex-col justify-between border-r-2 px-4 font-sans backdrop-blur-xl transition-all duration-500 ease-out"
     :class="currentTheme"
   >
     <div class="space-y-2 pt-6">
@@ -28,20 +28,35 @@
       <div v-if="!isLoggedIn" class="mb-4 px-4">
         <Link href="/join-us" class="block">
           <button
-            class="bg-primary/10 hover:bg-primary/20 border-primary/20 w-full rounded-xl border px-4 py-3 text-sm font-semibold text-primary transition-all duration-200 hover:scale-105"
+            class="bg-base-200/50 hover:bg-base-200/80 border-base-300/60 w-full rounded-xl border px-4 py-3 text-sm font-semibold text-base-content transition-all duration-200 hover:scale-105"
+            :class="{ 'px-2': isCompact }"
           >
-            <div class="flex items-center justify-center space-x-2">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Compact Mode: Only Icon -->
+            <div v-if="isCompact" class="flex items-center justify-center">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                  d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
                 ></path>
               </svg>
-              <span>Aramıza Katıl</span>
             </div>
-            <div class="mt-1 text-xs opacity-80">NOTIRIEL</div>
+            <!-- Normal Mode: Full Content -->
+            <div v-else class="flex flex-col items-center justify-center space-y-1">
+              <div class="flex items-center justify-center space-x-2">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                  ></path>
+                </svg>
+                <span class="text-base-content">Aramıza Katıl</span>
+              </div>
+              <div class="text-base-content/60 text-xs">NOTIRIEL</div>
+            </div>
           </button>
         </Link>
       </div>

@@ -4,12 +4,19 @@
       <div class="text-center">
         <div class="relative mx-auto h-96 w-96">
           <template v-if="!isLoading">
-            <img
-              :src="logoPath"
-              :alt="logoAlt"
-              class="h-full w-full rounded-full object-cover"
-              @error="handleImageError"
-            />
+            <template v-if="logoPath">
+              <img
+                :src="logoPath"
+                :alt="logoAlt"
+                class="h-full w-full rounded-full object-cover"
+                @error="handleImageError"
+              />
+            </template>
+            <template v-else>
+              <div class="bg-primary/10 flex h-full w-full items-center justify-center rounded-full">
+                <span class="text-8xl font-bold text-primary">{{ seoTitle.charAt(0).toUpperCase() }}</span>
+              </div>
+            </template>
           </template>
           <!-- Skeleton Loading -->
           <div v-else class="animate-pulse">
@@ -48,7 +55,7 @@ let vantaEffect = null;
 const isLoading = ref(false);
 
 const handleImageError = () => {
-  logoPath.value = '/images/default-logo.png'; // Varsayılan bir resim yolu
+  logoPath.value = null; // Logo yüklenemediğinde fallback göster
 };
 
 onMounted(async () => {
