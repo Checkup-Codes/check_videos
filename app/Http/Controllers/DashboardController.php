@@ -85,6 +85,29 @@ class DashboardController extends Controller
             'popularCategories' => $popularCategories,
             'monthlyStats' => $monthlyStats,
             'allWrites' => $allWrites,
+            'screen' => $this->getScreenData(false),
         ]);
+    }
+
+    /**
+     * Get screen data for dashboard page
+     * 
+     * @param bool $isMobile
+     * @return array
+     */
+    private function getScreenData(bool $isMobile = false): array
+    {
+        $seo = \App\Models\Seo::first();
+        $logo = \App\Models\WritesCategories\WriteImage::where('category', 'logo')->first();
+
+        return [
+            'isMobileSidebar' => $isMobile,
+            'name' => 'dashboard',
+            'seo' => [
+                'title' => $seo->title ?? 'Seo Title',
+                'description' => $seo->description ?? 'Seo Description',
+                'logo' => $logo->image_path ?? '/images/checkup_codes_logo.png',
+            ],
+        ];
     }
 }

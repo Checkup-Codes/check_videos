@@ -1,22 +1,33 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
+// @ts-ignore
 import { useStore } from 'vuex';
 
 const showingNavigationDropdown = ref(false);
 const store = useStore();
+const page = usePage();
 
 const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
+
+// Prevent body scroll for authenticated pages
+onMounted(() => {
+  document.body.style.overflow = 'hidden';
+});
+
+onBeforeUnmount(() => {
+  document.body.style.overflow = '';
+});
 </script>
 
 <template>
   <div>
-    <div class="min-h-screen bg-base-100">
+    <div class="h-screen overflow-hidden bg-base-100">
       <nav class="border-b border-base-300 bg-base-200">
         <!-- Primary Navigation Menu -->
         <div class="mx-auto max-w-7xl px-4 sm:px-6">
@@ -160,7 +171,7 @@ const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
       </header>
 
       <!-- Page Content -->
-      <main>
+      <main class="h-[calc(100vh-4rem)] overflow-y-auto">
         <slot />
       </main>
     </div>

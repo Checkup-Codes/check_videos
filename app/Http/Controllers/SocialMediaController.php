@@ -14,7 +14,8 @@ class SocialMediaController extends Controller
     {
         return Inertia::render('SocialMedia/Index', [
             'socialMedia' => UserSocialMedia::orderBy('order')
-                ->get()
+                ->get(),
+            'screen' => $this->getScreenData(false)
         ]);
     }
 
@@ -130,5 +131,27 @@ class SocialMediaController extends Controller
             return redirect()->back()
                 ->with('error', 'Sosyal medya linki silinirken bir hata oluştu: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Get screen data for social media pages
+     * 
+     * @param bool $isMobile
+     * @return array
+     */
+    private function getScreenData(bool $isMobile = false): array
+    {
+        $seo = \App\Models\Seo::first();
+        $logo = \App\Models\WritesCategories\WriteImage::where('category', 'logo')->first();
+
+        return [
+            'isMobileSidebar' => $isMobile,
+            'name' => 'social-media',
+            'seo' => [
+                'title' => $seo->title ?? 'Seo Title',
+                'description' => $seo->description ?? 'Seo Description',
+                'logo' => $logo->image_path ?? '/images/checkup_codes_logo.png',
+            ],
+        ];
     }
 }

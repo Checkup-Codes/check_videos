@@ -28,6 +28,9 @@ use App\Http\Controllers\SeoController;
 // Public Routes
 Route::get('/', [IndexController::class, 'index']);
 Route::get('/factory', [IndexController::class, 'factory']);
+Route::get('/join-us', function () {
+    return Inertia::render('JoinUs/Index');
+});
 Route::get('/typescript-tutorial', [IndexController::class, 'typescriptTutorial']);
 
 // Writes & Categories Routes (Public)
@@ -127,6 +130,7 @@ Route::group(['prefix' => 'rendition', 'as' => 'rendition.'], function () {
 Route::get('/api/social-media', [SocialMediaController::class, 'getAll'])->name('social-media.all');
 Route::get('/api/logo', [MediaController::class, 'getLogo'])->name('api.logo');
 Route::get('/api/categories/{category}/writes', [CategoriesController::class, 'getWrites'])->name('api.categories.writes');
+Route::get('/api/search', [WritesController::class, 'search'])->name('api.search');
 
 // SEO Routes
 Route::get('/robots.txt', [App\Http\Controllers\RobotsController::class, 'generate']);

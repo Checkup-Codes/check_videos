@@ -9,7 +9,7 @@
 const props = defineProps({
   infoClass: {
     type: String,
-    default: 'grid grid-cols-1 lg:grid-cols-subsidebar h-screen-minus-1 overflow-y-auto overscroll-none scrollbar-hide',
+    default: 'grid grid-cols-1 lg:grid-cols-subsidebar h-screen overflow-hidden overscroll-none scrollbar-hide',
   },
   isCollapsed: {
     type: Boolean,

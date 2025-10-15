@@ -18,7 +18,7 @@ import CheckLayout from '@/Components/CekapUI/Slots/CheckLayout.vue';
 import SidebarLayoutVersion from '@/Pages/FBVersions/_layouts/SidebarLayoutVersion.vue';
 import FlashMessage from '@/Components/CekapUI/Notifications/FlashMessage.vue';
 import { usePage, Head } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 
 const page = usePage();
 const props = computed(() => page.props);
@@ -36,4 +36,13 @@ const isSidebarCollapsed = ref(true);
 const handleSidebarCollapse = (newState) => {
   isSidebarCollapsed.value = newState;
 };
+
+// Prevent body scrolling on versions pages
+onMounted(() => {
+  document.body.style.overflow = 'hidden';
+});
+
+onBeforeUnmount(() => {
+  document.body.style.overflow = '';
+});
 </script>

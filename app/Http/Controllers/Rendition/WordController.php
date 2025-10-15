@@ -126,10 +126,7 @@ class WordController extends Controller
                     'status' => $status,
                 ],
                 'languagePacks' => $languagePacks,
-                'screen' => [
-                    'isMobileSidebar' => true,
-                    'name' => 'words'
-                ]
+                'screen' => $this->getScreenData(true)
             ]);
         } catch (\Exception $e) {
             // Log the error for debugging
@@ -223,10 +220,7 @@ class WordController extends Controller
                     'slug' => $languagePack->slug,
                     'language' => $languagePack->language,
                 ],
-                'screen' => [
-                    'isMobileSidebar' => false,
-                    'name' => 'words'
-                ]
+                'screen' => $this->getScreenData(false)
             ]);
         } catch (\Exception $e) {
             Log::error('Error in WordController@show: ' . $e->getMessage());
@@ -236,10 +230,7 @@ class WordController extends Controller
                 'words' => [],
                 'languagePacks' => [],
                 'pack' => null,
-                'screen' => [
-                    'isMobileSidebar' => false,
-                    'name' => 'words'
-                ],
+                'screen' => $this->getScreenData(false),
                 'error' => 'Verileri yüklerken bir hata oluştu: ' . $e->getMessage()
             ]);
         }
@@ -264,10 +255,7 @@ class WordController extends Controller
 
         return Inertia::render('Rendition/Words/CreateWord', [
             'languagePacks' => $languagePacks,
-            'screen' => [
-                'isMobileSidebar' => false,
-                'name' => 'words'
-            ]
+            'screen' => $this->getScreenData(false)
         ]);
     }
 
@@ -402,10 +390,7 @@ class WordController extends Controller
         return Inertia::render('Rendition/Words/EditWord', [
             'word' => $word,
             'languagePacks' => $languagePacks,
-            'screen' => [
-                'isMobileSidebar' => true,
-                'name' => 'words'
-            ]
+            'screen' => $this->getScreenData(true)
         ]);
     }
 
@@ -725,5 +710,27 @@ class WordController extends Controller
             ->get();
 
         return Response::json($words);
+    }
+
+    /**
+     * Get screen data for rendition words pages
+     * 
+     * @param bool $isMobile
+     * @return array
+     */
+    private function getScreenData(bool $isMobile = false): array
+    {
+        $seo = \App\Models\Seo::first();
+        $logo = \App\Models\WritesCategories\WriteImage::where('category', 'logo')->first();
+
+        return [
+            'isMobileSidebar' => $isMobile,
+            'name' => 'words',
+            'seo' => [
+                'title' => $seo->title ?? 'Seo Title',
+                'description' => $seo->description ?? 'Seo Description',
+                'logo' => $logo->image_path ?? '/images/checkup_codes_logo.png',
+            ],
+        ];
     }
 }

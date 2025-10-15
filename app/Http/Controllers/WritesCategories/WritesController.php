@@ -4,10 +4,12 @@ namespace App\Http\Controllers\WritesCategories;
 
 use App\Http\Controllers\Controller;
 use App\Models\WritesCategories\Write;
+use App\Models\WritesCategories\Category;
 use App\Services\WritesCategories\WriteService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class WritesController extends Controller
 {
@@ -219,5 +221,112 @@ class WritesController extends Controller
         return response()->json([
             'message' => 'Versiyon başarıyla silindi.'
         ]);
+    }
+
+    /**
+     * Search articles and categories
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function search(Request $request)
+    {
+        try {
+            $query = $request->get('q', '');
+            $type = $request->get('type', 'articles,categories');
+            $isLoggedIn = auth()->check();
+
+            Log::info('Search request', ['query' => $query, 'type' => $type, 'is_logged_in' => $isLoggedIn]);
+
+            if (strlen($query) < 2) {
+                return response()->json([
+                    'articles' => [],
+                    'categories' => []
+                ]);
+            }
+
+            $results = [
+                'articles' => [],
+                'categories' => []
+            ];
+
+            // Search articles if requested
+            if (str_contains($type, 'articles')) {
+                $articlesQuery = Write::where(function ($q) use ($query) {
+                    $q->where('title', 'LIKE', "%{$query}%")
+                        ->orWhere('summary', 'LIKE', "%{$query}%")
+                        ->orWhere('content', 'LIKE', "%{$query}%")
+                        ->orWhere('tags', 'LIKE', "%{$query}%");
+                });
+
+                // Filter by status based on login status
+                if ($isLoggedIn) {
+                    // Logged in users can see all articles (published, draft, etc.)
+                    $articlesQuery->whereIn('status', ['published', 'draft', 'private']);
+                } else {
+                    // Non-logged in users can only see published articles
+                    $articlesQuery->where('status', 'published');
+                }
+
+                $articles = $articlesQuery
+                    ->with('category')
+                    ->limit(5)
+                    ->get()
+                    ->map(function ($write) {
+                        return [
+                            'id' => $write->id,
+                            'title' => $write->title,
+                            'excerpt' => $write->summary ?: Str::limit(strip_tags($write->content), 100),
+                            'url' => route('writes.show', $write->slug),
+                            'category' => $write->category ? $write->category->name : null
+                        ];
+                    });
+
+                $results['articles'] = $articles;
+            }
+
+            // Search categories if requested
+            if (str_contains($type, 'categories')) {
+                $categoriesQuery = Category::where('name', 'LIKE', "%{$query}%");
+
+                // Filter by status based on login status
+                if ($isLoggedIn) {
+                    // Logged in users can see all categories (public, private, etc.)
+                    $categoriesQuery->whereIn('status', ['public', 'private']);
+                } else {
+                    // Non-logged in users can only see public categories
+                    $categoriesQuery->where('status', 'public');
+                }
+
+                $categories = $categoriesQuery
+                    ->limit(5)
+                    ->get()
+                    ->map(function ($category) {
+                        return [
+                            'id' => $category->id,
+                            'name' => $category->name,
+                            'description' => 'Category description',
+                            'url' => route('categories.show', $category->slug)
+                        ];
+                    });
+
+                $results['categories'] = $categories;
+            }
+
+            Log::info('Search results', [
+                'articles_count' => count($results['articles']),
+                'categories_count' => count($results['categories']),
+                'is_logged_in' => $isLoggedIn
+            ]);
+
+            return response()->json($results);
+        } catch (\Exception $e) {
+            Log::error('Search error: ' . $e->getMessage());
+            return response()->json([
+                'error' => $e->getMessage(),
+                'articles' => [],
+                'categories' => []
+            ], 500);
+        }
     }
 }

@@ -18,7 +18,7 @@ import CheckLayout from '@/Components/CekapUI/Slots/CheckLayout.vue';
 import FlashMessage from '@/Components/CekapUI/Notifications/FlashMessage.vue';
 import SidebarRendition from '@/Pages/Rendition/_layouts/SidebarRendition.vue';
 import { usePage, Head } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useStore } from 'vuex';
 
 const { props } = usePage();
@@ -37,4 +37,13 @@ const isSidebarCollapsed = ref(true);
 const handleSidebarCollapse = (newState) => {
   isSidebarCollapsed.value = newState;
 };
+
+// Prevent body scrolling on rendition pages
+onMounted(() => {
+  document.body.style.overflow = 'hidden';
+});
+
+onBeforeUnmount(() => {
+  document.body.style.overflow = '';
+});
 </script>

@@ -22,10 +22,7 @@ class VersionsController extends Controller
         $versions = $this->getAllVersionsWithDetails();
 
         return inertia('FBVersions/Versions/IndexVersion', [
-            'screen'     => [
-                'isMobileSidebar' => true,
-                'name'            => 'versions'
-            ],
+            'screen'     => $this->getScreenData(true),
             'versions' => $versions
         ]);
     }
@@ -38,7 +35,7 @@ class VersionsController extends Controller
         return inertia('FBVersions/Versions/ShowVersion', [
             'versions' => $versions,
             'version' => $version,
-            'screen' => $this->screenDefault,
+            'screen' => $this->getScreenData(false),
         ]);
     }
 
@@ -50,7 +47,7 @@ class VersionsController extends Controller
         return inertia('FBVersions/Versions/EditVersion', [
             'versions' => $versions,
             'version' => $version,
-            'screen' => $this->screenDefault,
+            'screen' => $this->getScreenData(false),
         ]);
     }
 
@@ -60,7 +57,7 @@ class VersionsController extends Controller
 
         return inertia('FBVersions/Versions/CreateVersion', [
             'versions' => $versions,
-            'screen' => $this->screenDefault,
+            'screen' => $this->getScreenData(false),
         ]);
     }
 
@@ -177,5 +174,27 @@ class VersionsController extends Controller
         $version->features()->delete();
         $version->bugs()->delete();
         $version->delete();
+    }
+
+    /**
+     * Get screen data for versions pages
+     * 
+     * @param bool $isMobile
+     * @return array
+     */
+    private function getScreenData(bool $isMobile = false): array
+    {
+        $seo = \App\Models\Seo::first();
+        $logo = \App\Models\WritesCategories\WriteImage::where('category', 'logo')->first();
+
+        return [
+            'isMobileSidebar' => $isMobile,
+            'name' => 'versions',
+            'seo' => [
+                'title' => $seo->title ?? 'Seo Title',
+                'description' => $seo->description ?? 'Seo Description',
+                'logo' => $logo->image_path ?? '/images/checkup_codes_logo.png',
+            ],
+        ];
     }
 }

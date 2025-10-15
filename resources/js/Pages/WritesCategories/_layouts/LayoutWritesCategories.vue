@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { computed, ref, provide, watch } from 'vue';
+import { computed, ref, provide, watch, onMounted, onBeforeUnmount } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import CheckLayout from '@/Components/CekapUI/Slots/CheckLayout.vue';
 import SidebarLayoutWrite from './SidebarLayoutWrite.vue';
@@ -80,6 +80,15 @@ const mainContentClass = computed(() => ({
 const handleSidebarWidthChange = (isNarrow) => {
   isSidebarNarrow.value = isNarrow;
 };
+
+// Prevent body scrolling on writes pages
+onMounted(() => {
+  document.body.style.overflow = 'hidden';
+});
+
+onBeforeUnmount(() => {
+  document.body.style.overflow = '';
+});
 
 provide('categories', props.categories || []);
 provide('writes', props.writes || []);

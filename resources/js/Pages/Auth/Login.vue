@@ -57,9 +57,15 @@ function moveEyes(e: MouseEvent) {
 }
 
 onMounted(() => {
+  // Prevent body scrolling on login page
+  document.body.style.overflow = 'hidden';
+
   window.addEventListener('mousemove', moveEyes);
 });
 onBeforeUnmount(() => {
+  // Restore body scrolling when leaving login page
+  document.body.style.overflow = '';
+
   window.removeEventListener('mousemove', moveEyes);
 });
 </script>

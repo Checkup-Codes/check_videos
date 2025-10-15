@@ -28,6 +28,7 @@ class MediaController extends Controller
             'uploadedImages' => $uploadedImages,
             'categories' => WriteImage::getCategories(),
             'logo' => $logo,
+            'screen' => $this->getScreenData(false),
         ]);
     }
 
@@ -50,5 +51,27 @@ class MediaController extends Controller
             'image_path' => $logo->image_path,
             'alt_text' => $logo->alt_text,
         ]);
+    }
+
+    /**
+     * Get screen data for media pages
+     * 
+     * @param bool $isMobile
+     * @return array
+     */
+    private function getScreenData(bool $isMobile = false): array
+    {
+        $seo = \App\Models\Seo::first();
+        $logo = \App\Models\WritesCategories\WriteImage::where('category', 'logo')->first();
+
+        return [
+            'isMobileSidebar' => $isMobile,
+            'name' => 'media',
+            'seo' => [
+                'title' => $seo->title ?? 'Seo Title',
+                'description' => $seo->description ?? 'Seo Description',
+                'logo' => $logo->image_path ?? '/images/checkup_codes_logo.png',
+            ],
+        ];
     }
 }

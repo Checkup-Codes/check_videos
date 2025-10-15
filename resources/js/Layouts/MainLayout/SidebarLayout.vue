@@ -1,187 +1,57 @@
 <template>
   <aside
-    class="flex h-screen flex-col justify-between border-r-2 border-base-300 bg-base-200 px-4 font-sans transition-all duration-500 ease-out"
+    class="border-base-300/40 bg-base-200/90 hidden h-[calc(100vh-4rem)] flex-col justify-between border-r-2 px-4 font-sans backdrop-blur-xl transition-all duration-500 ease-out lg:flex"
     :class="currentTheme"
   >
-    <div class="space-y-1">
-      <!-- Workspace Header -->
-      <Link href="/" class="block">
-        <div class="px-2 py-5">
-          <div class="flex items-center justify-between">
-            <div
-              class="flex items-center transition-all duration-500 ease-out"
-              :class="{ 'w-full justify-center space-x-0': isCompact, 'space-x-3': !isCompact }"
-            >
-              <div class="flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-neutral">
-                <template v-if="logoPath && !isLoading">
-                  <img :src="logoPath" :alt="logoAlt" class="h-full w-full object-cover" @error="handleImageError" />
-                </template>
-                <span v-else class="text-sm font-bold text-neutral-content">{{ appName.charAt(0) }}</span>
-              </div>
-              <div
-                class="overflow-hidden transition-all duration-500 ease-out"
-                :class="{ 'w-0 opacity-0': isCompact, 'w-auto opacity-100': !isCompact }"
-              >
-                <h3 class="whitespace-nowrap font-semibold text-base-content">{{ appName }}</h3>
-              </div>
-            </div>
-            <!-- 
-            <button v-if="!isCompact" class="text-base-content/60 transition-colors hover:text-base-content">
-              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </button>
-            -->
-          </div>
-        </div>
-      </Link>
-
-      <!-- Main Navigation -->
-      <div :class="{ 'text-center': isCompact }">
-        <!-- <h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">
-          {{ isCompact ? '-----' : 'Ana Navigasyon' }}
-        </h4>
-        -->
+    <div class="space-y-2 pt-6">
+      <!-- Clean Navigation Buttons -->
+      <div class="space-y-2">
         <NavItem href="/" icon="home" label="Ana Sayfa" :is-compact="isCompact" />
-        <NavItem href="/dashboard" icon="chart-bar" label="Panel" :is-compact="isCompact" />
-      </div>
-
-      <!-- Content Management -->
-      <div :class="{ 'text-center': isCompact }">
-        <!--  <h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">
-          {{ isCompact ? '-----' : 'İçerik Yönetimi' }}
-        </h4>
-        -->
         <NavItem href="/writes" icon="fa-solid fa-pencil" label="Yazılar" :is-compact="isCompact" />
         <NavItem href="/categories" icon="fa-solid fa-book" label="Kategoriler" :is-compact="isCompact" />
-      </div>
 
-      <!-- Language & Translation -->
-      <div v-if="isLoggedIn" :class="{ 'text-center': isCompact }">
-        <!-- <h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">
-          {{ isCompact ? '-----' : 'Dil & Çeviri' }}
-        </h4>
-        -->
-        <NavItem href="/rendition/words" icon="fa-solid fa-globe" label="Kelimeler" :is-compact="isCompact" />
-        <!--  <NavItem
-          href="/rendition/language-packs"
-          icon="fa-solid fa-language"
-          label="Dil Paketleri"
-          :is-compact="isCompact"
-        />
-        -->
-      </div>
-
-      <!-- Project Management 
-      <div v-if="isLoggedIn" :class="{ 'text-center': isCompact }">
-         <h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">
-          {{ isCompact ? '-----' : 'Proje Yönetimi' }}
-        </h4>
-        
-        <NavItem href="/projects" icon="fa-solid fa-project-diagram" label="Projeler" :is-compact="isCompact" />
-      
-        <NavItem href="/customers" icon="fa-solid fa-users" label="Müşteriler" :is-compact="isCompact" />
-        <NavItem href="/services" icon="fa-solid fa-cogs" label="Hizmetler" :is-compact="isCompact" />
-      </div>
-      -->
-
-      <!-- System & Tools -->
-      <div v-if="isLoggedIn" :class="{ 'text-center': isCompact }">
-        <!-- <h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">
-          {{ isCompact ? '-----' : 'Sistem & Araçlar' }}
-        </h4>
-        -->
-        <NavItem href="/versions" icon="fa-solid fa-sync" label="Versiyonlar" :is-compact="isCompact" />
-        <!-- 
-        <NavItem
-          href="/software-products"
-          icon="fa-solid fa-laptop-code"
-          label="Yazılım Ürünleri"
-          :is-compact="isCompact"
-        />
-        <NavItem href="/lessons" icon="fa-solid fa-chalkboard-teacher" label="Dersler" :is-compact="isCompact" />
-         -->
-      </div>
-
-      <!-- Equipment & Tools (Public) 
-      <div :class="{ 'text-center': isCompact }">
-        <h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">
-          {{ isCompact ? '-----' : 'Ekipman & Araçlar' }}
-        </h4>
-        
-        <NavItem href="/equipments" icon="fa-solid fa-tools" label="Ekipmanlar" :is-compact="isCompact" />
-      </div>
-       -->
-
-      <!-- Media & Assets -->
-      <div v-if="isLoggedIn" :class="{ 'text-center': isCompact }">
-        <!-- <h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">
-          {{ isCompact ? '-----' : 'Media & Varlıklar' }}
-        </h4>
-        <NavItem href="/bookmarks" icon="fa-solid fa-bookmark" label="Yer İmleri" :is-compact="isCompact" />
-        
-        <NavItem href="/social-media" icon="fa-solid fa-share-alt" label="Sosyal Medya" :is-compact="isCompact" />
-        -->
+        <!-- Conditional items for logged in users -->
+        <template v-if="isLoggedIn">
+          <NavItem href="/rendition/words" icon="fa-solid fa-globe" label="Kelimeler" :is-compact="isCompact" />
+          <NavItem href="/versions" icon="fa-solid fa-sync" label="Versiyonlar" :is-compact="isCompact" />
+        </template>
       </div>
 
       <!-- Social Links for Non-Logged In Users -->
-      <div class="space-y-1 border-t border-base-300 pt-4" :class="{ 'text-center': isCompact }">
+      <div v-if="!isLoggedIn" class="border-base-300/40 space-y-1 border-t pt-4">
         <SocialLinks :is-compact="isCompact" />
       </div>
     </div>
 
-    <div class="absolute inset-x-0 bottom-0 py-4 text-center">
-      <!-- Dark/Light Mode Toggle -->
-      <div class="mb-3">
-        <button @click="toggleDarkLight" class="btn btn-ghost btn-sm">
-          <template v-if="isDarkMode">
-            <svg class="h-4 w-4 fill-current text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <path
-                d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"
-              />
-            </svg>
-          </template>
-          <template v-else>
-            <svg class="h-4 w-4 fill-current text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <path
-                d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"
-              />
-            </svg>
-          </template>
-        </button>
-        <!-- Tema bilgisi -->
-        <div
-          class="overflow-hidden transition-all duration-500 ease-out"
-          :class="{ 'h-0 opacity-0': isCompact, 'h-auto opacity-100': !isCompact }"
-        >
-          <p class="text-base-content/40 mt-1 whitespace-nowrap text-xs">{{ currentThemeName }}</p>
-        </div>
-      </div>
-      <!-- Powered by Button / Profile Link -->
-      <div v-if="!isLoggedIn" class="space-y-1 p-4">
-        <a href="https://youtu.be/FPsx8xHLR1k?si=3dNFdwhk5s8LyqOe" target="_blank">
+    <div class="absolute inset-x-0 bottom-0 py-6 text-center">
+      <!-- Join Us Button for Non-Logged In Users -->
+      <div v-if="!isLoggedIn" class="mb-4 px-4">
+        <Link href="/join-us" class="block">
           <button
-            class="w-full rounded-lg border border-base-300 bg-base-100 p-3 shadow-sm transition-colors hover:bg-base-200"
+            class="bg-primary/10 hover:bg-primary/20 border-primary/20 w-full rounded-xl border px-4 py-3 text-sm font-semibold text-primary transition-all duration-200 hover:scale-105"
           >
-            <div
-              class="flex items-center transition-all duration-500 ease-out"
-              :class="{ 'justify-center space-x-0': isCompact, 'space-x-3': !isCompact }"
-            >
-              <div
-                class="overflow-hidden transition-all duration-500 ease-out"
-                :class="{ 'w-0 opacity-0': isCompact, 'w-auto opacity-100': !isCompact }"
-              >
-                <span class="whitespace-nowrap text-sm font-medium text-base-content">Powered by : Notiriel</span>
-              </div>
+            <div class="flex items-center justify-center space-x-2">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                ></path>
+              </svg>
+              <span>Aramıza Katıl</span>
             </div>
+            <div class="mt-1 text-xs opacity-80">NOTIRIEL</div>
           </button>
-        </a>
+        </Link>
       </div>
+
+      <!-- Copyright -->
       <div
         class="overflow-hidden transition-all duration-500 ease-out"
         :class="{ 'h-0 opacity-0': isCompact, 'h-auto opacity-100': !isCompact }"
       >
-        <p class="text-base-content/60 mt-2 whitespace-nowrap text-xs">Notiriel - Tüm Hakları Saklıdır</p>
+        <p class="text-base-content/50 text-xs">Notiriel - Tüm Hakları Saklıdır</p>
       </div>
     </div>
   </aside>
@@ -205,60 +75,6 @@ const isLoggedIn = computed(() => {
   return !!(page.props.auth && page.props.auth.user);
 });
 
-const appName = computed(() => {
-  return page.props?.app?.name ?? 'Check Videos';
-});
-
-const seoTitle = computed(() => {
-  return page.props?.screen?.seo?.title ?? 'Check Videos';
-});
-
-// Logo path logic
-const logoPath = ref(page.props?.screen?.seo?.logo);
-const logoAlt = ref('Logo');
-const isLoading = ref(false);
-
-const handleImageError = () => {
-  logoPath.value = '/images/default-logo.png'; // Varsayılan bir resim yolu
-};
-
-// Dark/Light mode logic
-const isDarkMode = computed(() => {
-  return currentTheme.value.includes('dark');
-});
-
-const currentThemeName = computed(() => {
-  const theme = currentTheme.value;
-  const themeMap = {
-    light: 'Light',
-    dark: 'Dark',
-    'lotr-light': 'LOTR Light',
-    'lotr-dark': 'LOTR Dark',
-    custom: 'Custom',
-  };
-  return themeMap[theme] || theme;
-});
-
-const toggleDarkLight = () => {
-  const current = currentTheme.value;
-  let newTheme;
-
-  if (current.includes('dark')) {
-    // Dark'tan Light'a geç
-    newTheme = current.replace('-dark', '-light');
-  } else {
-    // Light'tan Dark'a geç
-    newTheme = current.replace('-light', '-dark');
-  }
-
-  // Eğer değişiklik olmadıysa (light/dark gibi), alternatif tema seç
-  if (newTheme === current) {
-    newTheme = current === 'light' ? 'dark' : 'light';
-  }
-
-  store.dispatch('Theme/changeTheme', newTheme);
-};
-
 defineProps({
   isCompact: {
     type: Boolean,
@@ -266,3 +82,52 @@ defineProps({
   },
 });
 </script>
+
+<style scoped>
+/* Modern button hover effects */
+.btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+/* Theme-specific enhancements */
+html[data-theme='lotr-light'] .btn,
+html[data-theme='lotr-dark'] .btn {
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(139, 69, 19, 0.3);
+  border: 2px solid #d4af37;
+}
+
+html[data-theme='lotr-light'] .btn:hover,
+html[data-theme='lotr-dark'] .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px -2px rgba(139, 69, 19, 0.4);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Enhanced backdrop blur effect */
+.backdrop-blur-sm {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+</style>

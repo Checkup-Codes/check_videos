@@ -11,17 +11,7 @@ class IndexController extends Controller
 
     public function __construct()
     {
-        $seo = Seo::first();
-        $logo = WriteImage::where('category', 'logo')->first();
-        $this->screenDefault = [
-            'isMobileSidebar' => false,
-            'name' => 'Index',
-            'seo' => [
-                'title' => config('app.name', 'Checkup Codes'),
-                'description' => $seo->description ?? 'Checkup Codes',
-                'logo' => $logo->image_path ?? '/images/checkup_codes_logo.png',
-            ],
-        ];
+        $this->screenDefault = $this->getScreenData(false);
     }
 
     public function index()
@@ -48,5 +38,27 @@ class IndexController extends Controller
     public function vueTutorial()
     {
         return inertia('Category/VueTutorial');
+    }
+
+    /**
+     * Get screen data for index page
+     * 
+     * @param bool $isMobile
+     * @return array
+     */
+    private function getScreenData(bool $isMobile = false): array
+    {
+        $seo = Seo::first();
+        $logo = WriteImage::where('category', 'logo')->first();
+
+        return [
+            'isMobileSidebar' => $isMobile,
+            'name' => 'index',
+            'seo' => [
+                'title' => $seo->title ?? 'Seo Title',
+                'description' => $seo->description ?? 'Seo Description',
+                'logo' => $logo->image_path ?? '/images/checkup_codes_logo.png',
+            ],
+        ];
     }
 }
