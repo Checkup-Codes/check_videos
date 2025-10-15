@@ -1,0 +1,1 @@
+import{c as n,b as o,n as r,o as a}from"./ssr-BzisTTDH.js";const c={__name:"SubSidebarScreen",props:{infoClass:{type:String,default:"h-screen-minus-28 lg:h-screen-minus-17 overflow-y-auto overscroll-none"}},setup(e){return(s,l)=>(a(),n("p",{class:r(e.infoClass)},[o(s.$slots,"default")],2))}};export{c as _};
