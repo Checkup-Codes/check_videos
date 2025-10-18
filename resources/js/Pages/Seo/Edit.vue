@@ -1,18 +1,5 @@
 <template>
-  <Head title="SEO Ayarları" />
-
   <AuthenticatedLayout>
-    <template #header>
-      <div class="flex items-center justify-between">
-        <div>
-          <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">SEO Ayarları</h2>
-          <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            Arama motorları ve sosyal medya için optimizasyon ayarları
-          </p>
-        </div>
-      </div>
-    </template>
-
     <div class="py-6">
       <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <form @submit.prevent="submit" class="space-y-8">

@@ -6,13 +6,12 @@
     <!-- Header - En üstte -->
     <HeaderLayout @toggle-sidebar="toggleSidebar" />
 
-    <!-- Alt kısım - Sidebar ve Content -->
-    <div class="flex flex-1">
-      <SidebarLayout :class="sidebarClass" :is-compact="isCompactMode" @link-clicked="toggleSidebar" />
+    <!-- Tab Navigation - Header altında -->
+    <SidebarLayout :is-compact="isCompactMode" @link-clicked="toggleSidebar" />
 
-      <div :class="contentWrapperClass">
-        <slot />
-      </div>
+    <!-- Content Area -->
+    <div :class="contentWrapperClass">
+      <slot />
     </div>
   </div>
 </template>
@@ -57,12 +56,6 @@ const isCompactMode = computed(() => {
   }
 
   return false;
-});
-
-const sidebarClass = computed(() => {
-  const baseClass = 'hidden lg:flex flex-col transition-all duration-500 ease-out';
-  const widthClass = isCompactMode.value ? 'w-24' : 'w-64';
-  return `${baseClass} ${widthClass}`;
 });
 
 const contentWrapperClass = computed(() => {

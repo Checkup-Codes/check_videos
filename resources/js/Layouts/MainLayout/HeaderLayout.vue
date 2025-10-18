@@ -558,15 +558,9 @@ const searchItems = ref([]);
 const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
 
 // Logo path logic
-const logoPath = computed(() => {
-  return (
-    page.props?.screen?.seo?.logo ||
-    page.props?.seo?.logo ||
-    page.props?.app?.seo?.logo ||
-    page.props?.app?.logo ||
-    null
-  );
-});
+const logoPath = ref(
+  page.props?.screen?.seo?.logo || page.props?.seo?.logo || page.props?.app?.seo?.logo || page.props?.app?.logo || null
+);
 
 const logoAlt = computed(() => {
   return (
@@ -581,8 +575,8 @@ const logoAlt = computed(() => {
 const isLoading = ref(false);
 
 const handleImageError = () => {
-  // Logo yüklenemediğinde varsayılan logo kullan
-  // Bu durumda computed property null döndürecek ve fallback olarak seoTitle'ın ilk harfi gösterilecek
+  // Logo yüklenemediğinde logoPath'i null yap
+  logoPath.value = null;
 };
 
 // Dark/Light mode logic

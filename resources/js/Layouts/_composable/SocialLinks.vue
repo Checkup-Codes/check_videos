@@ -1,9 +1,5 @@
 <template>
-  <div class="space-y-1 transition-all duration-500 ease-out" :class="{ 'text-center': isCompact }">
-    <!-- <h4 class="text-base-content/70 px-3 text-xs font-semibold uppercase tracking-wider">
-      {{ isCompact ? '-----' : 'Sosyal Medya' }}
-    </h4>
-    -->
+  <div class="flex items-center space-x-2 transition-all duration-500 ease-out">
     <template v-for="link in socialLinks" :key="link.id">
       <SocialLink
         v-if="link.is_active"

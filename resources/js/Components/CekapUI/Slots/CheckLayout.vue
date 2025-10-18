@@ -1,5 +1,5 @@
 <template>
-  <div :class="isCollapsed ? infoClass : 'h-screen overflow-hidden'">
+  <div :class="isCollapsed ? infoClass : 'h-[calc(100vh-7rem)] overflow-hidden'">
     <slot name="sidebar" v-if="isCollapsed"></slot>
     <slot />
   </div>

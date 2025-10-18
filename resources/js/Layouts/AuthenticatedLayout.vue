@@ -171,7 +171,7 @@ onBeforeUnmount(() => {
       </header>
 
       <!-- Page Content -->
-      <main class="h-[calc(100vh-4rem)] overflow-y-auto">
+      <main class="overflow-y-auto" style="height: calc(100vh - 11rem)">
         <slot />
       </main>
     </div>
