@@ -1177,7 +1177,7 @@ const _sfc_main$3 = {
       }
     });
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<!--[--><header class="${ssrRenderClass([currentTheme.value, "border-base-200/60 bg-base-100/95 sticky top-0 z-50 w-full border-b shadow-sm backdrop-blur-md transition-all duration-300"])}" data-v-a47f19be><div class="flex h-14 items-center justify-between px-4 sm:px-6 lg:hidden" data-v-a47f19be>`);
+      _push(`<!--[--><header class="${ssrRenderClass([currentTheme.value, "border-base-200/60 bg-base-100/95 sticky top-0 z-50 w-full border-b shadow-sm backdrop-blur-md transition-all duration-300"])}" data-v-79ce3c43><div class="flex h-14 items-center justify-between px-4 sm:px-6 lg:hidden" data-v-79ce3c43>`);
       if (basePath.value) {
         _push(ssrRenderComponent(unref(Link), {
           href: `/${basePath.value}`,
@@ -1195,13 +1195,13 @@ const _sfc_main$3 = {
           _: 1
         }, _parent));
       } else {
-        _push(`<div class="w-10" data-v-a47f19be></div>`);
+        _push(`<div class="w-10" data-v-79ce3c43></div>`);
       }
-      _push(`<div class="flex items-center space-x-2" data-v-a47f19be><div class="bg-primary/10 flex h-7 w-7 items-center justify-center overflow-hidden rounded-lg" data-v-a47f19be>`);
+      _push(`<div class="flex items-center space-x-2" data-v-79ce3c43><div class="bg-primary/10 flex h-7 w-7 items-center justify-center overflow-hidden rounded-lg" data-v-79ce3c43>`);
       if (logoPath.value && !isLoading.value) {
-        _push(`<img${ssrRenderAttr("src", logoPath.value)}${ssrRenderAttr("alt", logoAlt.value)} class="h-full w-full object-cover" data-v-a47f19be>`);
+        _push(`<img${ssrRenderAttr("src", logoPath.value)}${ssrRenderAttr("alt", logoAlt.value)} class="h-full w-full object-cover" data-v-79ce3c43>`);
       } else {
-        _push(`<span class="text-xs font-bold text-primary" data-v-a47f19be>${ssrInterpolate(seoTitle.value.charAt(0).toUpperCase())}</span>`);
+        _push(`<span class="text-xs font-bold text-primary" data-v-79ce3c43>${ssrInterpolate(seoTitle.value.charAt(0).toUpperCase())}</span>`);
       }
       _push(`</div>`);
       _push(ssrRenderComponent(unref(Link), {
@@ -1219,11 +1219,11 @@ const _sfc_main$3 = {
         }),
         _: 1
       }, _parent));
-      _push(`</div><button class="hover:bg-base-200/80 btn btn-ghost btn-sm rounded-xl px-3 transition-all duration-200" data-v-a47f19be><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-v-a47f19be><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16m-7 6h7" data-v-a47f19be></path></svg></button></div><div class="hidden h-16 items-center justify-between px-6 lg:flex" data-v-a47f19be><div class="flex items-center space-x-4" data-v-a47f19be><div class="flex items-center space-x-3" data-v-a47f19be><div class="bg-primary/10 ring-primary/20 flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl ring-1" data-v-a47f19be>`);
+      _push(`</div><button class="hover:bg-base-200/80 btn btn-ghost btn-sm rounded-xl px-3 transition-all duration-200" data-v-79ce3c43><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-v-79ce3c43><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16m-7 6h7" data-v-79ce3c43></path></svg></button></div><div class="hidden h-16 items-center justify-between px-6 lg:flex" data-v-79ce3c43><div class="flex items-center space-x-4" data-v-79ce3c43><div class="flex items-center space-x-3" data-v-79ce3c43><div class="bg-primary/10 ring-primary/20 flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl ring-1" data-v-79ce3c43>`);
       if (logoPath.value && !isLoading.value) {
-        _push(`<img${ssrRenderAttr("src", logoPath.value)}${ssrRenderAttr("alt", logoAlt.value)} class="h-full w-full object-cover" data-v-a47f19be>`);
+        _push(`<img${ssrRenderAttr("src", logoPath.value)}${ssrRenderAttr("alt", logoAlt.value)} class="h-full w-full object-cover" data-v-79ce3c43>`);
       } else {
-        _push(`<span class="text-sm font-bold text-primary" data-v-a47f19be>${ssrInterpolate(seoTitle.value.charAt(0).toUpperCase())}</span>`);
+        _push(`<span class="text-sm font-bold text-primary" data-v-79ce3c43>${ssrInterpolate(seoTitle.value.charAt(0).toUpperCase())}</span>`);
       }
       _push(`</div>`);
       _push(ssrRenderComponent(unref(Link), {
@@ -1241,30 +1241,30 @@ const _sfc_main$3 = {
         }),
         _: 1
       }, _parent));
-      _push(`</div></div><div class="mx-8 max-w-lg flex-1" data-v-a47f19be><div class="relative" data-v-a47f19be><div class="relative" data-v-a47f19be><div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4" data-v-a47f19be><svg class="${ssrRenderClass([isDarkMode.value ? "text-gray-400" : "text-gray-500", "h-4 w-4"])}" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-v-a47f19be><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" data-v-a47f19be></path></svg></div><input${ssrRenderAttr("value", searchQuery.value)} type="text" placeholder="Ara..." class="${ssrRenderClass([[
+      _push(`</div></div><div class="mx-8 max-w-lg flex-1" data-v-79ce3c43><div class="relative" data-v-79ce3c43><div class="relative" data-v-79ce3c43><div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4" data-v-79ce3c43><svg class="${ssrRenderClass([isDarkMode.value ? "text-gray-400" : "text-gray-500", "h-4 w-4"])}" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-v-79ce3c43><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" data-v-79ce3c43></path></svg></div><input${ssrRenderAttr("value", searchQuery.value)} type="text" placeholder="Ara..." class="${ssrRenderClass([[
         isDarkMode.value ? "border-gray-600/60 bg-gray-800/90 text-gray-100 placeholder-gray-400 focus:border-blue-500/40 focus:ring-blue-500/20" : "border-gray-300/60 bg-white/90 text-gray-900 placeholder-gray-500 focus:border-blue-500/40 focus:ring-blue-500/20"
-      ], "search-input w-full rounded-lg border py-3 pl-12 pr-16 text-sm backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2"])}" data-v-a47f19be><div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4" data-v-a47f19be><kbd class="${ssrRenderClass([
+      ], "search-input w-full rounded-lg border py-3 pl-12 pr-16 text-sm backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2"])}" data-v-79ce3c43><div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4" data-v-79ce3c43><kbd class="${ssrRenderClass([
         isDarkMode.value ? "border-gray-600/60 bg-gray-700/60 text-gray-300" : "border-gray-300/60 bg-gray-100/60 text-gray-600",
         "rounded border px-2 py-1 text-xs font-semibold"
-      ])}" data-v-a47f19be>⌘K</kbd></div></div>`);
+      ])}" data-v-79ce3c43>⌘K</kbd></div></div>`);
       if (showSearchResults.value && (searchResults.value.articles && searchResults.value.articles.length > 0 || searchResults.value.categories && searchResults.value.categories.length > 0 || searchQuery.value.length > 0)) {
-        _push(`<div class="${ssrRenderClass([isDarkMode.value ? "border-gray-600 bg-gray-800" : "border-gray-300 bg-white", "search-results-dropdown absolute left-0 right-0 top-full z-50 mt-2 max-h-[28rem] overflow-y-auto rounded-2xl border shadow-2xl"])}" data-v-a47f19be>`);
+        _push(`<div class="${ssrRenderClass([isDarkMode.value ? "border-gray-600 bg-gray-800" : "border-gray-300 bg-white", "search-results-dropdown absolute left-0 right-0 top-full z-50 mt-2 max-h-[28rem] overflow-y-auto rounded-2xl border shadow-2xl"])}" data-v-79ce3c43>`);
         if (isSearching.value) {
-          _push(`<div class="p-4 text-center" data-v-a47f19be><div class="inline-block h-4 w-4 animate-spin rounded-full border-b-2 border-primary" data-v-a47f19be></div><span class="${ssrRenderClass([isDarkMode.value ? "text-gray-300" : "text-gray-600", "ml-2 text-sm"])}" data-v-a47f19be>Aranıyor...</span></div>`);
+          _push(`<div class="p-4 text-center" data-v-79ce3c43><div class="inline-block h-4 w-4 animate-spin rounded-full border-b-2 border-primary" data-v-79ce3c43></div><span class="${ssrRenderClass([isDarkMode.value ? "text-gray-300" : "text-gray-600", "ml-2 text-sm"])}" data-v-79ce3c43>Aranıyor...</span></div>`);
         } else if (searchQuery.value.length > 0 && (!searchResults.value.articles || searchResults.value.articles.length === 0) && (!searchResults.value.categories || searchResults.value.categories.length === 0)) {
-          _push(`<div class="p-6 text-center" data-v-a47f19be><div class="${ssrRenderClass([isDarkMode.value ? "text-gray-500" : "text-gray-400", "mb-2"])}" data-v-a47f19be><svg class="mx-auto h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-a47f19be><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" data-v-a47f19be></path></svg></div><span class="${ssrRenderClass([isDarkMode.value ? "text-gray-300" : "text-gray-600", "text-sm"])}" data-v-a47f19be>&quot;${ssrInterpolate(searchQuery.value)}&quot; için sonuç bulunamadı</span></div>`);
+          _push(`<div class="p-6 text-center" data-v-79ce3c43><div class="${ssrRenderClass([isDarkMode.value ? "text-gray-500" : "text-gray-400", "mb-2"])}" data-v-79ce3c43><svg class="mx-auto h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-79ce3c43><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" data-v-79ce3c43></path></svg></div><span class="${ssrRenderClass([isDarkMode.value ? "text-gray-300" : "text-gray-600", "text-sm"])}" data-v-79ce3c43>&quot;${ssrInterpolate(searchQuery.value)}&quot; için sonuç bulunamadı</span></div>`);
         } else if (searchResults.value.articles && searchResults.value.articles.length > 0 || searchResults.value.categories && searchResults.value.categories.length > 0) {
-          _push(`<div class="py-2" data-v-a47f19be>`);
+          _push(`<div class="py-2" data-v-79ce3c43>`);
           if (searchResults.value.articles && searchResults.value.articles.length > 0) {
-            _push(`<div class="mb-3" data-v-a47f19be><div class="${ssrRenderClass([isDarkMode.value ? "border-gray-600 text-gray-400" : "border-gray-200 text-gray-600", "border-b px-3 py-1.5 text-xs font-semibold uppercase tracking-wider"])}" data-v-a47f19be> Yazılar </div><!--[-->`);
+            _push(`<div class="mb-3" data-v-79ce3c43><div class="${ssrRenderClass([isDarkMode.value ? "border-gray-600 text-gray-400" : "border-gray-200 text-gray-600", "border-b px-3 py-1.5 text-xs font-semibold uppercase tracking-wider"])}" data-v-79ce3c43> Yazılar </div><!--[-->`);
             ssrRenderList(searchResults.value.articles, (article, index) => {
               _push(`<div${ssrRenderAttr("data-selected-index", index)} class="${ssrRenderClass([
                 "cursor-pointer border-b px-3 py-2 transition-colors duration-200 last:border-b-0",
                 isDarkMode.value ? "border-gray-700 hover:bg-gray-700" : "border-gray-50 hover:bg-gray-50",
                 selectedIndex.value === index ? isDarkMode.value ? "border-blue-500 bg-blue-900/30" : "border-blue-200 bg-blue-50" : ""
-              ])}" data-v-a47f19be><div class="${ssrRenderClass([isDarkMode.value ? "text-gray-200" : "text-gray-800", "text-sm font-semibold leading-none"])}" data-v-a47f19be>${highlightText(article.title) ?? ""}</div><div class="${ssrRenderClass([isDarkMode.value ? "text-gray-400" : "text-gray-700", "mt-0.5 text-xs leading-tight"])}" data-v-a47f19be>${highlightText(article.excerpt) ?? ""}</div>`);
+              ])}" data-v-79ce3c43><div class="${ssrRenderClass([isDarkMode.value ? "text-gray-200" : "text-gray-800", "text-sm font-semibold leading-none"])}" data-v-79ce3c43>${highlightText(article.title) ?? ""}</div><div class="${ssrRenderClass([isDarkMode.value ? "text-gray-400" : "text-gray-700", "mt-0.5 text-xs leading-tight"])}" data-v-79ce3c43>${highlightText(article.excerpt) ?? ""}</div>`);
               if (article.category) {
-                _push(`<div class="mt-1" data-v-a47f19be><span class="${ssrRenderClass([isDarkMode.value ? "bg-blue-900/50 text-blue-300" : "bg-blue-100 text-blue-800", "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"])}" data-v-a47f19be>${ssrInterpolate(article.category)}</span></div>`);
+                _push(`<div class="mt-1" data-v-79ce3c43><span class="${ssrRenderClass([isDarkMode.value ? "bg-blue-900/50 text-blue-300" : "bg-blue-100 text-blue-800", "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"])}" data-v-79ce3c43>${ssrInterpolate(article.category)}</span></div>`);
               } else {
                 _push(`<!---->`);
               }
@@ -1275,13 +1275,13 @@ const _sfc_main$3 = {
             _push(`<!---->`);
           }
           if (searchResults.value.categories && searchResults.value.categories.length > 0) {
-            _push(`<div class="mb-3" data-v-a47f19be><div class="${ssrRenderClass([isDarkMode.value ? "border-gray-600 text-gray-400" : "border-gray-200 text-gray-600", "border-b px-3 py-1.5 text-xs font-semibold uppercase tracking-wider"])}" data-v-a47f19be> Kategoriler </div><!--[-->`);
+            _push(`<div class="mb-3" data-v-79ce3c43><div class="${ssrRenderClass([isDarkMode.value ? "border-gray-600 text-gray-400" : "border-gray-200 text-gray-600", "border-b px-3 py-1.5 text-xs font-semibold uppercase tracking-wider"])}" data-v-79ce3c43> Kategoriler </div><!--[-->`);
             ssrRenderList(searchResults.value.categories, (category, index) => {
               _push(`<div${ssrRenderAttr("data-selected-index", searchResults.value.articles.length + index)} class="${ssrRenderClass([
                 "cursor-pointer border-b px-3 py-2 transition-colors duration-200 last:border-b-0",
                 isDarkMode.value ? "border-gray-700 hover:bg-gray-700" : "border-gray-50 hover:bg-gray-50",
                 selectedIndex.value === searchResults.value.articles.length + index ? isDarkMode.value ? "border-blue-500 bg-blue-900/30" : "border-blue-200 bg-blue-50" : ""
-              ])}" data-v-a47f19be><div class="${ssrRenderClass([isDarkMode.value ? "text-gray-200" : "text-gray-800", "text-sm font-semibold leading-none"])}" data-v-a47f19be>${highlightText(category.name) ?? ""}</div></div>`);
+              ])}" data-v-79ce3c43><div class="${ssrRenderClass([isDarkMode.value ? "text-gray-200" : "text-gray-800", "text-sm font-semibold leading-none"])}" data-v-79ce3c43>${highlightText(category.name) ?? ""}</div></div>`);
             });
             _push(`<!--]--></div>`);
           } else {
@@ -1289,21 +1289,21 @@ const _sfc_main$3 = {
           }
           _push(`</div>`);
         } else {
-          _push(`<div class="py-2" data-v-a47f19be><div class="${ssrRenderClass([isDarkMode.value ? "border-gray-600 text-gray-400" : "border-gray-200 text-gray-600", "border-b px-3 py-1.5 text-xs font-semibold uppercase tracking-wider"])}" data-v-a47f19be> Hızlı Eylemler </div><div data-selected-index="0" class="${ssrRenderClass([
+          _push(`<div class="py-2" data-v-79ce3c43><div class="${ssrRenderClass([isDarkMode.value ? "border-gray-600 text-gray-400" : "border-gray-200 text-gray-600", "border-b px-3 py-1.5 text-xs font-semibold uppercase tracking-wider"])}" data-v-79ce3c43> Hızlı Eylemler </div><div data-selected-index="0" class="${ssrRenderClass([
             "cursor-pointer border-b px-3 py-2 transition-colors duration-200 last:border-b-0",
             isDarkMode.value ? "border-gray-700 hover:bg-gray-700" : "border-gray-50 hover:bg-gray-50",
             selectedIndex.value === 0 ? isDarkMode.value ? "border-blue-500 bg-blue-900/30" : "border-blue-200 bg-blue-50" : ""
-          ])}" data-v-a47f19be><div class="${ssrRenderClass([isDarkMode.value ? "text-gray-200" : "text-gray-800", "text-sm font-semibold"])}" data-v-a47f19be> Tüm Yazıları Görüntüle </div><div class="${ssrRenderClass([isDarkMode.value ? "text-gray-400" : "text-gray-700", "mt-0.5 text-xs"])}" data-v-a47f19be> Tüm yayınlanmış yazıları görüntüle </div></div><div data-selected-index="1" class="${ssrRenderClass([
+          ])}" data-v-79ce3c43><div class="${ssrRenderClass([isDarkMode.value ? "text-gray-200" : "text-gray-800", "text-sm font-semibold"])}" data-v-79ce3c43> Tüm Yazıları Görüntüle </div><div class="${ssrRenderClass([isDarkMode.value ? "text-gray-400" : "text-gray-700", "mt-0.5 text-xs"])}" data-v-79ce3c43> Tüm yayınlanmış yazıları görüntüle </div></div><div data-selected-index="1" class="${ssrRenderClass([
             "cursor-pointer border-b px-3 py-2 transition-colors duration-200 last:border-b-0",
             isDarkMode.value ? "border-gray-700 hover:bg-gray-700" : "border-gray-50 hover:bg-gray-50",
             selectedIndex.value === 1 ? isDarkMode.value ? "border-blue-500 bg-blue-900/30" : "border-blue-200 bg-blue-50" : ""
-          ])}" data-v-a47f19be><div class="${ssrRenderClass([isDarkMode.value ? "text-gray-200" : "text-gray-800", "text-sm font-semibold"])}" data-v-a47f19be> Tüm Kategorileri Görüntüle </div><div class="${ssrRenderClass([isDarkMode.value ? "text-gray-400" : "text-gray-700", "mt-0.5 text-xs"])}" data-v-a47f19be> Tüm kategorileri görüntüle </div></div></div>`);
+          ])}" data-v-79ce3c43><div class="${ssrRenderClass([isDarkMode.value ? "text-gray-200" : "text-gray-800", "text-sm font-semibold"])}" data-v-79ce3c43> Tüm Kategorileri Görüntüle </div><div class="${ssrRenderClass([isDarkMode.value ? "text-gray-400" : "text-gray-700", "mt-0.5 text-xs"])}" data-v-79ce3c43> Tüm kategorileri görüntüle </div></div></div>`);
         }
         _push(`</div>`);
       } else {
         _push(`<!---->`);
       }
-      _push(`</div></div><div class="flex items-center space-x-4" data-v-a47f19be><div class="hidden items-center space-x-6 xl:flex" data-v-a47f19be>`);
+      _push(`</div></div><div class="flex items-center space-x-4" data-v-79ce3c43><div class="hidden items-center space-x-6 xl:flex" data-v-79ce3c43>`);
       _push(ssrRenderComponent(unref(Link), {
         href: "/dashboard",
         class: "text-base-content/80 text-sm font-medium transition-colors duration-200 hover:text-base-content"
@@ -1319,28 +1319,28 @@ const _sfc_main$3 = {
         }),
         _: 1
       }, _parent));
-      _push(`<a href="https://youtu.be/FPsx8xHLR1k?si=nZnBfqjYQun9R06h" target="_blank" class="text-base-content/80 text-sm font-medium transition-colors duration-200 hover:text-base-content" data-v-a47f19be> Destek </a></div><button class="hover:bg-base-200/80 btn btn-ghost btn-sm rounded-lg px-3 transition-all duration-200" data-v-a47f19be>`);
+      _push(`<a href="https://youtu.be/FPsx8xHLR1k?si=nZnBfqjYQun9R06h" target="_blank" class="text-base-content/80 text-sm font-medium transition-colors duration-200 hover:text-base-content" data-v-79ce3c43> Destek </a></div><button class="hover:bg-base-200/80 btn btn-ghost btn-sm rounded-lg px-3 transition-all duration-200" data-v-79ce3c43>`);
       if (isDarkMode.value) {
-        _push(`<svg class="h-4 w-4 fill-current text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-v-a47f19be><path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" data-v-a47f19be></path></svg>`);
+        _push(`<svg class="h-4 w-4 fill-current text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-v-79ce3c43><path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" data-v-79ce3c43></path></svg>`);
       } else {
-        _push(`<svg class="h-4 w-4 fill-current text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-v-a47f19be><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" data-v-a47f19be></path></svg>`);
+        _push(`<svg class="h-4 w-4 fill-current text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-v-79ce3c43><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" data-v-79ce3c43></path></svg>`);
       }
-      _push(`</button><button class="hover:bg-base-200/80 btn btn-ghost btn-sm rounded-lg px-3 transition-all duration-200 xl:hidden" data-v-a47f19be><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-v-a47f19be><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16m-7 6h7" data-v-a47f19be></path></svg></button></div></div></header>`);
+      _push(`</button><button class="hover:bg-base-200/80 btn btn-ghost btn-sm rounded-lg px-3 transition-all duration-200 xl:hidden" data-v-79ce3c43><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-v-79ce3c43><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16m-7 6h7" data-v-79ce3c43></path></svg></button></div></div></header>`);
       if (isMenuOpen.value) {
-        _push(`<div class="${ssrRenderClass([isMenuOpen.value ? "opacity-100" : "opacity-0", "fixed inset-0 z-50 transition-all duration-300 ease-out"])}" data-v-a47f19be><div class="bg-base-content/20 absolute inset-0 backdrop-blur-sm" data-v-a47f19be></div><div class="relative flex h-full items-end justify-center" data-v-a47f19be><div class="${ssrRenderClass([isMenuOpen.value ? "translate-y-0" : "translate-y-full", "w-full max-w-sm transform transition-all duration-300 ease-out"])}" data-v-a47f19be><div class="border-base-200/40 bg-base-100/95 mx-4 mb-4 max-h-[85vh] overflow-y-auto rounded-3xl border shadow-2xl backdrop-blur-xl" data-v-a47f19be><div class="flex justify-center pb-2 pt-4" data-v-a47f19be><div class="bg-base-300/60 h-1.5 w-16 rounded-full" data-v-a47f19be></div></div><div class="px-4 pb-6 sm:px-6" data-v-a47f19be>`);
+        _push(`<div class="${ssrRenderClass([isMenuOpen.value ? "opacity-100" : "opacity-0", "fixed inset-0 z-50 transition-all duration-300 ease-out"])}" data-v-79ce3c43><div class="bg-base-content/20 absolute inset-0 backdrop-blur-sm" data-v-79ce3c43></div><div class="relative flex h-full items-end justify-center" data-v-79ce3c43><div class="${ssrRenderClass([isMenuOpen.value ? "translate-y-0" : "translate-y-full", "w-full max-w-sm transform transition-all duration-300 ease-out"])}" data-v-79ce3c43><div class="border-base-200/40 bg-base-100/95 mx-4 mb-4 max-h-[85vh] overflow-y-auto rounded-3xl border shadow-2xl backdrop-blur-xl" data-v-79ce3c43><div class="flex justify-center pb-2 pt-4" data-v-79ce3c43><div class="bg-base-300/60 h-1.5 w-16 rounded-full" data-v-79ce3c43></div></div><div class="px-4 pb-6 sm:px-6" data-v-79ce3c43>`);
         _push(ssrRenderComponent(unref(Link), {
           href: "/",
           class: "mb-4 block"
         }, {
           default: withCtx((_2, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`<div class="bg-base-200/50 flex items-center space-x-3 rounded-2xl p-3 backdrop-blur-sm" data-v-a47f19be${_scopeId}><div class="bg-primary/10 ring-primary/20 flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl ring-1" data-v-a47f19be${_scopeId}>`);
+              _push2(`<div class="bg-base-200/50 flex items-center space-x-3 rounded-2xl p-3 backdrop-blur-sm" data-v-79ce3c43${_scopeId}><div class="bg-primary/10 ring-primary/20 flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl ring-1" data-v-79ce3c43${_scopeId}>`);
               if (logoPath.value && !isLoading.value) {
-                _push2(`<img${ssrRenderAttr("src", logoPath.value)}${ssrRenderAttr("alt", logoAlt.value)} class="h-full w-full object-cover" data-v-a47f19be${_scopeId}>`);
+                _push2(`<img${ssrRenderAttr("src", logoPath.value)}${ssrRenderAttr("alt", logoAlt.value)} class="h-full w-full object-cover" data-v-79ce3c43${_scopeId}>`);
               } else {
-                _push2(`<span class="text-sm font-bold text-primary" data-v-a47f19be${_scopeId}>${ssrInterpolate(seoTitle.value.charAt(0).toUpperCase())}</span>`);
+                _push2(`<span class="text-sm font-bold text-primary" data-v-79ce3c43${_scopeId}>${ssrInterpolate(seoTitle.value.charAt(0).toUpperCase())}</span>`);
               }
-              _push2(`</div><div data-v-a47f19be${_scopeId}><h3 class="text-base font-semibold text-base-content" data-v-a47f19be${_scopeId}>${ssrInterpolate(seoTitle.value)}</h3><p class="text-base-content/60 text-xs" data-v-a47f19be${_scopeId}>${ssrInterpolate(appName.value)}</p></div></div>`);
+              _push2(`</div><div data-v-79ce3c43${_scopeId}><h3 class="text-base font-semibold text-base-content" data-v-79ce3c43${_scopeId}>${ssrInterpolate(seoTitle.value)}</h3><p class="text-base-content/60 text-xs" data-v-79ce3c43${_scopeId}>${ssrInterpolate(appName.value)}</p></div></div>`);
             } else {
               return [
                 createVNode("div", { class: "bg-base-200/50 flex items-center space-x-3 rounded-2xl p-3 backdrop-blur-sm" }, [
@@ -1366,7 +1366,7 @@ const _sfc_main$3 = {
           }),
           _: 1
         }, _parent));
-        _push(`<div class="space-y-1" data-v-a47f19be>`);
+        _push(`<div class="space-y-2" data-v-79ce3c43><div class="space-y-1" data-v-79ce3c43>`);
         _push(ssrRenderComponent(_sfc_main$6, {
           href: "/",
           icon: "home",
@@ -1382,13 +1382,45 @@ const _sfc_main$3 = {
           icon: "fa-solid fa-book",
           label: "Kategoriler"
         }, null, _parent));
+        _push(`</div><div class="border-base-200/40 border-t pt-3" data-v-79ce3c43>`);
+        _push(ssrRenderComponent(unref(Link), {
+          href: "/dashboard",
+          class: "block"
+        }, {
+          default: withCtx((_2, _push2, _parent2, _scopeId) => {
+            if (_push2) {
+              _push2(`<div class="bg-primary/5 hover:bg-primary/10 border-primary/20 flex items-center space-x-3 rounded-2xl border p-3 transition-all duration-200" data-v-79ce3c43${_scopeId}><div class="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-xl" data-v-79ce3c43${_scopeId}><svg class="h-4 w-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-79ce3c43${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" data-v-79ce3c43${_scopeId}></path></svg></div><div data-v-79ce3c43${_scopeId}><h4 class="text-sm font-semibold text-primary" data-v-79ce3c43${_scopeId}>Panel</h4><p class="text-primary/70 text-xs" data-v-79ce3c43${_scopeId}>Yönetim Paneli</p></div></div>`);
+            } else {
+              return [
+                createVNode("div", { class: "bg-primary/5 hover:bg-primary/10 border-primary/20 flex items-center space-x-3 rounded-2xl border p-3 transition-all duration-200" }, [
+                  createVNode("div", { class: "bg-primary/10 flex h-8 w-8 items-center justify-center rounded-xl" }, [
+                    (openBlock(), createBlock("svg", {
+                      class: "h-4 w-4 text-primary",
+                      fill: "none",
+                      stroke: "currentColor",
+                      viewBox: "0 0 24 24"
+                    }, [
+                      createVNode("path", {
+                        "stroke-linecap": "round",
+                        "stroke-linejoin": "round",
+                        "stroke-width": "2",
+                        d: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                      })
+                    ]))
+                  ]),
+                  createVNode("div", null, [
+                    createVNode("h4", { class: "text-sm font-semibold text-primary" }, "Panel"),
+                    createVNode("p", { class: "text-primary/70 text-xs" }, "Yönetim Paneli")
+                  ])
+                ])
+              ];
+            }
+          }),
+          _: 1
+        }, _parent));
+        _push(`</div>`);
         if (isLoggedIn.value) {
-          _push(`<!--[-->`);
-          _push(ssrRenderComponent(_sfc_main$6, {
-            href: "/dashboard",
-            icon: "fa-solid fa-tachometer-alt",
-            label: "Panel"
-          }, null, _parent));
+          _push(`<div class="space-y-1" data-v-79ce3c43><div class="border-base-200/40 border-t pt-3" data-v-79ce3c43><h4 class="text-base-content/60 mb-2 text-xs font-semibold uppercase tracking-wider" data-v-79ce3c43>Yönetim</h4>`);
           _push(ssrRenderComponent(_sfc_main$6, {
             href: "/rendition/words",
             icon: "fa-solid fa-globe",
@@ -1399,30 +1431,30 @@ const _sfc_main$3 = {
             icon: "fa-solid fa-sync",
             label: "Versiyonlar"
           }, null, _parent));
-          _push(`<!--]-->`);
+          _push(`</div></div>`);
         } else {
           _push(`<!---->`);
         }
         _push(`</div>`);
         if (!isLoggedIn.value) {
-          _push(`<div class="border-base-200/40 mt-4 border-t pt-3" data-v-a47f19be><a href="https://youtu.be/FPsx8xHLR1k?si=3dNFdwhk5s8LyqOe" target="_blank" data-v-a47f19be><div class="bg-primary/5 hover:bg-primary/10 rounded-2xl p-3 text-center transition-all duration-200" data-v-a47f19be><span class="text-sm font-medium text-primary" data-v-a47f19be>Powered by Notiriel</span></div></a></div>`);
+          _push(`<div class="border-base-200/40 mt-4 border-t pt-3" data-v-79ce3c43><a href="https://youtu.be/FPsx8xHLR1k?si=3dNFdwhk5s8LyqOe" target="_blank" data-v-79ce3c43><div class="bg-primary/5 hover:bg-primary/10 rounded-2xl p-3 text-center transition-all duration-200" data-v-79ce3c43><span class="text-sm font-medium text-primary" data-v-79ce3c43>Powered by Notiriel</span></div></a></div>`);
         } else {
           _push(`<!---->`);
         }
         if (!isLoggedIn.value) {
-          _push(`<div class="mt-3" data-v-a47f19be>`);
+          _push(`<div class="mt-3" data-v-79ce3c43>`);
           _push(ssrRenderComponent(_sfc_main$4, { "is-compact": false }, null, _parent));
           _push(`</div>`);
         } else {
           _push(`<!---->`);
         }
-        _push(`<div class="mt-4 flex flex-col items-center space-y-2" data-v-a47f19be><button class="bg-base-200/50 hover:bg-base-200/80 flex items-center space-x-2 rounded-2xl px-3 py-2 backdrop-blur-sm transition-all duration-200" data-v-a47f19be>`);
+        _push(`<div class="mt-4 flex flex-col items-center space-y-2" data-v-79ce3c43><button class="bg-base-200/50 hover:bg-base-200/80 flex items-center space-x-2 rounded-2xl px-3 py-2 backdrop-blur-sm transition-all duration-200" data-v-79ce3c43>`);
         if (isDarkMode.value) {
-          _push(`<svg class="h-4 w-4 fill-current text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-v-a47f19be><path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" data-v-a47f19be></path></svg>`);
+          _push(`<svg class="h-4 w-4 fill-current text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-v-79ce3c43><path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" data-v-79ce3c43></path></svg>`);
         } else {
-          _push(`<svg class="h-4 w-4 fill-current text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-v-a47f19be><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" data-v-a47f19be></path></svg>`);
+          _push(`<svg class="h-4 w-4 fill-current text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-v-79ce3c43><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" data-v-79ce3c43></path></svg>`);
         }
-        _push(`<span class="text-sm font-medium text-base-content" data-v-a47f19be>${ssrInterpolate(currentThemeName.value)}</span></button><p class="text-base-content/50 text-xs" data-v-a47f19be>Notiriel - Tüm Hakları Saklıdır</p></div></div></div></div></div></div>`);
+        _push(`<span class="text-sm font-medium text-base-content" data-v-79ce3c43>${ssrInterpolate(currentThemeName.value)}</span></button><p class="text-base-content/50 text-xs" data-v-79ce3c43>Notiriel - Tüm Hakları Saklıdır</p></div></div></div></div></div></div>`);
       } else {
         _push(`<!---->`);
       }
@@ -1436,7 +1468,7 @@ _sfc_main$3.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/MainLayout/HeaderLayout.vue");
   return _sfc_setup$3 ? _sfc_setup$3(props, ctx) : void 0;
 };
-const HeaderLayout = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-a47f19be"]]);
+const HeaderLayout = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-79ce3c43"]]);
 const _sfc_main$2 = {
   __name: "TabNavItem",
   __ssrInlineRender: true,

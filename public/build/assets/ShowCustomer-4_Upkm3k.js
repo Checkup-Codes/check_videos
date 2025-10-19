@@ -1,1 +1,0 @@
-import o from"./LayoutProjects-MBQAaKOb.js";import r from"./Screen-BEXpePiN.js";import{j as t,w as e,e as m,o as a}from"./ssr-CAy-S3_r.js";import"./FlashMessage-BfbQBuxX.js";import"./SidebarLayoutProject-BmgXjSw0.js";import"./CheckSubsidebar-CYUw6rXT.js";const h={__name:"ShowCustomer",setup(s){return(_,c)=>(a(),t(o,null,{screen:e(()=>[m(r)]),_:1}))}};export{h as default};
