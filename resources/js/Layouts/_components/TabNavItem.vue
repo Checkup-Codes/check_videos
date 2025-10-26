@@ -1,15 +1,15 @@
 <template>
   <Link
     :href="href"
-    class="flex items-center space-x-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200"
+    class="flex items-center space-x-1.5 px-2 py-1.5 text-sm font-medium transition-all duration-200"
     :class="{
-      'bg-base-content text-base-100 shadow-sm': isActive,
-      'text-base-content/70 hover:bg-base-200/50 hover:text-base-content': !isActive,
+      'rounded-none border-b-2 border-base-content text-base-content': isActive,
+      'text-base-content/70 rounded-md hover:text-base-content': !isActive,
     }"
   >
     <!-- Icon -->
-    <div class="flex h-4 w-4 flex-shrink-0 items-center justify-center">
-      <svg v-if="icon === 'home'" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center">
+      <svg v-if="icon === 'home'" class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -19,7 +19,7 @@
       </svg>
       <svg
         v-else-if="icon === 'fa-solid fa-pencil'"
-        class="h-4 w-4"
+        class="h-3.5 w-3.5"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -33,7 +33,7 @@
       </svg>
       <svg
         v-else-if="icon === 'fa-solid fa-book'"
-        class="h-4 w-4"
+        class="h-3.5 w-3.5"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -47,7 +47,7 @@
       </svg>
       <svg
         v-else-if="icon === 'fa-solid fa-globe'"
-        class="h-4 w-4"
+        class="h-3.5 w-3.5"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -61,7 +61,7 @@
       </svg>
       <svg
         v-else-if="icon === 'fa-solid fa-sync'"
-        class="h-4 w-4"
+        class="h-3.5 w-3.5"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -73,7 +73,7 @@
           d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
         ></path>
       </svg>
-      <font-awesome-icon v-else :icon="dynamicIcon" class="h-4 w-4" />
+      <font-awesome-icon v-else :icon="dynamicIcon" class="h-3.5 w-3.5" />
     </div>
 
     <!-- Label -->

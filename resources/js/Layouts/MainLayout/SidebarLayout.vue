@@ -1,10 +1,10 @@
 <template>
   <!-- Horizontal Tab Navigation -->
   <nav
-    class="border-base-200/60 bg-base-100/95 sticky top-14 z-40 w-full border-b shadow-sm backdrop-blur-md transition-all duration-300"
+    class="bg-base-100/95 border-base-200/30 sticky top-12 z-40 w-full border-b backdrop-blur-md transition-all duration-300"
     :class="currentTheme"
   >
-    <div class="flex h-12 items-center justify-between px-4 sm:px-6">
+    <div class="flex h-10 items-center justify-between px-4 sm:px-6">
       <!-- Tab Navigation Links -->
       <div class="flex items-center space-x-1">
         <TabNavItem href="/" icon="home" label="Ana Sayfa" :is-active="isActiveRoute('/')" />

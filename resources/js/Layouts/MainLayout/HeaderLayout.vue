@@ -1,24 +1,24 @@
 <template>
   <!-- Full Width Header -->
   <header
-    class="border-base-200/60 bg-base-100/95 sticky top-0 z-50 w-full border-b shadow-sm backdrop-blur-md transition-all duration-300"
+    class="bg-base-100/95 border-base-200/30 sticky top-0 z-50 w-full border-b backdrop-blur-md transition-all duration-300"
     :class="currentTheme"
   >
     <!-- Mobile Header -->
-    <div class="flex h-14 items-center justify-between px-4 sm:px-6 lg:hidden">
+    <div class="flex h-12 items-center justify-between px-3 sm:px-4 lg:hidden">
       <!-- Back button -->
       <Link
         v-if="basePath"
         :href="`/${basePath}`"
-        class="hover:bg-base-200/80 btn btn-ghost btn-sm rounded-xl px-3 transition-all duration-200"
+        class="hover:bg-base-200/80 btn btn-ghost btn-sm rounded-lg px-2 transition-all duration-200"
       >
-        <GoBackSvg class="h-4 w-4" />
+        <GoBackSvg class="h-3.5 w-3.5" />
       </Link>
       <div v-else class="w-10"></div>
 
       <!-- Logo/Title -->
-      <div class="flex items-center space-x-2">
-        <div class="bg-primary/10 flex h-7 w-7 items-center justify-center overflow-hidden rounded-lg">
+      <div class="flex items-center space-x-1.5">
+        <div class="bg-primary/10 flex h-6 w-6 items-center justify-center overflow-hidden rounded-md">
           <template v-if="logoPath && !isLoading">
             <img :src="logoPath" :alt="logoAlt" class="h-full w-full object-cover" @error="handleImageError" />
           </template>
@@ -34,31 +34,37 @@
       <!-- Menu Toggle Button -->
       <button
         @click="toggleMenu"
-        class="hover:bg-base-200/80 btn btn-ghost btn-sm rounded-xl px-3 transition-all duration-200"
+        class="hover:bg-base-200/80 btn btn-ghost btn-sm rounded-lg px-2 transition-all duration-200"
       >
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          class="h-3.5 w-3.5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16m-7 6h7"></path>
         </svg>
       </button>
     </div>
 
     <!-- Desktop Header -->
-    <div class="hidden h-16 items-center justify-between px-6 lg:flex">
+    <div class="hidden h-12 items-center justify-between px-4 lg:flex">
       <!-- Left Section: Logo + Brand + Language -->
       <div class="flex items-center space-x-4">
         <!-- Logo/Title -->
-        <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2">
           <div
-            class="bg-primary/10 ring-primary/20 flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl ring-1"
+            class="bg-primary/10 ring-primary/20 flex h-7 w-7 items-center justify-center overflow-hidden rounded-lg ring-1"
           >
             <template v-if="logoPath && !isLoading">
               <img :src="logoPath" :alt="logoAlt" class="h-full w-full object-cover" @error="handleImageError" />
             </template>
-            <span v-else class="text-sm font-bold text-primary">{{ seoTitle.charAt(0).toUpperCase() }}</span>
+            <span v-else class="text-xs font-bold text-primary">{{ seoTitle.charAt(0).toUpperCase() }}</span>
           </div>
           <Link
             href="/"
-            class="text-lg font-semibold text-base-content transition-colors duration-200 hover:text-primary"
+            class="text-base font-semibold text-base-content transition-colors duration-200 hover:text-primary"
             >{{ seoTitle }}</Link
           >
         </div>
@@ -102,13 +108,13 @@
       </div>
 
       <!-- Center Section: Search Input -->
-      <div class="mx-8 max-w-lg flex-1">
+      <div class="mx-6 max-w-md flex-1">
         <div class="relative">
           <div class="relative">
             <!-- Search Icon -->
-            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <svg
-                class="h-4 w-4"
+                class="h-3.5 w-3.5"
                 :class="isDarkMode ? 'text-gray-400' : 'text-gray-500'"
                 fill="none"
                 stroke="currentColor"
@@ -136,7 +142,7 @@
               @input="performSearch"
               type="text"
               placeholder="Ara..."
-              class="search-input w-full rounded-lg border py-3 pl-12 pr-16 text-sm backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2"
+              class="search-input w-full rounded-md border py-2 pl-10 pr-12 text-sm backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2"
               :class="[
                 isDarkMode
                   ? 'border-gray-600/60 bg-gray-800/90 text-gray-100 placeholder-gray-400 focus:border-blue-500/40 focus:ring-blue-500/20'
@@ -145,9 +151,9 @@
             />
 
             <!-- Keyboard Shortcut -->
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
               <kbd
-                class="rounded border px-2 py-1 text-xs font-semibold"
+                class="rounded border px-1.5 py-0.5 text-xs font-semibold"
                 :class="
                   isDarkMode
                     ? 'border-gray-600/60 bg-gray-700/60 text-gray-300'
@@ -337,9 +343,9 @@
       </div>
 
       <!-- Right Section: Navigation + Actions -->
-      <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-2">
         <!-- Navigation Links -->
-        <div class="hidden items-center space-x-6 xl:flex">
+        <div class="hidden items-center space-x-4 xl:flex">
           <Link
             href="/dashboard"
             class="text-base-content/80 text-sm font-medium transition-colors duration-200 hover:text-base-content"
@@ -358,17 +364,17 @@
         <!-- Theme Toggle -->
         <button
           @click="toggleDarkLight"
-          class="hover:bg-base-200/80 btn btn-ghost btn-sm rounded-lg px-3 transition-all duration-200"
+          class="hover:bg-base-200/80 btn btn-ghost btn-sm rounded-md px-2 transition-all duration-200"
         >
           <template v-if="isDarkMode">
-            <svg class="h-4 w-4 fill-current text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <svg class="h-3.5 w-3.5 fill-current text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path
                 d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"
               />
             </svg>
           </template>
           <template v-else>
-            <svg class="h-4 w-4 fill-current text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <svg class="h-3.5 w-3.5 fill-current text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path
                 d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"
               />
@@ -379,9 +385,15 @@
         <!-- Mobile Menu Toggle for Desktop (fallback) -->
         <button
           @click="toggleMenu"
-          class="hover:bg-base-200/80 btn btn-ghost btn-sm rounded-lg px-3 transition-all duration-200 xl:hidden"
+          class="hover:bg-base-200/80 btn btn-ghost btn-sm rounded-md px-2 transition-all duration-200 xl:hidden"
         >
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            class="h-3.5 w-3.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16m-7 6h7"></path>
           </svg>
         </button>
