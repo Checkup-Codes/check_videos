@@ -2,7 +2,7 @@
   <Head>
     <title>{{ title }}</title>
   </Head>
-  <div class="flex h-screen flex-col">
+  <div class="flex h-screen flex-col px-3">
     <!-- Header - En üstte -->
     <HeaderLayout @toggle-sidebar="toggleSidebar" />
 

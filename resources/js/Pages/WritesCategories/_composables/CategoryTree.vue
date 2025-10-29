@@ -1,18 +1,31 @@
 <template>
   <div ref="scrollContainer" class="category-tree-container space-y-1 overflow-y-auto p-3">
-    <!-- Search bar for all users -->
-    <div class="mb-3">
-      <input
-        v-model="searchQuery"
-        type="text"
-        class="input-bordered input w-full"
-        placeholder="Kategori ara..."
-        @input="handleSearchInput"
-      />
-    </div>
-    <!-- Responsive filter buttons for logged-in users -->
-    <div v-if="isAdmin" class="mb-3">
-      <div class="hidden gap-2 sm:flex">
+    <!-- Expand/Collapse and Filter buttons -->
+    <div class="mb-3 flex flex-wrap items-center gap-2">
+      <!-- Expand/Collapse All Button -->
+      <div v-if="enableExpandCollapse" class="flex gap-2">
+        <button
+          class="btn btn-outline btn-xs flex items-center justify-center"
+          :class="{ 'bg-base-content text-base-100': areAllExpanded }"
+          @click="handleToggleExpand"
+          :title="areAllExpanded ? 'Tümünü Daralt' : 'Tümünü Genişlet'"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-3.5 w-3.5 transition-transform duration-200"
+            :class="{ 'rotate-180': areAllExpanded }"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+          <span v-if="!props.isCollapsed" class="ml-1">{{ areAllExpanded ? 'Daralt' : 'Genişlet' }}</span>
+        </button>
+      </div>
+
+      <!-- Responsive filter buttons for logged-in users -->
+      <div v-if="isAdmin" class="hidden gap-2 sm:flex">
         <button
           class="btn btn-outline btn-xs flex items-center justify-center"
           :class="{ 'btn-neutral': adminFilter === 'all' }"
@@ -439,23 +452,21 @@ defineOptions({
 
 const props = defineProps({
   isCollapsed: { type: Boolean, default: false },
+  expandAll: { type: Boolean, default: false },
+  enableExpandCollapse: { type: Boolean, default: false },
 });
 
 const categories = inject('categories', []);
 const isAdmin = inject('isAdmin', false);
-const searchQuery = ref('');
-const debouncedSearchQuery = ref('');
 const adminFilter = ref('all');
 const showFilterMenu = ref(false);
 
-// Recursive filter for search and status
-function filterCategories(categories, search, status) {
+// Recursive filter for status only
+function filterCategories(categories, status) {
   return categories
     .map((cat) => {
       // Recursively filter children first
-      const filteredChildren = filterCategories(cat.children || [], search, status);
-      // Search filter
-      const matchesSearch = cat.name.toLowerCase().includes(search.toLowerCase());
+      const filteredChildren = filterCategories(cat.children || [], status);
       // Status filter
       let matchesStatus = true;
       if (isAdmin && status !== 'all') {
@@ -463,9 +474,9 @@ function filterCategories(categories, search, status) {
         else matchesStatus = cat.status === status;
       }
       // Show this category if:
-      // - It matches search+status
+      // - It matches status
       // - OR any child matches (filteredChildren not empty)
-      if ((matchesSearch && matchesStatus) || filteredChildren.length > 0) {
+      if (matchesStatus || filteredChildren.length > 0) {
         return {
           ...cat,
           children: filteredChildren,
@@ -484,25 +495,24 @@ const parentCategories = computed(() =>
     .sort((a, b) => getTotalWriteCount(b) - getTotalWriteCount(a))
 );
 
-// Debounce search input
-let searchTimeout = null;
-const handleSearchInput = () => {
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => {
-    debouncedSearchQuery.value = searchQuery.value;
-  }, 300);
-};
+const filteredParentCategories = computed(() => filterCategories(parentCategories.value, adminFilter.value));
 
-const filteredParentCategories = computed(() =>
-  filterCategories(parentCategories.value, debouncedSearchQuery.value, adminFilter.value)
-);
-
-const emit = defineEmits(['update:expandAll']);
+const emit = defineEmits(['update:expandAll', 'toggle-expand']);
 const page = usePage();
 const url = computed(() => page.url);
 
 const scrollContainer = ref(null);
 const store = useStore();
+
+// Check if all categories are expanded
+const areAllExpanded = computed(() => {
+  return store.getters['CategorySidebar/collapsedSet'].size === 0;
+});
+
+// Handle toggle expand/collapse all
+const handleToggleExpand = () => {
+  emit('toggle-expand');
+};
 
 // Calculate total write count for a category and its children
 const getTotalWriteCount = (category) => {

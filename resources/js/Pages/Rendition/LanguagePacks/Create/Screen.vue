@@ -1,110 +1,111 @@
 <template>
   <CheckScreen>
-    <GoBackButton url="/rendition/language-packs" />
-    <TopScreen title="Yeni Dil Paketi Oluştur" />
-
-    <div class="mx-auto max-w-2xl">
-      <div class="rounded-lg border border-base-300 bg-base-100 p-6">
-        <form @submit.prevent="submitForm" class="space-y-5">
-          <!-- Paket Adı -->
-          <div class="space-y-2">
-            <label class="text-sm font-medium text-base-content">Paket Adı</label>
-            <input
-              v-model="form.name"
-              type="text"
-              class="placeholder-base-content/50 w-full rounded border border-base-300 bg-base-100 px-3 py-2 text-base-content focus:border-base-content focus:outline-none focus:ring-1 focus:ring-base-content"
-              placeholder="Örn: Temel İngilizce Kelimeler"
-              required
-            />
-            <p v-if="errors.name" class="text-sm text-error">{{ errors.name }}</p>
-          </div>
-
-          <!-- Açıklama -->
-          <div class="space-y-2">
-            <label class="text-sm font-medium text-base-content">Açıklama</label>
-            <textarea
-              v-model="form.description"
-              rows="3"
-              class="placeholder-base-content/50 w-full resize-none rounded border border-base-300 bg-base-100 px-3 py-2 text-base-content focus:border-base-content focus:outline-none focus:ring-1 focus:ring-base-content"
-              placeholder="Bu paket hakkında kısa bir açıklama yazın..."
-            ></textarea>
-            <p v-if="errors.description" class="text-sm text-error">{{ errors.description }}</p>
-          </div>
-
-          <!-- Dil Kodu -->
-          <div class="space-y-2">
-            <label class="text-sm font-medium text-base-content">Dil Kodu</label>
-            <select
-              v-model="form.language"
-              class="w-full rounded border border-base-300 bg-base-100 px-3 py-2 text-base-content focus:border-base-content focus:outline-none focus:ring-1 focus:ring-base-content"
-              required
-            >
-              <option value="" disabled>Dil seçiniz</option>
-              <option value="tr">Türkçe (TR)</option>
-              <option value="en">İngilizce (EN)</option>
-              <option value="de">Almanca (DE)</option>
-              <option value="fr">Fransızca (FR)</option>
-              <option value="es">İspanyolca (ES)</option>
-              <option value="it">İtalyanca (IT)</option>
-              <option value="ru">Rusça (RU)</option>
-              <option value="ar">Arapça (AR)</option>
-            </select>
-            <p v-if="errors.language" class="text-sm text-error">{{ errors.language }}</p>
-          </div>
-
-          <!-- Slug -->
-          <div class="space-y-2">
-            <label class="text-sm font-medium text-base-content">Slug</label>
-            <input
-              v-model="form.slug"
-              type="text"
-              class="placeholder-base-content/50 w-full rounded border border-base-300 bg-base-100 px-3 py-2 text-base-content focus:border-base-content focus:outline-none focus:ring-1 focus:ring-base-content"
-              placeholder="temel-ingilizce-kelimeler"
-              required
-            />
-            <p v-if="errors.slug" class="text-sm text-error">{{ errors.slug }}</p>
-          </div>
-
-          <!-- Dosya Yükleme -->
-          <div class="space-y-2">
-            <label class="text-sm font-medium text-base-content">JSON Dosyası İçe Aktar</label>
-            <div class="relative">
-              <input
-                type="file"
-                accept=".json"
-                @change="handleFileUpload"
-                class="w-full rounded border border-base-300 bg-base-100 px-3 py-2 text-base-content file:mr-3 file:rounded file:border-0 file:bg-base-content file:px-3 file:py-1 file:text-sm file:font-medium file:text-base-100 hover:file:bg-base-300 hover:file:text-base-content"
-              />
-            </div>
-            <p class="text-base-content/70 text-xs">
-              Daha önce dışa aktarılmış bir JSON dosyasını yükleyerek kelimeleri otomatik olarak içe aktarabilirsiniz.
-            </p>
-            <p v-if="errors.import_file" class="text-sm text-error">{{ errors.import_file }}</p>
-          </div>
-
-          <!-- Butonlar -->
-          <div class="flex justify-end gap-3 pt-4">
-            <button
-              type="button"
-              @click="goBack"
-              class="rounded border border-base-300 bg-base-100 px-4 py-2 text-sm font-medium text-base-content transition hover:bg-base-200"
-            >
-              İptal
-            </button>
-            <button
-              type="submit"
-              class="rounded bg-base-content px-4 py-2 text-sm font-medium text-base-100 transition hover:bg-base-300 hover:text-base-content disabled:opacity-50"
-              :disabled="processing"
-            >
-              <span
-                v-if="processing"
-                class="mr-2 inline-block h-3 w-3 animate-spin rounded-full border-2 border-base-100 border-t-transparent"
-              ></span>
-              {{ processing ? 'Kaydediliyor...' : 'Kaydet' }}
-            </button>
-          </div>
-        </form>
+    <div class="card-body p-4 sm:p-6">
+      <!-- Header -->
+      <div class="mb-6">
+        <h1 class="text-xl font-bold sm:text-2xl">Yeni Dil Paketi Oluştur</h1>
+        <p class="text-base-content/60 mt-1 text-sm">Yeni bir dil paketi oluşturun ve kelimelerinizi organize edin</p>
       </div>
+
+      <form @submit.prevent="submitForm" class="space-y-4">
+        <!-- Paket Adı -->
+        <div class="space-y-1.5">
+          <label class="text-sm font-medium text-base-content">Paket Adı</label>
+          <input
+            v-model="form.name"
+            type="text"
+            class="placeholder-base-content/50 border-base-300/50 bg-base-50 focus:border-base-content/50 focus:ring-base-content/20 w-full rounded-lg border px-3 py-2 text-sm text-base-content transition-colors focus:bg-base-100 focus:outline-none focus:ring-1"
+            placeholder="Örn: Temel İngilizce Kelimeler"
+            required
+          />
+          <p v-if="errors.name" class="text-xs text-error">{{ errors.name }}</p>
+        </div>
+
+        <!-- Dil Kodu -->
+        <div class="space-y-1.5">
+          <label class="text-sm font-medium text-base-content">Dil Kodu</label>
+          <select
+            v-model="form.language"
+            class="border-base-300/50 bg-base-50 focus:border-base-content/50 focus:ring-base-content/20 w-full rounded-lg border px-3 py-2 text-sm text-base-content transition-colors focus:bg-base-100 focus:outline-none focus:ring-1"
+            required
+          >
+            <option value="" disabled>Dil seçiniz</option>
+            <option value="tr">Türkçe (TR)</option>
+            <option value="en">İngilizce (EN)</option>
+            <option value="de">Almanca (DE)</option>
+            <option value="fr">Fransızca (FR)</option>
+            <option value="es">İspanyolca (ES)</option>
+            <option value="it">İtalyanca (IT)</option>
+            <option value="ru">Rusça (RU)</option>
+            <option value="ar">Arapça (AR)</option>
+          </select>
+          <p v-if="errors.language" class="text-xs text-error">{{ errors.language }}</p>
+        </div>
+
+        <!-- Slug -->
+        <div class="space-y-1.5">
+          <label class="text-sm font-medium text-base-content">Slug</label>
+          <input
+            v-model="form.slug"
+            type="text"
+            class="placeholder-base-content/50 border-base-300/50 bg-base-50 focus:border-base-content/50 focus:ring-base-content/20 w-full rounded-lg border px-3 py-2 text-sm text-base-content transition-colors focus:bg-base-100 focus:outline-none focus:ring-1"
+            placeholder="temel-ingilizce-kelimeler"
+            required
+          />
+          <p v-if="errors.slug" class="text-xs text-error">{{ errors.slug }}</p>
+        </div>
+
+        <!-- Açıklama -->
+        <div class="space-y-1.5">
+          <label class="text-sm font-medium text-base-content">Açıklama</label>
+          <textarea
+            v-model="form.description"
+            rows="3"
+            class="placeholder-base-content/50 border-base-300/50 bg-base-50 focus:border-base-content/50 focus:ring-base-content/20 w-full resize-none rounded-lg border px-3 py-2 text-sm text-base-content transition-colors focus:bg-base-100 focus:outline-none focus:ring-1"
+            placeholder="Bu paket hakkında kısa bir açıklama yazın..."
+          ></textarea>
+          <p v-if="errors.description" class="text-xs text-error">{{ errors.description }}</p>
+        </div>
+
+        <!-- Dosya Yükleme -->
+        <div class="space-y-1.5">
+          <label class="text-sm font-medium text-base-content">JSON Dosyası İçe Aktar</label>
+          <div class="relative">
+            <input
+              type="file"
+              accept=".json"
+              @change="handleFileUpload"
+              class="border-base-300/50 bg-base-50 focus:border-base-content/50 focus:ring-base-content/20 w-full rounded-lg border px-3 py-2 text-sm text-base-content transition-colors file:mr-3 file:rounded-lg file:border-0 file:bg-base-content file:px-3 file:py-1 file:text-sm file:font-medium file:text-base-100 hover:file:bg-base-300 hover:file:text-base-content focus:bg-base-100 focus:outline-none focus:ring-1"
+            />
+          </div>
+          <p class="text-base-content/70 text-xs">
+            Daha önce dışa aktarılmış bir JSON dosyasını yükleyerek kelimeleri otomatik olarak içe aktarabilirsiniz.
+          </p>
+          <p v-if="errors.import_file" class="text-xs text-error">{{ errors.import_file }}</p>
+        </div>
+
+        <!-- Butonlar -->
+        <div class="flex flex-col-reverse gap-2 pt-4 sm:flex-row sm:justify-end">
+          <button
+            type="button"
+            @click="goBack"
+            class="border-base-300/50 rounded-lg border bg-base-100 px-4 py-2 text-sm font-medium text-base-content transition-colors hover:bg-base-200"
+          >
+            İptal
+          </button>
+          <button
+            type="submit"
+            class="rounded-lg bg-base-content px-4 py-2 text-sm font-medium text-base-100 transition-colors hover:bg-base-300 hover:text-base-content disabled:opacity-50"
+            :disabled="processing"
+          >
+            <span
+              v-if="processing"
+              class="mr-2 inline-block h-3 w-3 animate-spin rounded-full border-2 border-base-100 border-t-transparent"
+            ></span>
+            {{ processing ? 'Kaydediliyor...' : 'Kaydet' }}
+          </button>
+        </div>
+      </form>
     </div>
   </CheckScreen>
 </template>
@@ -114,8 +115,6 @@ import { ref, watch } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { router } from '@inertiajs/vue3';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
-import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
-import GoBackButton from '@/Components/GoBackButton.vue';
 
 const props = defineProps({
   screen: Object,

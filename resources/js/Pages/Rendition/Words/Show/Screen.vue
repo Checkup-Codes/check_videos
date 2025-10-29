@@ -10,22 +10,6 @@
             </h1>
             <p class="text-muted-foreground mt-1">{{ props.words?.length || 0 }} kelime bulundu</p>
           </div>
-          <div class="flex items-center gap-2">
-            <Link
-              v-if="isLoggedIn && props.pack"
-              :href="route('rendition.language-packs.edit', props.pack.id)"
-              class="btn btn-outline btn-sm"
-            >
-              Paketi Düzenle
-            </Link>
-            <Link
-              v-if="isLoggedIn"
-              :href="route('rendition.words.create')"
-              class="btn btn-sm bg-base-content text-base-100 hover:bg-base-300 hover:text-base-content"
-            >
-              Yeni Kelime
-            </Link>
-          </div>
         </div>
       </div>
 

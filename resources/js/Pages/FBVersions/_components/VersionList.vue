@@ -1,58 +1,63 @@
 <template>
-  <CheckSubsidebar>
-    <div class="space-y-2 p-2">
-      <div v-if="versions && versions.length === 0" class="alert alert-info">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          ></path>
-        </svg>
-        <span>Henüz versiyon bulunmamaktadır.</span>
-      </div>
-
-      <div v-for="version in versions" :key="version.id" class="transition-all duration-200 hover:scale-[1.01]">
-        <Link
-          :href="`/versions/${version.version}`"
-          :class="[
-            getLinkClasses(`/versions/${version.version}`),
-            'card block rounded-lg bg-base-100 shadow-sm hover:shadow',
-          ]"
-        >
-          <div class="p-3">
-            <div class="mb-1 text-base font-semibold">
-              {{ version.version }}
-            </div>
-            <div class="flex items-center text-sm opacity-70">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="mr-1 h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
-              <span>{{ formatDate(version.release_date) }}</span>
-            </div>
-          </div>
-        </Link>
-      </div>
+  <div class="version-list-container space-y-2 p-3">
+    <!-- Empty state -->
+    <div v-if="versions && versions.length === 0" class="flex h-32 items-center justify-center text-center opacity-50">
+      <div>Henüz versiyon bulunmuyor</div>
     </div>
-  </CheckSubsidebar>
+
+    <!-- Version List - Minimalist design like WriteList -->
+    <div v-else class="space-y-2">
+      <Link
+        v-for="version in versions"
+        :key="version.id"
+        :href="`/versions/${version.version}`"
+        :class="[
+          'block rounded-lg p-3 transition-all duration-200',
+          getLinkClasses(`/versions/${version.version}`)
+            ? 'bg-base-content text-base-100'
+            : 'border border-base-300 bg-base-100 hover:bg-base-300',
+        ]"
+      >
+        <!-- Version Number -->
+        <div class="mb-1">
+          <h3
+            class="text-sm font-medium leading-tight"
+            :class="getLinkClasses(`/versions/${version.version}`) ? 'text-base-100' : 'text-base-content'"
+          >
+            {{ version.version }}
+          </h3>
+        </div>
+
+        <!-- Meta bilgiler -->
+        <div
+          class="flex items-center gap-3 text-xs"
+          :class="getLinkClasses(`/versions/${version.version}`) ? 'text-base-100/70' : 'text-base-content/70'"
+        >
+          <span class="flex items-center gap-1">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-3 w-3 flex-shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+            <span class="truncate">{{ formatDate(version.release_date) }}</span>
+          </span>
+        </div>
+      </Link>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { Link } from '@inertiajs/vue3';
-import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
-import ThemeSwitcher from '@/Layouts/_components/ThemeSwitcher.vue';
 
 // Props tanımı
 const props = defineProps({
@@ -66,11 +71,9 @@ const props = defineProps({
   },
 });
 
-// Sınıf hesaplama işlevi
+// Sınıf hesaplama işlevi - aktif versiyon kontrolü
 const getLinkClasses = (href) => {
-  return props.currentUrl === href
-    ? 'border-l-2 text-primary bg-base-100'
-    : 'border-l-2 border-transparent text-base-content';
+  return props.currentUrl === href || props.currentUrl.startsWith(href + '/');
 };
 
 // Tarih formatlama işlevi

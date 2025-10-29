@@ -4,13 +4,9 @@
       <div class="mb-6 flex items-center justify-between">
         <div>
           <h2 class="text-xl font-bold text-base-content">Dil Paketleri</h2>
-          <p class="text-sm text-base-content/70">Toplam Paket Sayısı: {{ languagePacks.length }}</p>
+          <p class="text-base-content/70 text-sm">Toplam Paket Sayısı: {{ languagePacks.length }}</p>
         </div>
-        <a
-          v-if="isLoggedIn"
-          :href="route('rendition.language-packs.create')"
-          class="btn btn-primary btn-sm"
-        >
+        <a v-if="isLoggedIn" :href="route('rendition.language-packs.create')" class="btn btn-primary btn-sm">
           Yeni Paket Oluştur
         </a>
       </div>
@@ -24,33 +20,25 @@
                 type="text"
                 v-model="searchQuery"
                 placeholder="Kelime veya anlam ara..."
-                class="input input-bordered w-full"
+                class="input-bordered input w-full"
               />
             </div>
             <div class="min-w-[200px] flex-1">
-              <select
-                v-model="statusFilter"
-                class="select select-bordered w-full"
-              >
+              <select v-model="statusFilter" class="select-bordered select w-full">
                 <option value="">Tüm Durumlar</option>
                 <option value="0">Öğrenilmedi</option>
                 <option value="1">Öğreniliyor</option>
                 <option value="2">Öğrenildi</option>
               </select>
             </div>
-            <button
-              @click="clearFilters"
-              class="btn btn-outline btn-sm"
-            >
-              Filtreleri Temizle
-            </button>
+            <button @click="clearFilters" class="btn btn-outline btn-sm">Filtreleri Temizle</button>
           </div>
         </div>
 
         <!-- Yükleme Durumu -->
         <div v-if="isLoading" class="p-8 text-center">
           <div class="loading loading-spinner loading-lg"></div>
-          <p class="mt-2 text-base-content/70">Kelime listesi yükleniyor...</p>
+          <p class="text-base-content/70 mt-2">Kelime listesi yükleniyor...</p>
         </div>
 
         <!-- Tablo -->
@@ -68,22 +56,19 @@
               <tr v-for="pack in languagePacks" :key="pack.id" class="hover">
                 <td>
                   <div class="text-sm font-medium text-base-content">{{ pack.name }}</div>
-                  <div class="text-sm text-base-content/70">{{ pack.description }}</div>
+                  <div class="text-base-content/70 text-sm">{{ pack.description }}</div>
                 </td>
                 <td>
                   <span class="badge badge-primary">
                     {{ getLanguageName(pack.language) }}
                   </span>
                 </td>
-                <td class="text-sm text-base-content/70">
+                <td class="text-base-content/70 text-sm">
                   {{ pack.word_count }}
                 </td>
                 <td>
                   <div class="flex gap-2">
-                    <a
-                      :href="route('rendition.language-packs.words', pack.id)"
-                      class="link link-primary"
-                    >
+                    <a :href="route('rendition.language-packs.words', pack.id)" class="link link-primary">
                       Kelimeler
                     </a>
                     <a

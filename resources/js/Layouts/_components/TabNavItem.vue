@@ -1,15 +1,28 @@
 <template>
   <Link
     :href="href"
-    class="flex items-center space-x-1.5 px-2 py-1.5 text-sm font-medium transition-all duration-200"
-    :class="{
-      'rounded-none border-b-2 border-base-content text-base-content': isActive,
-      'text-base-content/70 rounded-md hover:text-base-content': !isActive,
-    }"
+    class="group relative flex items-center space-x-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-300 sm:mx-1"
+    :class="[
+      {
+        'bg-primary/10 shadow-sm': isActive,
+        'text-base-content/70 hover:bg-base-200/60 hover:text-base-content': !isActive,
+      },
+      isActive ? (isDarkTheme ? 'text-white' : 'text-black') : '',
+    ]"
   >
+    <!-- Active Indicator -->
+    <div
+      v-if="isActive"
+      class="absolute -bottom-px left-1/2 h-1 w-3/4 -translate-x-1/2 rounded-t-full"
+      :class="isDarkTheme ? 'bg-white' : 'bg-black'"
+    ></div>
+
     <!-- Icon -->
-    <div class="flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center">
-      <svg v-if="icon === 'home'" class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div
+      class="flex h-4 w-4 flex-shrink-0 items-center justify-center transition-transform duration-300"
+      :class="{ 'scale-110': isActive }"
+    >
+      <svg v-if="icon === 'home'" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -19,7 +32,7 @@
       </svg>
       <svg
         v-else-if="icon === 'fa-solid fa-pencil'"
-        class="h-3.5 w-3.5"
+        class="h-4 w-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -33,7 +46,7 @@
       </svg>
       <svg
         v-else-if="icon === 'fa-solid fa-book'"
-        class="h-3.5 w-3.5"
+        class="h-4 w-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -47,7 +60,7 @@
       </svg>
       <svg
         v-else-if="icon === 'fa-solid fa-globe'"
-        class="h-3.5 w-3.5"
+        class="h-4 w-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -61,7 +74,7 @@
       </svg>
       <svg
         v-else-if="icon === 'fa-solid fa-sync'"
-        class="h-3.5 w-3.5"
+        class="h-4 w-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -73,11 +86,17 @@
           d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
         ></path>
       </svg>
-      <font-awesome-icon v-else :icon="dynamicIcon" class="h-3.5 w-3.5" />
+      <font-awesome-icon v-else :icon="dynamicIcon" class="h-4 w-4" />
     </div>
 
     <!-- Label -->
-    <span class="whitespace-nowrap">{{ label }}</span>
+    <span class="whitespace-nowrap font-medium">{{ label }}</span>
+
+    <!-- Hover Effect Background -->
+    <div
+      v-if="!isActive"
+      class="via-base-200/30 absolute inset-0 rounded-lg bg-gradient-to-r from-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+    ></div>
   </Link>
 </template>
 
@@ -85,6 +104,9 @@
 import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { useStore } from 'vuex';
+
+const store = useStore();
 
 const props = defineProps({
   href: String,
@@ -94,6 +116,12 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+});
+
+// Theme control
+const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
+const isDarkTheme = computed(() => {
+  return currentTheme.value.includes('dark');
 });
 
 const dynamicIcon = computed(() => {

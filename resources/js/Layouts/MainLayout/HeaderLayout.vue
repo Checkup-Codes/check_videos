@@ -361,6 +361,22 @@
           </a>
         </div>
 
+        <!-- Join Us Button for Non-Logged In Users -->
+        <div v-if="!isLoggedIn" class="tooltip tooltip-bottom" data-tip="Aramıza Katıl">
+          <Link href="/join-us" class="block">
+            <button class="hover:bg-base-200/80 btn btn-ghost btn-sm rounded-md px-2 transition-all duration-200">
+              <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                ></path>
+              </svg>
+            </button>
+          </Link>
+        </div>
+
         <!-- Theme Toggle -->
         <button
           @click="toggleDarkLight"
@@ -454,7 +470,340 @@
                 <NavItem href="/" icon="home" label="Ana Sayfa" />
                 <NavItem href="/writes" icon="fa-solid fa-pencil" label="Yazılar" />
                 <NavItem href="/categories" icon="fa-solid fa-book" label="Kategoriler" />
+                <!-- Admin Navigation for Logged In Users -->
+                <template v-if="isLoggedIn">
+                  <NavItem href="/rendition/words" icon="fa-solid fa-globe" label="Kelimeler" />
+                  <NavItem href="/versions" icon="fa-solid fa-sync" label="Versiyonlar" />
+                </template>
               </div>
+
+              <!-- Write Show Page Actions for Mobile -->
+              <template v-if="isWriteShowPage && isLoggedIn && write">
+                <div class="border-base-200/40 border-t pt-3">
+                  <div class="space-y-1">
+                    <Link
+                      :href="route('writes.edit', write.id)"
+                      class="bg-base-200/50 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 hover:bg-base-200"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                        />
+                      </svg>
+                      <span>Yazıyı Düzenle</span>
+                    </Link>
+                    <button
+                      @click="deleteWriteMobile(write.id)"
+                      class="bg-error/10 hover:bg-error/20 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-error transition-all duration-200"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                        />
+                      </svg>
+                      <span>Yazıyı Sil</span>
+                    </button>
+                  </div>
+                </div>
+              </template>
+
+              <!-- Category Show Page Actions for Mobile -->
+              <template v-else-if="isCategoryShowPage && isLoggedIn && category">
+                <div class="border-base-200/40 border-t pt-3">
+                  <div class="space-y-1">
+                    <Link
+                      :href="route('categories.edit', category.id)"
+                      class="bg-base-200/50 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 hover:bg-base-200"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                        />
+                      </svg>
+                      <span>Kategoriyi Düzenle</span>
+                    </Link>
+                    <button
+                      @click="deleteCategoryMobile(category.id)"
+                      class="bg-error/10 hover:bg-error/20 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-error transition-all duration-200"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                        />
+                      </svg>
+                      <span>Kategoriyi Sil</span>
+                    </button>
+                  </div>
+                </div>
+              </template>
+
+              <!-- Language Pack Show Page Actions for Mobile -->
+              <template v-else-if="isLanguagePackShowPage && isLoggedIn && pack">
+                <div class="border-base-200/40 border-t pt-3">
+                  <div class="space-y-1">
+                    <Link
+                      :href="route('rendition.language-packs.edit', pack.id)"
+                      class="bg-base-200/50 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 hover:bg-base-200"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                        />
+                      </svg>
+                      <span>Paketi Düzenle</span>
+                    </Link>
+                    <Link
+                      :href="route('rendition.words.create')"
+                      class="bg-primary/10 hover:bg-primary/20 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                      </svg>
+                      <span>Yeni Kelime Ekle</span>
+                    </Link>
+                  </div>
+                </div>
+              </template>
+
+              <!-- Word Show Page Actions for Mobile -->
+              <template v-else-if="isWordShowPage && isLoggedIn && word">
+                <div class="border-base-200/40 border-t pt-3">
+                  <div class="space-y-1">
+                    <Link
+                      :href="route('rendition.words.edit', word.id)"
+                      class="bg-base-200/50 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 hover:bg-base-200"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                        />
+                      </svg>
+                      <span>Kelimeyi Düzenle</span>
+                    </Link>
+                    <button
+                      @click="deleteWordMobile(word.id)"
+                      class="bg-error/10 hover:bg-error/20 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-error transition-all duration-200"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                        />
+                      </svg>
+                      <span>Kelimeyi Sil</span>
+                    </button>
+                  </div>
+                </div>
+              </template>
+
+              <!-- Version Show Page Actions for Mobile -->
+              <template v-else-if="isVersionShowPage && isLoggedIn && version">
+                <div class="border-base-200/40 border-t pt-3">
+                  <div class="space-y-1">
+                    <Link
+                      :href="route('versions.edit', version.id)"
+                      class="bg-base-200/50 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 hover:bg-base-200"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                        />
+                      </svg>
+                      <span>Versiyonu Düzenle</span>
+                    </Link>
+                    <button
+                      @click="deleteVersionMobile(version.id)"
+                      class="bg-error/10 hover:bg-error/20 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-error transition-all duration-200"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                        />
+                      </svg>
+                      <span>Versiyonu Sil</span>
+                    </button>
+                  </div>
+                </div>
+              </template>
+
+              <!-- New Write/Category Buttons for Mobile -->
+              <template v-else-if="isLoggedIn">
+                <div class="border-base-200/40 border-t pt-3">
+                  <div class="space-y-1">
+                    <Link
+                      v-if="isActiveRoute('/writes') && !isWriteShowPage"
+                      href="/writes/create"
+                      class="bg-primary/10 hover:bg-primary/20 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                      </svg>
+                      <span>Yeni Yazı Ekle</span>
+                    </Link>
+                    <Link
+                      v-if="isActiveRoute('/categories') && !isCategoryShowPage"
+                      href="/categories/create"
+                      class="bg-primary/10 hover:bg-primary/20 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                      </svg>
+                      <span>Yeni Kategori Ekle</span>
+                    </Link>
+                    <Link
+                      v-if="isActiveRoute('/rendition/words') && !isWordShowPage"
+                      href="/rendition/words/create"
+                      class="bg-primary/10 hover:bg-primary/20 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                      </svg>
+                      <span>Yeni Kelime Ekle</span>
+                    </Link>
+                    <Link
+                      v-if="isActiveRoute('/rendition/words') && !isWordShowPage"
+                      href="/rendition/language-packs/create"
+                      class="bg-primary/10 hover:bg-primary/20 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                        />
+                      </svg>
+                      <span>Yeni Paket Ekle</span>
+                    </Link>
+                    <Link
+                      v-if="isActiveRoute('/versions') && !isVersionShowPage"
+                      href="/versions/create"
+                      class="bg-primary/10 hover:bg-primary/20 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                      </svg>
+                      <span>Yeni Versiyon Ekle</span>
+                    </Link>
+                  </div>
+                </div>
+              </template>
 
               <!-- Dashboard Button for All Users -->
               <div class="border-base-200/40 border-t pt-3">
@@ -478,15 +827,6 @@
                     </div>
                   </div>
                 </Link>
-              </div>
-
-              <!-- Admin Navigation for Logged In Users -->
-              <div v-if="isLoggedIn" class="space-y-1">
-                <div class="border-base-200/40 border-t pt-3">
-                  <h4 class="text-base-content/60 mb-2 text-xs font-semibold uppercase tracking-wider">Yönetim</h4>
-                  <NavItem href="/rendition/words" icon="fa-solid fa-globe" label="Kelimeler" />
-                  <NavItem href="/versions" icon="fa-solid fa-sync" label="Versiyonlar" />
-                </div>
               </div>
             </div>
 
@@ -673,6 +1013,106 @@ const toggleDarkLight = () => {
 const isLoggedIn = computed(() => {
   return !!(page.props.auth && page.props.auth.user);
 });
+
+// Check if current route matches the given path
+const isActiveRoute = (path) => {
+  const currentUrl = page.url;
+
+  if (path === '/') {
+    return currentUrl === '/' || currentUrl === '';
+  }
+
+  return currentUrl.startsWith(path);
+};
+
+// Check if we're on a show page (not index)
+const isWriteShowPage = computed(() => {
+  const url = page.url;
+  return url.startsWith('/writes/') && url !== '/writes' && url !== '/writes/create';
+});
+
+const isVersionShowPage = computed(() => {
+  const url = page.url;
+  return url.startsWith('/versions/') && url !== '/versions' && url !== '/versions/create';
+});
+
+const isWordShowPage = computed(() => {
+  const url = page.url;
+  return url.startsWith('/rendition/words/') && url !== '/rendition/words' && url !== '/rendition/words/create';
+});
+
+// Check if we're on a language pack show page (not word edit page)
+const isLanguagePackShowPage = computed(() => {
+  return isWordShowPage.value && !word.value && pack.value;
+});
+
+// Get write and category from props
+const write = computed(() => page.props.write || null);
+const category = computed(() => page.props.category || null);
+const word = computed(() => page.props.word || null);
+const version = computed(() => page.props.version || null);
+const pack = computed(() => page.props.pack || null);
+
+// Delete functions for mobile menu
+const deleteWriteMobile = async (id) => {
+  if (!confirm('Bu yazıyı silmek istediğinizden emin misiniz?')) {
+    return;
+  }
+  try {
+    await router.delete(route('writes.destroy', { write: id }));
+    closeMenu();
+  } catch (error) {
+    console.error('Error deleting write:', error);
+  }
+};
+
+const deleteCategoryMobile = async (id) => {
+  if (!confirm('Bu kategoriyi silmek istediğinizden emin misiniz?')) {
+    return;
+  }
+  try {
+    await router.delete(route('categories.destroy', id), {
+      onSuccess: () => {
+        router.visit(route('categories.index'));
+        closeMenu();
+      },
+    });
+  } catch (error) {
+    console.error('Error deleting category:', error);
+  }
+};
+
+const deleteWordMobile = async (id) => {
+  if (!confirm('Bu kelimeyi silmek istediğinizden emin misiniz?')) {
+    return;
+  }
+  try {
+    await router.delete(route('rendition.words.destroy', id), {
+      onSuccess: () => {
+        router.visit(route('rendition.words.index'));
+        closeMenu();
+      },
+    });
+  } catch (error) {
+    console.error('Error deleting word:', error);
+  }
+};
+
+const deleteVersionMobile = async (id) => {
+  if (!confirm('Bu versiyonu silmek istediğinizden emin misiniz?')) {
+    return;
+  }
+  try {
+    await router.delete(route('versions.destroy', id), {
+      onSuccess: () => {
+        router.visit(route('versions.index'));
+        closeMenu();
+      },
+    });
+  } catch (error) {
+    console.error('Error deleting version:', error);
+  }
+};
 
 // Watch for page props changes to update auth data
 watch(

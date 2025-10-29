@@ -1,7 +1,7 @@
 <template>
   <div class="relative h-full w-full">
     <!-- Save button - only for authenticated users -->
-    <div v-if="props.auth.user" class="absolute right-4 top-4 z-10">
+    <div v-if="props.auth.user" class="absolute right-4 top-[53px] z-10 lg:top-4">
       <button
         @click="saveDrawToServer"
         class="flex items-center gap-2 rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-sm text-base-content shadow-lg transition-all duration-200 hover:bg-base-200"
@@ -27,7 +27,7 @@
     <!-- Flash message -->
     <div
       v-if="flashMessage"
-      class="absolute right-4 top-16 z-20 rounded-lg border border-green-300 bg-green-100 px-3 py-2 text-sm text-green-800 shadow-lg"
+      class="absolute right-4 top-[101px] z-20 rounded-lg border border-green-300 bg-green-100 px-3 py-2 text-sm text-green-800 shadow-lg lg:top-16"
     >
       {{ flashMessage }}
     </div>

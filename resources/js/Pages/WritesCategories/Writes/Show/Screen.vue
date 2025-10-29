@@ -2,7 +2,7 @@
   <!-- Draw view with full width - bypass CheckScreen -->
   <div v-if="showDraw" class="relative h-screen w-full">
     <!-- Back button for draw view -->
-    <div class="absolute left-4 top-4 z-10">
+    <div class="absolute left-4 top-[53px] z-10 lg:top-4">
       <button
         @click="toggleContent"
         class="flex items-center gap-2 rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-sm text-base-content shadow-lg transition-all duration-200 hover:bg-base-200"
@@ -74,51 +74,6 @@
               </svg>
               {{ showDraw ? 'Metni Göster' : 'Çizimi Göster' }}
             </button>
-
-            <!-- Admin actions - only for authenticated users -->
-            <div v-if="auth.user" class="flex items-center gap-2">
-              <Link
-                :href="route('writes.edit', write.id)"
-                class="flex h-8 w-8 items-center justify-center rounded-lg bg-base-200 text-base-content transition-all duration-200 hover:bg-base-300"
-                title="Düzenle"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="h-4 w-4"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                  />
-                </svg>
-              </Link>
-
-              <button
-                @click="deleteWrite(write.id)"
-                class="flex h-8 w-8 items-center justify-center rounded-lg bg-base-200 text-error transition-all duration-200 hover:bg-error hover:text-error-content"
-                title="Sil"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="h-4 w-4"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                  />
-                </svg>
-              </button>
-            </div>
           </div>
 
           <!-- Main content area -->
@@ -186,7 +141,7 @@
     <!-- Mobile: Fixed sidebar -->
     <div
       v-if="!isLoading && showTableOfContents && !showDraw"
-      class="fixed right-0 top-0 z-40 h-full w-80 transform bg-base-100 shadow-2xl transition-transform duration-300 2xl:hidden"
+      class="fixed right-0 top-12 z-40 h-[calc(100vh-3rem)] w-80 transform bg-base-100 shadow-2xl transition-transform duration-300 2xl:hidden"
       :class="{ 'translate-x-full': !isTableOfContentsOpen }"
     >
       <div class="flex h-full flex-col">
@@ -228,7 +183,7 @@
     <button
       v-if="!isLoading && showTableOfContents && !showDraw"
       @click="toggleTableOfContents"
-      class="fixed right-4 top-4 z-50 flex hidden h-10 w-10 items-center justify-center rounded-full bg-base-content text-base-100 shadow-lg transition-all duration-200 hover:bg-base-300 2xl:flex"
+      class="fixed right-4 top-28 z-50 hidden h-10 w-10 items-center justify-center rounded-full bg-base-content text-base-100 shadow-lg transition-all duration-200 hover:bg-base-300 2xl:flex"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -245,7 +200,7 @@
     <!-- Desktop: Fixed sidebar on the right (15.6 inch and above) -->
     <div
       v-if="!isLoading && showTableOfContents && !showDraw"
-      class="fixed right-4 top-4 z-30 hidden w-64 transition-all duration-300 ease-in-out 2xl:block"
+      class="fixed right-4 top-28 z-30 hidden w-64 transition-all duration-300 ease-in-out 2xl:block"
       :class="isTableOfContentsOpen ? 'translate-x-0 opacity-100' : 'pointer-events-none translate-x-full opacity-0'"
     >
       <div class="rounded-lg bg-base-100 shadow-lg">
@@ -264,7 +219,7 @@
             </svg>
           </button>
         </div>
-        <div class="overflow-y-auto p-3" style="max-height: calc(100vh - 120px)">
+        <div class="overflow-y-auto p-3" style="max-height: calc(100vh - 220px)">
           <div v-if="tableOfContents.length === 0" class="text-base-content/60 py-4 text-center text-xs">
             İçindekiler bulunamadı
           </div>
@@ -332,6 +287,19 @@ const activeHeadingId = ref(null);
 // Check if screen is large enough for auto-open
 const isLargeScreen = ref(false);
 
+// Initialize table of contents state based on screen size
+const initializeTableOfContentsState = () => {
+  const isLarge = window.innerWidth >= 1536; // 2xl breakpoint
+  isLargeScreen.value = isLarge;
+  // Desktop'ta varsayılan olarak açık, mobilde kapalı
+  // Sadece TOC varsa aç
+  if (isLarge && showTableOfContents.value && tableOfContents.value.length > 0) {
+    isTableOfContentsOpen.value = true;
+  } else if (!isLarge) {
+    isTableOfContentsOpen.value = false;
+  }
+};
+
 // isLoading'i dinamik ve computed yap
 const isLoading = computed(() => !write.value.title);
 
@@ -382,23 +350,51 @@ const toggleContent = () => {
 };
 
 /**
- * Delete write with confirmation
+ * Setup active heading tracking using Intersection Observer
  */
-const deleteWrite = async (id) => {
-  if (!confirm('Bu yazıyı silmek istediğinizden emin misiniz?')) {
-    return;
+let headingObserver = null;
+
+const setupActiveHeadingTracking = () => {
+  if (!contentRef.value) return;
+
+  // Cleanup existing observer
+  if (headingObserver) {
+    headingObserver.disconnect();
   }
 
-  try {
-    await router.delete(route('writes.destroy', { write: id }));
-  } catch (error) {
-    console.error('Error deleting write:', error);
-  }
+  const headings = contentRef.value.querySelectorAll('h1, h2, h3, h4, h5, h6');
+  if (headings.length === 0) return;
+
+  headingObserver = new IntersectionObserver(
+    (entries) => {
+      // Find the heading that is currently in view
+      const visibleHeadings = entries.filter((entry) => entry.isIntersecting);
+      if (visibleHeadings.length > 0) {
+        // Sort by intersection ratio and position
+        visibleHeadings.sort((a, b) => {
+          if (a.intersectionRatio !== b.intersectionRatio) {
+            return b.intersectionRatio - a.intersectionRatio;
+          }
+          return a.boundingClientRect.top - b.boundingClientRect.top;
+        });
+        const topHeading = visibleHeadings[0];
+        if (topHeading.target.id) {
+          activeHeadingId.value = topHeading.target.id;
+        }
+      }
+    },
+    {
+      rootMargin: '-20% 0px -70% 0px',
+      threshold: [0, 0.25, 0.5, 0.75, 1],
+    }
+  );
+
+  headings.forEach((heading) => {
+    if (heading.id) {
+      headingObserver.observe(heading);
+    }
+  });
 };
-
-/**
- * Generate table of contents from content
- */
 const generateTableOfContents = () => {
   if (!contentRef.value) return;
 
@@ -527,13 +523,20 @@ const animateSkeleton = () => {
  * Intersection Observer for lazy loading content
  */
 let contentObserver = null;
+let resizeHandler = null;
 
 /**
  * Apply GSAP animation on mount and restore write list scroll position
  */
 onMounted(() => {
-  // Check screen size for auto-open
-  isLargeScreen.value = window.innerWidth >= 1536; // 2xl breakpoint
+  // Initialize table of contents state based on screen size
+  initializeTableOfContentsState();
+
+  // Listen for window resize to update table of contents state
+  resizeHandler = () => {
+    initializeTableOfContentsState();
+  };
+  window.addEventListener('resize', resizeHandler);
 
   // Start with content loading disabled for better initial performance
   contentShouldLoad.value = false;
@@ -552,9 +555,13 @@ onMounted(() => {
               // Generate table of contents after content is loaded
               setTimeout(() => {
                 generateTableOfContents();
-                // Auto-open on large screens
-                if (isLargeScreen.value && tableOfContents.value.length > 0) {
-                  isTableOfContentsOpen.value = true;
+                // Setup active heading tracking after TOC is generated
+                if (tableOfContents.value.length > 0) {
+                  setupActiveHeadingTracking();
+                  // Desktop'ta varsayılan olarak açık - TOC oluşturulduktan sonra
+                  if (isLargeScreen.value) {
+                    isTableOfContentsOpen.value = true;
+                  }
                 }
               }, 100);
             });
@@ -576,9 +583,13 @@ onMounted(() => {
       // Generate table of contents after content is loaded
       setTimeout(() => {
         generateTableOfContents();
-        // Auto-open on large screens
-        if (isLargeScreen.value && tableOfContents.value.length > 0) {
-          isTableOfContentsOpen.value = true;
+        // Setup active heading tracking after TOC is generated
+        if (tableOfContents.value.length > 0) {
+          setupActiveHeadingTracking();
+          // Desktop'ta varsayılan olarak açık - TOC oluşturulduktan sonra
+          if (isLargeScreen.value) {
+            isTableOfContentsOpen.value = true;
+          }
         }
       }, 100);
     });
@@ -606,6 +617,12 @@ onUnmounted(() => {
   if (contentObserver) {
     contentObserver.disconnect();
   }
+  if (headingObserver) {
+    headingObserver.disconnect();
+  }
+  if (resizeHandler) {
+    window.removeEventListener('resize', resizeHandler);
+  }
 });
 
 /**
@@ -627,6 +644,14 @@ watch(
     if (contentShouldLoad.value && processedContent.value) {
       nextTick(() => {
         generateTableOfContents();
+        // Setup active heading tracking after TOC is regenerated
+        if (tableOfContents.value.length > 0) {
+          setupActiveHeadingTracking();
+          // Desktop'ta varsayılan olarak açık - TOC oluşturulduktan sonra
+          if (isLargeScreen.value) {
+            isTableOfContentsOpen.value = true;
+          }
+        }
       });
     }
   },

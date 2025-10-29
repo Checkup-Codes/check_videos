@@ -2,7 +2,7 @@
   <!-- Draw view with full width - bypass CheckScreen -->
   <div v-if="showDraw" class="relative h-screen w-full">
     <!-- Back button for draw view -->
-    <div class="absolute left-4 top-4 z-10">
+    <div class="absolute left-4 top-[53px] z-10 lg:top-4">
       <button
         @click="toggleContent"
         class="flex items-center gap-2 rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-sm text-base-content shadow-lg transition-all duration-200 hover:bg-base-200"

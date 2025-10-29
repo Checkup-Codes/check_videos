@@ -8,7 +8,7 @@
 const props = defineProps({
   infoClass: {
     type: String,
-    default: 'h-[calc(100vh-11rem)] lg:h-[calc(100vh-10rem)] overflow-y-auto overscroll-none',
+    default: 'h-[calc(100vh-3.5rem)] lg:h-[calc(100vh-8rem)] overflow-y-auto overscroll-none',
   },
 });
 </script>

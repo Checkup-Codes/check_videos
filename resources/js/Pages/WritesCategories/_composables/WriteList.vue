@@ -1,15 +1,5 @@
 <template>
   <div ref="scrollContainer" class="write-list-container space-y-1 overflow-y-auto p-3">
-    <!-- Search bar for all users -->
-    <div class="mb-3">
-      <input
-        v-model="searchQuery"
-        type="text"
-        class="input-bordered input w-full"
-        placeholder="Yazı başlığı ara..."
-        @input="handleSearchInput"
-      />
-    </div>
     <!-- Responsive filter buttons for logged-in users -->
     <div v-if="isAdmin" class="mb-3">
       <div class="hidden gap-2 sm:flex">
@@ -360,21 +350,10 @@ let isActive = false;
 const activeWrite = ref('');
 
 // Search and filter state
-const searchQuery = ref('');
-const debouncedSearchQuery = ref('');
 const adminFilter = ref('all');
 const showFilterMenu = ref(false);
 
 // Removed virtual scrolling for simpler design
-
-// Debounce search input
-let searchTimeout = null;
-const handleSearchInput = () => {
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => {
-    debouncedSearchQuery.value = searchQuery.value;
-  }, 300);
-};
 
 /**
  * Determine the correct route for a write based on current context
@@ -429,10 +408,6 @@ const getActiveWritePath = (write) => {
 
 const filteredWrites = computed(() => {
   let result = writes.value;
-  // Search filter for all users
-  if (debouncedSearchQuery.value) {
-    result = result.filter((write) => write.title.toLowerCase().includes(debouncedSearchQuery.value.toLowerCase()));
-  }
   if (!isAdmin) {
     // Guest: hide private
     result = result.filter((write) => write.status !== 'private');
@@ -493,7 +468,7 @@ const updateActiveWrite = () => {
 };
 
 const getScrollKey = () => {
-  return `writeListScroll_${adminFilter.value}_${debouncedSearchQuery.value}`;
+  return `writeListScroll_${adminFilter.value}`;
 };
 
 const handleScroll = (e) => {
@@ -503,14 +478,9 @@ const handleScroll = (e) => {
 onMounted(() => {
   isActive = true;
 
-  // Filtre ve arama sorgusunu localStorage'dan yükle
+  // Filtre localStorage'dan yükle
   const savedFilter = localStorage.getItem('writeListFilter');
   if (savedFilter) adminFilter.value = savedFilter;
-  const savedSearch = localStorage.getItem('writeListSearch');
-  if (savedSearch) {
-    searchQuery.value = savedSearch;
-    debouncedSearchQuery.value = savedSearch;
-  }
 
   updateActiveWrite();
 
@@ -553,9 +523,6 @@ onMounted(() => {
     if (scrollContainer.value) {
       scrollContainer.value.removeEventListener('scroll', handleScroll);
     }
-    if (searchTimeout) {
-      clearTimeout(searchTimeout);
-    }
     window.removeEventListener('popstate', handlePopState);
     window.removeEventListener('inertia:start', handleNavigationStart);
     window.removeEventListener('inertia:finish', handleNavigationEnd);
@@ -590,12 +557,9 @@ const formatNumber = (num) => {
   return new Intl.NumberFormat('tr-TR').format(num);
 };
 
-// Filtre ve arama sorgusu değişince localStorage'a kaydet
+// Filtre değişince localStorage'a kaydet
 watch(adminFilter, (val) => {
   localStorage.setItem('writeListFilter', val);
-});
-watch(debouncedSearchQuery, (val) => {
-  localStorage.setItem('writeListSearch', val);
 });
 </script>
 

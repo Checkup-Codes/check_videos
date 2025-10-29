@@ -1,23 +1,14 @@
 <template>
   <CheckSubsidebar :isNarrow="isNarrow" :class="currentTheme">
-    <!-- <ToggleSubSidebarButtonClose :isCollapsed="false" :toggle="toggleSidebar" class="btn-ghost" /> -->
-    <TopSubsidebar
-      title="KATEGORİLER"
-      href="/categories/create"
-      :showExpandCollapseButton="true"
-      :isExpanded="areAllCategoriesExpanded"
-      @toggle-expand="toggleAllCategories"
-      @toggle-width="handleWidthToggle"
-      class="border-base-200 bg-base-200"
-    >
-    </TopSubsidebar>
-    <SubSidebarScreen ref="scrollableRef" class="bg-base-200">
+    <SubSidebarScreen ref="scrollableRef" class="sidebar-content-embedded">
       <CategoryTree
         v-if="showCategories"
         ref="categoryTreeRef"
         :getLinkClasses="getLinkClasses"
         :expandAll="areAllCategoriesExpanded"
         :isCollapsed="isNarrow"
+        :enableExpandCollapse="true"
+        @toggle-expand="toggleAllCategories"
       />
     </SubSidebarScreen>
   </CheckSubsidebar>
@@ -28,7 +19,6 @@ import { ref, watch, inject, computed, onMounted } from 'vue';
 import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
 import SubSidebarScreen from '@/Components/CekapUI/Slots/SubSidebarScreen.vue';
 import CategoryTree from '@/Pages/WritesCategories/_composables/CategoryTree.vue';
-import TopSubsidebar from '@/Components/CekapUI/Typography/TopSubsidebar.vue';
 import { useSidebar } from '../_utils/useSidebar';
 import { useStore } from 'vuex';
 
@@ -62,11 +52,6 @@ const isNarrow = ref(store.getters['Writes/isCollapsed']);
 const scrollableRef = ref(null);
 
 const emit = defineEmits(['update:isNarrow']);
-
-const handleWidthToggle = (value) => {
-  isNarrow.value = value;
-  store.commit('Writes/SET_COLLAPSED', value);
-};
 
 // Watch for isNarrow changes and emit to parent
 watch(isNarrow, (newValue) => {
@@ -124,5 +109,22 @@ onMounted(() => {
 <style scoped>
 :deep(.border-color-one) {
   border-color: var(--b2) !important;
+}
+
+/* Embedded sidebar content design - subtle recessed effect */
+:deep(.sidebar-content-embedded) {
+  background: hsl(var(--b1) / 0.7) !important;
+  position: relative;
+}
+
+:deep(.sidebar-content-embedded)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, hsl(var(--b2) / 0.3), transparent);
+  pointer-events: none;
 }
 </style>
