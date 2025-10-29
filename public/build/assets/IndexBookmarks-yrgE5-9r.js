@@ -1,0 +1,1 @@
+import o from"./SidebarLayoutBookmarks-DnoF1J2b.js";import{c as e,e as a,a as r,o as c}from"./ssr-COd_82OS.js";const l={class:"grid h-full grid-cols-1 lg:grid-cols-subsidebar"},m={__name:"IndexBookmarks",setup(t){return(d,s)=>(c(),e("div",l,[a(o,{class:"block"}),s[0]||(s[0]=r("div",{class:"hidden p-4 lg:block"},"Bookmarks",-1))]))}};export{m as default};

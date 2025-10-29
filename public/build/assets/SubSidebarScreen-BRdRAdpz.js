@@ -1,1 +1,0 @@
-import{c as o,b as r,n as s,o as l}from"./ssr-EaFHtsEv.js";const t={__name:"SubSidebarScreen",props:{infoClass:{type:String,default:"h-[calc(100vh-11rem)] lg:h-[calc(100vh-10rem)] overflow-y-auto overscroll-none"}},setup(e){return(a,n)=>(l(),o("p",{class:s(e.infoClass)},[r(a.$slots,"default")],2))}};export{t as _};

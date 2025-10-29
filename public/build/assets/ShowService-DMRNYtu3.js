@@ -1,0 +1,1 @@
+import r from"./LayoutProjects-BfFqzHbe.js";import e from"./Screen-BzR4oiaW.js";import{j as o,w as t,e as a,o as c}from"./ssr-COd_82OS.js";import"./FlashMessage-DjzFBhBL.js";import"./SidebarLayoutProject-Dr9kcnVh.js";import"./CheckSubsidebar-DxX88Bkq.js";const h={__name:"ShowService",setup(m){return(_,s)=>(c(),o(r,null,{screen:t(()=>[a(e)]),_:1}))}};export{h as default};
