@@ -9,8 +9,11 @@ class Kernel extends ConsoleKernel
 {
     protected function schedule(Schedule $schedule): void
     {
-        // Generate sitemap daily at midnight
         $schedule->command('sitemap:generate')->daily();
+
+        $schedule->command('metals:fetch')
+            ->weekdays()
+            ->at('09:00');
     }
 
     protected function commands(): void
