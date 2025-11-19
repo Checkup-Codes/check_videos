@@ -234,9 +234,9 @@ class FetchMetalsCommand extends Command
                             'quote_currency' => $symbolConfig['quote_currency'],
                         ],
                         [
-                            'base_symbol' => $symbolConfig['base_symbol'],
+                        'base_symbol' => $symbolConfig['base_symbol'],
                             'price' => $pricePerGram,
-                            'price_time' => $priceTime,
+                        'price_time' => $priceTime,
                         ]
                     );
 

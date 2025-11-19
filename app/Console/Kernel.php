@@ -11,9 +11,8 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('sitemap:generate')->daily();
 
-        $schedule->command('metals:fetch')
-            ->weekdays()
-            ->at('09:00');
+        // metals:fetch is now handled directly by cron job
+        // Cron: 0 9 * * * /usr/bin/php /home/u807351145/check_videos/artisan metals:fetch
     }
 
     protected function commands(): void
