@@ -228,7 +228,7 @@ class FetchMetalsCommand extends Command
 
                 try {
                     // Update existing record or create a new one (price stored per gram)
-                    MetalPrice::updateOrCreate(
+                    $metalPrice = MetalPrice::updateOrCreate(
                         [
                             'provider_symbol' => $providerSymbol,
                             'quote_currency' => $symbolConfig['quote_currency'],
@@ -237,9 +237,11 @@ class FetchMetalsCommand extends Command
                             'base_symbol' => $symbolConfig['base_symbol'],
                             'price' => $pricePerGram,
                             'price_time' => $priceTime,
-                            'updated_at' => now(), // Force update timestamp
                         ]
                     );
+
+                    // Force update timestamp even if values didn't change
+                    $metalPrice->touch();
 
                     $savedCount++;
                     $this->info("Saved price for {$providerSymbol}: {$pricePerGram} (per gram)");
