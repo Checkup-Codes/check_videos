@@ -9,8 +9,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // ParaPlan API endpoints - All require API key authentication
 Route::prefix('paraplan')->middleware(\App\Http\Middleware\ParaPlan\ValidateApiKey::class)->group(function () {
-    // Metals latest prices endpoint
-    Route::get('/metals/latest', [\App\Http\Controllers\ParaPlan\MetalPriceController::class, 'latest']);
+    // Metals latest prices endpoint with rate limiting (60 requests per minute)
+    Route::get('/metals/latest', [\App\Http\Controllers\ParaPlan\MetalPriceController::class, 'latest'])
+        ->middleware('throttle:60,1');
 
     // Feedback endpoint with rate limiting (5 requests per minute)
     Route::post('/feedback', [\App\Http\Controllers\ParaPlan\FeedbackController::class, 'store'])

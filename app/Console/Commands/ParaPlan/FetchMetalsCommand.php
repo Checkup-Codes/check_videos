@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class FetchMetalsCommand extends Command
 {
@@ -23,6 +24,16 @@ class FetchMetalsCommand extends Command
      * @var string
      */
     protected $description = 'Fetch metal prices from external API and store them in the database';
+
+    /**
+     * Maximum number of retry attempts for API calls
+     */
+    private const MAX_RETRIES = 3;
+
+    /**
+     * Delay between retries in seconds
+     */
+    private const RETRY_DELAY = 5;
 
     /**
      * Execute the console command.
@@ -72,8 +83,14 @@ class FetchMetalsCommand extends Command
         }
 
         try {
-            // Make HTTP request to external API (MetalpriceAPI / MetalsAPI compatible structure)
-            $response = Http::get($baseUrl, $query);
+            // Make HTTP request to external API with retry mechanism
+            $response = $this->fetchWithRetry($baseUrl, $query);
+
+            if (!$response) {
+                $this->error('API request failed after ' . self::MAX_RETRIES . ' attempts');
+                $this->sendFailureNotification('API request failed after multiple retry attempts');
+                return Command::FAILURE;
+            }
 
             if (!$response->successful()) {
                 $this->error('API request failed with status: ' . $response->status());
@@ -81,6 +98,7 @@ class FetchMetalsCommand extends Command
                     'status' => $response->status(),
                     'body' => $response->body(),
                 ]);
+                $this->sendFailureNotification('API request failed with status: ' . $response->status());
                 return Command::FAILURE;
             }
 
@@ -88,8 +106,38 @@ class FetchMetalsCommand extends Command
 
             // Debug: Log the actual API response to understand the format
             $this->info('API Response received. Status: ' . $response->status());
+
+            // Extract and log timestamp information
+            $apiTimestamp = $data['timestamp'] ?? null;
+            $apiBase = $data['base'] ?? 'unknown';
+            $timestampInfo = [];
+
+            if ($apiTimestamp) {
+                try {
+                    $parsedTimestamp = Carbon::createFromTimestamp((int) $apiTimestamp);
+                    $timestampInfo = [
+                        'raw_timestamp' => $apiTimestamp,
+                        'parsed_datetime' => $parsedTimestamp->toIso8601String(),
+                        'human_readable' => $parsedTimestamp->format('Y-m-d H:i:s'),
+                        'timezone' => $parsedTimestamp->timezone->getName(),
+                    ];
+                } catch (\Exception $e) {
+                    $timestampInfo = ['raw_timestamp' => $apiTimestamp, 'parse_error' => $e->getMessage()];
+                }
+            }
+
+            $this->info('API Base Currency: ' . $apiBase);
+            if ($apiTimestamp) {
+                $this->info('API Timestamp: ' . ($timestampInfo['human_readable'] ?? $apiTimestamp));
+            } else {
+                $this->warn('⚠️  No timestamp found in API response!');
+            }
+
             Log::info('MetalpriceAPI Response', [
                 'status' => $response->status(),
+                'base_currency' => $apiBase,
+                'timestamp' => $timestampInfo,
+                'rates_count' => isset($data['rates']) ? count($data['rates']) : 0,
                 'body' => $response->body(),
                 'json' => $data,
             ]);
@@ -149,24 +197,51 @@ class FetchMetalsCommand extends Command
 
             // Extract timestamp from response (ADAPT THIS if your API uses different field name)
             $priceTime = now();
+            $timestampSource = 'current_time'; // Track where timestamp came from
+
             $timestampFields = [
-                $data['timestamp'] ?? null,
-                $data['meta']['timestamp'] ?? null,
+                'timestamp' => $data['timestamp'] ?? null,
+                'meta.timestamp' => $data['meta']['timestamp'] ?? null,
             ];
 
-            foreach ($timestampFields as $ts) {
+            foreach ($timestampFields as $source => $ts) {
                 if (is_numeric($ts)) {
-                    $priceTime = Carbon::createFromTimestamp((int) $ts);
-                    break;
+                    try {
+                        $priceTime = Carbon::createFromTimestamp((int) $ts);
+                        $timestampSource = $source;
+                        $this->info("Using timestamp from {$source}: {$ts} (" . $priceTime->toDateTimeString() . ")");
+                        Log::info('Metal prices timestamp extracted', [
+                            'source' => $source,
+                            'timestamp' => $ts,
+                            'parsed_time' => $priceTime->toIso8601String(),
+                        ]);
+                        break;
+                    } catch (\Exception $e) {
+                        $this->warn("Failed to parse timestamp from {$source}: " . $e->getMessage());
+                    }
                 }
             }
 
-            if (isset($data['meta']['last_updated_at']) && empty($timestampFields[0]) && empty($timestampFields[1])) {
+            // Fallback to last_updated_at if timestamp not found
+            if ($timestampSource === 'current_time' && isset($data['meta']['last_updated_at'])) {
                 try {
                     $priceTime = Carbon::parse($data['meta']['last_updated_at']);
+                    $timestampSource = 'meta.last_updated_at';
+                    $this->info("Using last_updated_at: " . $priceTime->toDateTimeString());
                 } catch (\Exception $e) {
-                    // Ignore parse failures and fall back to now()
+                    $this->warn("Failed to parse last_updated_at: " . $e->getMessage());
+                    Log::warning('Using current time as price_time - no valid timestamp found in API response', [
+                        'response_keys' => array_keys($data),
+                        'timestamp_fields' => $timestampFields,
+                    ]);
                 }
+            }
+
+            // Log final timestamp being used
+            if ($timestampSource === 'current_time') {
+                $this->warn("⚠️  No timestamp found in API response, using current time: " . $priceTime->toDateTimeString());
+            } else {
+                $this->info("✓ Price time from API: " . $priceTime->toDateTimeString() . " (source: {$timestampSource})");
             }
 
             $savedCount = 0;
@@ -178,43 +253,61 @@ class FetchMetalsCommand extends Command
                 $metalCode = strtoupper($symbolConfig['base_symbol']);
                 $quoteCode = strtoupper($symbolConfig['quote_currency']);
 
-                if (!isset($data['rates'][$metalCode]) || !is_numeric($data['rates'][$metalCode])) {
-                    $this->warn("No valid rate returned for base symbol: {$metalCode}");
-                    $skippedCount++;
-                    continue;
-                }
+                // Try to use direct combination first (e.g., TRYXAU, USDXAU)
+                // This is more accurate and faster than calculating
+                $directKey = $quoteCode . $metalCode;
+                $pricePerOunce = null;
 
-                $metalRate = (float) $data['rates'][$metalCode];
-
-                if ($metalRate <= 0) {
-                    $this->warn("Invalid (<=0) rate for {$metalCode}: {$metalRate}");
-                    $skippedCount++;
-                    continue;
-                }
-
-                // Determine quote currency rate relative to base currency
-                $quoteRate = 1.0;
-                if ($quoteCode !== $baseCurrency) {
-                    if (!isset($data['rates'][$quoteCode]) || !is_numeric($data['rates'][$quoteCode])) {
-                        $this->warn("No valid rate returned for quote currency: {$quoteCode}");
+                if (isset($data['rates'][$directKey]) && is_numeric($data['rates'][$directKey])) {
+                    // Direct combination found (e.g., TRYXAU = 170893 means 1 XAU = 170893 TRY)
+                    $pricePerOunce = (float) $data['rates'][$directKey];
+                    $this->info("Using direct rate for {$directKey}: {$pricePerOunce}");
+                } else {
+                    // Fallback to calculation method
+                    if (!isset($data['rates'][$metalCode]) || !is_numeric($data['rates'][$metalCode])) {
+                        $this->warn("No valid rate returned for base symbol: {$metalCode}");
                         $skippedCount++;
                         continue;
                     }
 
-                    $quoteRate = (float) $data['rates'][$quoteCode];
+                    $metalRate = (float) $data['rates'][$metalCode];
+
+                    if ($metalRate <= 0) {
+                        $this->warn("Invalid (<=0) rate for {$metalCode}: {$metalRate}");
+                        $skippedCount++;
+                        continue;
+                    }
+
+                    // Determine quote currency rate relative to base currency
+                    $quoteRate = 1.0;
+                    if ($quoteCode !== $baseCurrency) {
+                        if (!isset($data['rates'][$quoteCode]) || !is_numeric($data['rates'][$quoteCode])) {
+                            $this->warn("No valid rate returned for quote currency: {$quoteCode}");
+                            $skippedCount++;
+                            continue;
+                        }
+
+                        $quoteRate = (float) $data['rates'][$quoteCode];
+                    }
+
+                    if ($quoteRate <= 0) {
+                        $this->warn("Invalid (<=0) rate for {$quoteCode}: {$quoteRate}");
+                        $skippedCount++;
+                        continue;
+                    }
+
+                    // Provider returns amount of target currency per 1 base currency (e.g. USD -> XAU)
+                    // We need the price of 1 base metal unit in the quote currency:
+                    // (baseCurrency per metal) * (quoteCurrency per baseCurrency)
+                    // Note: API returns prices in troy ounces, we convert to grams
+                    $pricePerOunce = (1 / $metalRate) * $quoteRate;
                 }
 
-                if ($quoteRate <= 0) {
-                    $this->warn("Invalid (<=0) rate for {$quoteCode}: {$quoteRate}");
+                if ($pricePerOunce <= 0 || !is_finite($pricePerOunce)) {
+                    $this->warn("Invalid price per ounce for {$providerSymbol}: {$pricePerOunce}");
                     $skippedCount++;
                     continue;
                 }
-
-                // Provider returns amount of target currency per 1 base currency (e.g. USD -> XAU)
-                // We need the price of 1 base metal unit in the quote currency:
-                // (baseCurrency per metal) * (quoteCurrency per baseCurrency)
-                // Note: API returns prices in troy ounces, we convert to grams
-                $pricePerOunce = (1 / $metalRate) * $quoteRate;
 
                 // Convert from troy ounce to gram (1 troy ounce = 31.1035 grams)
                 $troyOunceToGram = 31.1035;
@@ -228,7 +321,7 @@ class FetchMetalsCommand extends Command
 
                 try {
                     // Update existing record or create a new one (price stored per gram)
-                    MetalPrice::updateOrCreate(
+                    $metalPrice = MetalPrice::updateOrCreate(
                         [
                             'provider_symbol' => $providerSymbol,
                             'quote_currency' => $symbolConfig['quote_currency'],
@@ -236,13 +329,20 @@ class FetchMetalsCommand extends Command
                         [
                             'base_symbol' => $symbolConfig['base_symbol'],
                             'price' => $pricePerGram,
-                            'price_time' => $priceTime,
-                            'updated_at' => now(), // Force update timestamp
+                            'price_time' => $priceTime, // API'nin verdiği fiyat zamanı
+                            'updated_at' => now(), // Veritabanı kayıt zamanı
                         ]
                     );
 
                     $savedCount++;
-                    $this->info("Saved price for {$providerSymbol}: {$pricePerGram} (per gram)");
+                    $this->info("Saved price for {$providerSymbol}: {$pricePerGram} TRY/gram (price_time: {$priceTime->toDateTimeString()})");
+
+                    Log::info('Metal price saved', [
+                        'provider_symbol' => $providerSymbol,
+                        'price_per_gram' => $pricePerGram,
+                        'price_time' => $priceTime->toIso8601String(),
+                        'price_time_source' => $timestampSource,
+                    ]);
                 } catch (\Exception $e) {
                     $this->error("Failed to save price for {$providerSymbol}: " . $e->getMessage());
                     Log::error("Failed to save metal price", [
@@ -262,6 +362,107 @@ class FetchMetalsCommand extends Command
                 'trace' => $e->getTraceAsString(),
             ]);
             return Command::FAILURE;
+        }
+    }
+
+    /**
+     * Fetch data from API with retry mechanism
+     *
+     * @param string $baseUrl
+     * @param array $query
+     * @return \Illuminate\Http\Client\Response|null
+     */
+    private function fetchWithRetry(string $baseUrl, array $query): ?\Illuminate\Http\Client\Response
+    {
+        $attempt = 0;
+        $lastException = null;
+
+        while ($attempt < self::MAX_RETRIES) {
+            $attempt++;
+
+            try {
+                $this->info("API request attempt {$attempt}/" . self::MAX_RETRIES);
+
+                $response = Http::timeout(30)->get($baseUrl, $query);
+
+                if ($response->successful()) {
+                    return $response;
+                }
+
+                // If it's a server error (5xx), retry
+                if ($response->status() >= 500 && $attempt < self::MAX_RETRIES) {
+                    $this->warn("Server error ({$response->status()}), retrying in " . self::RETRY_DELAY . " seconds...");
+                    sleep(self::RETRY_DELAY);
+                    continue;
+                }
+
+                // If it's a client error (4xx), don't retry
+                if ($response->status() >= 400 && $response->status() < 500) {
+                    return $response;
+                }
+
+                // For other errors, retry
+                if ($attempt < self::MAX_RETRIES) {
+                    $this->warn("Request failed with status {$response->status()}, retrying in " . self::RETRY_DELAY . " seconds...");
+                    sleep(self::RETRY_DELAY);
+                }
+            } catch (\Exception $e) {
+                $lastException = $e;
+                $this->warn("Exception on attempt {$attempt}: " . $e->getMessage());
+
+                if ($attempt < self::MAX_RETRIES) {
+                    $this->warn("Retrying in " . self::RETRY_DELAY . " seconds...");
+                    sleep(self::RETRY_DELAY);
+                }
+            }
+        }
+
+        if ($lastException) {
+            Log::error('All retry attempts failed', [
+                'exception' => $lastException->getMessage(),
+                'trace' => $lastException->getTraceAsString(),
+            ]);
+        }
+
+        return null;
+    }
+
+    /**
+     * Send failure notification email to admin
+     *
+     * @param string $message
+     * @return void
+     */
+    private function sendFailureNotification(string $message): void
+    {
+        try {
+            $adminEmail = config('mail.from.address');
+
+            if (!$adminEmail) {
+                $this->warn('No admin email configured. Skipping notification.');
+                return;
+            }
+
+            $subject = 'Metal Prices Fetch Failed - ' . config('app.name');
+            $body = "The metal prices fetch command has failed.\n\n";
+            $body .= "Error: {$message}\n\n";
+            $body .= "Time: " . now()->toDateTimeString() . "\n";
+            $body .= "Please check the logs for more details.\n\n";
+            $body .= "Log file: " . storage_path('logs/laravel.log');
+
+            Mail::raw($body, function ($mail) use ($adminEmail, $subject) {
+                $mail->to($adminEmail)
+                    ->subject($subject);
+            });
+
+            $this->info('Failure notification email sent to ' . $adminEmail);
+        } catch (\Exception $e) {
+            // Log email error but don't fail the command
+            Log::warning('Failed to send failure notification email', [
+                'error' => $e->getMessage(),
+                'original_error' => $message,
+            ]);
+            $this->warn('Failed to send notification email: ' . $e->getMessage());
         }
     }
 }
