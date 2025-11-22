@@ -1,1 +1,0 @@
-import{c as o,b as r,n as s,o as l}from"./ssr-COd_82OS.js";const t={__name:"SubSidebarScreen",props:{infoClass:{type:String,default:"h-[calc(100vh-3.5rem)] lg:h-[calc(100vh-8rem)] overflow-y-auto overscroll-none"}},setup(e){return(a,n)=>(l(),o("p",{class:s(e.infoClass)},[r(a.$slots,"default")],2))}};export{t as _};
