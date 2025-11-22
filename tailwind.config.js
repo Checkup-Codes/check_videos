@@ -1,6 +1,5 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
-import daisyui from 'daisyui';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -17,6 +16,46 @@ export default {
     
     theme: {
         extend: {
+            colors: {
+                border: 'hsl(var(--border))',
+                input: 'hsl(var(--input))',
+                ring: 'hsl(var(--ring))',
+                background: 'hsl(var(--background))',
+                foreground: 'hsl(var(--foreground))',
+                primary: {
+                    DEFAULT: 'hsl(var(--primary))',
+                    foreground: 'hsl(var(--primary-foreground))',
+                },
+                secondary: {
+                    DEFAULT: 'hsl(var(--secondary))',
+                    foreground: 'hsl(var(--secondary-foreground))',
+                },
+                destructive: {
+                    DEFAULT: 'hsl(var(--destructive))',
+                    foreground: 'hsl(var(--destructive-foreground))',
+                },
+                muted: {
+                    DEFAULT: 'hsl(var(--muted))',
+                    foreground: 'hsl(var(--muted-foreground))',
+                },
+                accent: {
+                    DEFAULT: 'hsl(var(--accent))',
+                    foreground: 'hsl(var(--accent-foreground))',
+                },
+                popover: {
+                    DEFAULT: 'hsl(var(--popover))',
+                    foreground: 'hsl(var(--popover-foreground))',
+                },
+                card: {
+                    DEFAULT: 'hsl(var(--card))',
+                    foreground: 'hsl(var(--card-foreground))',
+                },
+            },
+            borderRadius: {
+                lg: 'var(--radius)',
+                md: 'calc(var(--radius) - 2px)',
+                sm: 'calc(var(--radius) - 4px)',
+            },
             fontFamily: {
                 sans: ['Geist Sans', ...defaultTheme.fontFamily.sans],
             },
@@ -51,79 +90,5 @@ export default {
         },
     },
 
-    plugins: [forms, daisyui],
-    daisyui: {
-        themes: [
-            {
-                'light': {
-                    primary: "#333333", /* koyu gri */
-                    secondary: "#666666", /* orta gri */
-                    accent: "#999999", /* açık gri */
-                    neutral: "#4d4d4d", /* koyu gri */
-                    "base-100": "#ffffff", /* saf beyaz */
-                    "base-200": "#fafafa", /* çok açık gri */
-                    "base-300": "#f0f0f0", /* açık gri */
-                    "base-content": "#333333", /* koyu gri */
-                    info: "#666666",
-                    success: "#4d4d4d",
-                    warning: "#666666",
-                    error: "#333333",
-                }
-            },
-            {
-                'dark': {
-                    primary: "#e5e5e5", /* açık gri */
-                    secondary: "#b3b3b3", /* orta gri */
-                    accent: "#808080", /* koyu gri */
-                    neutral: "#cccccc", /* açık gri */
-                    "base-100": "#0a0a0a", /* çok koyu gri */
-                    "base-200": "#1a1a1a", /* koyu gri */
-                    "base-300": "#2a2a2a", /* orta koyu gri */
-                    "base-content": "#e5e5e5", /* açık gri */
-                    info: "#b3b3b3",
-                    success: "#cccccc",
-                    warning: "#b3b3b3",
-                    error: "#e5e5e5",
-                }
-            },
-            {
-                'lotr-light': {
-                    primary: "#d4af37", /* altın sarısı */
-                    secondary: "#8b4513", /* kahverengi */
-                    accent: "#ffd700", /* parlak altın */
-                    neutral: "#2d1810", /* koyu kahve */
-                    "base-100": "#f5f5dc", /* açık bej */
-                    "base-200": "#f0f0e6", /* çok açık bej */
-                    "base-300": "#e6e6d1", /* açık bej */
-                    "base-content": "#2d1810", /* koyu kahve */
-                    info: "#d4af37",
-                    success: "#8b4513",
-                    warning: "#ffd700",
-                    error: "#8b4513",
-                }
-            },
-            {
-                'lotr-dark': {
-                    primary: "#ffd700", /* parlak altın */
-                    secondary: "#d4af37", /* altın sarısı */
-                    accent: "#8b4513", /* kahverengi */
-                    neutral: "#2d1810", /* koyu kahve */
-                    "base-100": "#1a0f0a", /* çok koyu kahve */
-                    "base-200": "#2a1f1a", /* koyu kahve */
-                    "base-300": "#3a2f2a", /* orta koyu kahve */
-                    "base-content": "#ffd700", /* parlak altın */
-                    info: "#ffd700",
-                    success: "#d4af37",
-                    warning: "#8b4513",
-                    error: "#d4af37",
-                }
-            }
-        ],
-        darkTheme: "dark",
-        base: true,
-        styled: true,
-        utils: true,
-        prefix: "",
-        logs: false,
-    },
+    plugins: [forms],
 };

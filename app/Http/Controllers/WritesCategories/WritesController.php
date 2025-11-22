@@ -74,6 +74,7 @@ class WritesController extends Controller
         return inertia('WritesCategories/Writes/ShowWrite', [
             'writes'     => $writesResult['data'],
             'write'      => $writeResult['data'],
+            'categories' => $categoriesResult['data'],
             'screen'     => $this->writeService->getScreenData(false),
             'showDraw'   => filter_var(request()->query('showDraw', false), FILTER_VALIDATE_BOOLEAN),
             'isAdmin'    => $isAdmin

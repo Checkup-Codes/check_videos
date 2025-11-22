@@ -72,8 +72,14 @@ initializeIcons();
 // Initialize Inertia Progress
 InertiaProgress.init(INERTIA_PROGRESS_CONFIG);
 
-// Remove system theme preference
+// Theme initialization - Shadcn compatible
+// Theme store will handle the dark class, but we ensure clean state here
+const savedTheme = localStorage.getItem('theme') || 'light';
+if (savedTheme === 'dark') {
+  document.documentElement.classList.add('dark');
+} else {
 document.documentElement.classList.remove('dark');
+}
 
 createInertiaApp({
   resolve: async (name) => {

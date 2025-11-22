@@ -190,9 +190,13 @@ class WriteService
     public function getWriteBySlug($slug)
     {
         $isAdmin = Auth::check();
-        $query = Write::with(['writeDraws' => function ($query) {
+        $query = Write::with([
+            'writeDraws' => function ($query) {
             $query->orderBy('version', 'desc')->latest();
-        }])->where('slug', $slug);
+            },
+            'categories',
+            'category'
+        ])->where('slug', $slug);
         if (!$isAdmin) {
             $query->where(function ($q) {
                 $q->where('status', 'published')

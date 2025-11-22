@@ -311,6 +311,41 @@ export function useProcessedQuillContent(contentRef, contentString) {
         }
       });
 
+      // Process headings: add IDs and anchor links with hash icon
+      const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      headings.forEach((heading, index) => {
+        // Generate a unique ID based on heading text or index
+        if (!heading.id) {
+          const headingText = heading.textContent.trim().toLowerCase();
+          const slug = headingText
+            .replace(/[^\w\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .substring(0, 50);
+          heading.id = slug || `heading-${index}`;
+        }
+
+        // Create anchor link wrapper
+        const headingWrapper = doc.createElement('div');
+        headingWrapper.className = 'heading-wrapper';
+        headingWrapper.style.position = 'relative';
+
+        // Create anchor link with hash icon
+        const anchorLink = doc.createElement('a');
+        anchorLink.href = `#${heading.id}`;
+        anchorLink.className = 'heading-anchor';
+        anchorLink.setAttribute('aria-label', 'Link to heading');
+        anchorLink.innerHTML = `#`;
+
+        // Clone heading and wrap it
+        const headingClone = heading.cloneNode(true);
+        headingWrapper.appendChild(anchorLink);
+        headingWrapper.appendChild(headingClone);
+
+        // Replace original heading with wrapper
+        heading.parentNode.replaceChild(headingWrapper, heading);
+      });
+
       // Add classes for colored text/background
       const styledElements = doc.querySelectorAll('[style*="color"], [style*="background-color"]');
       styledElements.forEach((el) => {

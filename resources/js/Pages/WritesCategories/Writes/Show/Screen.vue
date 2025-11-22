@@ -1,11 +1,9 @@
 <template>
-  <!-- Draw view with full width - bypass CheckScreen -->
-  <div v-if="showDraw" class="relative h-screen w-full">
-    <!-- Back button for draw view -->
+  <div v-if="showDraw" class="relative h-[calc(100vh-3rem)] w-full lg:h-[calc(100vh-5.5rem)]">
     <div class="absolute left-4 top-[53px] z-10 lg:top-4">
       <button
         @click="toggleContent"
-        class="flex items-center gap-2 rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-sm text-base-content shadow-lg transition-all duration-200 hover:bg-base-200"
+        class="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground shadow-lg transition-all hover:bg-accent"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -20,79 +18,90 @@
         Metne Dön
       </button>
     </div>
-    <ExcalidrawComponent :write="write" />
+    <ExcalidrawComponent ref="excalidrawRef" :write="write" />
   </div>
 
-  <!-- Content view with CheckScreen wrapper -->
   <CheckScreen v-else>
-    <!-- Content view with max width -->
     <div class="mx-auto max-w-4xl">
-      <div class="bg-base-100 transition-all duration-200">
+      <div class="bg-background transition-colors">
         <div class="p-6 pt-12 sm:p-8 sm:pt-16">
-          <!-- Title and date section -->
           <div class="mb-8">
             <div v-if="isLoading" class="space-y-3">
-              <div class="skeleton h-8 w-3/4 rounded"></div>
-              <div class="skeleton h-4 w-24 rounded"></div>
+              <div class="skeleton h-8 w-3/4 rounded-md"></div>
+              <div class="skeleton h-4 w-24 rounded-md"></div>
             </div>
             <template v-else>
-              <h1 class="mb-3 text-2xl font-bold text-base-content">{{ write.title }}</h1>
-              <div class="text-base-content/60 text-sm">
-                {{ formatDate(write.created_at) }}
+              <h1 class="mb-2 text-2xl font-bold text-foreground sm:mb-3">{{ write.title }}</h1>
+              <div class="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs sm:mb-0">
+                <span class="text-muted-foreground">{{ formatDate(write.created_at) }}</span>
+                <template v-if="writeCategories.length > 0">
+                  <span class="text-muted-foreground/40">•</span>
+                  <div class="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                    <template v-for="(categoryPath, index) in writeCategories" :key="index">
+                      <div class="inline-flex items-center gap-0.5 text-muted-foreground">
+                        <template v-for="(category, catIndex) in categoryPath" :key="category.id">
+                          <Link
+                            :href="getCategoryRoute(category)"
+                            class="font-medium transition-colors hover:text-foreground"
+                          >
+                            {{ category.name }}
+                          </Link>
+                          <span v-if="catIndex < categoryPath.length - 1" class="text-muted-foreground/40">/</span>
+                        </template>
+                      </div>
+                      <span v-if="index < writeCategories.length - 1" class="text-muted-foreground/30">,</span>
+                    </template>
+                  </div>
+                </template>
+                <template v-if="write.hasDraw || (write.writeDraws && write.writeDraws.length > 0)">
+                  <span class="text-muted-foreground/40">•</span>
+                  <button
+                    @click="toggleContent"
+                    class="inline-flex h-6 items-center justify-center gap-1 rounded-md border border-input bg-background px-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                    :class="showDraw ? 'bg-accent text-accent-foreground' : ''"
+                    :title="showDraw ? 'Metne Dön' : 'Çizime Git'"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="h-3 w-3"
+                    >
+                      <path
+                        v-if="showDraw"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                      />
+                      <path
+                        v-else
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 12.75l3 3m0 0l3-3m-3 3v-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span class="hidden sm:inline">{{ showDraw ? 'Metne Dön' : 'Çizime Git' }}</span>
+                  </button>
+                </template>
               </div>
             </template>
           </div>
 
-          <!-- Action buttons -->
-          <div v-if="!isLoading" class="mb-6 flex items-center justify-between">
-            <!-- Toggle content button - visible for everyone -->
-            <button
-              @click="toggleContent"
-              class="flex items-center gap-2 rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-sm transition-all duration-200 hover:bg-base-200"
-              :class="showDraw ? 'border-primary bg-primary text-primary-content' : 'text-base-content'"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="h-4 w-4"
-              >
-                <path
-                  v-if="showDraw"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-                />
-                <path
-                  v-else
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M9 12.75l3 3m0 0l3-3m-3 3v-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              {{ showDraw ? 'Metni Göster' : 'Çizimi Göster' }}
-            </button>
-          </div>
-
-          <!-- Main content area -->
           <div v-if="isLoading" class="space-y-3">
-            <div class="skeleton h-4 w-full rounded"></div>
-            <div class="skeleton h-4 w-5/6 rounded"></div>
-            <div class="skeleton h-4 w-4/6 rounded"></div>
-            <div class="skeleton h-4 w-full rounded"></div>
-            <div class="skeleton h-4 w-3/4 rounded"></div>
-            <div class="skeleton h-4 w-5/6 rounded"></div>
-            <div class="skeleton h-32 w-full rounded"></div>
-            <div class="skeleton h-4 w-2/3 rounded"></div>
-            <div class="skeleton h-4 w-full rounded"></div>
+            <div class="skeleton h-4 w-full rounded-md"></div>
+            <div class="skeleton h-4 w-5/6 rounded-md"></div>
+            <div class="skeleton h-4 w-4/6 rounded-md"></div>
+            <div class="skeleton h-4 w-full rounded-md"></div>
+            <div class="skeleton h-4 w-3/4 rounded-md"></div>
+            <div class="skeleton h-4 w-5/6 rounded-md"></div>
+            <div class="skeleton h-32 w-full rounded-md"></div>
+            <div class="skeleton h-4 w-2/3 rounded-md"></div>
+            <div class="skeleton h-4 w-full rounded-md"></div>
           </div>
           <div v-else>
             <div class="content-container">
-              <!-- Summary removed for cleaner design -->
-
-              <!-- Lazy load content with intersection observer -->
               <div
                 v-if="contentShouldLoad"
                 class="article-content ql-editor"
@@ -101,30 +110,27 @@
               ></div>
               <div v-else class="content-placeholder">
                 <div class="space-y-3">
-                  <div class="skeleton h-4 w-full rounded"></div>
-                  <div class="skeleton h-4 w-5/6 rounded"></div>
-                  <div class="skeleton h-4 w-4/6 rounded"></div>
-                  <div class="skeleton h-4 w-full rounded"></div>
-                  <div class="skeleton h-4 w-3/4 rounded"></div>
+                  <div class="skeleton h-4 w-full rounded-md"></div>
+                  <div class="skeleton h-4 w-5/6 rounded-md"></div>
+                  <div class="skeleton h-4 w-4/6 rounded-md"></div>
+                  <div class="skeleton h-4 w-full rounded-md"></div>
+                  <div class="skeleton h-4 w-3/4 rounded-md"></div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Footer metadata - simplified -->
-          <div v-if="!isLoading" class="text-base-content/60 mt-8 text-sm">
+          <div v-if="!isLoading" class="mt-8 text-sm text-muted-foreground">
             {{ formatNumber(write.views_count) }} görüntülenme
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Table of Contents - Sade Tasarım -->
-    <!-- Mobile & Small screens: Toggle button (up to 15.6 inch) -->
     <button
       v-if="!isLoading && showTableOfContents && !showDraw"
       @click="toggleTableOfContents"
-      class="fixed right-4 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-base-content text-base-100 shadow-lg transition-all duration-200 hover:bg-base-300 2xl:hidden"
+      class="fixed right-4 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-colors hover:bg-primary/90 2xl:hidden"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -138,16 +144,18 @@
       </svg>
     </button>
 
-    <!-- Mobile: Fixed sidebar -->
     <div
       v-if="!isLoading && showTableOfContents && !showDraw"
-      class="fixed right-0 top-12 z-40 h-[calc(100vh-3rem)] w-80 transform bg-base-100 shadow-2xl transition-transform duration-300 2xl:hidden"
+      class="fixed right-0 top-12 z-40 h-[calc(100vh-3rem)] w-80 transform border-l border-border bg-popover shadow-2xl transition-transform duration-300 2xl:hidden"
       :class="{ 'translate-x-full': !isTableOfContentsOpen }"
     >
       <div class="flex h-full flex-col">
-        <div class="flex items-center justify-between border-b border-base-300 p-4">
-          <h3 class="text-lg font-semibold text-base-content">İçindekiler</h3>
-          <button @click="toggleTableOfContents" class="btn btn-ghost btn-sm">
+        <div class="flex items-center justify-between border-b border-border p-4">
+          <h3 class="text-lg font-semibold text-foreground">İçindekiler</h3>
+          <button
+            @click="toggleTableOfContents"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -161,7 +169,7 @@
           </button>
         </div>
         <div class="flex-1 overflow-y-auto p-4">
-          <div v-if="tableOfContents.length === 0" class="text-base-content/60 py-8 text-center text-sm">
+          <div v-if="tableOfContents.length === 0" class="py-8 text-center text-sm text-muted-foreground">
             İçindekiler bulunamadı
           </div>
           <div v-else class="space-y-1">
@@ -169,21 +177,20 @@
               v-for="(item, index) in tableOfContents"
               :key="index"
               @click="scrollToHeading(item.id)"
-              class="cursor-pointer rounded-lg p-2 text-sm transition-colors hover:bg-base-200"
+              class="cursor-pointer rounded-lg p-2 text-sm transition-colors hover:bg-accent"
               :class="[getTreeHeadingClass(item.level), getActiveHeadingClass(item.id)]"
             >
-              <span class="text-base-content">{{ item.text }}</span>
+              <span class="text-foreground">{{ item.text }}</span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Desktop: Toggle button for large screens -->
     <button
       v-if="!isLoading && showTableOfContents && !showDraw"
       @click="toggleTableOfContents"
-      class="fixed right-4 top-28 z-50 hidden h-10 w-10 items-center justify-center rounded-full bg-base-content text-base-100 shadow-lg transition-all duration-200 hover:bg-base-300 2xl:flex"
+      class="fixed right-4 top-28 z-50 hidden h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-colors hover:bg-primary/90 2xl:flex"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -197,16 +204,18 @@
       </svg>
     </button>
 
-    <!-- Desktop: Fixed sidebar on the right (15.6 inch and above) -->
     <div
       v-if="!isLoading && showTableOfContents && !showDraw"
       class="fixed right-4 top-28 z-30 hidden w-64 transition-all duration-300 ease-in-out 2xl:block"
       :class="isTableOfContentsOpen ? 'translate-x-0 opacity-100' : 'pointer-events-none translate-x-full opacity-0'"
     >
-      <div class="rounded-lg bg-base-100 shadow-lg">
-        <div class="flex items-center justify-between border-b border-base-300 p-3">
-          <h3 class="text-sm font-semibold text-base-content">İçindekiler</h3>
-          <button @click="toggleTableOfContents" class="btn btn-ghost btn-xs">
+      <div class="rounded-lg border border-border bg-popover shadow-lg">
+        <div class="flex items-center justify-between border-b border-border p-3">
+          <h3 class="text-sm font-semibold text-foreground">İçindekiler</h3>
+          <button
+            @click="toggleTableOfContents"
+            class="inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -220,7 +229,7 @@
           </button>
         </div>
         <div class="overflow-y-auto p-3" style="max-height: calc(100vh - 220px)">
-          <div v-if="tableOfContents.length === 0" class="text-base-content/60 py-4 text-center text-xs">
+          <div v-if="tableOfContents.length === 0" class="py-4 text-center text-xs text-muted-foreground">
             İçindekiler bulunamadı
           </div>
           <div v-else class="space-y-1">
@@ -228,17 +237,16 @@
               v-for="(item, index) in tableOfContents"
               :key="index"
               @click="scrollToHeading(item.id)"
-              class="cursor-pointer rounded p-2 text-xs transition-colors hover:bg-base-200"
+              class="cursor-pointer rounded p-2 text-xs transition-colors hover:bg-accent"
               :class="[getTreeHeadingClass(item.level), getActiveHeadingClass(item.id)]"
             >
-              <span class="text-base-content">{{ item.text }}</span>
+              <span class="text-foreground">{{ item.text }}</span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Mobile & Small screens backdrop -->
     <div
       v-if="!isLoading && showTableOfContents && isTableOfContentsOpen && !showDraw"
       @click="toggleTableOfContents"
@@ -248,51 +256,128 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, nextTick, onUnmounted, watch } from 'vue';
+import { ref, onMounted, computed, nextTick, onUnmounted, watch, inject } from 'vue';
 import { usePage, router, Link } from '@inertiajs/vue3';
 import ExcalidrawComponent from '@/Components/ExcalidrawComponent.vue';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 import '@/Shared/Css/quill-custom-styles.css';
 import { useGsapFadeIn } from '@/Pages/WritesCategories/_utils/useGsapAnimation.js';
 import { useProcessedQuillContent } from '@/Pages/WritesCategories/_utils/useProcessedQuillContent.js';
-import gsap from 'gsap';
-import ScrollTrigger from 'gsap/ScrollTrigger';
 
-// Register ScrollTrigger plugin
-gsap.registerPlugin(ScrollTrigger);
-
-/**
- * Component name definition
- */
 defineOptions({
   name: 'ShowWriteScreen',
 });
 
-/**
- * Get write data from page props
- */
 const { props } = usePage();
 const write = ref(props.write || {});
-const auth = props.auth;
 const contentRef = ref(null);
+const excalidrawRef = ref(null);
 const showDraw = ref(false);
 const contentShouldLoad = ref(false);
 
-// Table of Contents states
+// Get categories from inject or props
+const injectedCategories = inject('categories', null);
+const allCategories = computed(() => {
+  // Try inject first, then props, then empty array
+  if (injectedCategories && Array.isArray(injectedCategories) && injectedCategories.length > 0) {
+    return injectedCategories;
+  }
+  if (props.categories && Array.isArray(props.categories) && props.categories.length > 0) {
+    return props.categories;
+  }
+  return [];
+});
+
+// Get category hierarchy for write
+const writeCategories = computed(() => {
+  if (!write.value) {
+    return [];
+  }
+
+  const categories = allCategories.value;
+  if (categories.length === 0) {
+    return [];
+  }
+
+  const categoryPaths = [];
+  const categoryIds = new Set();
+
+  // Check for write.categories (belongsToMany relationship)
+  if (write.value.categories && Array.isArray(write.value.categories) && write.value.categories.length > 0) {
+    write.value.categories.forEach((category) => {
+      if (category && category.id && !categoryIds.has(category.id)) {
+        categoryIds.add(category.id);
+        const path = getCategoryPath(category.id, categories);
+        if (path.length > 0) {
+          categoryPaths.push(path);
+        }
+      }
+    });
+  }
+
+  // Check for write.category (belongsTo relationship - full object)
+  if (write.value.category && write.value.category.id && !categoryIds.has(write.value.category.id)) {
+    categoryIds.add(write.value.category.id);
+    const path = getCategoryPath(write.value.category.id, categories);
+    if (path.length > 0) {
+      categoryPaths.push(path);
+    }
+  }
+
+  // Check for write.category_id (belongsTo relationship - just ID)
+  if (write.value.category_id && !categoryIds.has(write.value.category_id)) {
+    categoryIds.add(write.value.category_id);
+    const path = getCategoryPath(write.value.category_id, categories);
+    if (path.length > 0) {
+      categoryPaths.push(path);
+    }
+  }
+
+  return categoryPaths;
+});
+
+// Get full category path (parent > child > subchild)
+const getCategoryPath = (categoryId, categories) => {
+  if (!categoryId || !categories || categories.length === 0) {
+    return [];
+  }
+
+  const category = categories.find((cat) => cat && cat.id === categoryId);
+  if (!category) {
+    return [];
+  }
+
+  const path = [category];
+  let currentCategory = category;
+
+  // Build path from child to parent
+  while (currentCategory && currentCategory.parent_id) {
+    const parent = categories.find((cat) => cat && cat.id === currentCategory.parent_id);
+    if (parent) {
+      path.unshift(parent);
+      currentCategory = parent;
+    } else {
+      break;
+    }
+  }
+
+  return path;
+};
+
+// Get category route
+const getCategoryRoute = (category) => {
+  return route('categories.show', { category: category.slug });
+};
+
 const isTableOfContentsOpen = ref(false);
 const tableOfContents = ref([]);
 const showTableOfContents = ref(false);
 const activeHeadingId = ref(null);
-
-// Check if screen is large enough for auto-open
 const isLargeScreen = ref(false);
 
-// Initialize table of contents state based on screen size
 const initializeTableOfContentsState = () => {
-  const isLarge = window.innerWidth >= 1536; // 2xl breakpoint
+  const isLarge = window.innerWidth >= 1536;
   isLargeScreen.value = isLarge;
-  // Desktop'ta varsayılan olarak açık, mobilde kapalı
-  // Sadece TOC varsa aç
   if (isLarge && showTableOfContents.value && tableOfContents.value.length > 0) {
     isTableOfContentsOpen.value = true;
   } else if (!isLarge) {
@@ -300,77 +385,54 @@ const initializeTableOfContentsState = () => {
   }
 };
 
-// isLoading'i dinamik ve computed yap
 const isLoading = computed(() => !write.value.title);
 
-/**
- * Use the centralized Quill content processor with lazy loading
- */
 const processedContent = useProcessedQuillContent(
   contentRef,
   computed(() => (contentShouldLoad.value ? write.value.content : ''))
 );
 
-/**
- * Format date for display in Turkish
- * @param {string} dateString - ISO date string
- * @returns {string} Formatted date
- */
 const formatDate = (dateString) => {
   if (!dateString) return '';
-
   const date = new Date(dateString);
   const monthNames = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
-
   const day = date.getDate();
   const month = monthNames[date.getMonth()];
   const year = date.getFullYear();
-
   return `${day} ${month} ${year}`;
 };
 
-/**
- * Format number with thousand separators
- * @param {number} num - Number to format
- * @returns {string} Formatted number
- */
 const formatNumber = (num) => {
   return new Intl.NumberFormat('tr-TR').format(num);
 };
 
-/**
- * Toggle between content and drawing views
- */
 const toggleContent = () => {
+  // Check for unsaved changes before switching to text view
+  if (showDraw.value && excalidrawRef.value && excalidrawRef.value.hasUnsavedChanges) {
+    if (!confirm('Kaydedilmemiş değişiklikler var. Metne dönmek istediğinizden emin misiniz?')) {
+      return;
+    }
+  }
+
   showDraw.value = !showDraw.value;
-  // If switching to content view, trigger content loading
   if (!showDraw.value && !contentShouldLoad.value) {
     contentShouldLoad.value = true;
   }
 };
 
-/**
- * Setup active heading tracking using Intersection Observer
- */
 let headingObserver = null;
 
 const setupActiveHeadingTracking = () => {
   if (!contentRef.value) return;
-
-  // Cleanup existing observer
   if (headingObserver) {
     headingObserver.disconnect();
   }
-
   const headings = contentRef.value.querySelectorAll('h1, h2, h3, h4, h5, h6');
   if (headings.length === 0) return;
-
   headingObserver = new IntersectionObserver(
     (entries) => {
-      // Find the heading that is currently in view
       const visibleHeadings = entries.filter((entry) => entry.isIntersecting);
       if (visibleHeadings.length > 0) {
-        // Sort by intersection ratio and position
         visibleHeadings.sort((a, b) => {
           if (a.intersectionRatio !== b.intersectionRatio) {
             return b.intersectionRatio - a.intersectionRatio;
@@ -388,72 +450,65 @@ const setupActiveHeadingTracking = () => {
       threshold: [0, 0.25, 0.5, 0.75, 1],
     }
   );
-
   headings.forEach((heading) => {
     if (heading.id) {
       headingObserver.observe(heading);
     }
   });
 };
+
 const generateTableOfContents = () => {
   if (!contentRef.value) return;
-
-  const headings = contentRef.value.querySelectorAll('h1, h2, h3, h4, h5, h6');
+  const headings = contentRef.value.querySelectorAll(
+    '.heading-wrapper h1, .heading-wrapper h2, .heading-wrapper h3, .heading-wrapper h4, .heading-wrapper h5, .heading-wrapper h6'
+  );
   const toc = [];
-
-  headings.forEach((heading, index) => {
-    // Generate unique ID if not exists
+  headings.forEach((heading) => {
+    // Get ID from the heading or its wrapper
+    const headingId =
+      heading.id ||
+      heading.closest('.heading-wrapper')?.querySelector('a.heading-anchor')?.href?.split('#')[1] ||
+      `heading-${toc.length}`;
     if (!heading.id) {
-      heading.id = `heading-${index}`;
+      heading.id = headingId;
     }
-
     const level = parseInt(heading.tagName.charAt(1));
     const text = heading.textContent.trim();
-
     if (text) {
       toc.push({
-        id: heading.id,
+        id: headingId,
         text: text,
         level: level,
       });
     }
   });
-
   tableOfContents.value = toc;
   showTableOfContents.value = toc.length > 0;
 };
 
-/**
- * Toggle table of contents sidebar
- */
 const toggleTableOfContents = () => {
   isTableOfContentsOpen.value = !isTableOfContentsOpen.value;
 };
 
-/**
- * Scroll to specific heading
- */
 const scrollToHeading = (headingId) => {
   const element = document.getElementById(headingId);
   if (element) {
-    // Set active heading immediately for better UX
     activeHeadingId.value = headingId;
+    // Account for header height when scrolling
+    const headerOffset = 80;
+    const elementPosition = element.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
-    element.scrollIntoView({
+    window.scrollTo({
+      top: offsetPosition,
       behavior: 'smooth',
-      block: 'start',
     });
-
-    // Close sidebar on mobile
     if (window.innerWidth < 768) {
       isTableOfContentsOpen.value = false;
     }
   }
 };
 
-/**
- * Get CSS class for heading level (for table of contents)
- */
 const getHeadingClass = (level) => {
   switch (level) {
     case 1:
@@ -463,85 +518,61 @@ const getHeadingClass = (level) => {
     case 3:
       return 'border-l-4 border-accent bg-accent/5 ml-8';
     case 4:
-      return 'border-l-4 border-base-300 bg-base-200/50 ml-12';
+      return 'border-l-4 border-border bg-muted/50 ml-12';
     case 5:
-      return 'border-l-4 border-base-300 bg-base-200/30 ml-16';
+      return 'border-l-4 border-border bg-muted/30 ml-16';
     case 6:
-      return 'border-l-4 border-base-300 bg-base-200/20 ml-20';
+      return 'border-l-4 border-border bg-muted/20 ml-20';
     default:
       return '';
   }
 };
 
-/**
- * Get CSS class for tree-style heading level (ağaç dal tasarımı)
- */
 const getTreeHeadingClass = (level) => {
   switch (level) {
     case 1:
       return 'pl-0';
     case 2:
-      return 'pl-4 relative before:absolute before:left-0 before:top-1/2 before:h-px before:w-3 before:bg-base-300 before:-translate-y-1/2';
+      return 'pl-4 relative before:absolute before:left-0 before:top-1/2 before:h-px before:w-3 before:bg-border before:-translate-y-1/2';
     case 3:
-      return 'pl-8 relative before:absolute before:left-0 before:top-1/2 before:h-px before:w-3 before:bg-base-300 before:-translate-y-1/2 after:absolute after:left-0 after:top-0 after:h-full after:w-px after:bg-base-300';
+      return 'pl-8 relative before:absolute before:left-0 before:top-1/2 before:h-px before:w-3 before:bg-border before:-translate-y-1/2 after:absolute after:left-0 after:top-0 after:h-full after:w-px after:bg-border';
     case 4:
-      return 'pl-12 relative before:absolute before:left-0 before:top-1/2 before:h-px before:w-3 before:bg-base-300 before:-translate-y-1/2 after:absolute after:left-0 after:top-0 after:h-full after:w-px after:bg-base-300';
+      return 'pl-12 relative before:absolute before:left-0 before:top-1/2 before:h-px before:w-3 before:bg-border before:-translate-y-1/2 after:absolute after:left-0 after:top-0 after:h-full after:w-px after:bg-border';
     case 5:
-      return 'pl-16 relative before:absolute before:left-0 before:top-1/2 before:h-px before:w-3 before:bg-base-300 before:-translate-y-1/2 after:absolute after:left-0 after:top-0 after:h-full after:w-px after:bg-base-300';
+      return 'pl-16 relative before:absolute before:left-0 before:top-1/2 before:h-px before:w-3 before:bg-border before:-translate-y-1/2 after:absolute after:left-0 after:top-0 after:h-full after:w-px after:bg-border';
     case 6:
-      return 'pl-20 relative before:absolute before:left-0 before:top-1/2 before:h-px before:w-3 before:bg-base-300 before:-translate-y-1/2 after:absolute after:left-0 after:top-0 after:h-full after:w-px after:bg-base-300';
+      return 'pl-20 relative before:absolute before:left-0 before:top-1/2 before:h-px before:w-3 before:bg-border before:-translate-y-1/2 after:absolute after:left-0 after:top-0 after:h-full after:w-px after:bg-border';
     default:
       return 'pl-0';
   }
 };
 
-/**
- * Get CSS class for active heading (sade tasarım)
- */
 const getActiveHeadingClass = (headingId) => {
-  return activeHeadingId.value === headingId
-    ? 'bg-base-content/10 text-base-content border-l-2 border-base-content'
-    : '';
+  return activeHeadingId.value === headingId ? 'bg-muted/50 text-foreground border-l-2 border-primary' : '';
 };
 
-/**
- * Animate skeleton loading
- */
-const animateSkeleton = () => {
-  const skeletons = document.querySelectorAll('.skeleton');
-  gsap.to(skeletons, {
-    opacity: 0.5,
-    duration: 0.8,
-    stagger: 0.1,
-    repeat: -1,
-    yoyo: true,
-    ease: 'power1.inOut',
-  });
-};
-
-/**
- * Intersection Observer for lazy loading content
- */
 let contentObserver = null;
 let resizeHandler = null;
+let beforeUnloadHandler = null;
 
-/**
- * Apply GSAP animation on mount and restore write list scroll position
- */
 onMounted(() => {
-  // Initialize table of contents state based on screen size
   initializeTableOfContentsState();
-
-  // Listen for window resize to update table of contents state
   resizeHandler = () => {
     initializeTableOfContentsState();
   };
   window.addEventListener('resize', resizeHandler);
 
-  // Start with content loading disabled for better initial performance
-  contentShouldLoad.value = false;
+  // Handle browser beforeunload event for unsaved changes
+  beforeUnloadHandler = (e) => {
+    if (showDraw.value && excalidrawRef.value && excalidrawRef.value.hasUnsavedChanges) {
+      e.preventDefault();
+      e.returnValue = 'Kaydedilmemiş değişiklikler var. Sayfadan ayrılmak istediğinizden emin misiniz?';
+      return e.returnValue;
+    }
+  };
+  window.addEventListener('beforeunload', beforeUnloadHandler);
 
-  // Set up intersection observer for lazy loading
+  contentShouldLoad.value = false;
   const contentPlaceholder = document.querySelector('.content-placeholder');
   if (contentPlaceholder) {
     contentObserver = new IntersectionObserver(
@@ -549,16 +580,12 @@ onMounted(() => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && !contentShouldLoad.value) {
             contentShouldLoad.value = true;
-            // Apply animation after content loads
             nextTick(() => {
               useGsapFadeIn(contentRef, { duration: 0.8 });
-              // Generate table of contents after content is loaded
               setTimeout(() => {
                 generateTableOfContents();
-                // Setup active heading tracking after TOC is generated
                 if (tableOfContents.value.length > 0) {
                   setupActiveHeadingTracking();
-                  // Desktop'ta varsayılan olarak açık - TOC oluşturulduktan sonra
                   if (isLargeScreen.value) {
                     isTableOfContentsOpen.value = true;
                   }
@@ -573,20 +600,15 @@ onMounted(() => {
         rootMargin: '50px',
       }
     );
-
     contentObserver.observe(contentPlaceholder);
   } else {
-    // Fallback: load content immediately if no placeholder
     contentShouldLoad.value = true;
     nextTick(() => {
       useGsapFadeIn(contentRef, { duration: 0.8 });
-      // Generate table of contents after content is loaded
       setTimeout(() => {
         generateTableOfContents();
-        // Setup active heading tracking after TOC is generated
         if (tableOfContents.value.length > 0) {
           setupActiveHeadingTracking();
-          // Desktop'ta varsayılan olarak açık - TOC oluşturulduktan sonra
           if (isLargeScreen.value) {
             isTableOfContentsOpen.value = true;
           }
@@ -594,12 +616,8 @@ onMounted(() => {
       }, 100);
     });
   }
-
-  // Check URL parameters for draw mode
   const urlParams = new URLSearchParams(window.location.search);
   showDraw.value = urlParams.has('draw');
-
-  // Preload images if content contains them
   if (write.value.content && write.value.content.includes('<img')) {
     const imgRegex = /<img[^>]+src="([^"]+)"/g;
     let match;
@@ -610,9 +628,6 @@ onMounted(() => {
   }
 });
 
-/**
- * Cleanup observer on unmount
- */
 onUnmounted(() => {
   if (contentObserver) {
     contentObserver.disconnect();
@@ -623,31 +638,34 @@ onUnmounted(() => {
   if (resizeHandler) {
     window.removeEventListener('resize', resizeHandler);
   }
+  if (beforeUnloadHandler) {
+    window.removeEventListener('beforeunload', beforeUnloadHandler);
+  }
 });
 
-/**
- * Save write list scroll position before navigating away
- */
-router.on('before', () => {
+router.on('before', (event) => {
+  // Check for unsaved changes in Excalidraw
+  if (showDraw.value && excalidrawRef.value && excalidrawRef.value.hasUnsavedChanges) {
+    if (!confirm('Kaydedilmemiş değişiklikler var. Sayfadan ayrılmak istediğinizden emin misiniz?')) {
+      event.preventDefault();
+      return;
+    }
+  }
+
   const writeListElement = document.querySelector('.write-list-container');
   if (writeListElement) {
     localStorage.setItem('writeListScrollPosition', writeListElement.scrollTop.toString());
   }
 });
 
-/**
- * Watch for content changes to regenerate table of contents
- */
 watch(
   processedContent,
   () => {
     if (contentShouldLoad.value && processedContent.value) {
       nextTick(() => {
         generateTableOfContents();
-        // Setup active heading tracking after TOC is regenerated
         if (tableOfContents.value.length > 0) {
           setupActiveHeadingTracking();
-          // Desktop'ta varsayılan olarak açık - TOC oluşturulduktan sonra
           if (isLargeScreen.value) {
             isTableOfContentsOpen.value = true;
           }
@@ -661,8 +679,8 @@ watch(
 
 <style scoped>
 .skeleton {
-  @apply bg-base-300;
-  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+  @apply bg-muted;
+  background-image: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -676,43 +694,11 @@ watch(
   }
 }
 
-.skeleton-wrapper {
-  @apply animate-pulse;
-}
-
 .content-placeholder {
   min-height: 200px;
 }
 
-/* Content container - minimal */
 .content-container {
   contain: layout;
-}
-
-/* Table of Contents styles */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Smooth scroll behavior */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Mobile responsive adjustments */
-@media (max-width: 768px) {
-  .fixed.right-4 {
-    right: 1rem;
-  }
-}
-
-/* Draw view full height */
-.h-screen {
-  height: 100vh;
-  height: 100dvh; /* Dynamic viewport height for mobile */
 }
 </style>

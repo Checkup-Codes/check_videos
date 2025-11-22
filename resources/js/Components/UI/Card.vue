@@ -1,11 +1,17 @@
 <template>
-  <div :class="['card', bgClass, shadowClass, 'transition-all duration-200']">
-    <div :class="['card-body', padding]">
+  <div
+    :class="[
+      'rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-200',
+      shadowClass,
+      bgClass,
+    ]"
+  >
+    <div :class="['p-6', { 'p-4': compact }]">
       <!-- Header with optional icon and action button -->
-      <div v-if="$slots.header || title" class="card-title flex items-center justify-between">
+      <div v-if="$slots.header || title" class="mb-4 flex items-center justify-between">
         <div class="flex items-center gap-2">
           <slot name="icon"></slot>
-          <h2 class="text-gray-800 dark:text-white">{{ title }}</h2>
+          <h2 class="text-lg font-semibold text-card-foreground">{{ title }}</h2>
         </div>
         <slot name="action"></slot>
       </div>
@@ -14,7 +20,7 @@
       <slot></slot>
 
       <!-- Card footer -->
-      <div v-if="$slots.footer" class="card-actions mt-4 justify-end">
+      <div v-if="$slots.footer" class="mt-4 flex justify-end">
         <slot name="footer"></slot>
       </div>
     </div>
@@ -33,7 +39,7 @@ const props = defineProps({
     type: String,
     default: 'default',
     validator: (value) =>
-      ['default', 'primary', 'secondary', 'accent', 'info', 'success', 'warning', 'error'].includes(value),
+      ['default', 'primary', 'secondary', 'destructive'].includes(value),
   },
   elevated: {
     type: Boolean,
@@ -48,29 +54,17 @@ const props = defineProps({
 const bgClass = computed(() => {
   switch (props.variant) {
     case 'primary':
-      return 'bg-primary text-primary-content';
+      return 'bg-primary text-primary-foreground border-primary';
     case 'secondary':
-      return 'bg-secondary text-secondary-content';
-    case 'accent':
-      return 'bg-accent text-accent-content';
-    case 'info':
-      return 'bg-info text-info-content';
-    case 'success':
-      return 'bg-success text-success-content';
-    case 'warning':
-      return 'bg-warning text-warning-content';
-    case 'error':
-      return 'bg-error text-error-content';
+      return 'bg-secondary text-secondary-foreground border-secondary';
+    case 'destructive':
+      return 'bg-destructive text-destructive-foreground border-destructive';
     default:
-      return 'bg-white dark:bg-base-100 border border-gray-200 dark:border-gray-700';
+      return 'bg-card text-card-foreground border-border';
   }
 });
 
 const shadowClass = computed(() => {
   return props.elevated ? 'shadow-lg' : 'shadow-sm';
-});
-
-const padding = computed(() => {
-  return props.compact ? 'p-4' : 'p-6';
 });
 </script>

@@ -1,213 +1,5 @@
 <template>
   <div ref="scrollContainer" class="write-list-container space-y-1 overflow-y-auto p-3">
-    <!-- Responsive filter buttons for logged-in users -->
-    <div v-if="isAdmin" class="mb-3">
-      <div class="hidden gap-2 sm:flex">
-        <button
-          class="btn btn-outline btn-xs flex items-center justify-center"
-          :class="{ 'bg-base-content text-base-100': adminFilter === 'all' }"
-          @click="adminFilter = 'all'"
-        >
-          <span v-if="props.isCollapsed">
-            <!-- List icon -->
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </span>
-          <span v-else>Tümü</span>
-        </button>
-        <button
-          class="btn btn-outline btn-xs flex items-center justify-center"
-          :class="{ 'bg-base-content text-base-100': adminFilter === 'published' }"
-          @click="adminFilter = 'published'"
-        >
-          <span v-if="props.isCollapsed">
-            <!-- Globe icon -->
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <circle cx="12" cy="12" r="10" stroke-width="2" />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"
-              />
-            </svg>
-          </span>
-          <span v-else>Herkese Açık</span>
-        </button>
-        <button
-          class="btn btn-outline btn-xs flex items-center justify-center"
-          :class="{ 'bg-base-content text-base-100': adminFilter === 'link_only' }"
-          @click="adminFilter = 'link_only'"
-        >
-          <span v-if="props.isCollapsed">
-            <!-- Link icon -->
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13.828 10.172a4 4 0 010 5.656l-3 3a4 4 0 01-5.656-5.656l1.5-1.5M10.172 13.828a4 4 0 010-5.656l3-3a4 4 0 015.656 5.656l-1.5 1.5"
-              />
-            </svg>
-          </span>
-          <span v-else>Sadece Link</span>
-        </button>
-        <button
-          class="btn btn-outline btn-xs flex items-center justify-center"
-          :class="{ 'bg-base-content text-base-100': adminFilter === 'private' }"
-          @click="adminFilter = 'private'"
-        >
-          <span v-if="props.isCollapsed">
-            <!-- Lock icon -->
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 11c1.104 0 2-.896 2-2V7a2 2 0 10-4 0v2c0 1.104.896 2 2 2zm6 2v5a2 2 0 01-2 2H8a2 2 0 01-2-2v-5a2 2 0 012-2h8a2 2 0 012 2z"
-              />
-            </svg>
-          </span>
-          <span v-else>Gizli</span>
-        </button>
-      </div>
-      <!-- Mobile: show filter icon -->
-      <div class="relative inline-block sm:hidden">
-        <button @click="showFilterMenu = !showFilterMenu" class="btn btn-ghost btn-xs">
-          <!-- Heroicons funnel icon -->
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A2 2 0 0013 14.586V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-3.414a2 2 0 00-.293-1.172L2.293 6.707A1 1 0 012 6V4z"
-            />
-          </svg>
-        </button>
-        <div
-          v-if="showFilterMenu"
-          class="absolute z-10 mt-2 w-40 rounded-md bg-base-100 shadow-lg ring-1 ring-black ring-opacity-5"
-        >
-          <div class="flex flex-col gap-1 py-1">
-            <button
-              class="btn btn-outline btn-xs btn-block flex items-center justify-center"
-              :class="{ 'bg-base-content text-base-100': adminFilter === 'all' }"
-              @click="
-                adminFilter = 'all';
-                showFilterMenu = false;
-              "
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-            <button
-              class="btn btn-outline btn-xs btn-block flex items-center justify-center"
-              :class="{ 'bg-base-content text-base-100': adminFilter === 'published' }"
-              @click="
-                adminFilter = 'published';
-                showFilterMenu = false;
-              "
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <circle cx="12" cy="12" r="10" stroke-width="2" />
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"
-                />
-              </svg>
-            </button>
-            <button
-              class="btn btn-outline btn-xs btn-block flex items-center justify-center"
-              :class="{ 'bg-base-content text-base-100': adminFilter === 'link_only' }"
-              @click="
-                adminFilter = 'link_only';
-                showFilterMenu = false;
-              "
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13.828 10.172a4 4 0 010 5.656l-3 3a4 4 0 01-5.656-5.656l1.5-1.5M10.172 13.828a4 4 0 010-5.656l3-3a4 4 0 015.656 5.656l-1.5 1.5"
-                />
-              </svg>
-            </button>
-            <button
-              class="btn btn-outline btn-xs btn-block flex items-center justify-center"
-              :class="{ 'bg-base-content text-base-100': adminFilter === 'private' }"
-              @click="
-                adminFilter = 'private';
-                showFilterMenu = false;
-              "
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 11c1.104 0 2-.896 2-2V7a2 2 0 10-4 0v2c0 1.104.896 2 2 2zm6 2v5a2 2 0 01-2 2H8a2 2 0 01-2-2v-5a2 2 0 012-2h8a2 2 0 012 2z"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Write List -->
     <div class="space-y-2">
       <Link
         v-for="write in filteredWrites"
@@ -216,27 +8,24 @@
         :class="[
           'block rounded-lg p-3',
           activeWrite === getActiveWritePath(write)
-            ? 'bg-base-content text-base-100'
-            : 'border border-base-300 bg-base-100 hover:bg-base-300',
+            ? 'bg-primary text-primary-foreground'
+            : 'border border-border bg-card hover:bg-accent',
         ]"
       >
-        <!-- Başlık -->
         <div class="mb-1">
           <h3
             class="line-clamp-2 text-sm font-medium leading-tight"
-            :class="activeWrite === getActiveWritePath(write) ? 'text-base-100' : 'text-base-content'"
+            :class="activeWrite === getActiveWritePath(write) ? 'text-primary-foreground' : 'text-foreground'"
           >
             {{ write.title }}
           </h3>
         </div>
 
-        <!-- Meta bilgiler -->
         <div
           class="flex flex-col gap-1 text-xs sm:flex-row sm:items-center sm:justify-between"
-          :class="activeWrite === getActiveWritePath(write) ? 'text-base-100/70' : 'text-base-content/70'"
+          :class="activeWrite === getActiveWritePath(write) ? 'text-primary-foreground/70' : 'text-muted-foreground'"
         >
           <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
-            <!-- Tarih -->
             <span class="flex items-center gap-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -255,7 +44,6 @@
               <span class="truncate">{{ formatDate(write.created_at) }}</span>
             </span>
 
-            <!-- Görüntülenme sayısı -->
             <span class="flex items-center gap-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -281,9 +69,8 @@
             </span>
           </div>
 
-          <!-- Status icons -->
           <div class="flex items-center gap-1 self-start sm:self-center">
-            <span v-if="write.status === 'private'" class="text-warning" title="Gizli yazı">
+            <span v-if="write.status === 'private'" class="text-yellow-500 dark:text-yellow-400" title="Gizli yazı">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fill-rule="evenodd"
@@ -292,7 +79,7 @@
                 />
               </svg>
             </span>
-            <span v-if="write.status === 'link_only'" class="text-info" title="Sadece link">
+            <span v-if="write.status === 'link_only'" class="text-blue-500 dark:text-blue-400" title="Sadece link">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fill-rule="evenodd"
@@ -306,8 +93,7 @@
       </Link>
     </div>
 
-    <!-- Boş durum -->
-    <div v-if="filteredWrites.length === 0" class="flex h-32 items-center justify-center text-center opacity-50">
+    <div v-if="filteredWrites.length === 0" class="flex h-32 items-center justify-center text-center text-muted-foreground">
       <div>Henüz yazı bulunmuyor</div>
     </div>
   </div>
@@ -325,20 +111,14 @@ const props = defineProps({
   isCollapsed: { type: Boolean, default: false },
 });
 
-// Daha güvenli veri alımı
 const writes = computed(() => {
-  // Önce props'tan gelen veriyi kontrol et
   if (props.writes && props.writes.length > 0) {
     return props.writes;
   }
-
-  // Props'ta veri yoksa inject'ten al
   const injectedWrites = inject('writes', []);
   if (injectedWrites && injectedWrites.length > 0) {
     return injectedWrites;
   }
-
-  // Hiçbiri yoksa boş array döndür
   return [];
 });
 
@@ -349,71 +129,42 @@ const virtualContainer = ref(null);
 let isActive = false;
 const activeWrite = ref('');
 
-// Search and filter state
 const adminFilter = ref('all');
-const showFilterMenu = ref(false);
 
-// Removed virtual scrolling for simpler design
-
-/**
- * Determine the correct route for a write based on current context
- */
 const getWriteRoute = (write) => {
   const currentPath = window.location.pathname;
-
-  // If we're in categories context, use category-based route
   if (currentPath.includes('/categories/')) {
-    // Extract category slug from current URL
     const pathParts = currentPath.split('/').filter((part) => part.length > 0);
-
-    // Check if we're in a category page (not create/edit)
     if (pathParts.length >= 2 && pathParts[0] === 'categories') {
       const categorySlug = pathParts[1];
-
-      // Make sure we're not in create/edit pages
       if (categorySlug && categorySlug !== 'create' && categorySlug !== 'edit') {
         return route('categories.showByCategory', { category: categorySlug, slug: write.slug });
       }
     }
   }
-
-  // Default to writes.show route
   return route('writes.show', { write: write.slug });
 };
 
-/**
- * Get active write path for highlighting
- */
 const getActiveWritePath = (write) => {
   const currentPath = window.location.pathname;
-
-  // If we're in categories context, use category-based path
   if (currentPath.includes('/categories/')) {
     const pathParts = currentPath.split('/').filter((part) => part.length > 0);
-
-    // Check if we're in a category page (not create/edit)
     if (pathParts.length >= 2 && pathParts[0] === 'categories') {
       const categorySlug = pathParts[1];
-
-      // Make sure we're not in create/edit pages
       if (categorySlug && categorySlug !== 'create' && categorySlug !== 'edit') {
         return `/categories/${categorySlug}/${write.slug}`;
       }
     }
   }
-
-  // Default to writes path
   return `/writes/${write.slug}`;
 };
 
 const filteredWrites = computed(() => {
   let result = writes.value;
   if (!isAdmin) {
-    // Guest: hide private
     result = result.filter((write) => write.status !== 'private');
     return result;
   } else {
-    // Admin: filter by selected status
     if (adminFilter.value === 'published') {
       result = result.filter((write) => write.status === 'published');
     } else if (adminFilter.value === 'link_only') {
@@ -425,30 +176,17 @@ const filteredWrites = computed(() => {
   }
 });
 
-// Removed virtual scrolling computed properties
-
 defineExpose({ filteredWrites, scrollContainer });
 
-/**
- * Handle component activation (from KeepAlive)
- */
 onActivated(() => {
   isActive = true;
   updateActiveWrite();
 });
 
-/**
- * Handle component deactivation (from KeepAlive)
- */
 onDeactivated(() => {
   isActive = false;
 });
 
-// Removed virtual scrolling watchers
-
-/**
- * Watch for route changes to update data
- */
 watch(
   () => page.url,
   () => {
@@ -458,11 +196,6 @@ watch(
   }
 );
 
-// Removed props watcher for virtual scrolling
-
-/**
- * Update active write based on current URL
- */
 const updateActiveWrite = () => {
   activeWrite.value = window.location.pathname;
 };
@@ -477,47 +210,40 @@ const handleScroll = (e) => {
 
 onMounted(() => {
   isActive = true;
-
-  // Filtre localStorage'dan yükle
   const savedFilter = localStorage.getItem('writeListFilter');
   if (savedFilter) adminFilter.value = savedFilter;
-
   updateActiveWrite();
-
-  // DOM'un hazır olmasını bekle
   nextTick(() => {
     if (scrollContainer.value) {
       scrollContainer.value.addEventListener('scroll', handleScroll);
-      // Scroll pozisyonunu geri yükle
       const savedScroll = localStorage.getItem(getScrollKey());
       if (savedScroll) {
         scrollContainer.value.scrollTop = parseInt(savedScroll, 10);
       }
-      // Initialize scroll position
     }
   });
-
   const handlePopState = () => {
     if (isActive) {
       updateActiveWrite();
     }
   };
-
-  // Handle Inertia navigation
   const handleNavigationStart = () => {};
-
   const handleNavigationEnd = () => {
     if (isActive) {
       updateActiveWrite();
     }
   };
 
-  // Add event listeners
+  // Listen for filter changes from SidebarLayout
+  const handleWriteFilterChanged = (event) => {
+    adminFilter.value = event.detail;
+  };
+  
   window.addEventListener('popstate', handlePopState);
   window.addEventListener('inertia:start', handleNavigationStart);
   window.addEventListener('inertia:finish', handleNavigationEnd);
+  window.addEventListener('writeFilterChanged', handleWriteFilterChanged);
 
-  // Cleanup on unmount
   onUnmounted(() => {
     isActive = false;
     if (scrollContainer.value) {
@@ -526,12 +252,10 @@ onMounted(() => {
     window.removeEventListener('popstate', handlePopState);
     window.removeEventListener('inertia:start', handleNavigationStart);
     window.removeEventListener('inertia:finish', handleNavigationEnd);
+    window.removeEventListener('writeFilterChanged', handleWriteFilterChanged);
   });
 });
 
-/**
- * Format date for display in Turkish
- */
 const formatDate = (date) => {
   const options = {
     year: 'numeric',
@@ -550,14 +274,10 @@ const formatDate = (date) => {
   return `${day} ${month} ${year}`;
 };
 
-/**
- * Format number with thousand separators
- */
 const formatNumber = (num) => {
   return new Intl.NumberFormat('tr-TR').format(num);
 };
 
-// Filtre değişince localStorage'a kaydet
 watch(adminFilter, (val) => {
   localStorage.setItem('writeListFilter', val);
 });
@@ -569,7 +289,6 @@ watch(adminFilter, (val) => {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Custom scrollbar styling */
 .write-list-container::-webkit-scrollbar {
   width: 6px;
 }
@@ -579,20 +298,29 @@ watch(adminFilter, (val) => {
 }
 
 .write-list-container::-webkit-scrollbar-thumb {
-  background-color: rgba(var(--color-base-300), 0.5);
+  background-color: hsl(var(--muted));
   border-radius: 3px;
 }
 
-@media (prefers-color-scheme: dark) {
-  .write-list-container::-webkit-scrollbar-thumb {
-    background-color: rgba(var(--color-base-100), 0.5);
-  }
-}
-
-/* Line clamp utility for title truncation */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+button {
+  transition: none;
+}
+
+button:hover {
+  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+a {
+  transition: none;
+}
+
+a:hover {
+  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
 }
 </style>

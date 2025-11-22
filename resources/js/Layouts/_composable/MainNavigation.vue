@@ -1,5 +1,5 @@
 <template>
-  <nav class="w-full space-y-1 bg-base-200 px-2">
+  <nav class="w-full space-y-1 bg-background px-2 py-1">
     <NavItem href="/" icon="home" label="Ana Sayfa" :is-compact="isCompact" />
     <NavItem href="/writes" icon="fa-solid fa-pencil" label="Yazılar" :is-compact="isCompact" />
     <NavItem href="/categories" icon="fa-solid fa-book" label="Kategoriler" :is-compact="isCompact" />

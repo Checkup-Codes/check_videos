@@ -1,5 +1,5 @@
 <template>
-  <CheckSubsidebar :isNarrow="isNarrow" :class="currentTheme">
+  <CheckSubsidebar :isNarrow="isNarrow">
     <SubSidebarScreen ref="scrollableRef" class="sidebar-content-embedded">
       <WriteList ref="writeListRef" :writes="writes" :route="route" :isCollapsed="isNarrow" />
     </SubSidebarScreen>
@@ -23,9 +23,6 @@ defineOptions({
 // Composables
 const { isCollapsed, toggleSidebar } = useSidebar();
 const store = useStore();
-
-// Get current theme
-const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
 
 // Local state
 const { props } = usePage();
@@ -77,7 +74,7 @@ onMounted(() => {
 <style scoped>
 /* Embedded sidebar content design - subtle recessed effect */
 :deep(.sidebar-content-embedded) {
-  background: hsl(var(--b1) / 0.7) !important;
+  background: hsl(var(--muted) / 0.7) !important;
   position: relative;
 }
 
@@ -88,7 +85,7 @@ onMounted(() => {
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(to right, transparent, hsl(var(--b2) / 0.3), transparent);
+  background: linear-gradient(to right, transparent, hsl(var(--border) / 0.3), transparent);
   pointer-events: none;
 }
 </style>

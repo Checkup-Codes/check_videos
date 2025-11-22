@@ -371,7 +371,7 @@
                     </label>
                     <select
                       v-model="customTheme.shadow"
-                      class="select-bordered select w-full"
+                      class="select select-bordered w-full"
                       @change="updateCustomTheme"
                     >
                       <option value="0 4px 6px -1px rgba(0, 0, 0, 0.1)">Hafif Gölge</option>
@@ -393,9 +393,9 @@
                 <button class="btn btn-accent">Accent Button</button>
               </div>
               <div class="mt-4">
-                <div class="card bg-base-200 p-4">
+                <div class="card bg-card p-4">
                   <h5 class="font-semibold">Örnek Card</h5>
-                  <p class="text-base-content/70 text-sm">Bu bir örnek card'tır.</p>
+                  <p class="text-muted-foreground text-sm">Bu bir örnek card'tır.</p>
                 </div>
               </div>
             </div>

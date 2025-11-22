@@ -1,10 +1,10 @@
 <template>
   <div class="relative h-full w-full">
     <!-- Save button - only for authenticated users -->
-    <div v-if="props.auth.user" class="absolute right-4 top-[53px] z-10 lg:top-4">
+    <div v-if="props.auth.user" class="absolute left-32 top-[53px] z-10 lg:left-36 lg:top-4">
       <button
         @click="saveDrawToServer"
-        class="flex items-center gap-2 rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-sm text-base-content shadow-lg transition-all duration-200 hover:bg-base-200"
+        class="flex items-center gap-2 rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground shadow-lg transition-all hover:bg-accent"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -27,7 +27,7 @@
     <!-- Flash message -->
     <div
       v-if="flashMessage"
-      class="absolute right-4 top-[101px] z-20 rounded-lg border border-green-300 bg-green-100 px-3 py-2 text-sm text-green-800 shadow-lg lg:top-16"
+      class="absolute left-32 top-[101px] z-20 rounded-lg border border-green-300 bg-green-100 px-3 py-2 text-sm text-green-800 shadow-lg lg:left-36 lg:top-16"
     >
       {{ flashMessage }}
     </div>
@@ -40,7 +40,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch, computed, onBeforeUnmount } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 
@@ -49,6 +49,8 @@ const elementsRef = ref([]);
 const flashMessage = ref('');
 const writeDraws = ref(props.write.write_draws);
 const excalidrawInstance = ref(null);
+const savedElements = ref(null);
+const isSaving = ref(false);
 
 // Theme detection
 const isDarkTheme = ref(document.documentElement.getAttribute('data-theme') === 'dark');
@@ -88,18 +90,16 @@ const loadInitialVersion = () => {
         const container = document.getElementById('excali');
         const root = ReactDOMClient.createRoot(container);
 
-        const initialData =
-          writeDraws.value.length > 0
-            ? {
-                elements: JSON.parse(writeDraws.value[0].elements),
-                scrollToContent: true,
-                theme: isDarkTheme.value ? 'dark' : 'light',
-              }
-            : {
-                elements: [],
-                scrollToContent: true,
-                theme: isDarkTheme.value ? 'dark' : 'light',
-              };
+        const initialElements =
+          writeDraws.value.length > 0 ? JSON.parse(writeDraws.value[0].elements) : [];
+
+        savedElements.value = JSON.stringify(initialElements);
+
+        const initialData = {
+          elements: initialElements,
+          scrollToContent: true,
+          theme: isDarkTheme.value ? 'dark' : 'light',
+        };
 
         const handleChange = (elements) => {
           elementsRef.value = elements;
@@ -121,9 +121,17 @@ const loadInitialVersion = () => {
   });
 };
 
+// Check if there are unsaved changes
+const hasUnsavedChanges = computed(() => {
+  if (!savedElements.value) return false;
+  const currentElements = JSON.stringify(elementsRef.value);
+  return currentElements !== savedElements.value;
+});
+
 const saveDrawToServer = () => {
   const latestElements = elementsRef.value.length > 0 ? elementsRef.value : [];
   const jsonString = JSON.stringify(latestElements);
+  isSaving.value = true;
 
   axios
     .post(`/writes/${props.write.id}/draw`, {
@@ -132,6 +140,8 @@ const saveDrawToServer = () => {
     })
     .then((response) => {
       setFlashMessage('Canvas durumu başarıyla kaydedildi!');
+      // Update saved elements
+      savedElements.value = jsonString;
       // Update the first draw version or create it if it doesn't exist
       if (writeDraws.value.length > 0) {
         writeDraws.value[0] = response.data;
@@ -141,8 +151,16 @@ const saveDrawToServer = () => {
     })
     .catch(() => {
       setFlashMessage('Kaydetme sırasında bir hata oluştu. Lütfen tekrar deneyin.');
+    })
+    .finally(() => {
+      isSaving.value = false;
     });
 };
+
+// Expose hasUnsavedChanges to parent component
+defineExpose({
+  hasUnsavedChanges,
+});
 
 const setFlashMessage = (message) => {
   flashMessage.value = message;

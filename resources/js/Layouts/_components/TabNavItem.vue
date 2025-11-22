@@ -1,22 +1,13 @@
 <template>
   <Link
     :href="href"
-    class="group relative flex items-center space-x-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-300 sm:mx-1"
+    class="group relative inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 px-3 py-2 h-9"
     :class="[
-      {
-        'bg-primary/10 shadow-sm': isActive,
-        'text-base-content/70 hover:bg-base-200/60 hover:text-base-content': !isActive,
-      },
-      isActive ? (isDarkTheme ? 'text-white' : 'text-black') : '',
+      isActive
+        ? 'bg-accent text-accent-foreground shadow-sm'
+        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
     ]"
   >
-    <!-- Active Indicator -->
-    <div
-      v-if="isActive"
-      class="absolute -bottom-px left-1/2 h-1 w-3/4 -translate-x-1/2 rounded-t-full"
-      :class="isDarkTheme ? 'bg-white' : 'bg-black'"
-    ></div>
-
     <!-- Icon -->
     <div
       class="flex h-4 w-4 flex-shrink-0 items-center justify-center transition-transform duration-300"
@@ -90,13 +81,7 @@
     </div>
 
     <!-- Label -->
-    <span class="whitespace-nowrap font-medium">{{ label }}</span>
-
-    <!-- Hover Effect Background -->
-    <div
-      v-if="!isActive"
-      class="via-base-200/30 absolute inset-0 rounded-lg bg-gradient-to-r from-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-    ></div>
+    <span class="whitespace-nowrap">{{ label }}</span>
   </Link>
 </template>
 

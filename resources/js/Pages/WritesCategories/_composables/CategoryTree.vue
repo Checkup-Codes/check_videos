@@ -1,29 +1,7 @@
 <template>
   <div ref="scrollContainer" class="category-tree-container space-y-1 overflow-y-auto p-3">
-    <!-- Expand/Collapse and Filter buttons -->
+    <!-- Filter buttons -->
     <div class="mb-3 flex flex-wrap items-center gap-2">
-      <!-- Expand/Collapse All Button -->
-      <div v-if="enableExpandCollapse" class="flex gap-2">
-        <button
-          class="btn btn-outline btn-xs flex items-center justify-center"
-          :class="{ 'bg-base-content text-base-100': areAllExpanded }"
-          @click="handleToggleExpand"
-          :title="areAllExpanded ? 'Tümünü Daralt' : 'Tümünü Genişlet'"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-3.5 w-3.5 transition-transform duration-200"
-            :class="{ 'rotate-180': areAllExpanded }"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
-          <span v-if="!props.isCollapsed" class="ml-1">{{ areAllExpanded ? 'Daralt' : 'Genişlet' }}</span>
-        </button>
-      </div>
-
       <!-- Responsive filter buttons for logged-in users -->
       <div v-if="isAdmin" class="hidden gap-2 sm:flex">
         <button
@@ -134,7 +112,7 @@
         </button>
         <div
           v-if="showFilterMenu"
-          class="absolute z-10 mt-2 w-40 rounded-md bg-base-100 shadow-lg ring-1 ring-black ring-opacity-5"
+          class="absolute z-10 mt-2 w-40 rounded-md bg-popover border border-border shadow-lg"
         >
           <div class="flex flex-col gap-1 py-1">
             <button
@@ -234,8 +212,8 @@
       <div v-for="category in filteredParentCategories" :key="category.id">
         <div
           :class="[
-            'rounded-lg bg-base-100 transition-all duration-200',
-            url === `/categories/${category.slug}` ? 'bg-base-content text-base-100' : 'hover:bg-base-300',
+            'rounded-lg bg-card transition-all duration-200',
+            url === `/categories/${category.slug}` ? 'bg-primary text-primary-foreground' : 'hover:bg-accent',
           ]"
         >
           <!-- Ana kategori başlığı -->
@@ -263,7 +241,7 @@
                 </span>
                 <h3
                   class="max-w-[120px] truncate text-sm font-medium leading-tight"
-                  :class="url === `/categories/${category.slug}` ? 'text-base-100' : 'text-base-content'"
+                  :class="url === `/categories/${category.slug}` ? 'text-primary-foreground' : 'text-foreground'"
                   :title="category.name"
                 >
                   {{ category.name }}
@@ -307,7 +285,7 @@
                     :href="route('categories.show', { category: child.slug })"
                     :class="[
                       'block rounded-md p-2 transition-all duration-200',
-                      url === `/categories/${child.slug}` ? 'bg-base-content text-base-100' : 'hover:bg-base-300',
+                      url === `/categories/${child.slug}` ? 'bg-primary text-primary-foreground' : 'hover:bg-accent',
                     ]"
                   >
                     <div class="flex items-center justify-between">
@@ -335,8 +313,8 @@
                           class="max-w-[100px] truncate text-sm font-medium"
                           :class="
                             url === `/categories/${child.slug}` || url === `/categories/${category.slug}`
-                              ? 'text-base-100'
-                              : 'text-base-content'
+                              ? 'text-primary-foreground'
+                              : 'text-foreground'
                           "
                           :title="child.name"
                           >{{ child.name }}</span
@@ -380,7 +358,7 @@
                           :class="[
                             'block rounded-md p-2 transition-all duration-200',
                             url === `/categories/${subChild.slug}`
-                              ? 'bg-base-content text-base-100'
+                              ? 'bg-primary text-primary-foreground'
                               : 'hover:bg-base-300',
                           ]"
                         >
@@ -453,7 +431,6 @@ defineOptions({
 const props = defineProps({
   isCollapsed: { type: Boolean, default: false },
   expandAll: { type: Boolean, default: false },
-  enableExpandCollapse: { type: Boolean, default: false },
 });
 
 const categories = inject('categories', []);
@@ -497,22 +474,12 @@ const parentCategories = computed(() =>
 
 const filteredParentCategories = computed(() => filterCategories(parentCategories.value, adminFilter.value));
 
-const emit = defineEmits(['update:expandAll', 'toggle-expand']);
+const emit = defineEmits(['update:expandAll']);
 const page = usePage();
 const url = computed(() => page.url);
 
 const scrollContainer = ref(null);
 const store = useStore();
-
-// Check if all categories are expanded
-const areAllExpanded = computed(() => {
-  return store.getters['CategorySidebar/collapsedSet'].size === 0;
-});
-
-// Handle toggle expand/collapse all
-const handleToggleExpand = () => {
-  emit('toggle-expand');
-};
 
 // Calculate total write count for a category and its children
 const getTotalWriteCount = (category) => {

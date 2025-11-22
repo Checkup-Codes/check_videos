@@ -1,8 +1,7 @@
 <template>
   <!-- Full Width Header -->
   <header
-    class="bg-base-100/95 border-base-200/30 sticky top-0 z-50 w-full border-b backdrop-blur-md transition-all duration-300"
-    :class="currentTheme"
+    class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur transition-all duration-300 supports-[backdrop-filter]:bg-background/60"
   >
     <!-- Mobile Header -->
     <div class="flex h-12 items-center justify-between px-3 sm:px-4 lg:hidden">
@@ -10,31 +9,31 @@
       <Link
         v-if="basePath"
         :href="`/${basePath}`"
-        class="hover:bg-base-200/80 btn btn-ghost btn-sm rounded-lg px-2 transition-all duration-200"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
       >
-        <GoBackSvg class="h-3.5 w-3.5" />
+        <GoBackSvg class="h-4 w-4" />
       </Link>
       <div v-else class="w-10"></div>
 
       <!-- Logo/Title -->
-      <div class="flex items-center space-x-1.5">
-        <div class="bg-primary/10 flex h-6 w-6 items-center justify-center overflow-hidden rounded-md">
+      <div class="flex items-center space-x-2">
+        <div
+          class="flex h-7 w-7 items-center justify-center overflow-hidden rounded-md bg-primary/10 ring-1 ring-primary/20"
+        >
           <template v-if="logoPath && !isLoading">
             <img :src="logoPath" :alt="logoAlt" class="h-full w-full object-cover" @error="handleImageError" />
           </template>
-          <span v-else class="text-xs font-bold text-primary">{{ seoTitle.charAt(0).toUpperCase() }}</span>
+          <span v-else class="text-xs font-semibold text-primary">{{ seoTitle.charAt(0).toUpperCase() }}</span>
         </div>
-        <Link
-          href="/"
-          class="text-sm font-semibold text-base-content transition-colors duration-200 hover:text-primary"
-          >{{ title }}</Link
-        >
+        <Link href="/" class="text-sm font-semibold text-foreground transition-colors hover:text-foreground/80">{{
+          title
+        }}</Link>
       </div>
 
       <!-- Menu Toggle Button -->
       <button
         @click="toggleMenu"
-        class="hover:bg-base-200/80 btn btn-ghost btn-sm rounded-lg px-2 transition-all duration-200"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
       >
         <svg
           class="h-3.5 w-3.5"
@@ -53,20 +52,18 @@
       <!-- Left Section: Logo + Brand + Language -->
       <div class="flex items-center space-x-4">
         <!-- Logo/Title -->
-        <div class="flex items-center space-x-2">
+        <div class="flex items-center space-x-2.5">
           <div
-            class="bg-primary/10 ring-primary/20 flex h-7 w-7 items-center justify-center overflow-hidden rounded-lg ring-1"
+            class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-md bg-primary/10 ring-1 ring-primary/20"
           >
             <template v-if="logoPath && !isLoading">
               <img :src="logoPath" :alt="logoAlt" class="h-full w-full object-cover" @error="handleImageError" />
             </template>
-            <span v-else class="text-xs font-bold text-primary">{{ seoTitle.charAt(0).toUpperCase() }}</span>
+            <span v-else class="text-sm font-semibold text-primary">{{ seoTitle.charAt(0).toUpperCase() }}</span>
           </div>
-          <Link
-            href="/"
-            class="text-base font-semibold text-base-content transition-colors duration-200 hover:text-primary"
-            >{{ seoTitle }}</Link
-          >
+          <Link href="/" class="text-base font-semibold text-foreground transition-colors hover:text-foreground/80">{{
+            seoTitle
+          }}</Link>
         </div>
 
         <!-- Language Selector - Temporarily disabled -->
@@ -108,14 +105,13 @@
       </div>
 
       <!-- Center Section: Search Input -->
-      <div class="mx-6 max-w-md flex-1">
+      <div class="mx-6 flex-1 sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl">
         <div class="relative">
           <div class="relative">
             <!-- Search Icon -->
             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <svg
-                class="h-3.5 w-3.5"
-                :class="isDarkMode ? 'text-gray-400' : 'text-gray-500'"
+                class="h-4 w-4 text-muted-foreground"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -132,6 +128,7 @@
 
             <!-- Search Input -->
             <input
+              ref="searchInputRef"
               v-model="searchQuery"
               @focus="showSearchResults = true"
               @blur="hideSearchResults"
@@ -142,23 +139,13 @@
               @input="performSearch"
               type="text"
               placeholder="Ara..."
-              class="search-input w-full rounded-md border py-2 pl-10 pr-12 text-sm backdrop-blur-sm transition-all duration-200 focus:outline-none focus:ring-2"
-              :class="[
-                isDarkMode
-                  ? 'border-gray-600/60 bg-gray-800/90 text-gray-100 placeholder-gray-400 focus:border-blue-500/40 focus:ring-blue-500/20'
-                  : 'border-gray-300/60 bg-white/90 text-gray-900 placeholder-gray-500 focus:border-blue-500/40 focus:ring-blue-500/20',
-              ]"
+              class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 pl-9 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             />
 
             <!-- Keyboard Shortcut -->
             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
               <kbd
-                class="rounded border px-1.5 py-0.5 text-xs font-semibold"
-                :class="
-                  isDarkMode
-                    ? 'border-gray-600/60 bg-gray-700/60 text-gray-300'
-                    : 'border-gray-300/60 bg-gray-100/60 text-gray-600'
-                "
+                class="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100"
                 >⌘K</kbd
               >
             </div>
@@ -172,13 +159,12 @@
                 (searchResults.categories && searchResults.categories.length > 0) ||
                 searchQuery.length > 0)
             "
-            class="search-results-dropdown absolute left-0 right-0 top-full z-50 mt-2 max-h-[28rem] overflow-y-auto rounded-2xl border shadow-2xl"
-            :class="isDarkMode ? 'border-gray-600 bg-gray-800' : 'border-gray-300 bg-white'"
+            class="search-results-dropdown absolute left-0 right-0 top-full z-50 mt-1.5 max-h-[32rem] w-full min-w-[400px] overflow-y-auto rounded-md border border-border bg-popover text-popover-foreground shadow-lg sm:min-w-[500px] md:min-w-[600px] lg:min-w-[700px] xl:min-w-[800px] 2xl:min-w-[900px]"
           >
             <!-- Loading State -->
-            <div v-if="isSearching" class="p-4 text-center">
-              <div class="inline-block h-4 w-4 animate-spin rounded-full border-b-2 border-primary"></div>
-              <span class="ml-2 text-sm" :class="isDarkMode ? 'text-gray-300' : 'text-gray-600'">Aranıyor...</span>
+            <div v-if="isSearching" class="flex items-center justify-center p-4">
+              <div class="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+              <span class="ml-2 text-sm text-muted-foreground">Aranıyor...</span>
             </div>
 
             <!-- No Results -->
@@ -188,9 +174,9 @@
                 (!searchResults.articles || searchResults.articles.length === 0) &&
                 (!searchResults.categories || searchResults.categories.length === 0)
               "
-              class="p-6 text-center"
+              class="flex flex-col items-center justify-center p-6 text-center"
             >
-              <div class="mb-2" :class="isDarkMode ? 'text-gray-500' : 'text-gray-400'">
+              <div class="mb-2 text-muted-foreground">
                 <svg class="mx-auto h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     stroke-linecap="round"
@@ -200,9 +186,7 @@
                   ></path>
                 </svg>
               </div>
-              <span class="text-sm" :class="isDarkMode ? 'text-gray-300' : 'text-gray-600'"
-                >"{{ searchQuery }}" için sonuç bulunamadı</span
-              >
+              <span class="text-sm text-muted-foreground">"{{ searchQuery }}" için sonuç bulunamadı</span>
             </div>
 
             <!-- Search Results -->
@@ -215,41 +199,27 @@
             >
               <!-- Articles Section -->
               <div v-if="searchResults.articles && searchResults.articles.length > 0" class="mb-3">
-                <div
-                  class="border-b px-3 py-1.5 text-xs font-semibold uppercase tracking-wider"
-                  :class="isDarkMode ? 'border-gray-600 text-gray-400' : 'border-gray-200 text-gray-600'"
-                >
-                  Yazılar
-                </div>
+                <div class="border-b border-border px-3 py-1.5 text-xs font-medium text-muted-foreground">Yazılar</div>
                 <div
                   v-for="(article, index) in searchResults.articles"
                   :key="article.id"
                   :data-selected-index="index"
                   @click="navigateToResult(article.url)"
                   :class="[
-                    'cursor-pointer border-b px-3 py-2 transition-colors duration-200 last:border-b-0',
-                    isDarkMode ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-50 hover:bg-gray-50',
+                    'cursor-pointer border-b border-border px-3 py-2 transition-colors last:border-b-0',
                     selectedIndex === index
-                      ? isDarkMode
-                        ? 'border-blue-500 bg-blue-900/30'
-                        : 'border-blue-200 bg-blue-50'
-                      : '',
+                      ? 'bg-accent text-accent-foreground'
+                      : 'hover:bg-accent hover:text-accent-foreground',
                   ]"
                 >
+                  <div class="text-sm font-medium leading-none" v-html="highlightText(article.title)"></div>
                   <div
-                    class="text-sm font-semibold leading-none"
-                    :class="isDarkMode ? 'text-gray-200' : 'text-gray-800'"
-                    v-html="highlightText(article.title)"
-                  ></div>
-                  <div
-                    class="mt-0.5 text-xs leading-tight"
-                    :class="isDarkMode ? 'text-gray-400' : 'text-gray-700'"
+                    class="mt-0.5 text-xs leading-tight text-muted-foreground"
                     v-html="highlightText(article.excerpt)"
                   ></div>
                   <div v-if="article.category" class="mt-1">
                     <span
-                      class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
-                      :class="isDarkMode ? 'bg-blue-900/50 text-blue-300' : 'bg-blue-100 text-blue-800'"
+                      class="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
                     >
                       {{ article.category }}
                     </span>
@@ -259,10 +229,7 @@
 
               <!-- Categories Section -->
               <div v-if="searchResults.categories && searchResults.categories.length > 0" class="mb-3">
-                <div
-                  class="border-b px-3 py-1.5 text-xs font-semibold uppercase tracking-wider"
-                  :class="isDarkMode ? 'border-gray-600 text-gray-400' : 'border-gray-200 text-gray-600'"
-                >
+                <div class="border-b border-border px-3 py-1.5 text-xs font-medium text-muted-foreground">
                   Kategoriler
                 </div>
                 <div
@@ -271,71 +238,47 @@
                   :data-selected-index="searchResults.articles.length + index"
                   @click="navigateToResult(category.url)"
                   :class="[
-                    'cursor-pointer border-b px-3 py-2 transition-colors duration-200 last:border-b-0',
-                    isDarkMode ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-50 hover:bg-gray-50',
+                    'cursor-pointer border-b border-border px-3 py-2 transition-colors last:border-b-0',
                     selectedIndex === searchResults.articles.length + index
-                      ? isDarkMode
-                        ? 'border-blue-500 bg-blue-900/30'
-                        : 'border-blue-200 bg-blue-50'
-                      : '',
+                      ? 'bg-accent text-accent-foreground'
+                      : 'hover:bg-accent hover:text-accent-foreground',
                   ]"
                 >
-                  <div
-                    class="text-sm font-semibold leading-none"
-                    :class="isDarkMode ? 'text-gray-200' : 'text-gray-800'"
-                    v-html="highlightText(category.name)"
-                  ></div>
+                  <div class="text-sm font-medium leading-none" v-html="highlightText(category.name)"></div>
                 </div>
               </div>
             </div>
 
             <!-- Quick Actions -->
             <div v-else class="py-2">
-              <div
-                class="border-b px-3 py-1.5 text-xs font-semibold uppercase tracking-wider"
-                :class="isDarkMode ? 'border-gray-600 text-gray-400' : 'border-gray-200 text-gray-600'"
-              >
+              <div class="border-b border-border px-3 py-1.5 text-xs font-medium text-muted-foreground">
                 Hızlı Eylemler
               </div>
               <div
                 data-selected-index="0"
                 @click="navigateToResult('/writes')"
                 :class="[
-                  'cursor-pointer border-b px-3 py-2 transition-colors duration-200 last:border-b-0',
-                  isDarkMode ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-50 hover:bg-gray-50',
+                  'cursor-pointer border-b border-border px-3 py-2 transition-colors last:border-b-0',
                   selectedIndex === 0
-                    ? isDarkMode
-                      ? 'border-blue-500 bg-blue-900/30'
-                      : 'border-blue-200 bg-blue-50'
-                    : '',
+                    ? 'bg-accent text-accent-foreground'
+                    : 'hover:bg-accent hover:text-accent-foreground',
                 ]"
               >
-                <div class="text-sm font-semibold" :class="isDarkMode ? 'text-gray-200' : 'text-gray-800'">
-                  Tüm Yazıları Görüntüle
-                </div>
-                <div class="mt-0.5 text-xs" :class="isDarkMode ? 'text-gray-400' : 'text-gray-700'">
-                  Tüm yayınlanmış yazıları görüntüle
-                </div>
+                <div class="text-sm font-medium">Tüm Yazıları Görüntüle</div>
+                <div class="mt-0.5 text-xs text-muted-foreground">Tüm yayınlanmış yazıları görüntüle</div>
               </div>
               <div
                 data-selected-index="1"
                 @click="navigateToResult('/categories')"
                 :class="[
-                  'cursor-pointer border-b px-3 py-2 transition-colors duration-200 last:border-b-0',
-                  isDarkMode ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-50 hover:bg-gray-50',
+                  'cursor-pointer border-b border-border px-3 py-2 transition-colors last:border-b-0',
                   selectedIndex === 1
-                    ? isDarkMode
-                      ? 'border-blue-500 bg-blue-900/30'
-                      : 'border-blue-200 bg-blue-50'
-                    : '',
+                    ? 'bg-accent text-accent-foreground'
+                    : 'hover:bg-accent hover:text-accent-foreground',
                 ]"
               >
-                <div class="text-sm font-semibold" :class="isDarkMode ? 'text-gray-200' : 'text-gray-800'">
-                  Tüm Kategorileri Görüntüle
-                </div>
-                <div class="mt-0.5 text-xs" :class="isDarkMode ? 'text-gray-400' : 'text-gray-700'">
-                  Tüm kategorileri görüntüle
-                </div>
+                <div class="text-sm font-medium">Tüm Kategorileri Görüntüle</div>
+                <div class="mt-0.5 text-xs text-muted-foreground">Tüm kategorileri görüntüle</div>
               </div>
             </div>
           </div>
@@ -345,17 +288,17 @@
       <!-- Right Section: Navigation + Actions -->
       <div class="flex items-center space-x-2">
         <!-- Navigation Links -->
-        <div class="hidden items-center space-x-4 xl:flex">
+        <div class="hidden items-center space-x-1 xl:flex">
           <Link
             href="/dashboard"
-            class="text-base-content/80 text-sm font-medium transition-colors duration-200 hover:text-base-content"
+            class="inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
           >
             Panel
           </Link>
           <a
             href="https://youtu.be/FPsx8xHLR1k?si=nZnBfqjYQun9R06h"
             target="_blank"
-            class="text-base-content/80 text-sm font-medium transition-colors duration-200 hover:text-base-content"
+            class="inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
           >
             Destek
           </a>
@@ -364,8 +307,10 @@
         <!-- Join Us Button for Non-Logged In Users -->
         <div v-if="!isLoggedIn" class="tooltip tooltip-bottom" data-tip="Aramıza Katıl">
           <Link href="/join-us" class="block">
-            <button class="hover:bg-base-200/80 btn btn-ghost btn-sm rounded-md px-2 transition-all duration-200">
-              <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button
+              class="inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+            >
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -380,7 +325,7 @@
         <!-- Theme Toggle -->
         <button
           @click="toggleDarkLight"
-          class="hover:bg-base-200/80 btn btn-ghost btn-sm rounded-md px-2 transition-all duration-200"
+          class="inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
         >
           <template v-if="isDarkMode">
             <svg class="h-3.5 w-3.5 fill-current text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -401,7 +346,7 @@
         <!-- Mobile Menu Toggle for Desktop (fallback) -->
         <button
           @click="toggleMenu"
-          class="hover:bg-base-200/80 btn btn-ghost btn-sm rounded-md px-2 transition-all duration-200 xl:hidden"
+          class="inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 xl:hidden"
         >
           <svg
             class="h-3.5 w-3.5"
@@ -449,7 +394,7 @@
             <Link href="/" class="mb-4 block">
               <div class="bg-base-200/50 flex items-center space-x-3 rounded-2xl p-3 backdrop-blur-sm">
                 <div
-                  class="bg-primary/10 ring-primary/20 flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl ring-1"
+                  class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-primary/10 ring-1 ring-primary/20"
                 >
                   <template v-if="logoPath && !isLoading">
                     <img :src="logoPath" :alt="logoAlt" class="h-full w-full object-cover" @error="handleImageError" />
@@ -457,7 +402,7 @@
                   <span v-else class="text-sm font-bold text-primary">{{ seoTitle.charAt(0).toUpperCase() }}</span>
                 </div>
                 <div>
-                  <h3 class="text-base font-semibold text-base-content">{{ seoTitle }}</h3>
+                  <h3 class="text-base-content text-base font-semibold">{{ seoTitle }}</h3>
                   <p class="text-base-content/60 text-xs">{{ appName }}</p>
                 </div>
               </div>
@@ -483,7 +428,7 @@
                   <div class="space-y-1">
                     <Link
                       :href="route('writes.edit', write.id)"
-                      class="bg-base-200/50 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 hover:bg-base-200"
+                      class="bg-base-200/50 hover:bg-base-200 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -503,7 +448,7 @@
                     </Link>
                     <button
                       @click="deleteWriteMobile(write.id)"
-                      class="bg-error/10 hover:bg-error/20 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-error transition-all duration-200"
+                      class="bg-error/10 hover:bg-error/20 text-error flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -531,7 +476,7 @@
                   <div class="space-y-1">
                     <Link
                       :href="route('categories.edit', category.id)"
-                      class="bg-base-200/50 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 hover:bg-base-200"
+                      class="bg-base-200/50 hover:bg-base-200 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -551,7 +496,7 @@
                     </Link>
                     <button
                       @click="deleteCategoryMobile(category.id)"
-                      class="bg-error/10 hover:bg-error/20 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-error transition-all duration-200"
+                      class="bg-error/10 hover:bg-error/20 text-error flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -579,7 +524,7 @@
                   <div class="space-y-1">
                     <Link
                       :href="route('rendition.language-packs.edit', pack.id)"
-                      class="bg-base-200/50 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 hover:bg-base-200"
+                      class="bg-base-200/50 hover:bg-base-200 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -599,7 +544,7 @@
                     </Link>
                     <Link
                       :href="route('rendition.words.create')"
-                      class="bg-primary/10 hover:bg-primary/20 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200"
+                      class="flex w-full items-center gap-3 rounded-lg bg-primary/10 px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200 hover:bg-primary/20"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -622,7 +567,7 @@
                   <div class="space-y-1">
                     <Link
                       :href="route('rendition.words.edit', word.id)"
-                      class="bg-base-200/50 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 hover:bg-base-200"
+                      class="bg-base-200/50 hover:bg-base-200 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -642,7 +587,7 @@
                     </Link>
                     <button
                       @click="deleteWordMobile(word.id)"
-                      class="bg-error/10 hover:bg-error/20 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-error transition-all duration-200"
+                      class="bg-error/10 hover:bg-error/20 text-error flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -670,7 +615,7 @@
                   <div class="space-y-1">
                     <Link
                       :href="route('versions.edit', version.id)"
-                      class="bg-base-200/50 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 hover:bg-base-200"
+                      class="bg-base-200/50 hover:bg-base-200 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -690,7 +635,7 @@
                     </Link>
                     <button
                       @click="deleteVersionMobile(version.id)"
-                      class="bg-error/10 hover:bg-error/20 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-error transition-all duration-200"
+                      class="bg-error/10 hover:bg-error/20 text-error flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -719,7 +664,7 @@
                     <Link
                       v-if="isActiveRoute('/writes') && !isWriteShowPage"
                       href="/writes/create"
-                      class="bg-primary/10 hover:bg-primary/20 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200"
+                      class="flex w-full items-center gap-3 rounded-lg bg-primary/10 px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200 hover:bg-primary/20"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -735,7 +680,7 @@
                     <Link
                       v-if="isActiveRoute('/categories') && !isCategoryShowPage"
                       href="/categories/create"
-                      class="bg-primary/10 hover:bg-primary/20 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200"
+                      class="flex w-full items-center gap-3 rounded-lg bg-primary/10 px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200 hover:bg-primary/20"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -751,7 +696,7 @@
                     <Link
                       v-if="isActiveRoute('/rendition/words') && !isWordShowPage"
                       href="/rendition/words/create"
-                      class="bg-primary/10 hover:bg-primary/20 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200"
+                      class="flex w-full items-center gap-3 rounded-lg bg-primary/10 px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200 hover:bg-primary/20"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -767,7 +712,7 @@
                     <Link
                       v-if="isActiveRoute('/rendition/words') && !isWordShowPage"
                       href="/rendition/language-packs/create"
-                      class="bg-primary/10 hover:bg-primary/20 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200"
+                      class="flex w-full items-center gap-3 rounded-lg bg-primary/10 px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200 hover:bg-primary/20"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -788,7 +733,7 @@
                     <Link
                       v-if="isActiveRoute('/versions') && !isVersionShowPage"
                       href="/versions/create"
-                      class="bg-primary/10 hover:bg-primary/20 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200"
+                      class="flex w-full items-center gap-3 rounded-lg bg-primary/10 px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200 hover:bg-primary/20"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -809,9 +754,9 @@
               <div class="border-base-200/40 border-t pt-3">
                 <Link href="/dashboard" class="block">
                   <div
-                    class="bg-primary/5 hover:bg-primary/10 border-primary/20 flex items-center space-x-3 rounded-2xl border p-3 transition-all duration-200"
+                    class="flex items-center space-x-3 rounded-2xl border border-primary/20 bg-primary/5 p-3 transition-all duration-200 hover:bg-primary/10"
                   >
-                    <div class="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-xl">
+                    <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10">
                       <svg class="h-4 w-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           stroke-linecap="round"
@@ -823,7 +768,7 @@
                     </div>
                     <div>
                       <h4 class="text-sm font-semibold text-primary">Panel</h4>
-                      <p class="text-primary/70 text-xs">Yönetim Paneli</p>
+                      <p class="text-xs text-primary/70">Yönetim Paneli</p>
                     </div>
                   </div>
                 </Link>
@@ -833,7 +778,7 @@
             <!-- Powered by Section -->
             <div v-if="!isLoggedIn" class="border-base-200/40 mt-4 border-t pt-3">
               <a href="https://youtu.be/FPsx8xHLR1k?si=3dNFdwhk5s8LyqOe" target="_blank">
-                <div class="bg-primary/5 hover:bg-primary/10 rounded-2xl p-3 text-center transition-all duration-200">
+                <div class="rounded-2xl bg-primary/5 p-3 text-center transition-all duration-200 hover:bg-primary/10">
                   <span class="text-sm font-medium text-primary">Powered by Notiriel</span>
                 </div>
               </a>
@@ -873,7 +818,7 @@
                     />
                   </svg>
                 </template>
-                <span class="text-sm font-medium text-base-content">{{ currentThemeName }}</span>
+                <span class="text-base-content text-sm font-medium">{{ currentThemeName }}</span>
               </button>
 
               <!-- Copyright -->
@@ -934,6 +879,7 @@ const isSearching = ref(false);
 const searchTimeout = ref(null);
 const selectedIndex = ref(-1);
 const searchItems = ref([]);
+const searchInputRef = ref(null);
 
 // Theme management
 const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
@@ -970,11 +916,6 @@ const currentThemeName = computed(() => {
   const themeMap = {
     light: 'Light',
     dark: 'Dark',
-    'neon-light': 'Neon Light',
-    'neon-dark': 'Neon Dark',
-    'lotr-light': 'LOTR Light',
-    'lotr-dark': 'LOTR Dark',
-    custom: 'Custom',
   };
   return themeMap[theme] || theme;
 });
@@ -982,24 +923,7 @@ const currentThemeName = computed(() => {
 const toggleDarkLight = () => {
   try {
     const current = currentTheme.value;
-    let newTheme;
-
-    // Basit light/dark toggle
-    if (current === 'light' || current.includes('light')) {
-      newTheme = current.replace('light', 'dark');
-    } else if (current === 'dark' || current.includes('dark')) {
-      newTheme = current.replace('dark', 'light');
-    } else {
-      // Fallback: default light/dark toggle
-      newTheme = current === 'light' ? 'dark' : 'light';
-    }
-
-    // Eğer değişiklik olmadıysa, basit toggle yap
-    if (newTheme === current) {
-      newTheme = current === 'light' ? 'dark' : 'light';
-    }
-
-    console.log('Theme toggle:', current, '->', newTheme);
+    const newTheme = current === 'light' ? 'dark' : 'light';
     store.dispatch('Theme/changeTheme', newTheme);
   } catch (error) {
     console.error('Theme toggle error:', error);
@@ -1248,8 +1172,8 @@ const highlightText = (text) => {
 
   const query = searchQuery.value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const regex = new RegExp(`(${query})`, 'gi');
-  const highlightClass = isDarkMode.value ? 'bg-yellow-600/30 text-yellow-300' : 'bg-yellow-200 text-yellow-900';
-  return text.replace(regex, `<mark class="${highlightClass} px-1 rounded">$1</mark>`);
+  const highlightClass = 'bg-primary/20 text-primary font-medium px-0.5 rounded';
+  return text.replace(regex, `<mark class="${highlightClass}">$1</mark>`);
 };
 
 // Keyboard navigation methods
@@ -1354,13 +1278,16 @@ const selectLanguage = (lang) => {
   // For now, we'll just update the display
 };
 
-// Keyboard shortcut support
+// Keyboard shortcut support - Command+K / Ctrl+K
 const handleKeydown = (event) => {
+  // Command+K (Mac) veya Ctrl+K (Windows/Linux)
   if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
     event.preventDefault();
-    const searchInput = document.querySelector('input[placeholder="Search..."]');
-    if (searchInput) {
-      searchInput.focus();
+    event.stopPropagation();
+
+    // Search input'a focus yap
+    if (searchInputRef.value) {
+      searchInputRef.value.focus();
       showSearchResults.value = true;
     }
   }

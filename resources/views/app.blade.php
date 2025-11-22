@@ -14,23 +14,22 @@
 
     <link rel="icon" href="{{ $page['props']['screen']['seo']['logo'] ?? '/favicon.ico' }}" />
 
-    <!-- Theme initialization script -->
+    <!-- Theme initialization script - Shadcn compatible -->
     <script>
         // Mevcut tema ayarını localStorage'dan al veya varsayılan olarak 'light' kullan
         const savedTheme = localStorage.getItem('theme') || 'light';
         
-        // Tema özniteliğini ayarla (DaisyUI için)
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        
-        // Tema sınıfını ekle (CSS seçicileri için)
-        document.documentElement.classList.add(savedTheme);
-        
-        // Dark tema için özel sınıf (Tailwind için)
+        // Shadcn dark mode için .dark class'ı ekle/kaldır
         if (savedTheme === 'dark') {
             document.documentElement.classList.add('dark');
         } else {
             document.documentElement.classList.remove('dark');
         }
+        
+        // FOUC (Flash of Unstyled Content) önlemek için arka plan rengini hemen ayarla
+        document.documentElement.style.backgroundColor = savedTheme === 'dark' 
+            ? 'hsl(0, 0%, 3.9%)' 
+            : 'hsl(0, 0%, 100%)';
             </script>
 
     @routes

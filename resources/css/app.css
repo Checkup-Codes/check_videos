@@ -2,112 +2,180 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Manual dark mode control - devre dışı bırakılan sistem tercihi */
+/* Shadcn UI Color System */
 @layer base {
-  /* Sistem tercihini (prefers-color-scheme) devre dışı bırak, sadece .dark sınıfına göre değiştir */
+  /* Light Theme - Shadcn default colors */
   :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --radius: 0.5rem;
     color-scheme: light;
   }
 
+  /* Dark Theme - Shadcn dark colors */
   .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
     color-scheme: dark;
   }
 
+  /* Sistem tercihini devre dışı bırak - sadece .dark class'ına göre çalışır */
   @media (prefers-color-scheme: dark) {
-    /* Bu media sorgusunu etkisiz hale getiriyoruz */
     :root:not(.dark) {
-      /* Karanlık mod sistem tercihi olsa bile açık tema stil değerlerini korur */
       color-scheme: light;
     }
   }
 
-  /* Tema geçişlerini yumuşat */
+  /* Genel arka plan ve geçişler */
+  * {
+    border-color: hsl(var(--border));
+  }
+
   html {
-    transition:
-      background-color 0.3s ease,
-      color 0.3s ease;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  /* ===== LOTR TEMA ÖZEL STİLLERİ ===== */
-
-  /* Lord of the Rings Light tema özel stilleri */
-  html[data-theme='lotr-light'] {
-    font-family: 'Cinzel', 'Times New Roman', serif;
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
-
-  html[data-theme='lotr-light'] .btn {
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 6px -1px rgba(139, 69, 19, 0.3);
-    border: 2px solid #d4af37;
-  }
-
-  html[data-theme='lotr-light'] .card {
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 6px -1px rgba(139, 69, 19, 0.3);
-    border: 2px solid #d4af37;
-  }
-
-  html[data-theme='lotr-light'] .input,
-  html[data-theme='lotr-light'] .select {
-    border-radius: 0.75rem;
-    border: 2px solid #d4af37;
-  }
-
-  html[data-theme='lotr-light'] .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px -2px rgba(139, 69, 19, 0.4);
-    transition: all 0.3s ease-in-out;
-  }
-
-  html[data-theme='lotr-light'] .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 16px -4px rgba(139, 69, 19, 0.4);
-    transition: all 0.3s ease-in-out;
-  }
-
-  /* Lord of the Rings Dark tema özel stilleri */
-  html[data-theme='lotr-dark'] {
-    font-family: 'Cinzel', 'Times New Roman', serif;
-  }
-
-  html[data-theme='lotr-dark'] .btn {
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 6px -1px rgba(255, 215, 0, 0.4);
-    border: 2px solid #ffd700;
-  }
-
-  html[data-theme='lotr-dark'] .card {
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 6px -1px rgba(255, 215, 0, 0.4);
-    border: 2px solid #ffd700;
-  }
-
-  html[data-theme='lotr-dark'] .input,
-  html[data-theme='lotr-dark'] .select {
-    border-radius: 0.75rem;
-    border: 2px solid #ffd700;
-  }
-
-  html[data-theme='lotr-dark'] .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px -2px rgba(255, 215, 0, 0.4);
-    transition: all 0.3s ease-in-out;
-  }
-
-  html[data-theme='lotr-dark'] .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 16px -4px rgba(255, 215, 0, 0.4);
-    transition: all 0.3s ease-in-out;
-  }
-}
-
-body {
-  margin: 0;
-  padding: 0;
 }
 
 .input-error {
-  @apply text-sm text-red-500 dark:text-red-400;
+  @apply text-sm;
+  color: hsl(var(--destructive));
+}
+
+/* Shadcn-style utility classes for common components */
+@layer components {
+  /* Button utilities - shadcn style */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md font-medium transition-colors;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+    @apply disabled:pointer-events-none disabled:opacity-50;
+    @apply h-10 px-4 py-2;
+  }
+  
+  .btn-sm {
+    @apply h-9 rounded-md px-3 text-xs;
+  }
+
+  .btn-lg {
+    @apply h-11 rounded-md px-8;
+  }
+  
+  .btn-xs {
+    @apply h-8 rounded-md px-2 text-xs;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
+  }
+
+  .btn-outline {
+    @apply border border-input bg-background hover:bg-accent hover:text-accent-foreground;
+  }
+
+  .btn-ghost {
+    @apply hover:bg-accent hover:text-accent-foreground;
+  }
+  
+  .btn-square {
+    @apply aspect-square;
+  }
+
+  /* Select utilities - shadcn style */
+  .select {
+    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm;
+    @apply ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium;
+    @apply placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2;
+    @apply focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .select-bordered {
+    @apply border-input;
+  }
+  
+  /* Loading spinner - shadcn style */
+  .loading {
+    @apply inline-block animate-spin rounded-full border-2 border-current border-t-transparent;
+  }
+  
+  .loading-spinner {
+    @apply h-4 w-4;
+  }
+  
+  .loading-md {
+    @apply h-6 w-6;
+  }
+  
+  .loading-lg {
+    @apply h-8 w-8;
+  }
+
+  /* Card utilities - shadcn style */
+  .card {
+    @apply rounded-lg border bg-card text-card-foreground shadow-sm;
+  }
+  
+  .card-body {
+    @apply p-6;
+  }
+  
+  .card-compact .card-body {
+    @apply p-4;
+}
+
+  .card-title {
+    @apply mb-4 text-lg font-semibold;
+  }
+  
+  .card-actions {
+    @apply mt-4 flex justify-end;
+  }
 }
 
 /* Prevent right-click on images */

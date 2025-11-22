@@ -19,7 +19,7 @@
     <div class="mb-5 w-full">
       <!-- Card component directly implemented -->
       <div
-        class="card-compact card w-full border border-gray-200 bg-white shadow-md shadow-sm transition-all duration-200 dark:border-gray-700 dark:bg-base-100"
+        class="card-compact card w-full border border-border bg-card shadow-sm transition-all duration-200"
       >
         <div class="card-body">
           <div v-if="lessons.length === 0" class="p-4">

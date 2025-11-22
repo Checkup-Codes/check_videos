@@ -1,17 +1,16 @@
 <template>
   <Link
     :href="href"
-    class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-500 ease-out"
+    class="flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium"
     :class="{
-      'bg-base-content text-base-100': isActive,
-      'text-base-content hover:bg-base-300': !isActive,
+      'bg-accent text-accent-foreground': isActive,
+      'text-foreground hover:bg-accent hover:text-accent-foreground': !isActive,
       'justify-center px-2': isCompact,
     }"
     :title="isCompact ? label : ''"
   >
-    <!-- Sol kısım: İkon + Label -->
     <div
-      class="flex items-center transition-all duration-500 ease-out"
+      class="flex items-center"
       :class="{ 'mx-auto gap-0': isCompact, 'gap-3': !isCompact }"
     >
       <div class="flex h-5 w-5 flex-shrink-0 items-center justify-center">
@@ -355,10 +354,10 @@
             d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
           ></path>
         </svg>
-        <font-awesome-icon v-else :icon="dynamicIcon" class="h-5 w-5 transition-all duration-500 ease-out" />
+        <font-awesome-icon v-else :icon="dynamicIcon" class="h-5 w-5" />
       </div>
       <div
-        class="overflow-hidden transition-all duration-500 ease-out"
+        class="overflow-hidden"
         :class="{ 'w-0 opacity-0': isCompact, 'w-auto opacity-100': !isCompact }"
       >
         <span class="whitespace-nowrap text-sm font-medium">{{ label }}</span>
@@ -368,8 +367,8 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onBeforeUnmount } from 'vue';
-import { Link, usePage, router } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 const props = defineProps({
@@ -395,3 +394,17 @@ const isActive = computed(() => {
   return isRoot ? currentUrl.value === props.href : currentUrl.value.startsWith(props.href);
 });
 </script>
+
+<style scoped>
+a {
+  transition: none;
+}
+
+a:hover {
+  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+.overflow-hidden {
+  transition: width 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+</style>
