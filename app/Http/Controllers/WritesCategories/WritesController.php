@@ -142,9 +142,10 @@ class WritesController extends Controller
         $data['author_id'] = Auth::id();
 
         $result = $this->writeService->createWrite($data);
+        $write = $result['data'];
 
         return redirect()
-            ->route('writes.index')
+            ->route('writes.show', ['write' => $write->slug])
             ->with('success', 'Nur topu gibi bir yazınız daha oldu.');
     }
 

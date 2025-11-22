@@ -2,15 +2,15 @@
   <CheckScreen>
     <div class="p-4 pt-6 sm:p-6 sm:pt-8">
       <!-- Compact Header Section -->
-      <div v-if="!isLoading" class="border-base-300/30 mb-6 border-b pb-4">
+      <div v-if="!isLoading" class="mb-6 border-b border-border pb-4">
         <div class="flex items-start justify-between gap-4">
           <div class="min-w-0 flex-1">
-            <h1 class="truncate text-xl font-semibold text-base-content sm:text-2xl">
+            <h1 class="truncate text-xl font-semibold text-foreground sm:text-2xl">
               {{ category.name }}
             </h1>
-            <div class="text-base-content/60 mt-1.5 flex flex-wrap items-center gap-2.5 text-xs">
+            <div class="mt-1.5 flex flex-wrap items-center gap-2.5 text-xs text-muted-foreground">
               <span class="font-medium">{{ filteredWrites?.length || 0 }} yazı</span>
-              <span v-if="category.description" class="text-base-content/40">•</span>
+              <span v-if="category.description" class="text-muted-foreground/40">•</span>
               <span v-if="category.description" class="line-clamp-1">{{ category.description }}</span>
             </div>
           </div>
@@ -19,22 +19,22 @@
           <div class="flex shrink-0 items-center gap-1.5">
             <button
               @click="statusFilter = 'all'"
-              class="rounded-md px-2.5 py-1 text-xs transition-colors"
+              class="rounded-md px-2.5 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               :class="
                 statusFilter === 'all'
-                  ? 'bg-base-content text-base-100'
-                  : 'bg-base-200/60 text-base-content/70 hover:bg-base-200'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground'
               "
             >
               Tümü
             </button>
             <button
               @click="statusFilter = 'published'"
-              class="rounded-md px-2.5 py-1 text-xs transition-colors"
+              class="rounded-md px-2.5 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               :class="
                 statusFilter === 'published'
-                  ? 'bg-base-content text-base-100'
-                  : 'bg-base-200/60 text-base-content/70 hover:bg-base-200'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground'
               "
             >
               Yayında
@@ -42,11 +42,11 @@
             <button
               v-if="auth.user"
               @click="statusFilter = 'private'"
-              class="rounded-md px-2.5 py-1 text-xs transition-colors"
+              class="rounded-md px-2.5 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               :class="
                 statusFilter === 'private'
-                  ? 'bg-base-content text-base-100'
-                  : 'bg-base-200/60 text-base-content/70 hover:bg-base-200'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground'
               "
             >
               Gizli
@@ -54,11 +54,11 @@
             <button
               v-if="auth.user"
               @click="statusFilter = 'link_only'"
-              class="rounded-md px-2.5 py-1 text-xs transition-colors"
+              class="rounded-md px-2.5 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               :class="
                 statusFilter === 'link_only'
-                  ? 'bg-base-content text-base-100'
-                  : 'bg-base-200/60 text-base-content/70 hover:bg-base-200'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground'
               "
             >
               Link
@@ -66,7 +66,7 @@
             <button
               v-if="statusFilter !== 'all'"
               @click="clearFilters"
-              class="text-base-content/50 ml-1 p-1 transition-colors hover:text-base-content"
+              class="ml-1 p-1 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               title="Filtreyi temizle"
             >
               <svg
@@ -86,9 +86,9 @@
 
       <!-- List view of writes - clean and readable -->
       <div v-if="isLoading" class="space-y-2">
-        <div v-for="i in 5" :key="i" class="border-base-300/30 bg-base-50 rounded border p-4">
-          <div class="mb-2 h-5 w-3/4 rounded bg-base-200"></div>
-          <div class="h-3 w-1/2 rounded bg-base-200"></div>
+        <div v-for="i in 5" :key="i" class="rounded border border-border bg-card p-4">
+          <div class="mb-2 h-5 w-3/4 rounded bg-muted"></div>
+          <div class="h-3 w-1/2 rounded bg-muted"></div>
         </div>
       </div>
 
@@ -99,7 +99,7 @@
             v-for="write in paginatedWrites"
             :key="write.id"
             :href="route('categories.showByCategory', { category: category.slug, slug: write.slug })"
-            class="border-base-300/30 bg-base-50 group block rounded-lg border p-4 transition-all duration-200 hover:border-base-300 hover:bg-base-100 hover:shadow-sm"
+            class="group block rounded-lg border border-border bg-card p-4 transition-all duration-200 hover:border-border hover:bg-accent hover:shadow-sm"
           >
             <div class="flex items-start justify-between gap-4">
               <!-- Main Content -->
@@ -110,7 +110,7 @@
                     <svg
                       v-if="write.status === 'private'"
                       xmlns="http://www.w3.org/2000/svg"
-                      class="text-base-content/50 h-3.5 w-3.5"
+                      class="h-3.5 w-3.5 text-muted-foreground"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -125,7 +125,7 @@
                     <svg
                       v-else-if="write.status === 'link_only'"
                       xmlns="http://www.w3.org/2000/svg"
-                      class="text-base-content/50 h-3.5 w-3.5"
+                      class="h-3.5 w-3.5 text-muted-foreground"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -140,7 +140,7 @@
                     <svg
                       v-else
                       xmlns="http://www.w3.org/2000/svg"
-                      class="text-base-content/50 h-3.5 w-3.5"
+                      class="h-3.5 w-3.5 text-muted-foreground"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -154,18 +154,18 @@
                     </svg>
                   </span>
                   <h3
-                    class="line-clamp-1 text-base font-medium text-base-content transition-colors group-hover:text-primary"
+                    class="line-clamp-1 text-base font-medium text-foreground transition-colors group-hover:text-primary"
                   >
                     {{ write.title }}
                   </h3>
                 </div>
 
-                <p v-if="write.summary" class="text-base-content/70 mb-2 line-clamp-2 text-sm">
+                <p v-if="write.summary" class="mb-2 line-clamp-2 text-sm text-muted-foreground">
                   {{ write.summary }}
                 </p>
 
                 <!-- Metadata - compact -->
-                <div class="text-base-content/50 flex flex-wrap items-center gap-3 text-xs">
+                <div class="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                   <span class="flex items-center gap-1">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -205,7 +205,7 @@
               </div>
 
               <!-- Arrow indicator -->
-              <div class="text-base-content/30 shrink-0 transition-colors group-hover:text-primary">
+              <div class="shrink-0 text-muted-foreground/50 transition-colors group-hover:text-primary">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -222,11 +222,15 @@
 
           <!-- Load More Section - sade tasarım -->
           <div v-if="(hasMore || isLoadingMore) && filteredWrites.length > perPage" class="flex justify-center py-6">
-            <div v-if="isLoadingMore" class="text-base-content/60 flex items-center gap-2 text-sm">
-              <div class="loading loading-spinner loading-sm"></div>
+            <div v-if="isLoadingMore" class="flex items-center gap-2 text-sm text-muted-foreground">
+              <div class="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
               Yükleniyor...
             </div>
-            <button v-else @click="loadMore" class="btn btn-ghost btn-sm">
+            <button
+              v-else
+              @click="loadMore"
+              class="inline-flex h-9 items-center justify-center gap-2 rounded-md px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -244,7 +248,7 @@
 
         <!-- Empty state -->
         <div v-if="filteredWrites.length === 0" class="py-16 text-center">
-          <div class="text-base-content/30 mb-3">
+          <div class="mb-3 text-muted-foreground/50">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -260,7 +264,7 @@
               />
             </svg>
           </div>
-          <p class="text-base-content/60 text-sm">
+          <p class="text-sm text-muted-foreground">
             <span v-if="statusFilter !== 'all'">Seçilen filtreye uygun yazı bulunamadı.</span>
             <span v-else>Bu kategoride henüz yazı bulunmuyor.</span>
           </p>
@@ -268,7 +272,7 @@
 
         <!-- No more items message -->
         <div v-else-if="!hasMore && paginatedWrites.length > 0" class="py-8 text-center">
-          <p class="text-base-content/40 text-xs">Tüm yazılar gösteriliyor</p>
+          <p class="text-xs text-muted-foreground/60">Tüm yazılar gösteriliyor</p>
         </div>
       </div>
     </div>
@@ -478,7 +482,7 @@ onMounted(() => {
 }
 
 /* Text overflow prevention */
-.text-base-content {
+.text-foreground {
   word-wrap: break-word;
   overflow-wrap: break-word;
 }

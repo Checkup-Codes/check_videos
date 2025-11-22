@@ -1,7 +1,10 @@
 <template>
   <div class="version-list-container space-y-2 p-3">
     <!-- Empty state -->
-    <div v-if="versions && versions.length === 0" class="flex h-32 items-center justify-center text-center opacity-50">
+    <div
+      v-if="versions && versions.length === 0"
+      class="flex h-32 items-center justify-center text-center text-muted-foreground opacity-50"
+    >
       <div>Henüz versiyon bulunmuyor</div>
     </div>
 
@@ -14,15 +17,15 @@
         :class="[
           'block rounded-lg p-3 transition-all duration-200',
           getLinkClasses(`/versions/${version.version}`)
-            ? 'bg-base-content text-base-100'
-            : 'border border-base-300 bg-base-100 hover:bg-base-300',
+            ? 'bg-primary text-primary-foreground'
+            : 'border border-border bg-card hover:bg-accent',
         ]"
       >
         <!-- Version Number -->
         <div class="mb-1">
           <h3
             class="text-sm font-medium leading-tight"
-            :class="getLinkClasses(`/versions/${version.version}`) ? 'text-base-100' : 'text-base-content'"
+            :class="getLinkClasses(`/versions/${version.version}`) ? 'text-primary-foreground' : 'text-foreground'"
           >
             {{ version.version }}
           </h3>
@@ -31,7 +34,7 @@
         <!-- Meta bilgiler -->
         <div
           class="flex items-center gap-3 text-xs"
-          :class="getLinkClasses(`/versions/${version.version}`) ? 'text-base-100/70' : 'text-base-content/70'"
+          :class="getLinkClasses(`/versions/${version.version}`) ? 'text-primary-foreground/70' : 'text-muted-foreground'"
         >
           <span class="flex items-center gap-1">
             <svg

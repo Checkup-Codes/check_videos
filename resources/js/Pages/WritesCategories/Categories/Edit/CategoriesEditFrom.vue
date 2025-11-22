@@ -1,40 +1,47 @@
 <template>
-  <div class="mx-auto mt-6 w-full max-w-full bg-base-100 px-3 sm:px-5 lg:mt-0">
+  <div class="mx-auto mt-6 w-full max-w-full px-3 sm:px-5 lg:mt-0">
     <div class="container mx-auto p-0 sm:p-4">
-      <div class="card border border-base-200 bg-base-100 shadow-md">
-        <div class="card-body p-4 sm:p-6">
-          <h2 class="card-title text-primary">Kategori Düzenle</h2>
-          <p class="text-xs opacity-70 sm:text-sm">
-            Kategorileriniz için düzenlemeler yapabilirsiniz. İsterseniz bir üst kategori seçebilirsiniz.
-          </p>
+      <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">
+        <div class="p-4 sm:p-6">
+          <div class="mb-4">
+            <h2 class="text-lg font-semibold text-card-foreground">Kategori Düzenle</h2>
+            <p class="mt-1 text-sm text-muted-foreground">
+              Kategorileriniz için düzenlemeler yapabilirsiniz. İsterseniz bir üst kategori seçebilirsiniz.
+            </p>
+          </div>
 
-          <div class="divider my-3"></div>
+          <div class="my-4 border-t border-border"></div>
 
-          <form @submit.prevent="updateCategory">
-            <div class="form-control w-full">
-              <label class="label py-1.5">
-                <span class="label-text">İsim</span>
-              </label>
-              <input type="text" v-model="form.name" class="input-bordered input w-full" placeholder="Kategori ismi" />
-              <label v-if="form.errors.name" class="label py-1">
-                <span class="label-text-alt text-error">{{ form.errors.name }}</span>
-              </label>
+          <form @submit.prevent="updateCategory" class="space-y-6">
+            <!-- Category Name Field -->
+            <div class="w-full">
+              <label class="mb-2 block text-sm font-medium text-foreground">İsim</label>
+              <input
+                type="text"
+                v-model="form.name"
+                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                :class="{ 'border-destructive focus-visible:ring-destructive': form.errors.name }"
+                placeholder="Kategori ismi"
+              />
+              <p v-if="form.errors.name" class="mt-1 text-sm text-destructive">{{ form.errors.name }}</p>
             </div>
 
-            <div class="form-control mt-3 w-full">
-              <label class="label py-1.5">
-                <span class="label-text">Slug</span>
-              </label>
-              <input type="text" v-model="form.slug" class="input-bordered input w-full" placeholder="kategori-slug" />
-              <label v-if="form.errors.slug" class="label py-1">
-                <span class="label-text-alt text-error">{{ form.errors.slug }}</span>
-              </label>
+            <!-- Category Slug Field -->
+            <div class="w-full">
+              <label class="mb-2 block text-sm font-medium text-foreground">Slug</label>
+              <input
+                type="text"
+                v-model="form.slug"
+                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                :class="{ 'border-destructive focus-visible:ring-destructive': form.errors.slug }"
+                placeholder="kategori-slug"
+              />
+              <p v-if="form.errors.slug" class="mt-1 text-sm text-destructive">{{ form.errors.slug }}</p>
             </div>
 
-            <div class="form-control mt-3 w-full">
-              <label class="label py-1.5">
-                <span class="label-text">Üst Kategori</span>
-              </label>
+            <!-- Parent Category Field with Search Dropdown -->
+            <div class="w-full">
+              <label class="mb-2 block text-sm font-medium text-foreground">Üst Kategori</label>
               <div class="relative w-full">
                 <input
                   type="text"
@@ -43,74 +50,128 @@
                   @blur="handleBlur"
                   @input="handleParentSearch"
                   @keydown.esc="showParentList = false"
-                  class="input-bordered input w-full"
+                  class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  :class="{ 'border-destructive focus-visible:ring-destructive': form.errors.parent_id }"
                   placeholder="Üst kategori ara"
                 />
 
-                <div v-if="showParentList && filteredCategories.length > 0" class="absolute z-30 mt-1 w-full">
-                  <ul
-                    class="menu max-h-60 w-full overflow-y-auto rounded-box border border-base-200 bg-base-100 p-2 shadow-md"
-                  >
-                    <li v-for="category in filteredCategories" :key="category.id">
-                      <a @mousedown="selectParentCategory(category)" class="py-2 text-sm hover:bg-base-200">
-                        {{ category.name }}
-                      </a>
+                <!-- Dropdown for search results -->
+                <div
+                  v-if="showParentList && filteredCategories.length > 0"
+                  class="absolute z-30 mt-1 w-full rounded-md border border-border bg-popover shadow-lg"
+                >
+                  <ul class="max-h-60 w-full overflow-y-auto p-1">
+                    <li
+                      v-for="category in filteredCategories"
+                      :key="category.id"
+                      @mousedown="selectParentCategory(category)"
+                      class="cursor-pointer rounded-sm px-2 py-1.5 text-sm text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                    >
+                      <div class="flex flex-col gap-0.5">
+                        <span class="font-medium">{{ category.name }}</span>
+                        <span v-if="getCategoryPath(category.id)" class="text-xs text-muted-foreground">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="mr-1 inline h-3 w-3"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                            />
+                          </svg>
+                          {{ getCategoryPath(category.id) }}
+                        </span>
+                      </div>
                     </li>
                   </ul>
                 </div>
 
-                <div v-if="form.parent_id" class="mt-2 flex items-center">
-                  <div class="badge badge-sm">{{ parentCategoryName }}</div>
+                <!-- Selected parent category badge -->
+                <div v-if="form.parent_id" class="mt-2 flex items-center gap-2">
+                  <div
+                    class="inline-flex flex-col items-start rounded-full border border-border bg-secondary px-2 py-1 text-xs font-semibold text-secondary-foreground"
+                  >
+                    <span>{{ parentCategoryName }}</span>
+                    <span v-if="getCategoryPath(form.parent_id)" class="text-[10px] font-normal opacity-80">
+                      {{ getCategoryPath(form.parent_id) }}
+                    </span>
+                  </div>
                   <button
                     type="button"
                     @click="clearParentCategory"
-                    class="btn btn-ghost btn-xs ml-2"
-                    aria-label="Üst kategoriyi kaldır"
+                    class="inline-flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    aria-label="Remove parent category"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
+                      class="h-3.5 w-3.5"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
+                      stroke-width="2"
                     >
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
                 </div>
               </div>
-              <label v-if="form.errors.parent_id" class="label py-1">
-                <span class="label-text-alt text-error">{{ form.errors.parent_id }}</span>
-              </label>
+              <p v-if="form.errors.parent_id" class="mt-1 text-sm text-destructive">{{ form.errors.parent_id }}</p>
             </div>
 
-            <div class="form-control mt-3 w-full">
-              <label class="label py-1.5">
-                <span class="label-text">Durum</span>
-              </label>
-              <select v-model="form.status" class="select-bordered select w-full">
+            <!-- Category Status Field -->
+            <div class="w-full">
+              <label class="mb-2 block text-sm font-medium text-foreground">Durum</label>
+              <select
+                v-model="form.status"
+                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                :class="{ 'border-destructive focus-visible:ring-destructive': form.errors.status }"
+              >
                 <option value="public">Açık</option>
                 <option value="hidden">Gizli</option>
               </select>
-              <label v-if="form.errors.status" class="label py-1">
-                <span class="label-text-alt text-error">{{ form.errors.status }}</span>
-              </label>
+              <p v-if="form.errors.status" class="mt-1 text-sm text-destructive">{{ form.errors.status }}</p>
             </div>
 
+            <!-- Form Actions -->
             <div class="mt-5 flex flex-col justify-between gap-3 sm:flex-row">
               <button
                 type="button"
-                @click="deleteCategory(props.category.id)"
-                class="btn btn-error btn-outline btn-sm order-2 sm:btn-md sm:order-1"
+                @click="deleteCategory(currentCategory.id)"
+                class="order-2 inline-flex h-9 items-center justify-center rounded-md border border-destructive/20 bg-background px-4 text-sm font-medium text-destructive transition-colors hover:bg-destructive hover:text-destructive-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 sm:order-1"
               >
                 Kategoriyi Sil
               </button>
               <button
                 type="submit"
-                class="btn btn-primary btn-sm order-1 sm:btn-md sm:order-2"
+                class="order-1 inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 sm:order-2"
                 :disabled="form.processing || isFormDisabled"
               >
-                <span v-if="form.processing" class="loading loading-spinner loading-xs sm:loading-sm"></span>
+                <svg
+                  v-if="form.processing"
+                  class="mr-2 h-4 w-4 animate-spin"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
                 Kategoriyi Güncelle
               </button>
             </div>
@@ -133,10 +194,36 @@ defineOptions({
 });
 
 /**
+ * Flatten nested categories to a flat array (removes duplicates)
+ * @param {Array} categories - Nested categories array
+ * @returns {Array} Flat categories array without duplicates
+ */
+const flattenCategories = (categories) => {
+  const flat = [];
+  const seenIds = new Set();
+
+  const traverse = (cats) => {
+    if (!cats || !Array.isArray(cats)) return;
+    cats.forEach((cat) => {
+      if (cat && cat.id && !seenIds.has(cat.id)) {
+        seenIds.add(cat.id);
+        flat.push(cat);
+        if (cat.children && Array.isArray(cat.children) && cat.children.length > 0) {
+          traverse(cat.children);
+        }
+      }
+    });
+  };
+  traverse(categories);
+  return flat;
+};
+
+/**
  * Get data from page props
  */
 const { props } = usePage();
-const categories = ref(props.categories || []);
+const categoriesRaw = ref(props.categories || []);
+const categories = computed(() => flattenCategories(categoriesRaw.value));
 const currentCategory = ref(props.category || {});
 
 /**
@@ -159,18 +246,134 @@ const isLoading = ref(false);
 const dropdownTimer = ref(null);
 
 /**
- * Filter categories, excluding the current category
+ * Get category path (parent > child > subchild)
+ * @param {String} categoryId - The category ID
+ * @returns {String} Category path string
+ */
+const getCategoryPath = (categoryId) => {
+  if (!categoryId || !categories.value || categories.value.length === 0) return '';
+
+  const findCategory = (id) => {
+    return categories.value.find((cat) => cat.id === id);
+  };
+
+  const buildPath = (id, path = []) => {
+    const category = findCategory(id);
+    if (!category) return path;
+
+    path.unshift(category.name);
+
+    if (category.parent_id) {
+      return buildPath(category.parent_id, path);
+    }
+
+    return path;
+  };
+
+  const path = buildPath(categoryId);
+  // Remove the last item (current category) and return parent path
+  if (path.length > 1) {
+    return path.slice(0, -1).join(' > ');
+  }
+
+  return '';
+};
+
+/**
+ * Get full category path including the category itself
+ * @param {String} categoryId - The category ID
+ * @returns {String} Full category path string
+ */
+const getFullCategoryPath = (categoryId) => {
+  if (!categoryId || !categories.value || categories.value.length === 0) return '';
+
+  const findCategory = (id) => {
+    return categories.value.find((cat) => cat.id === id);
+  };
+
+  const buildPath = (id, path = []) => {
+    const category = findCategory(id);
+    if (!category) return path;
+
+    path.unshift(category.name);
+
+    if (category.parent_id) {
+      return buildPath(category.parent_id, path);
+    }
+
+    return path;
+  };
+
+  const path = buildPath(categoryId);
+  return path.join(' > ');
+};
+
+/**
+ * Filter categories, excluding the current category and its children
  * to prevent creating circular references
+ * Also filters by search term and shows hierarchy
  */
 const filteredCategories = computed(() => {
   if (!categories.value || categories.value.length === 0) return [];
 
-  return categories.value.filter(
-    (category) =>
-      category &&
-      category.id !== currentCategory.value.id &&
-      (!parentSearch.value || (category.name && category.name.toLowerCase().includes(parentSearch.value.toLowerCase())))
+  // Get all child category IDs recursively
+  const getChildIds = (categoryId, childIds = new Set()) => {
+    const children = categories.value.filter((cat) => cat.parent_id === categoryId);
+    children.forEach((child) => {
+      childIds.add(child.id);
+      getChildIds(child.id, childIds);
+    });
+    return childIds;
+  };
+
+  const excludedIds = new Set([currentCategory.value.id]);
+  const childIds = getChildIds(currentCategory.value.id);
+  childIds.forEach((id) => excludedIds.add(id));
+
+  let filtered = categories.value.filter(
+    (category) => category && category.id && !excludedIds.has(category.id)
   );
+
+  // Filter by search term if provided
+  if (parentSearch.value) {
+    const searchTerm = parentSearch.value.toLowerCase();
+    const uniqueCategories = [];
+    const seenIds = new Set();
+
+    filtered.forEach((category) => {
+      if (!category || !category.name || seenIds.has(category.id)) return;
+
+      // Search in category name
+      const nameMatch = category.name.toLowerCase().includes(searchTerm);
+
+      // Search in category path
+      const path = getCategoryPath(category.id);
+      const pathMatch = path.toLowerCase().includes(searchTerm);
+
+      // Search in full path (including category name)
+      const fullPath = getFullCategoryPath(category.id);
+      const fullPathMatch = fullPath.toLowerCase().includes(searchTerm);
+
+      if (nameMatch || pathMatch || fullPathMatch) {
+        seenIds.add(category.id);
+        uniqueCategories.push(category);
+      }
+    });
+
+    return uniqueCategories;
+  }
+
+  // Remove duplicates even when no search term
+  const uniqueCategories = [];
+  const seenIds = new Set();
+  filtered.forEach((category) => {
+    if (category && category.id && !seenIds.has(category.id)) {
+      seenIds.add(category.id);
+      uniqueCategories.push(category);
+    }
+  });
+
+  return uniqueCategories;
 });
 
 /**
@@ -200,8 +403,18 @@ watch(
  */
 onMounted(() => {
   // Fetch categories if not provided
-  if (!categories.value || categories.value.length === 0) {
+  if (!categoriesRaw.value || categoriesRaw.value.length === 0) {
     fetchCategories();
+  }
+
+  // Set initial parent category name with full path
+  if (form.parent_id) {
+    const category = categories.value.find((c) => c.id === form.parent_id);
+    if (category) {
+      const fullPath = getFullCategoryPath(category.id);
+      parentSearch.value = fullPath;
+      parentCategoryName.value = category.name;
+    }
   }
 
   // Add global escape key listener to close dropdown
@@ -249,8 +462,9 @@ const selectParentCategory = (category) => {
   if (!category || !category.id) return;
 
   form.parent_id = category.id;
-  parentSearch.value = category.name;
   parentCategoryName.value = category.name;
+  const fullPath = getFullCategoryPath(category.id);
+  parentSearch.value = fullPath;
   nextTick(() => {
     showParentList.value = false;
   });
@@ -291,7 +505,7 @@ const fetchCategories = async () => {
     }
 
     const data = await response.json();
-    categories.value = data.categories || [];
+    categoriesRaw.value = data.categories || [];
   } catch (error) {
     console.error('Error fetching categories:', error);
   } finally {

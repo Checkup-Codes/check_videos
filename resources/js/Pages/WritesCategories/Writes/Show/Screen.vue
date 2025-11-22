@@ -172,17 +172,23 @@
           <div v-if="tableOfContents.length === 0" class="py-8 text-center text-sm text-muted-foreground">
             İçindekiler bulunamadı
           </div>
-          <div v-else class="space-y-1">
-            <div
+          <nav v-else class="space-y-0.5">
+            <a
               v-for="(item, index) in tableOfContents"
               :key="index"
-              @click="scrollToHeading(item.id)"
-              class="cursor-pointer rounded-lg p-2 text-sm transition-colors hover:bg-accent"
-              :class="[getTreeHeadingClass(item.level), getActiveHeadingClass(item.id)]"
+              @click.prevent="scrollToHeading(item.id)"
+              class="block rounded-md px-2 py-1.5 text-sm transition-colors"
+              :class="[
+                getTreeHeadingClass(item.level),
+                getActiveHeadingClass(item.id),
+                activeHeadingId === item.id
+                  ? 'bg-accent text-accent-foreground font-medium'
+                  : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground',
+              ]"
             >
-              <span class="text-foreground">{{ item.text }}</span>
-            </div>
-          </div>
+              {{ item.text }}
+            </a>
+          </nav>
         </div>
       </div>
     </div>
@@ -232,17 +238,23 @@
           <div v-if="tableOfContents.length === 0" class="py-4 text-center text-xs text-muted-foreground">
             İçindekiler bulunamadı
           </div>
-          <div v-else class="space-y-1">
-            <div
+          <nav v-else class="space-y-0.5">
+            <a
               v-for="(item, index) in tableOfContents"
               :key="index"
-              @click="scrollToHeading(item.id)"
-              class="cursor-pointer rounded p-2 text-xs transition-colors hover:bg-accent"
-              :class="[getTreeHeadingClass(item.level), getActiveHeadingClass(item.id)]"
+              @click.prevent="scrollToHeading(item.id)"
+              class="block rounded-md px-2 py-1 text-xs transition-colors"
+              :class="[
+                getTreeHeadingClass(item.level),
+                getActiveHeadingClass(item.id),
+                activeHeadingId === item.id
+                  ? 'bg-accent text-accent-foreground font-medium'
+                  : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground',
+              ]"
             >
-              <span class="text-foreground">{{ item.text }}</span>
-            </div>
-          </div>
+              {{ item.text }}
+            </a>
+          </nav>
         </div>
       </div>
     </div>
@@ -429,32 +441,80 @@ const setupActiveHeadingTracking = () => {
   }
   const headings = contentRef.value.querySelectorAll('h1, h2, h3, h4, h5, h6');
   if (headings.length === 0) return;
-  headingObserver = new IntersectionObserver(
-    (entries) => {
-      const visibleHeadings = entries.filter((entry) => entry.isIntersecting);
-      if (visibleHeadings.length > 0) {
-        visibleHeadings.sort((a, b) => {
-          if (a.intersectionRatio !== b.intersectionRatio) {
-            return b.intersectionRatio - a.intersectionRatio;
-          }
-          return a.boundingClientRect.top - b.boundingClientRect.top;
-        });
-        const topHeading = visibleHeadings[0];
-        if (topHeading.target.id) {
-          activeHeadingId.value = topHeading.target.id;
+  
+  // Track scroll position to determine active heading
+  const headerOffset = 80;
+  
+  const updateActiveHeading = () => {
+    let currentHeading = null;
+    let minDistance = Infinity;
+    
+    headings.forEach((heading) => {
+      if (!heading.id) return;
+      
+      const rect = heading.getBoundingClientRect();
+      const distanceFromTop = Math.abs(rect.top - headerOffset);
+      
+      // Check if heading is above the header offset (visible in viewport)
+      if (rect.top <= headerOffset + 20 && rect.bottom > headerOffset) {
+        if (distanceFromTop < minDistance) {
+          minDistance = distanceFromTop;
+          currentHeading = heading.id;
         }
       }
+    });
+    
+    // If no heading is at the top, find the one closest to the top
+    if (!currentHeading) {
+      headings.forEach((heading) => {
+        if (!heading.id) return;
+        const rect = heading.getBoundingClientRect();
+        if (rect.top <= headerOffset + 100) {
+          const distance = Math.abs(rect.top - headerOffset);
+          if (distance < minDistance) {
+            minDistance = distance;
+            currentHeading = heading.id;
+          }
+        }
+      });
+    }
+    
+    if (currentHeading) {
+      activeHeadingId.value = currentHeading;
+    }
+  };
+  
+  // Use IntersectionObserver for better performance
+  headingObserver = new IntersectionObserver(
+    (entries) => {
+      // Update on scroll
+      updateActiveHeading();
     },
     {
-      rootMargin: '-20% 0px -70% 0px',
-      threshold: [0, 0.25, 0.5, 0.75, 1],
+      root: null,
+      rootMargin: `-${headerOffset}px 0px -70% 0px`,
+      threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
     }
   );
+  
   headings.forEach((heading) => {
     if (heading.id) {
       headingObserver.observe(heading);
     }
   });
+  
+  // Also listen to scroll events for more accurate tracking
+  const handleScroll = () => {
+    updateActiveHeading();
+  };
+  
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  
+  // Store scroll handler for cleanup
+  headingObserver._scrollHandler = handleScroll;
+  
+  // Initial update
+  updateActiveHeading();
 };
 
 const generateTableOfContents = () => {
@@ -493,17 +553,26 @@ const toggleTableOfContents = () => {
 const scrollToHeading = (headingId) => {
   const element = document.getElementById(headingId);
   if (element) {
+    // Set active heading immediately for better UX
     activeHeadingId.value = headingId;
-    // Account for header height when scrolling
+    
+    // Get header height (sticky navigation)
     const headerOffset = 80;
-    const elementPosition = element.getBoundingClientRect().top;
-    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+    
+    // Get element position relative to document
+    const elementTop = element.getBoundingClientRect().top + window.pageYOffset;
+    
+    // Calculate scroll position to place heading at top (accounting for header)
+    const scrollPosition = elementTop - headerOffset;
 
+    // Smooth scroll to position
     window.scrollTo({
-      top: offsetPosition,
+      top: scrollPosition,
       behavior: 'smooth',
     });
-    if (window.innerWidth < 768) {
+    
+    // Close mobile menu if on mobile
+    if (window.innerWidth < 1536) {
       isTableOfContentsOpen.value = false;
     }
   }
@@ -533,22 +602,22 @@ const getTreeHeadingClass = (level) => {
     case 1:
       return 'pl-0';
     case 2:
-      return 'pl-4 relative before:absolute before:left-0 before:top-1/2 before:h-px before:w-3 before:bg-border before:-translate-y-1/2';
+      return 'pl-4';
     case 3:
-      return 'pl-8 relative before:absolute before:left-0 before:top-1/2 before:h-px before:w-3 before:bg-border before:-translate-y-1/2 after:absolute after:left-0 after:top-0 after:h-full after:w-px after:bg-border';
+      return 'pl-6';
     case 4:
-      return 'pl-12 relative before:absolute before:left-0 before:top-1/2 before:h-px before:w-3 before:bg-border before:-translate-y-1/2 after:absolute after:left-0 after:top-0 after:h-full after:w-px after:bg-border';
+      return 'pl-8';
     case 5:
-      return 'pl-16 relative before:absolute before:left-0 before:top-1/2 before:h-px before:w-3 before:bg-border before:-translate-y-1/2 after:absolute after:left-0 after:top-0 after:h-full after:w-px after:bg-border';
+      return 'pl-10';
     case 6:
-      return 'pl-20 relative before:absolute before:left-0 before:top-1/2 before:h-px before:w-3 before:bg-border before:-translate-y-1/2 after:absolute after:left-0 after:top-0 after:h-full after:w-px after:bg-border';
+      return 'pl-12';
     default:
       return 'pl-0';
   }
 };
 
 const getActiveHeadingClass = (headingId) => {
-  return activeHeadingId.value === headingId ? 'bg-muted/50 text-foreground border-l-2 border-primary' : '';
+  return '';
 };
 
 let contentObserver = null;
@@ -634,6 +703,10 @@ onUnmounted(() => {
   }
   if (headingObserver) {
     headingObserver.disconnect();
+    // Remove scroll handler if it exists
+    if (headingObserver._scrollHandler) {
+      window.removeEventListener('scroll', headingObserver._scrollHandler);
+    }
   }
   if (resizeHandler) {
     window.removeEventListener('resize', resizeHandler);

@@ -381,20 +381,20 @@
         @click.stop
       >
         <div
-          class="border-base-200/40 bg-base-100/95 mx-4 mb-4 max-h-[85vh] overflow-y-auto rounded-3xl border shadow-2xl backdrop-blur-xl"
+          class="border-border bg-popover mx-4 mb-4 max-h-[85vh] overflow-y-auto rounded-lg border shadow-lg"
         >
           <!-- Handle Bar -->
           <div class="flex justify-center pb-2 pt-4">
-            <div class="bg-base-300/60 h-1.5 w-16 rounded-full"></div>
+            <div class="bg-muted h-1.5 w-16 rounded-full"></div>
           </div>
 
           <!-- Menu Content -->
           <div class="px-4 pb-6 sm:px-6" @click="handleMenuItemClick">
             <!-- App Header -->
-            <Link href="/" class="mb-4 block">
-              <div class="bg-base-200/50 flex items-center space-x-3 rounded-2xl p-3 backdrop-blur-sm">
+            <Link href="/" class="mb-4 block" @click="closeMenu">
+              <div class="flex items-center space-x-3 rounded-lg border border-border bg-card p-3">
                 <div
-                  class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-primary/10 ring-1 ring-primary/20"
+                  class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-md bg-primary/10"
                 >
                   <template v-if="logoPath && !isLoading">
                     <img :src="logoPath" :alt="logoAlt" class="h-full w-full object-cover" @error="handleImageError" />
@@ -402,8 +402,8 @@
                   <span v-else class="text-sm font-bold text-primary">{{ seoTitle.charAt(0).toUpperCase() }}</span>
                 </div>
                 <div>
-                  <h3 class="text-base-content text-base font-semibold">{{ seoTitle }}</h3>
-                  <p class="text-base-content/60 text-xs">{{ appName }}</p>
+                  <h3 class="text-card-foreground text-base font-semibold">{{ seoTitle }}</h3>
+                  <p class="text-muted-foreground text-xs">{{ appName }}</p>
                 </div>
               </div>
             </Link>
@@ -424,11 +424,12 @@
 
               <!-- Write Show Page Actions for Mobile -->
               <template v-if="isWriteShowPage && isLoggedIn && write">
-                <div class="border-base-200/40 border-t pt-3">
+                <div class="border-t border-border pt-3">
                   <div class="space-y-1">
                     <Link
                       :href="route('writes.edit', write.id)"
-                      class="bg-base-200/50 hover:bg-base-200 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      @click="closeMenu"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -448,7 +449,7 @@
                     </Link>
                     <button
                       @click="deleteWriteMobile(write.id)"
-                      class="bg-error/10 hover:bg-error/20 text-error flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -472,11 +473,12 @@
 
               <!-- Category Show Page Actions for Mobile -->
               <template v-else-if="isCategoryShowPage && isLoggedIn && category">
-                <div class="border-base-200/40 border-t pt-3">
+                <div class="border-t border-border pt-3">
                   <div class="space-y-1">
                     <Link
                       :href="route('categories.edit', category.id)"
-                      class="bg-base-200/50 hover:bg-base-200 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      @click="closeMenu"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -496,7 +498,7 @@
                     </Link>
                     <button
                       @click="deleteCategoryMobile(category.id)"
-                      class="bg-error/10 hover:bg-error/20 text-error flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -520,11 +522,12 @@
 
               <!-- Language Pack Show Page Actions for Mobile -->
               <template v-else-if="isLanguagePackShowPage && isLoggedIn && pack">
-                <div class="border-base-200/40 border-t pt-3">
+                <div class="border-t border-border pt-3">
                   <div class="space-y-1">
                     <Link
                       :href="route('rendition.language-packs.edit', pack.id)"
-                      class="bg-base-200/50 hover:bg-base-200 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      @click="closeMenu"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -544,7 +547,8 @@
                     </Link>
                     <Link
                       :href="route('rendition.words.create')"
-                      class="flex w-full items-center gap-3 rounded-lg bg-primary/10 px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200 hover:bg-primary/20"
+                      class="flex w-full items-center gap-3 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                      @click="closeMenu"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -563,11 +567,12 @@
 
               <!-- Word Show Page Actions for Mobile -->
               <template v-else-if="isWordShowPage && isLoggedIn && word">
-                <div class="border-base-200/40 border-t pt-3">
+                <div class="border-t border-border pt-3">
                   <div class="space-y-1">
                     <Link
                       :href="route('rendition.words.edit', word.id)"
-                      class="bg-base-200/50 hover:bg-base-200 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      @click="closeMenu"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -587,7 +592,7 @@
                     </Link>
                     <button
                       @click="deleteWordMobile(word.id)"
-                      class="bg-error/10 hover:bg-error/20 text-error flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -611,11 +616,12 @@
 
               <!-- Version Show Page Actions for Mobile -->
               <template v-else-if="isVersionShowPage && isLoggedIn && version">
-                <div class="border-base-200/40 border-t pt-3">
+                <div class="border-t border-border pt-3">
                   <div class="space-y-1">
                     <Link
                       :href="route('versions.edit', version.id)"
-                      class="bg-base-200/50 hover:bg-base-200 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      @click="closeMenu"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -635,7 +641,7 @@
                     </Link>
                     <button
                       @click="deleteVersionMobile(version.id)"
-                      class="bg-error/10 hover:bg-error/20 text-error flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -659,12 +665,13 @@
 
               <!-- New Write/Category Buttons for Mobile -->
               <template v-else-if="isLoggedIn">
-                <div class="border-base-200/40 border-t pt-3">
+                <div class="border-t border-border pt-3">
                   <div class="space-y-1">
+                    <!-- Yeni Yazı butonu - Writes sayfasında -->
                     <Link
                       v-if="isActiveRoute('/writes') && !isWriteShowPage"
                       href="/writes/create"
-                      class="flex w-full items-center gap-3 rounded-lg bg-primary/10 px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200 hover:bg-primary/20"
+                      class="flex w-full items-center gap-3 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -672,15 +679,53 @@
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
+                        stroke-width="2"
                       >
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                       </svg>
-                      <span>Yeni Yazı Ekle</span>
+                      <span>Yeni Yazı</span>
                     </Link>
+                    <!-- Yeni Kategori butonu - Writes sayfasında -->
+                    <Link
+                      v-if="isActiveRoute('/writes') && !isWriteShowPage"
+                      href="/categories/create"
+                      class="flex w-full items-center gap-3 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                      </svg>
+                      <span>Yeni Kategori</span>
+                    </Link>
+                    <!-- Yeni Yazı butonu - Categories sayfasında -->
+                    <Link
+                      v-if="isActiveRoute('/categories') && !isCategoryShowPage"
+                      href="/writes/create"
+                      class="flex w-full items-center gap-3 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                      </svg>
+                      <span>Yeni Yazı</span>
+                    </Link>
+                    <!-- Yeni Kategori butonu - Categories sayfasında -->
                     <Link
                       v-if="isActiveRoute('/categories') && !isCategoryShowPage"
                       href="/categories/create"
-                      class="flex w-full items-center gap-3 rounded-lg bg-primary/10 px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200 hover:bg-primary/20"
+                      class="flex w-full items-center gap-3 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -688,15 +733,17 @@
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
+                        stroke-width="2"
                       >
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                       </svg>
-                      <span>Yeni Kategori Ekle</span>
+                      <span>Yeni Kategori</span>
                     </Link>
                     <Link
                       v-if="isActiveRoute('/rendition/words') && !isWordShowPage"
                       href="/rendition/words/create"
-                      class="flex w-full items-center gap-3 rounded-lg bg-primary/10 px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200 hover:bg-primary/20"
+                      class="flex w-full items-center gap-3 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                      @click="closeMenu"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -712,7 +759,8 @@
                     <Link
                       v-if="isActiveRoute('/rendition/words') && !isWordShowPage"
                       href="/rendition/language-packs/create"
-                      class="flex w-full items-center gap-3 rounded-lg bg-primary/10 px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200 hover:bg-primary/20"
+                      class="flex w-full items-center gap-3 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                      @click="closeMenu"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -733,7 +781,8 @@
                     <Link
                       v-if="isActiveRoute('/versions') && !isVersionShowPage"
                       href="/versions/create"
-                      class="flex w-full items-center gap-3 rounded-lg bg-primary/10 px-3 py-2.5 text-sm font-medium text-primary transition-all duration-200 hover:bg-primary/20"
+                      class="flex w-full items-center gap-3 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                      @click="closeMenu"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -750,35 +799,181 @@
                 </div>
               </template>
 
-              <!-- Dashboard Button for All Users -->
-              <div class="border-base-200/40 border-t pt-3">
-                <Link href="/dashboard" class="block">
-                  <div
-                    class="flex items-center space-x-3 rounded-2xl border border-primary/20 bg-primary/5 p-3 transition-all duration-200 hover:bg-primary/10"
-                  >
-                    <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10">
-                      <svg class="h-4 w-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <!-- Profile Menu for Mobile - Only show for logged in users -->
+              <template v-if="isLoggedIn">
+                <div class="border-t border-border pt-3">
+                  <div class="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Hesap
+                  </div>
+                  <div class="space-y-1">
+                    <Link
+                      :href="route('profile.edit')"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      @click="closeMenu"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
                         <path
                           stroke-linecap="round"
                           stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                        ></path>
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                        />
                       </svg>
-                    </div>
-                    <div>
-                      <h4 class="text-sm font-semibold text-primary">Panel</h4>
-                      <p class="text-xs text-primary/70">Yönetim Paneli</p>
-                    </div>
+                      <span>Profil</span>
+                    </Link>
+                    <form @submit.prevent="handleLogoutMobile" class="w-full">
+                      <button
+                        type="submit"
+                        class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
+                        @click="closeMenu"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                          />
+                        </svg>
+                        <span>Çıkış Yap</span>
+                      </button>
+                    </form>
                   </div>
-                </Link>
-              </div>
+                </div>
+              </template>
+
+              <!-- Admin Panel Menu for Mobile - Only show on admin panel pages -->
+              <template v-if="isAdminPanelPage && isLoggedIn">
+                <div class="border-t border-border pt-3">
+                  <div class="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Panel
+                  </div>
+                  <div class="space-y-1">
+                    <Link
+                      :href="route('dashboard')"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors"
+                      :class="
+                        isActiveRoute('/dashboard')
+                          ? 'bg-accent text-accent-foreground'
+                          : 'text-foreground hover:bg-accent/50'
+                      "
+                      @click="closeMenu"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                        />
+                      </svg>
+                      <span>Dashboard</span>
+                    </Link>
+                    <Link
+                      :href="route('media.index')"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors"
+                      :class="
+                        isActiveRoute('/media')
+                          ? 'bg-accent text-accent-foreground'
+                          : 'text-foreground hover:bg-accent/50'
+                      "
+                      @click="closeMenu"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                      <span>Medya Yönetimi</span>
+                    </Link>
+                    <Link
+                      :href="route('social-media.index')"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors"
+                      :class="
+                        isActiveRoute('/social-media')
+                          ? 'bg-accent text-accent-foreground'
+                          : 'text-foreground hover:bg-accent/50'
+                      "
+                      @click="closeMenu"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                        />
+                      </svg>
+                      <span>Sosyal Medya Yönetimi</span>
+                    </Link>
+                    <Link
+                      :href="route('seo.edit')"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors"
+                      :class="
+                        isActiveRoute('/seo')
+                          ? 'bg-accent text-accent-foreground'
+                          : 'text-foreground hover:bg-accent/50'
+                      "
+                      @click="closeMenu"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                        />
+                      </svg>
+                      <span>SEO Yönetimi</span>
+                    </Link>
+                  </div>
+                </div>
+              </template>
             </div>
 
             <!-- Powered by Section -->
-            <div v-if="!isLoggedIn" class="border-base-200/40 mt-4 border-t pt-3">
+            <div v-if="!isLoggedIn" class="mt-4 border-t border-border pt-3">
               <a href="https://youtu.be/FPsx8xHLR1k?si=3dNFdwhk5s8LyqOe" target="_blank">
-                <div class="rounded-2xl bg-primary/5 p-3 text-center transition-all duration-200 hover:bg-primary/10">
+                <div class="rounded-md bg-primary/10 p-3 text-center transition-colors hover:bg-primary/20">
                   <span class="text-sm font-medium text-primary">Powered by Notiriel</span>
                 </div>
               </a>
@@ -794,7 +989,7 @@
               <!-- Theme Toggle -->
               <button
                 @click="toggleDarkLight"
-                class="bg-base-200/50 hover:bg-base-200/80 flex items-center space-x-2 rounded-2xl px-3 py-2 backdrop-blur-sm transition-all duration-200"
+                class="flex items-center space-x-2 rounded-md border border-border bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
               >
                 <template v-if="isDarkMode">
                   <svg
@@ -818,11 +1013,11 @@
                     />
                   </svg>
                 </template>
-                <span class="text-base-content text-sm font-medium">{{ currentThemeName }}</span>
+                <span class="text-sm font-medium">{{ currentThemeName }}</span>
               </button>
 
               <!-- Copyright -->
-              <p class="text-base-content/50 text-xs">Notiriel - Tüm Hakları Saklıdır</p>
+              <p class="text-xs text-muted-foreground">Notiriel - Tüm Hakları Saklıdır</p>
             </div>
           </div>
         </div>
@@ -952,7 +1147,44 @@ const isActiveRoute = (path) => {
 // Check if we're on a show page (not index)
 const isWriteShowPage = computed(() => {
   const url = page.url;
-  return url.startsWith('/writes/') && url !== '/writes' && url !== '/writes/create';
+  // Check for /writes/{slug} route
+  if (url.startsWith('/writes/') && url !== '/writes' && url !== '/writes/create') {
+    return true;
+  }
+  // Check for /categories/{category}/{write} route
+  const categoryWritePattern = /^\/categories\/[^/]+\/[^/]+$/;
+  if (
+    categoryWritePattern.test(url) &&
+    !url.includes('/create') &&
+    !url.includes('/edit') &&
+    url.split('/').length === 4
+  ) {
+    return true;
+  }
+  return false;
+});
+
+const isCategoryShowPage = computed(() => {
+  const url = page.url;
+  // Check for /categories/{slug} route (category show page)
+  if (url.startsWith('/categories/') && url !== '/categories' && url !== '/categories/create') {
+    const parts = url.split('/').filter((part) => part.length > 0);
+    if (parts.length === 2 && parts[0] === 'categories' && !parts[1].includes('edit')) {
+      return true;
+    }
+  }
+  return false;
+});
+
+// Check if we're on an admin panel page
+const isAdminPanelPage = computed(() => {
+  const url = page.url;
+  return (
+    url.startsWith('/dashboard') ||
+    url.startsWith('/media') ||
+    url.startsWith('/social-media') ||
+    url.startsWith('/seo')
+  );
 });
 
 const isVersionShowPage = computed(() => {
@@ -1036,6 +1268,12 @@ const deleteVersionMobile = async (id) => {
   } catch (error) {
     console.error('Error deleting version:', error);
   }
+};
+
+// Handle logout for mobile menu
+const handleLogoutMobile = () => {
+  router.post(route('logout'));
+  closeMenu();
 };
 
 // Watch for page props changes to update auth data

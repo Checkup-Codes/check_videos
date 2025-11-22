@@ -28,7 +28,7 @@ const scrollableRef = ref(null);
 <style scoped>
 /* Embedded sidebar content design - subtle recessed effect */
 :deep(.sidebar-content-embedded) {
-  background: hsl(var(--b1) / 0.7) !important;
+  background: hsl(var(--muted) / 0.5) !important;
   position: relative;
 }
 
@@ -39,7 +39,7 @@ const scrollableRef = ref(null);
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(to right, transparent, hsl(var(--b2) / 0.3), transparent);
+  background: linear-gradient(to right, transparent, hsl(var(--border) / 0.5), transparent);
   pointer-events: none;
 }
 </style>

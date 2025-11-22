@@ -1,5 +1,6 @@
 <template>
-  <div ref="vantaRef" class="relative min-h-[calc(100vh-3rem)] w-full overflow-hidden">
+  <div ref="canvasContainer" class="relative min-h-[calc(100vh-3rem)] w-full overflow-hidden">
+    <canvas ref="canvasRef" class="absolute inset-0 h-full w-full"></canvas>
     <!-- Hero Section -->
     <section class="relative z-10 flex min-h-[calc(100vh-3rem)] items-center justify-center px-4 py-12 sm:py-16">
       <div class="mx-auto max-w-6xl text-center">
@@ -193,8 +194,6 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch, computed, nextTick } from 'vue';
-import * as THREE from 'three';
-import NET from 'vanta/dist/vanta.net.min';
 import { usePage, Link } from '@inertiajs/vue3';
 import { useStore } from 'vuex';
 
@@ -205,11 +204,15 @@ const seoTitle = ref(props.screen.seo.title);
 const seoDescription = ref(props.screen.seo.description);
 const logoPath = ref(props.screen.seo.logo);
 const logoAlt = ref('Logo');
-const vantaRef = ref(null);
-let vantaEffect = null;
+const canvasRef = ref(null);
+const canvasContainer = ref(null);
 const isLoading = ref(false);
-let isUpdating = false; // Güncelleme flag'i
-let updateTimeout = null; // Debounce timeout
+
+let animationFrameId = null;
+let particles = [];
+let mouse = { x: 0, y: 0 };
+let canvas = null;
+let ctx = null;
 
 // Tema değişikliğini dinle
 const isDarkTheme = computed(() => store.getters['Theme/isDarkTheme']);
@@ -218,82 +221,154 @@ const handleImageError = () => {
   logoPath.value = null;
 };
 
-// Vanta animasyonunu başlat/güncelle
-const initVanta = async () => {
-  if (!vantaRef.value || isUpdating) return;
-
-  isUpdating = true;
-
-  // Mevcut animasyonu tamamen temizle
-  if (vantaEffect) {
-    try {
-      vantaEffect.destroy();
-    } catch (e) {
-      console.warn('Vanta destroy error:', e);
-    }
-    vantaEffect = null;
+// Particle sınıfı
+class Particle {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.baseX = x;
+    this.baseY = y;
+    this.size = Math.random() * 2 + 1;
+    this.speedX = (Math.random() - 0.5) * 0.5;
+    this.speedY = (Math.random() - 0.5) * 0.5;
+    this.distance = 0;
   }
 
-  // DOM güncellemesini bekle
-  await nextTick();
+  update() {
+    // Mouse etkileşimi
+    const dx = mouse.x - this.x;
+    const dy = mouse.y - this.y;
+    this.distance = Math.sqrt(dx * dx + dy * dy);
 
-  // Kısa bir gecikme ile animasyonun tamamen temizlendiğinden emin ol
-  await new Promise((resolve) => setTimeout(resolve, 200));
+    // Mouse yakınındaysa kaç
+    const maxDistance = 100;
+    if (this.distance < maxDistance) {
+      const force = (maxDistance - this.distance) / maxDistance;
+      const angle = Math.atan2(dy, dx);
+      const moveX = Math.cos(angle) * force * 10;
+      const moveY = Math.sin(angle) * force * 10;
 
-  // Tema kontrolü için dark class'ını kontrol et
-  const isDark = document.documentElement.classList.contains('dark');
-
-  // Yeni animasyonu başlat
-  if (vantaRef.value) {
-    try {
-      vantaEffect = NET({
-        el: vantaRef.value,
-        THREE,
-        mouseControls: true,
-        touchControls: true,
-        minHeight: 200.0,
-        minWidth: 200.0,
-        scale: 1.0,
-        scaleMobile: 1.0,
-        color: isDark ? 0x888888 : 0xaaaaaa, // Tema uyumlu renk
-        backgroundColor: isDark ? 0x0a0a0a : 0xfafafa, // Dark/Light mode için
-        points: 8.0,
-        maxDistance: 20.0,
-        spacing: 18.0,
-        showLines: false,
-        material: {
-          vertexColors: true,
-        },
-      });
-    } catch (e) {
-      console.error('Vanta init error:', e);
+      this.x -= moveX;
+      this.y -= moveY;
+    } else {
+      // Yavaşça orijinal pozisyonuna dön
+      this.x += (this.baseX - this.x) * 0.05;
+      this.y += (this.baseY - this.y) * 0.05;
     }
+
+    // Sınırları kontrol et
+    if (this.x < 0 || this.x > canvas.width) this.x = Math.random() * canvas.width;
+    if (this.y < 0 || this.y > canvas.height) this.y = Math.random() * canvas.height;
   }
 
-  isUpdating = false;
+  draw() {
+    if (!ctx) return;
+
+    // Tema uyumlu renk
+    const isDark = isDarkTheme.value;
+    const opacity = Math.max(0.1, 1 - this.distance / 100);
+
+    ctx.fillStyle = isDark
+      ? `rgba(148, 163, 184, ${opacity * 0.4})` // slate-400 for dark
+      : `rgba(100, 116, 139, ${opacity * 0.3})`; // slate-500 for light
+
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// Canvas'ı başlat
+const initCanvas = () => {
+  if (!canvasRef.value || !canvasContainer.value) return;
+
+  canvas = canvasRef.value;
+  ctx = canvas.getContext('2d');
+
+  const resizeCanvas = () => {
+    const rect = canvasContainer.value.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+  };
+
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  // Particle'ları oluştur
+  const particleCount = Math.floor((canvas.width * canvas.height) / 15000);
+  particles = [];
+
+  for (let i = 0; i < particleCount; i++) {
+    particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
+  }
+
+  // Mouse pozisyonunu takip et
+  const handleMouseMove = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = e.clientX - rect.left;
+    mouse.y = e.clientY - rect.top;
+  };
+
+  canvasContainer.value.addEventListener('mousemove', handleMouseMove);
+
+  // Mouse çıkınca reset
+  const handleMouseLeave = () => {
+    mouse.x = -1000;
+    mouse.y = -1000;
+  };
+
+  canvasContainer.value.addEventListener('mouseleave', handleMouseLeave);
+
+  // Animasyonu başlat
+  animate();
 };
 
-// Debounced Vanta güncelleme fonksiyonu
-const updateVantaDebounced = () => {
-  // Önceki timeout'u temizle
-  if (updateTimeout) {
-    clearTimeout(updateTimeout);
+// Animasyon döngüsü
+const animate = () => {
+  if (!ctx || !canvas) return;
+
+  // Canvas'ı temizle
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Tema uyumlu arka plan
+  const isDark = isDarkTheme.value;
+  ctx.fillStyle = isDark ? 'rgba(10, 10, 10, 0.01)' : 'rgba(250, 250, 250, 0.01)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Particle'ları güncelle ve çiz
+  particles.forEach((particle) => {
+    particle.update();
+    particle.draw();
+  });
+
+  // Yakın particle'lar arasında çizgiler çiz (opsiyonel, daha soft görünüm için)
+  const isDarkMode = isDarkTheme.value;
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < 120) {
+        const opacity = (1 - distance / 120) * 0.1;
+        ctx.strokeStyle = isDarkMode ? `rgba(148, 163, 184, ${opacity})` : `rgba(100, 116, 139, ${opacity})`;
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.stroke();
+      }
+    }
   }
 
-  // Yeni timeout ayarla (300ms debounce)
-  updateTimeout = setTimeout(async () => {
-    if (!isUpdating) {
-      await nextTick();
-      await initVanta();
-    }
-  }, 300);
+  animationFrameId = requestAnimationFrame(animate);
 };
 
-// Tema değişikliğini izle ve animasyonu güncelle (debounced)
+// Tema değişikliğini izle
 watch(
   isDarkTheme,
   () => {
-    updateVantaDebounced();
+    // Tema değiştiğinde animasyon devam edecek, sadece renkler güncellenecek
   },
   { immediate: false }
 );
@@ -305,25 +380,29 @@ onMounted(async () => {
   // DOM hazır olana kadar bekle
   await nextTick();
 
-  // Vanta animasyonu başlat
-  await initVanta();
+  // Kısa bir gecikme ile canvas'ı başlat
+  setTimeout(() => {
+    initCanvas();
+  }, 100);
 });
 
 onBeforeUnmount(() => {
   // Restore body scrolling when leaving index page
   document.body.style.overflow = '';
 
-  // Timeout'u temizle
-  if (updateTimeout) {
-    clearTimeout(updateTimeout);
-    updateTimeout = null;
+  // Animasyonu durdur
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
   }
 
-  // Animasyonu temizle
-  if (vantaEffect) {
-    vantaEffect.destroy();
-    vantaEffect = null;
+  // Canvas'ı temizle
+  if (ctx) {
+    ctx.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
   }
+
+  particles = [];
+  mouse = { x: 0, y: 0 };
 });
 </script>
 

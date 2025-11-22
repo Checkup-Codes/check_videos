@@ -20,7 +20,7 @@
             <button
               v-if="writeFilter !== 'all' && isActiveRoute('/writes')"
               @click.stop="clearWriteFilter"
-              class="inline-flex h-9 w-6 items-center justify-center rounded-md text-xs transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              class="inline-flex h-8 w-6 items-center justify-center rounded-md text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               title="Filtreyi temizle"
             >
               <svg
@@ -29,19 +29,20 @@
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
+                stroke-width="2"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
             <!-- Write Filter Dropdown button -->
             <div class="relative">
               <button
                 @click="handleFilterClick"
-                class="inline-flex h-9 w-6 items-center justify-center rounded-md text-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                class="inline-flex h-8 w-6 items-center justify-center rounded-md text-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                 :class="[
                   isActiveRoute('/writes')
                     ? 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-                    : 'cursor-not-allowed text-muted-foreground opacity-50',
+                    : 'cursor-not-allowed text-muted-foreground/30 opacity-50',
                   showWriteFilterDropdown && isActiveRoute('/writes') ? 'bg-accent text-accent-foreground' : '',
                 ]"
                 :disabled="!isActiveRoute('/writes')"
@@ -53,11 +54,11 @@
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
+                  stroke-width="2"
                 >
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    stroke-width="2"
                     d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A2 2 0 0013 14.586V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-3.414a2 2 0 00-.293-1.172L2.293 6.707A1 1 0 012 6V4z"
                   />
                 </svg>
@@ -164,25 +165,36 @@
             label="Kategoriler"
             :is-active="isActiveRoute('/categories')"
           />
-          <!-- Collapse/Expand button - Only show on /categories page -->
+          <!-- Collapse/Expand button - Always visible but only enabled on /categories page -->
           <button
-            v-if="isActiveRoute('/categories')"
             @click="toggleAllCategories"
-            class="relative -ml-1 inline-flex h-9 w-6 items-center justify-center rounded-md text-xs transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-            :class="{
-              'bg-accent text-accent-foreground': areAllCategoriesExpanded,
-            }"
-            :title="areAllCategoriesExpanded ? 'Tümünü Daralt' : 'Tümünü Genişlet'"
+            class="relative -ml-1 inline-flex h-9 w-6 items-center justify-center rounded-md text-xs transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none"
+            :class="
+              isActiveRoute('/categories')
+                ? areAllCategoriesExpanded
+                  ? 'bg-accent text-accent-foreground hover:bg-accent/80'
+                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                : 'cursor-not-allowed text-muted-foreground/30 opacity-50'
+            "
+            :disabled="!isActiveRoute('/categories')"
+            :title="
+              isActiveRoute('/categories')
+                ? areAllCategoriesExpanded
+                  ? 'Tümünü Daralt'
+                  : 'Tümünü Genişlet'
+                : 'Kategoriler sayfasında kullanılabilir'
+            "
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="h-3.5 w-3.5 transition-transform duration-200"
-              :class="{ 'rotate-180': areAllCategoriesExpanded }"
+              :class="{ 'rotate-180': areAllCategoriesExpanded && isActiveRoute('/categories') }"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              stroke-width="2"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
             </svg>
           </button>
         </div>
@@ -210,53 +222,43 @@
         <template v-if="isWriteShowPage && isLoggedIn && write">
           <Link
             :href="route('writes.edit', write.id)"
-            class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             title="Yazıyı düzenle"
           >
-            <div
-              class="flex h-4 w-4 flex-shrink-0 items-center justify-center transition-transform duration-300 group-hover:scale-110"
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="h-4 w-4"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="h-4 w-4"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                />
-              </svg>
-            </div>
-            <span class="hidden whitespace-nowrap text-sm font-medium sm:inline">Düzenle</span>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+              />
+            </svg>
           </Link>
           <button
             @click="deleteWrite(write.id)"
-            class="inline-flex h-9 items-center justify-center rounded-md border border-destructive/50 bg-background px-3 text-sm font-medium text-destructive shadow-sm transition-colors hover:bg-destructive hover:text-destructive-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive hover:text-destructive-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             title="Yazıyı sil"
           >
-            <div
-              class="flex h-4 w-4 flex-shrink-0 items-center justify-center transition-transform duration-300 group-hover:scale-110"
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="h-4 w-4"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="h-4 w-4"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                />
-              </svg>
-            </div>
-            <span class="hidden whitespace-nowrap text-sm font-medium sm:inline">Sil</span>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+              />
+            </svg>
           </button>
         </template>
 
@@ -264,7 +266,7 @@
         <template v-else-if="isCategoryShowPage && isLoggedIn && category">
           <Link
             :href="route('categories.edit', category.id)"
-            class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             title="Kategoriyi düzenle"
           >
             <svg
@@ -281,11 +283,10 @@
                 d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
               />
             </svg>
-            <span class="hidden whitespace-nowrap text-sm font-medium sm:inline">Düzenle</span>
           </Link>
           <button
             @click="deleteCategory(category.id)"
-            class="inline-flex h-9 items-center justify-center rounded-md border border-destructive/50 bg-background px-3 text-sm font-medium text-destructive shadow-sm transition-colors hover:bg-destructive hover:text-destructive-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive hover:text-destructive-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             title="Kategoriyi sil"
           >
             <svg
@@ -302,28 +303,38 @@
                 d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
               />
             </svg>
-            <span class="hidden whitespace-nowrap text-sm font-medium sm:inline">Sil</span>
           </button>
         </template>
 
         <!-- New Write Button for Writes Index Page -->
-        <Link
-          v-else-if="isActiveRoute('/writes') && isLoggedIn && !isWriteShowPage"
-          href="/writes/create"
-          class="inline-flex h-9 items-center justify-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-          title="Yeni yazı ekle"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          <span class="hidden whitespace-nowrap text-sm font-medium sm:inline">Yeni Yazı</span>
-        </Link>
+        <template v-if="isActiveRoute('/writes') && isLoggedIn && !isWriteShowPage">
+          <Link
+            href="/writes/create"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 sm:w-auto sm:px-3"
+            title="Yeni yazı ekle"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            <span class="hidden whitespace-nowrap text-sm font-medium sm:ml-2 sm:inline">Yeni Yazı</span>
+          </Link>
+          <Link
+            href="/categories/create"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 sm:w-auto sm:px-3"
+            title="Yeni kategori ekle"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            <span class="hidden whitespace-nowrap text-sm font-medium sm:ml-2 sm:inline">Yeni Kategori</span>
+          </Link>
+        </template>
 
         <!-- Language Pack Show Page Actions -->
         <template v-else-if="isLanguagePackShowPage && isLoggedIn && pack">
           <Link
             :href="route('rendition.language-packs.edit', pack.id)"
-            class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             title="Paketi düzenle"
           >
             <svg
@@ -340,11 +351,10 @@
                 d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
               />
             </svg>
-            <span class="hidden whitespace-nowrap text-sm font-medium sm:inline">Paketi Düzenle</span>
           </Link>
           <Link
             :href="route('rendition.words.create')"
-            class="inline-flex h-9 items-center justify-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 sm:w-auto sm:px-3"
             title="Yeni kelime ekle"
           >
             <svg
@@ -356,7 +366,7 @@
             >
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
-            <span class="hidden whitespace-nowrap text-sm font-medium sm:inline">Yeni Kelime</span>
+            <span class="hidden whitespace-nowrap text-sm font-medium sm:ml-2 sm:inline">Yeni Kelime</span>
           </Link>
         </template>
 
@@ -364,7 +374,7 @@
         <template v-else-if="isWordShowPage && isLoggedIn && word">
           <Link
             :href="route('rendition.words.edit', word.id)"
-            class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             title="Kelimeyi düzenle"
           >
             <svg
@@ -381,11 +391,10 @@
                 d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
               />
             </svg>
-            <span class="hidden whitespace-nowrap text-sm font-medium sm:inline">Düzenle</span>
           </Link>
           <button
             @click="deleteWord(word.id)"
-            class="inline-flex h-9 items-center justify-center rounded-md border border-destructive/50 bg-background px-3 text-sm font-medium text-destructive shadow-sm transition-colors hover:bg-destructive hover:text-destructive-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive hover:text-destructive-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             title="Kelimeyi sil"
           >
             <svg
@@ -402,7 +411,6 @@
                 d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
               />
             </svg>
-            <span class="hidden whitespace-nowrap text-sm font-medium sm:inline">Sil</span>
           </button>
         </template>
 
@@ -410,7 +418,7 @@
         <template v-else-if="isVersionShowPage && isLoggedIn && version">
           <Link
             :href="route('versions.edit', version.id)"
-            class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             title="Versiyonu düzenle"
           >
             <svg
@@ -427,11 +435,10 @@
                 d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
               />
             </svg>
-            <span class="hidden whitespace-nowrap text-sm font-medium sm:inline">Düzenle</span>
           </Link>
           <button
             @click="deleteVersion(version.id)"
-            class="inline-flex h-9 items-center justify-center rounded-md border border-destructive/50 bg-background px-3 text-sm font-medium text-destructive shadow-sm transition-colors hover:bg-destructive hover:text-destructive-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive hover:text-destructive-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             title="Versiyonu sil"
           >
             <svg
@@ -448,61 +455,295 @@
                 d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
               />
             </svg>
-            <span class="hidden whitespace-nowrap text-sm font-medium sm:inline">Sil</span>
           </button>
         </template>
 
         <!-- New Category Button for Categories Index Page -->
-        <Link
-          v-else-if="isActiveRoute('/categories') && isLoggedIn && !isCategoryShowPage"
-          href="/categories/create"
-          class="inline-flex h-9 items-center justify-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-          title="Yeni kategori ekle"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          <span class="hidden whitespace-nowrap text-sm font-medium sm:inline">Yeni Kategori</span>
-        </Link>
+        <template v-else-if="isActiveRoute('/categories') && isLoggedIn && !isCategoryShowPage">
+          <Link
+            href="/writes/create"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 sm:w-auto sm:px-3"
+            title="Yeni yazı ekle"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            <span class="hidden whitespace-nowrap text-sm font-medium sm:ml-2 sm:inline">Yeni Yazı</span>
+          </Link>
+          <Link
+            href="/categories/create"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 sm:w-auto sm:px-3"
+            title="Yeni kategori ekle"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            <span class="hidden whitespace-nowrap text-sm font-medium sm:ml-2 sm:inline">Yeni Kategori</span>
+          </Link>
+        </template>
 
         <!-- New Word Button for Rendition Words Index Page -->
         <Link
           v-else-if="isActiveRoute('/rendition/words') && isLoggedIn && !isWordShowPage"
           href="/rendition/words/create"
-          class="inline-flex h-9 items-center justify-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+          class="inline-flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 sm:w-auto sm:px-3"
           title="Yeni kelime ekle"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
-          <span class="hidden whitespace-nowrap text-sm font-medium sm:inline">Yeni Kelime</span>
+          <span class="hidden whitespace-nowrap text-sm font-medium sm:ml-2 sm:inline">Yeni Kelime</span>
         </Link>
 
         <!-- New Language Pack Button for Rendition Words Index Page -->
         <Link
           v-if="isActiveRoute('/rendition/words') && isLoggedIn && !isWordShowPage"
           href="/rendition/language-packs/create"
-          class="inline-flex h-9 items-center justify-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+          class="inline-flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 sm:w-auto sm:px-3"
           title="Yeni kelime paketi ekle"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
           </svg>
-          <span class="hidden whitespace-nowrap text-sm font-medium sm:inline">Yeni Paket</span>
+          <span class="hidden whitespace-nowrap text-sm font-medium sm:ml-2 sm:inline">Yeni Paket</span>
         </Link>
 
         <!-- New Version Button for Versions Index Page -->
         <Link
           v-else-if="isActiveRoute('/versions') && isLoggedIn && !isVersionShowPage"
           href="/versions/create"
-          class="inline-flex h-9 items-center justify-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+          class="inline-flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 sm:w-auto sm:px-3"
           title="Yeni versiyon ekle"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
-          <span class="hidden whitespace-nowrap text-sm font-medium sm:inline">Yeni Versiyon</span>
+          <span class="hidden whitespace-nowrap text-sm font-medium sm:ml-2 sm:inline">Yeni Versiyon</span>
         </Link>
+
+        <!-- Profile Dropdown - Only show for logged in users -->
+        <template v-if="isLoggedIn">
+          <div class="profile-dropdown-container relative inline-block">
+            <button
+              @click="showProfileDropdown = !showProfileDropdown"
+              class="inline-flex h-8 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+              :class="{ 'bg-accent text-accent-foreground': showProfileDropdown }"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="mr-2 h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+              <span class="hidden sm:inline">{{ user?.name || 'Profil' }}</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="ml-2 h-4 w-4 transition-transform"
+                :class="{ 'rotate-180': showProfileDropdown }"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <div
+              v-if="showProfileDropdown"
+              class="absolute right-0 top-full z-50 mt-1 w-48 rounded-md border border-border bg-popover shadow-lg"
+            >
+              <div class="flex flex-col gap-1 p-1">
+                <Link
+                  :href="route('profile.edit')"
+                  class="inline-flex h-7 items-center rounded-md px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  @click="showProfileDropdown = false"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="mr-2 h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                  Profil
+                </Link>
+                <form @submit.prevent="handleLogout" class="w-full">
+                  <button
+                    type="submit"
+                    class="inline-flex h-7 w-full items-center rounded-md px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-destructive hover:text-destructive-foreground"
+                    @click="showProfileDropdown = false"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="mr-2 h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                      />
+                    </svg>
+                    Çıkış Yap
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <!-- Admin Panel Dropdown - Only show on admin panel pages -->
+        <template v-if="isAdminPanelPage && isLoggedIn">
+          <div class="admin-panel-dropdown-container relative inline-block">
+            <button
+              @click="showAdminPanelDropdown = !showAdminPanelDropdown"
+              class="inline-flex h-8 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+              :class="{ 'bg-accent text-accent-foreground': showAdminPanelDropdown }"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="mr-2 h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                />
+              </svg>
+              Panel
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="ml-2 h-4 w-4 transition-transform"
+                :class="{ 'rotate-180': showAdminPanelDropdown }"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <div
+              v-if="showAdminPanelDropdown"
+              class="absolute right-0 top-full z-50 mt-1 w-48 rounded-md border border-border bg-popover shadow-lg"
+            >
+              <div class="flex flex-col gap-1 p-1">
+                <Link
+                  :href="route('dashboard')"
+                  class="inline-flex h-7 items-center rounded-md px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  :class="{ 'bg-accent text-accent-foreground': isActiveRoute('/dashboard') }"
+                  @click="showAdminPanelDropdown = false"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="mr-2 h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                    />
+                  </svg>
+                  Dashboard
+                </Link>
+                <Link
+                  :href="route('media.index')"
+                  class="inline-flex h-7 items-center rounded-md px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  :class="{ 'bg-accent text-accent-foreground': isActiveRoute('/media') }"
+                  @click="showAdminPanelDropdown = false"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="mr-2 h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                  Medya Yönetimi
+                </Link>
+                <Link
+                  :href="route('social-media.index')"
+                  class="inline-flex h-7 items-center rounded-md px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  :class="{ 'bg-accent text-accent-foreground': isActiveRoute('/social-media') }"
+                  @click="showAdminPanelDropdown = false"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="mr-2 h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                    />
+                  </svg>
+                  Sosyal Medya Yönetimi
+                </Link>
+                <Link
+                  :href="route('seo.edit')"
+                  class="inline-flex h-7 items-center rounded-md px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  :class="{ 'bg-accent text-accent-foreground': isActiveRoute('/seo') }"
+                  @click="showAdminPanelDropdown = false"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="mr-2 h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                    />
+                  </svg>
+                  SEO Yönetimi
+                </Link>
+              </div>
+            </div>
+          </div>
+        </template>
 
         <!-- Social Links for Non-Logged In Users -->
         <div v-if="!isLoggedIn" class="hidden md:flex">
@@ -527,6 +768,12 @@ const store = useStore();
 const showWriteFilterDropdown = ref(false);
 const writeFilter = ref('all');
 
+// Admin panel dropdown state
+const showAdminPanelDropdown = ref(false);
+
+// Profile dropdown state
+const showProfileDropdown = ref(false);
+
 // Category collapse/expand state
 const categories = inject('categories', []);
 const areAllCategoriesExpanded = computed(() => store.getters['CategorySidebar/collapsedSet'].size === 0);
@@ -543,8 +790,16 @@ onMounted(() => {
   // Close dropdown when clicking outside
   clickOutsideHandler = (event) => {
     const dropdownElement = event.target.closest('.write-filter-dropdown-container');
+    const adminDropdownElement = event.target.closest('.admin-panel-dropdown-container');
+    const profileDropdownElement = event.target.closest('.profile-dropdown-container');
     if (showWriteFilterDropdown.value && !dropdownElement) {
       showWriteFilterDropdown.value = false;
+    }
+    if (showAdminPanelDropdown.value && !adminDropdownElement) {
+      showAdminPanelDropdown.value = false;
+    }
+    if (showProfileDropdown.value && !profileDropdownElement) {
+      showProfileDropdown.value = false;
     }
   };
 
@@ -658,10 +913,57 @@ const isActiveRoute = (path) => {
   return currentUrl.startsWith(path);
 };
 
-// Check if we're on a show page (not index)
+// Check if we're on a write show page (not index)
+// This includes both /writes/{slug} and /categories/{category}/{write} routes
 const isWriteShowPage = computed(() => {
   const url = page.url;
-  return url.startsWith('/writes/') && url !== '/writes' && url !== '/writes/create';
+  
+  // Check for /writes/{slug} route
+  if (url.startsWith('/writes/') && url !== '/writes' && url !== '/writes/create') {
+    return true;
+  }
+  
+  // Check for /categories/{category}/{write} route
+  // Pattern: /categories/{category-slug}/{write-slug}
+  // Exclude: /categories/create, /categories/{id}/edit, /categories/{category}/create, etc.
+  const categoryWritePattern = /^\/categories\/[^/]+\/[^/]+$/;
+  if (
+    categoryWritePattern.test(url) &&
+    !url.includes('/create') &&
+    !url.includes('/edit') &&
+    url.split('/').length === 4 // Should be exactly: /categories/{category}/{write}
+  ) {
+    return true;
+  }
+  
+  return false;
+});
+
+const isCategoryShowPage = computed(() => {
+  const url = page.url;
+  // Check for /categories/{slug} route (category show page)
+  // Exclude: /categories, /categories/create, /categories/{id}/edit, /categories/{category}/{write}
+  if (url.startsWith('/categories/') && url !== '/categories' && url !== '/categories/create') {
+    const parts = url.split('/').filter((part) => part.length > 0);
+    // Should be exactly: /categories/{slug} (2 parts)
+    // Not: /categories/{category}/{write} (3 parts)
+    // Not: /categories/{id}/edit (3 parts with 'edit')
+    if (parts.length === 2 && parts[0] === 'categories' && !parts[1].includes('edit')) {
+      return true;
+    }
+  }
+  return false;
+});
+
+// Check if we're on an admin panel page
+const isAdminPanelPage = computed(() => {
+  const url = page.url;
+  return (
+    url.startsWith('/dashboard') ||
+    url.startsWith('/media') ||
+    url.startsWith('/social-media') ||
+    url.startsWith('/seo')
+  );
 });
 
 const isVersionShowPage = computed(() => {
@@ -686,6 +988,12 @@ const category = computed(() => page.props.category || null);
 const word = computed(() => page.props.word || null);
 const version = computed(() => page.props.version || null);
 const pack = computed(() => page.props.pack || null);
+const user = computed(() => page.props.auth?.user || null);
+
+// Handle logout
+const handleLogout = () => {
+  router.post(route('logout'));
+};
 
 // Delete functions
 const deleteWrite = async (id) => {
@@ -693,7 +1001,26 @@ const deleteWrite = async (id) => {
     return;
   }
   try {
-    await router.delete(route('writes.destroy', { write: id }));
+    const currentUrl = page.url;
+    // Check if we're on a category write page
+    const isCategoryWritePage = /^\/categories\/[^/]+\/[^/]+$/.test(currentUrl);
+    
+    await router.delete(route('writes.destroy', { write: id }), {
+      onSuccess: () => {
+        if (isCategoryWritePage) {
+          // Extract category slug from URL
+          const urlParts = currentUrl.split('/').filter((part) => part.length > 0);
+          if (urlParts.length >= 2 && urlParts[0] === 'categories') {
+            const categorySlug = urlParts[1];
+            router.visit(route('categories.show', { category: categorySlug }));
+          } else {
+            router.visit(route('writes.index'));
+          }
+        } else {
+          router.visit(route('writes.index'));
+        }
+      },
+    });
   } catch (error) {
     console.error('Error deleting write:', error);
   }
