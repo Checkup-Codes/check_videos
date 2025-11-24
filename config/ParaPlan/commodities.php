@@ -3,10 +3,12 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Metals API Configuration
+    | Commodities API Configuration
     |--------------------------------------------------------------------------
     |
-    | Configuration for the external metals API integration.
+    | Configuration for the external commodities API integration.
+    | Commodities include metals (gold, silver, platinum, etc.) and other
+    | tradable goods.
     |
     */
 
@@ -18,13 +20,16 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Supported Metal Symbols
+    | Supported Commodity Symbols
     |--------------------------------------------------------------------------
     |
-    | List of supported metal symbols with their base symbol, quote currency,
+    | List of supported commodity symbols with their base symbol, quote currency,
     | and provider symbol mapping.
     |
-    | To add a new metal/currency pair, simply add a new entry to this array.
+    | Currently includes metals (XAU, XAG, XPT, XPD, etc.) but can be extended
+    | to include other commodities.
+    |
+    | To add a new commodity/currency pair, simply add a new entry to this array.
     | No code changes are required elsewhere.
     |
     */
@@ -33,6 +38,9 @@ return [
         // XAU - Altın (Gold)
         ['base_symbol' => 'XAU', 'quote_currency' => 'TRY', 'provider_symbol' => 'XAUTRY'],
         ['base_symbol' => 'XAU', 'quote_currency' => 'USD', 'provider_symbol' => 'XAUUSD'],
+
+        // XAU variations - gram
+        ['base_symbol' => 'XAU', 'quote_currency' => 'TRY', 'provider_symbol' => 'XAUTRYG'], // Gram Altın
 
         // XAG - Gümüş (Silver)
         ['base_symbol' => 'XAG', 'quote_currency' => 'TRY', 'provider_symbol' => 'XAGTRY'],

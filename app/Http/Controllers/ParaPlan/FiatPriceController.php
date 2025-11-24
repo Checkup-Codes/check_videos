@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\ParaPlan;
 
 use App\Http\Controllers\Controller;
-use App\Models\ParaPlan\MetalPrice;
+use App\Models\ParaPlan\FiatPrice;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
-class MetalPriceController extends Controller
+class FiatPriceController extends Controller
 {
     /**
      * Maximum age of price data in hours before warning
@@ -18,46 +18,46 @@ class MetalPriceController extends Controller
 
     public function latest(Request $request): JsonResponse
     {
-        // Get all configured symbols
-        $symbols = config('paraplan.metals.symbols', []);
+        // Get all configured pairs
+        $pairs = config('paraplan.fiat.pairs', []);
 
         // Filter by requested symbols if provided
         $requestedSymbols = $request->query('symbols');
         if ($requestedSymbols) {
             $requestedSymbolsArray = array_map('trim', explode(',', $requestedSymbols));
 
-            $symbols = array_filter($symbols, function ($symbol) use ($requestedSymbolsArray) {
-                return in_array($symbol['provider_symbol'], $requestedSymbolsArray);
+            $pairs = array_filter($pairs, function ($pair) use ($requestedSymbolsArray) {
+                return in_array($pair['provider_symbol'], $requestedSymbolsArray);
             });
         }
 
-        // Create cache key based on requested symbols
-        $cacheKey = 'metal_prices_latest_' . md5(json_encode($symbols));
-        
+        // Create cache key based on requested pairs
+        $cacheKey = 'fiat_prices_latest_' . md5(json_encode($pairs));
+
         // Cache for 5 minutes to reduce database load
-        $results = Cache::remember($cacheKey, 300, function () use ($symbols) {
-            return $this->fetchLatestPrices($symbols);
+        $results = Cache::remember($cacheKey, 300, function () use ($pairs, $request) {
+            return $this->fetchLatestRates($pairs, $request);
         });
 
-        $supportedMetals = array_values(array_unique(array_map(
-            static fn($symbol) => $symbol['base_symbol'],
-            $symbols
+        $supportedBaseCurrencies = array_values(array_unique(array_map(
+            static fn($pair) => $pair['base_currency'],
+            $pairs
         )));
 
         $supportedQuoteCurrencies = array_values(array_unique(array_map(
-            static fn($symbol) => $symbol['quote_currency'],
-            $symbols
+            static fn($pair) => $pair['quote_currency'],
+            $pairs
         )));
 
         $supportedProviderSymbols = array_values(array_unique(array_map(
-            static fn($symbol) => $symbol['provider_symbol'],
-            $symbols
+            static fn($pair) => $pair['provider_symbol'],
+            $pairs
         )));
 
         // Check if any data is stale
         $hasStaleData = false;
         $oldestDataAge = null;
-        
+
         foreach ($results as $result) {
             if (isset($result['data_age_hours'])) {
                 if ($result['data_age_hours'] > self::MAX_DATA_AGE_HOURS) {
@@ -76,8 +76,8 @@ class MetalPriceController extends Controller
                 return $item;
             }, $results),
             'meta' => [
-                'unit'                      => 'gram',
-                'supported_metals'          => $supportedMetals,
+                'unit'                      => 'rate',
+                'supported_base_currencies' => $supportedBaseCurrencies,
                 'supported_quote_currencies' => $supportedQuoteCurrencies,
                 'supported_provider_symbols' => $supportedProviderSymbols,
                 'has_stale_data'            => $hasStaleData,
@@ -88,37 +88,45 @@ class MetalPriceController extends Controller
     }
 
     /**
-     * Fetch latest prices from database
+     * Fetch latest rates from database
      */
-    private function fetchLatestPrices(array $symbols): array
+    private function fetchLatestRates(array $pairs, ?Request $request = null): array
     {
         $results = [];
-        $unit = 'gram';
         $now = Carbon::now();
 
-        foreach ($symbols as $symbolConfig) {
-            $providerSymbol = $symbolConfig['provider_symbol'];
+        foreach ($pairs as $pairConfig) {
+            $providerSymbol = $pairConfig['provider_symbol'];
 
-            $latestPrice = MetalPrice::where('provider_symbol', $providerSymbol)
+            $query = FiatPrice::where('provider_symbol', $providerSymbol);
+
+            // Filter by source if provided
+            $requestedSource = $request?->query('source');
+            if ($requestedSource) {
+                $query->where('source', $requestedSource);
+            }
+
+            $latestRate = $query
                 ->orderBy('price_time', 'desc')
                 ->orderBy('updated_at', 'desc')
                 ->first();
 
-            if ($latestPrice) {
+            if ($latestRate) {
                 // Calculate data age
-                $priceTime = $latestPrice->price_time ?? $latestPrice->updated_at;
+                $priceTime = $latestRate->price_time ?? $latestRate->updated_at;
                 $dataAgeHours = $priceTime ? $now->diffInHours($priceTime) : null;
                 $isStale = $dataAgeHours !== null && $dataAgeHours > self::MAX_DATA_AGE_HOURS;
 
                 $results[] = [
-                    'base_symbol'      => $latestPrice->base_symbol,
-                    'quote_currency'   => $latestPrice->quote_currency,
-                    'provider_symbol'  => $latestPrice->provider_symbol,
-                    'price'            => (string) $latestPrice->price,
-                    'price_time'       => $latestPrice->price_time?->toIso8601String(), // API'nin verdiği fiyat zamanı
-                    'price_time_unix'  => $latestPrice->price_time?->timestamp, // Unix timestamp olarak da
-                    'updated_at'       => $latestPrice->updated_at?->toIso8601String(), // Veritabanı kayıt zamanı
-                    'unit'             => $unit,
+                    'base_currency'    => $latestRate->base_currency,
+                    'quote_currency'   => $latestRate->quote_currency,
+                    'provider_symbol'  => $latestRate->provider_symbol,
+                    'rate'             => (string) $latestRate->rate,
+                    'price_time'       => $latestRate->price_time?->toIso8601String(),
+                    'price_time_unix'  => $latestRate->price_time?->timestamp,
+                    'updated_at'       => $latestRate->updated_at?->toIso8601String(),
+                    'unit'             => 'rate',
+                    'source'           => $latestRate->source ?? 'metalpriceapi',
                     'data_age_hours'   => $dataAgeHours,
                     'is_stale'         => $isStale,
                 ];

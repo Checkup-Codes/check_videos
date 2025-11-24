@@ -9,9 +9,21 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // ParaPlan API endpoints - All require API key authentication
 Route::prefix('paraplan')->middleware(\App\Http\Middleware\ParaPlan\ValidateApiKey::class)->group(function () {
-    // Metals latest prices endpoint with rate limiting (60 requests per minute)
-    Route::get('/metals/latest', [\App\Http\Controllers\ParaPlan\MetalPriceController::class, 'latest'])
+    // Commodities latest prices endpoint with rate limiting (60 requests per minute)
+    Route::get('/commodities/latest', [\App\Http\Controllers\ParaPlan\CommodityPriceController::class, 'latest'])
         ->middleware('throttle:60,1');
+
+    // Crypto latest prices endpoint with rate limiting (60 requests per minute)
+    Route::get('/crypto/latest', [\App\Http\Controllers\ParaPlan\CryptoPriceController::class, 'latest'])
+        ->middleware('throttle:60,1');
+
+    // Fiat currency rates endpoint with rate limiting (60 requests per minute)
+    Route::get('/fiat/latest', [\App\Http\Controllers\ParaPlan\FiatPriceController::class, 'latest'])
+        ->middleware('throttle:60,1');
+
+    // Manual price fetch endpoint (admin/testing) - Very strict rate limiting (5 requests per hour)
+    Route::post('/fetch', [\App\Http\Controllers\ParaPlan\FetchPricesController::class, 'fetch'])
+        ->middleware('throttle:5,60');
 
     // Feedback endpoint with rate limiting (5 requests per minute)
     Route::post('/feedback', [\App\Http\Controllers\ParaPlan\FeedbackController::class, 'store'])
