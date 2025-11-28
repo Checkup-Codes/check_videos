@@ -22,8 +22,13 @@ if (php_sapi_name() === 'cli') {
     }
 } else {
     // For Web, use HTTP_HOST to determine environment file
-    $host = $_SERVER['HTTP_HOST'] ?? '';
+    $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? '';
+    
+    // Remove www. prefix
     $host = preg_replace('/^www\./', '', $host);
+    
+    // Remove port number if present (e.g., checkupcodes.com:80 -> checkupcodes.com)
+    $host = preg_replace('/:\d+$/', '', $host);
 
     if (!empty($host)) {
         $envFile = '.env.' . $host;
@@ -39,8 +44,21 @@ if ($envFile && file_exists($basePath . '/' . $envFile)) {
     $resolvedEnvFile = $envFile ?? '.env';
 }
 
+// Debug logging for troubleshooting (can be removed in production)
+if (php_sapi_name() !== 'cli') {
+    $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'unknown';
+    error_log("[ENV] Host: {$host}, Determined env file: {$envFile}, Resolved: {$resolvedEnvFile}, Exists: " . (file_exists($basePath . '/' . $resolvedEnvFile) ? 'yes' : 'no'));
+}
+
 // Load environment variables before Application::configure()
-Dotenv::createMutable($basePath, $resolvedEnvFile)->load();
+// Only load if file exists, otherwise Dotenv will throw an exception
+if (file_exists($basePath . '/' . $resolvedEnvFile)) {
+    Dotenv::createMutable($basePath, $resolvedEnvFile)->load();
+} else {
+    // If no env file exists, log warning but don't fail
+    // Environment variables may be set externally (e.g., via server config)
+    error_log("Warning: Environment file not found: {$resolvedEnvFile} at {$basePath}. Using system environment variables.");
+}
 
 $app = Application::configure(basePath: $basePath);
 
