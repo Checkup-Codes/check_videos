@@ -5,6 +5,10 @@
 
     RewriteEngine On
 
+    # Block web access to run_prices.php (only allow CLI/cronjob execution)
+    RewriteCond %{REQUEST_URI} run_prices\.php$ [NC]
+    RewriteRule ^(.*)$ - [F,L]
+
     RewriteCond %{REQUEST_FILENAME} -d [OR]
     RewriteCond %{REQUEST_FILENAME} -f
     RewriteRule ^ ^$1 [N]
