@@ -12,10 +12,20 @@ if (file_exists($maintenance = __DIR__ . '/../storage/framework/maintenance.php'
 // Register the Composer autoloader...
 require __DIR__ . '/../vendor/autoload.php';
 
-require __DIR__ . '/../bootstrap/environment.php';
+// Get the current host and remove www. prefix if exists
+$host = $_SERVER['HTTP_HOST'] ?? '';
+$host = preg_replace('/^www\./', '', $host);
 
-$app = require_once __DIR__ . '/../bootstrap/app.php';
+// Define custom .env file path based on domain
+$envFile = __DIR__ . '/../.env.' . $host;
 
-$app->handleRequest(
-    request: Request::capture()
-)->send();
+// Load domain-specific .env file if exists, otherwise fallback to default .env
+if (file_exists($envFile)) {
+    $app = require_once __DIR__ . '/../bootstrap/app.php';
+    $app->loadEnvironmentFrom('.env.' . $host);
+} else {
+    $app = require_once __DIR__ . '/../bootstrap/app.php';
+}
+
+// Bootstrap Laravel and handle the request...
+$app->handleRequest(Request::capture());
