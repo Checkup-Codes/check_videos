@@ -31,25 +31,30 @@
               <div class="skeleton h-4 w-24 rounded-md"></div>
             </div>
             <template v-else>
-              <h1 class="mb-2 text-2xl font-bold text-foreground sm:mb-3">{{ write.title }}</h1>
-              <div class="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs sm:mb-0">
-                <span class="text-muted-foreground">{{ formatDate(write.created_at) }}</span>
+              <h1 class="mb-4 text-3xl font-bold leading-tight text-foreground sm:text-4xl">{{ write.title }}</h1>
+              <div class="mb-6 flex flex-wrap items-center gap-3 text-sm">
+                <span class="inline-flex items-center gap-1.5 text-muted-foreground">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span class="font-medium">{{ formatDate(write.created_at) }}</span>
+                </span>
                 <template v-if="writeCategories.length > 0">
                   <span class="text-muted-foreground/40">•</span>
-                  <div class="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                  <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
                     <template v-for="(categoryPath, index) in writeCategories" :key="index">
-                      <div class="inline-flex items-center gap-0.5 text-muted-foreground">
+                      <div class="inline-flex items-center gap-1">
                         <template v-for="(category, catIndex) in categoryPath" :key="category.id">
                           <Link
                             :href="getCategoryRoute(category)"
-                            class="font-medium transition-colors hover:text-foreground"
+                            class="font-semibold text-primary transition-colors hover:underline"
                           >
                             {{ category.name }}
                           </Link>
-                          <span v-if="catIndex < categoryPath.length - 1" class="text-muted-foreground/40">/</span>
+                          <span v-if="catIndex < categoryPath.length - 1" class="text-muted-foreground/50">/</span>
                         </template>
                       </div>
-                      <span v-if="index < writeCategories.length - 1" class="text-muted-foreground/30">,</span>
+                      <span v-if="index < writeCategories.length - 1" class="text-muted-foreground/40">,</span>
                     </template>
                   </div>
                 </template>
@@ -120,8 +125,15 @@
             </div>
           </div>
 
-          <div v-if="!isLoading" class="mt-8 text-sm text-muted-foreground">
-            {{ formatNumber(write.views_count) }} görüntülenme
+          <div v-if="!isLoading" class="mt-10 flex items-center gap-2 border-t border-border/60 pt-6">
+            <div class="inline-flex items-center gap-2 rounded-md bg-muted/50 px-3 py-1.5 text-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              <span class="font-medium text-foreground">{{ formatNumber(write.views_count) }}</span>
+              <span class="text-muted-foreground">görüntülenme</span>
+            </div>
           </div>
         </div>
       </div>
@@ -146,7 +158,7 @@
 
     <div
       v-if="!isLoading && showTableOfContents && !showDraw"
-      class="fixed right-0 top-12 z-40 h-[calc(100vh-3rem)] w-80 transform border-l border-border bg-popover shadow-2xl transition-transform duration-300 2xl:hidden"
+      class="fixed right-0 top-12 z-40 h-[calc(100vh-3rem)] lg:h-[calc(100vh-5.5rem)] w-80 transform border-l border-border bg-popover shadow-2xl transition-transform duration-300 2xl:hidden"
       :class="{ 'translate-x-full': !isTableOfContentsOpen }"
     >
       <div class="flex h-full flex-col">
@@ -272,7 +284,7 @@ import { ref, onMounted, computed, nextTick, onUnmounted, watch, inject } from '
 import { usePage, router, Link } from '@inertiajs/vue3';
 import ExcalidrawComponent from '@/Components/ExcalidrawComponent.vue';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
-import '@/Shared/Css/quill-custom-styles.css';
+import '@/Shared/Css/quill-styles.css';
 import { useGsapFadeIn } from '@/Pages/WritesCategories/_utils/useGsapAnimation.js';
 import { useProcessedQuillContent } from '@/Pages/WritesCategories/_utils/useProcessedQuillContent.js';
 

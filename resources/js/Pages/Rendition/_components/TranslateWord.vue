@@ -3,65 +3,65 @@
     <!-- Quiz Tamamlandıysa -->
     <div
       v-if="!gameState.isPlaying && gameState.userResponses.length > 0"
-      class="w-full max-w-2xl rounded-lg border border-base-300 bg-base-100 p-6"
+      class="w-full max-w-2xl rounded-lg border border-border bg-card p-6 shadow-sm"
     >
       <!-- Başlık ve Puan -->
       <div class="mb-4 text-center">
-        <h2 class="mb-2 text-xl font-semibold text-base-content">Test Tamamlandı</h2>
-        <div class="inline-flex items-center gap-2 rounded bg-base-200 px-3 py-1">
-          <span class="text-base-content/70 text-sm">Puan:</span>
-          <span class="text-lg font-bold text-base-content">{{ calculateScore }} / 100</span>
+        <h2 class="mb-2 text-xl font-semibold text-foreground">Test Tamamlandı</h2>
+        <div class="inline-flex items-center gap-2 rounded bg-muted px-3 py-1">
+          <span class="text-muted-foreground text-sm">Puan:</span>
+          <span class="text-lg font-bold text-foreground">{{ calculateScore }} / 100</span>
         </div>
       </div>
 
       <!-- İstatistikler -->
       <div class="mb-4 grid grid-cols-2 gap-4">
-        <div class="rounded border border-base-300 bg-base-200 p-3 text-center">
+        <div class="rounded border border-border bg-muted p-3 text-center">
           <div class="mb-1">
-            <div class="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
-              <span class="text-sm font-bold text-green-600">{{ correctCount }}</span>
+            <div class="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+              <span class="text-sm font-bold text-green-600 dark:text-green-400">{{ correctCount }}</span>
             </div>
           </div>
-          <p class="text-base-content/70 text-xs">Doğru</p>
+          <p class="text-muted-foreground text-xs">Doğru</p>
         </div>
-        <div class="rounded border border-base-300 bg-base-200 p-3 text-center">
+        <div class="rounded border border-border bg-muted p-3 text-center">
           <div class="mb-1">
-            <div class="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-red-100">
-              <span class="text-sm font-bold text-red-600">{{ incorrectCount }}</span>
+            <div class="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
+              <span class="text-sm font-bold text-red-600 dark:text-red-400">{{ incorrectCount }}</span>
             </div>
           </div>
-          <p class="text-base-content/70 text-xs">Yanlış</p>
+          <p class="text-muted-foreground text-xs">Yanlış</p>
         </div>
       </div>
 
       <!-- Cevap Listesi -->
       <div class="mb-4">
-        <h3 class="mb-2 text-sm font-medium text-base-content">Cevaplarınız</h3>
+        <h3 class="mb-2 text-sm font-medium text-foreground">Cevaplarınız</h3>
         <div class="max-h-48 space-y-2 overflow-y-auto">
           <div
             v-for="response in gameState.userResponses"
             :key="response.word_id"
-            class="flex items-center justify-between rounded border border-base-300 bg-base-200 p-2"
+            class="flex items-center justify-between rounded border border-border bg-muted p-2"
           >
             <div class="flex items-center gap-2">
               <div
                 class="flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold"
-                :class="response.correct ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'"
+                :class="response.correct ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400'"
               >
                 {{ response.correct ? '✓' : '✗' }}
               </div>
               <div class="flex flex-col">
-                <span class="text-sm font-medium text-base-content">
+                <span class="text-sm font-medium text-foreground">
                   {{ wordsMap[response.word_id]?.word || 'Unknown' }}
                 </span>
-                <span class="text-base-content/70 text-xs">
+                <span class="text-muted-foreground text-xs">
                   {{ wordsMap[response.word_id]?.meaning || '' }}
                 </span>
               </div>
             </div>
             <span
               class="inline-flex items-center rounded px-2 py-1 text-xs font-medium"
-              :class="response.correct ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+              :class="response.correct ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400'"
             >
               {{ response.correct ? 'Doğru' : 'Yanlış' }}
             </span>
@@ -75,7 +75,7 @@
         <button
           v-if="hasUser"
           @click="updateWordStats"
-          class="w-full rounded border border-base-300 bg-base-content px-4 py-2 text-center text-sm font-medium text-base-100 transition hover:bg-base-300 hover:text-base-content"
+          class="inline-flex w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90"
           :disabled="isUpdating"
         >
           {{ isUpdating ? 'Güncelleniyor...' : 'İstatistikleri Güncelle' }}
@@ -84,13 +84,13 @@
         <div class="flex gap-2">
           <button
             @click="emit('game-completed')"
-            class="flex-1 rounded border border-base-300 bg-base-content px-4 py-2 text-center text-sm font-medium text-base-100 transition hover:bg-base-300 hover:text-base-content"
+            class="flex-1 inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90"
           >
             Pakete Dön
           </button>
           <button
             @click="restartGame"
-            class="flex-1 rounded border border-base-300 px-4 py-2 text-sm font-medium text-base-content transition hover:bg-base-200"
+            class="flex-1 inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
           >
             Tekrar Başla
           </button>
@@ -101,16 +101,16 @@
     <!-- Quiz Devam Ediyorsa -->
     <div
       v-else
-      class="relative w-full max-w-2xl rounded-lg border border-base-300 bg-base-100 p-6 transition-colors duration-500"
+      class="relative w-full max-w-2xl rounded-lg border border-border bg-card p-6 shadow-sm transition-colors duration-500"
       :class="{
-        'bg-base-100': !gameState.showAnswer,
-        'bg-green-50': gameState.showAnswer && gameState.isCorrect,
-        'bg-red-50': gameState.showAnswer && !gameState.isCorrect,
+        'bg-card': !gameState.showAnswer,
+        'bg-green-50 dark:bg-green-900/10': gameState.showAnswer && gameState.isCorrect,
+        'bg-red-50 dark:bg-red-900/10': gameState.showAnswer && !gameState.isCorrect,
       }"
     >
       <!-- Progress Bar -->
-      <div class="relative mb-4 h-1 w-full overflow-hidden rounded-full bg-base-200">
-        <div ref="progressBar" class="h-full w-0 bg-base-content"></div>
+      <div class="relative mb-4 h-1 w-full overflow-hidden rounded-full bg-muted">
+        <div ref="progressBar" class="h-full w-0 bg-primary"></div>
         <div
           ref="progressBarGlow"
           class="absolute left-0 top-0 h-full w-[50px] bg-gradient-to-r from-transparent via-white/30 to-transparent"
@@ -118,18 +118,18 @@
       </div>
 
       <!-- Soru Sayacı -->
-      <div class="text-base-content/70 mb-4 text-right text-sm">
+      <div class="text-muted-foreground mb-4 text-right text-sm">
         Soru {{ gameState.currentIndex + 1 }} / {{ gameState.totalQuestions }}
       </div>
 
       <!-- Soru -->
       <div v-if="gameState.currentQuestion" class="space-y-4" ref="questionContainer">
         <div>
-          <h2 class="mb-2 text-2xl font-semibold text-base-content">"{{ gameState.currentQuestion.word }}"</h2>
-          <p class="text-base-content/70 mb-3">Bu kelimenin anlamı nedir?</p>
+          <h2 class="mb-2 text-2xl font-semibold text-foreground">"{{ gameState.currentQuestion.word }}"</h2>
+          <p class="text-muted-foreground mb-3">Bu kelimenin anlamı nedir?</p>
           <div class="flex items-center justify-between">
             <span
-              class="inline-flex items-center rounded border border-base-300 bg-base-200 px-2 py-1 text-xs text-base-content"
+              class="inline-flex items-center rounded border border-border bg-muted px-2 py-1 text-xs text-foreground"
             >
               {{ getWordType(gameState.currentQuestion.type) }}
             </span>
@@ -140,7 +140,7 @@
                 gameState.currentQuestion.example_sentences.length > 1
               "
               @click="showHint"
-              class="text-base-content/70 text-xs transition-colors hover:text-base-content"
+              class="text-muted-foreground text-xs transition-colors hover:text-foreground"
             >
               Sonraki İpucu ({{ gameState.currentHintIndex + 1 }}/{{
                 gameState.currentQuestion.example_sentences.length
@@ -150,15 +150,15 @@
         </div>
 
         <!-- İpucu Gösterimi -->
-        <div v-if="gameState.hintShown" class="rounded border border-base-300 bg-base-200 p-3">
-          <p class="text-sm font-medium text-base-content">Örnek Cümle:</p>
+        <div v-if="gameState.hintShown" class="rounded border border-border bg-muted p-3">
+          <p class="text-sm font-medium text-foreground">Örnek Cümle:</p>
           <p
             v-if="gameState.currentQuestion.example_sentences && gameState.currentQuestion.example_sentences.length > 0"
-            class="mt-1 text-sm text-base-content"
+            class="mt-1 text-sm text-foreground"
           >
             {{ gameState.currentQuestion.example_sentences[gameState.currentHintIndex].sentence }}
           </p>
-          <p v-else class="mt-1 text-sm text-base-content">Bu kelime için örnek cümle bulunmuyor.</p>
+          <p v-else class="mt-1 text-sm text-foreground">Bu kelime için örnek cümle bulunmuyor.</p>
         </div>
 
         <div class="space-y-4">
@@ -169,12 +169,12 @@
             :disabled="gameState.showAnswer"
             @keyup.enter="checkAnswer"
             placeholder="Cevabınızı yazın..."
-            class="w-full rounded border border-base-300 bg-base-100 p-3 text-base-content focus:border-base-content focus:outline-none focus:ring-1 focus:ring-base-content disabled:cursor-not-allowed"
+            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           />
           <button
             @click="checkAnswer"
             :disabled="!gameState.userInput.trim() || gameState.showAnswer"
-            class="w-full rounded border border-base-300 bg-base-content px-4 py-3 text-center text-sm font-medium text-base-100 transition hover:bg-base-300 hover:text-base-content disabled:cursor-not-allowed disabled:opacity-50"
+            class="inline-flex w-full items-center justify-center rounded-md bg-primary px-4 py-3 text-sm font-medium text-primary-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90"
           >
             {{ gameState.showAnswer ? 'Sonraki Soru' : 'Cevapla' }}
           </button>
@@ -183,27 +183,27 @@
         <!-- Cevap gösterimi -->
         <div
           v-if="gameState.showAnswer"
-          class="mt-4 rounded border border-base-300 p-4"
+          class="mt-4 rounded border border-border p-4"
           :class="{
-            'bg-red-50': !gameState.isCorrect,
-            'bg-green-50': gameState.isCorrect,
+            'bg-red-50 dark:bg-red-900/20': !gameState.isCorrect,
+            'bg-green-50 dark:bg-green-900/20': gameState.isCorrect,
           }"
         >
           <p
             class="text-sm font-medium"
             :class="{
-              'text-red-600': !gameState.isCorrect,
-              'text-green-600': gameState.isCorrect,
+              'text-red-600 dark:text-red-400': !gameState.isCorrect,
+              'text-green-600 dark:text-green-400': gameState.isCorrect,
             }"
           >
             Doğru Cevap:
           </p>
-          <p class="mt-1 text-base-content">{{ gameState.currentQuestion.meaning }}</p>
+          <p class="mt-1 text-foreground">{{ gameState.currentQuestion.meaning }}</p>
 
           <!-- Tüm anlamlar -->
           <div v-if="gameState.currentQuestion.meanings && gameState.currentQuestion.meanings.length > 1" class="mt-3">
-            <p class="text-base-content/70 text-sm font-medium">Diğer Anlamlar:</p>
-            <ul class="mt-1 list-inside list-disc space-y-1 text-sm text-base-content">
+            <p class="text-muted-foreground text-sm font-medium">Diğer Anlamlar:</p>
+            <ul class="mt-1 list-inside list-disc space-y-1 text-sm text-foreground">
               <li v-for="(meaning, index) in gameState.currentQuestion.meanings" :key="index">
                 {{ meaning.meaning }}
               </li>

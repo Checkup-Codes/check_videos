@@ -114,7 +114,7 @@ class WritesController extends Controller
 
         return redirect()
             ->route('writes.index')
-            ->with('success', 'Çöp, bir yazı daha kazandı!');
+            ->with('success', 'Yazı başarıyla silindi.');
     }
 
     /**
@@ -146,7 +146,7 @@ class WritesController extends Controller
 
         return redirect()
             ->route('writes.show', ['write' => $write->slug])
-            ->with('success', 'Nur topu gibi bir yazınız daha oldu.');
+            ->with('success', 'Yazı başarıyla oluşturuldu.');
     }
 
     /**
@@ -179,10 +179,11 @@ class WritesController extends Controller
 
         try {
             $result = $this->writeService->updateWrite($write, $validated);
+            $updatedWrite = $result['data'];
 
             return redirect()
-                ->route('writes.index')
-                ->with('success', 'Yazıyı modifiye ettik.');
+                ->route('writes.show', ['write' => $updatedWrite->slug])
+                ->with('success', 'Yazı başarıyla güncellendi.');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Güncelleme sırasında bir hata oluştu.']);
         }

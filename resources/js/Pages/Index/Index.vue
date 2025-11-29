@@ -2,7 +2,9 @@
   <div ref="canvasContainer" class="relative min-h-[calc(100vh-3rem)] w-full overflow-hidden">
     <canvas ref="canvasRef" class="absolute inset-0 h-full w-full"></canvas>
     <!-- Hero Section -->
-    <section class="relative z-10 flex min-h-[calc(100vh-3rem)] items-center justify-center px-4 py-12 sm:py-16">
+    <section
+      class="relative z-10 flex min-h-[calc(100vh-3rem)] items-center justify-center px-4 pb-12 pt-6 sm:pb-16 sm:pt-10"
+    >
       <div class="mx-auto max-w-6xl text-center">
         <!-- Logo Section -->
         <div class="mb-8 flex justify-center">

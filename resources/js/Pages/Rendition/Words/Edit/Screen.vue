@@ -2,10 +2,10 @@
   <CheckScreen>
     <GoBackButton url="/rendition/words" />
     <!-- Error Alert -->
-    <div v-if="props.error" class="mx-6 mt-6 rounded-md bg-red-50 p-4">
+    <div v-if="props.error" class="mx-6 mt-6 rounded-lg border border-destructive/50 bg-destructive/10 p-4">
       <div class="flex">
         <div class="flex-shrink-0">
-          <svg class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="h-5 w-5 text-destructive" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -15,15 +15,15 @@
           </svg>
         </div>
         <div class="ml-3">
-          <h3 class="text-sm font-medium text-red-800">{{ props.error }}</h3>
+          <h3 class="text-sm font-medium text-destructive">{{ props.error }}</h3>
         </div>
       </div>
     </div>
 
-    <div v-if="!props.word && !props.error" class="mx-6 mt-6 rounded-md bg-yellow-50 p-4">
+    <div v-if="!props.word && !props.error" class="mx-6 mt-6 rounded-lg border border-yellow-500/50 bg-yellow-500/10 p-4">
       <div class="flex">
         <div class="flex-shrink-0">
-          <svg class="h-5 w-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="h-5 w-5 text-yellow-600 dark:text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -33,48 +33,45 @@
           </svg>
         </div>
         <div class="ml-3">
-          <h3 class="text-sm font-medium text-yellow-800">Kelime bulunamadı veya yüklenemedi.</h3>
+          <h3 class="text-sm font-medium text-yellow-800 dark:text-yellow-200">Kelime bulunamadı veya yüklenemedi.</h3>
           <div class="mt-2">
-            <a href="/rendition/words" class="text-sm font-medium text-yellow-800 underline">Kelime listesine dön</a>
+            <a href="/rendition/words" class="text-sm font-medium text-yellow-800 dark:text-yellow-200 underline">Kelime listesine dön</a>
           </div>
         </div>
       </div>
     </div>
 
-    <div v-if="props.word" class="card bg-base-100 shadow-lg">
-      <div class="card-body p-6">
-        <form @submit.prevent="submitForm" class="space-y-6">
-          <div class="text-center">
-            <h1 class="text-2xl font-bold text-base-content">Kelime Düzenle</h1>
-            <p class="text-base-content/70">{{ props.word.word }} kelimesinin bilgilerini güncelleyin</p>
-          </div>
+    <div v-if="props.word" class="rounded-lg border border-border bg-card p-6 shadow-sm">
+      <form @submit.prevent="submitForm" class="space-y-6">
+        <div class="text-center">
+          <h1 class="text-2xl font-bold text-foreground">Kelime Düzenle</h1>
+          <p class="text-muted-foreground">{{ props.word.word }} kelimesinin bilgilerini güncelleyin</p>
+        </div>
 
           <!-- Temel Bilgiler -->
           <div class="space-y-4">
             <!-- Kelime -->
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div class="form-control w-full">
-                <label class="label">
-                  <span class="label-text font-semibold">Kelime</span>
+              <div class="w-full space-y-2">
+                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  Kelime
                 </label>
                 <input
                   type="text"
                   v-model="form.word"
-                  class="input-bordered input w-full"
+                  class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   placeholder="Kelimeyi girin..."
                   required
                 />
-                <label v-if="errors.word" class="label">
-                  <span class="label-text-alt text-error">{{ errors.word }}</span>
-                </label>
+                <p v-if="errors.word" class="text-xs text-destructive">{{ errors.word }}</p>
               </div>
 
               <!-- Tür -->
-              <div class="form-control w-full">
-                <label class="label">
-                  <span class="label-text font-semibold">Tür</span>
+              <div class="w-full space-y-2">
+                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  Tür
                 </label>
-                <select v-model="form.type" class="select-bordered select w-full">
+                <select v-model="form.type" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
                   <option value="">Tür seçiniz</option>
                   <option value="noun">İsim (Noun)</option>
                   <option value="verb">Fiil (Verb)</option>
@@ -86,16 +83,14 @@
                   <option value="interjection">Ünlem (Interjection)</option>
                   <option value="phrase">Deyim (Phrase)</option>
                 </select>
-                <label v-if="errors.type" class="label">
-                  <span class="label-text-alt text-error">{{ errors.type }}</span>
-                </label>
+                <p v-if="errors.type" class="text-xs text-destructive">{{ errors.type }}</p>
               </div>
             </div>
 
             <!-- Anlamlar -->
-            <div class="form-control w-full">
-              <label class="label">
-                <span class="label-text font-semibold">Anlamlar</span>
+            <div class="w-full space-y-2">
+              <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Anlamlar
               </label>
 
               <div class="space-y-3">
@@ -103,21 +98,21 @@
                   <input
                     type="text"
                     v-model="meaning.meaning"
-                    class="input-bordered input w-full"
+                    class="flex h-10 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     :placeholder="`${index + 1}. anlam`"
                     :data-index="index"
                     @keydown.enter.prevent="addMeaningAndFocus(index)"
                     required
                   />
-                  <div class="form-control">
-                    <label class="label cursor-pointer gap-2">
-                      <span class="label-text text-xs">Birincil</span>
+                  <div class="flex items-center gap-2">
+                    <label class="flex cursor-pointer items-center gap-2">
+                      <span class="text-xs text-foreground">Birincil</span>
                       <input
                         type="radio"
                         name="primaryMeaning"
                         :checked="meaning.is_primary"
                         @change="setPrimaryMeaning(index)"
-                        class="h-4 w-4 border border-base-300 bg-base-100 text-base-content focus:ring-1 focus:ring-base-content"
+                        class="h-4 w-4 border border-input text-primary focus:ring-2 focus:ring-ring focus:ring-offset-2"
                       />
                     </label>
                   </div>
@@ -125,7 +120,7 @@
                     v-if="form.meanings.length > 1"
                     type="button"
                     @click="removeMeaning(index)"
-                    class="rounded border border-red-300 bg-red-50 p-1 text-red-700 transition hover:bg-red-100"
+                    class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-destructive/50 bg-destructive/10 text-destructive transition-colors hover:bg-destructive/20"
                   >
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -134,16 +129,14 @@
                 </div>
               </div>
 
-              <label v-if="errors.meanings" class="label">
-                <span class="label-text-alt text-error">{{ errors.meanings }}</span>
-              </label>
+              <p v-if="errors.meanings" class="text-xs text-destructive">{{ errors.meanings }}</p>
 
               <!-- Anlam Ekleme Butonu -->
               <div class="mt-3">
                 <button
                   type="button"
                   @click="addMeaning"
-                  class="w-full rounded border border-base-300 bg-base-100 px-3 py-2 text-sm font-medium text-base-content transition hover:bg-base-200"
+                  class="inline-flex w-full items-center justify-center rounded-md border border-input bg-background px-3 py-2 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
                 >
                   <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -161,69 +154,76 @@
 
           <!-- Dil Paketleri -->
           <div class="space-y-4">
-            <div class="divider">
-              <span class="font-semibold text-base-content">Dil Paketleri</span>
+            <div class="relative">
+              <div class="absolute inset-0 flex items-center">
+                <span class="w-full border-t border-border"></span>
+              </div>
+              <div class="relative flex justify-center text-xs uppercase">
+                <span class="bg-background px-2 font-semibold text-foreground">Dil Paketleri</span>
+              </div>
             </div>
 
-            <div v-if="props.languagePacks.length === 0" class="alert alert-info">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                class="h-6 w-6 shrink-0 stroke-current"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                ></path>
-              </svg>
-              <span>Henüz dil paketi bulunmamaktadır.</span>
+            <div v-if="props.languagePacks.length === 0" class="rounded-lg border border-border bg-muted p-4">
+              <div class="flex items-center gap-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  class="h-6 w-6 shrink-0 stroke-current text-muted-foreground"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+                <span class="text-foreground">Henüz dil paketi bulunmamaktadır.</span>
+              </div>
             </div>
 
             <div v-else class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
               <div
                 v-for="pack in props.languagePacks"
                 :key="pack.id"
-                class="card cursor-pointer bg-base-200 transition-colors hover:bg-base-300"
-                :class="{ 'ring-2 ring-base-content': form.language_pack_ids.includes(pack.id) }"
+                class="cursor-pointer rounded-lg border border-border bg-muted p-4 transition-colors hover:bg-muted/80"
+                :class="{ 'ring-2 ring-primary': form.language_pack_ids.includes(pack.id) }"
                 @click="togglePack(pack.id)"
               >
-                <div class="card-body p-4">
-                  <div class="flex items-center justify-between">
-                    <div>
-                      <h3 class="font-semibold text-base-content">{{ pack.name }}</h3>
-                      <p class="text-base-content/70 text-sm">{{ pack.description }}</p>
-                    </div>
-                    <div
-                      class="rounded border border-base-300 bg-base-content px-2 py-1 text-xs font-medium text-base-100"
-                    >
-                      {{ pack.language.toUpperCase() }}
-                    </div>
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h3 class="font-semibold text-foreground">{{ pack.name }}</h3>
+                    <p class="text-muted-foreground text-sm">{{ pack.description }}</p>
                   </div>
-                  <div class="text-base-content/60 mt-2 text-xs">{{ pack.word_count || 0 }} kelime</div>
+                  <div
+                    class="rounded border border-border bg-primary px-2 py-1 text-xs font-medium text-primary-foreground"
+                  >
+                    {{ pack.language.toUpperCase() }}
+                  </div>
                 </div>
+                <div class="text-muted-foreground/60 mt-2 text-xs">{{ pack.word_count || 0 }} kelime</div>
               </div>
             </div>
 
-            <label v-if="errors.language_pack_ids" class="label">
-              <span class="label-text-alt text-error">{{ errors.language_pack_ids }}</span>
-            </label>
+            <p v-if="errors.language_pack_ids" class="text-xs text-destructive">{{ errors.language_pack_ids }}</p>
           </div>
 
           <!-- Daha Fazla Seçenek -->
-          <div class="collapse collapse-arrow bg-base-200">
-            <input type="checkbox" v-model="showAdvancedOptions" />
-            <div class="collapse-title font-semibold text-base-content">Daha Fazla Seçenek</div>
-            <div class="collapse-content">
-              <div class="grid grid-cols-1 gap-4 pt-4 md:grid-cols-2">
+          <details class="group rounded-lg border border-border bg-muted">
+            <summary class="flex cursor-pointer items-center justify-between p-4 font-semibold text-foreground">
+              <span>Daha Fazla Seçenek</span>
+              <svg class="h-5 w-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="p-4 pt-0">
+              <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <!-- Dil -->
-                <div class="form-control w-full">
-                  <label class="label">
-                    <span class="label-text">Dil</span>
+                <div class="w-full space-y-2">
+                  <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Dil
                   </label>
-                  <select v-model="form.language" class="select-bordered select w-full">
+                  <select v-model="form.language" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
                     <option value="en">İngilizce (EN)</option>
                     <option value="tr">Türkçe (TR)</option>
                     <option value="de">Almanca (DE)</option>
@@ -233,33 +233,29 @@
                     <option value="ru">Rusça (RU)</option>
                     <option value="ar">Arapça (AR)</option>
                   </select>
-                  <label v-if="errors.language" class="label">
-                    <span class="label-text-alt text-error">{{ errors.language }}</span>
-                  </label>
+                  <p v-if="errors.language" class="text-xs text-destructive">{{ errors.language }}</p>
                 </div>
 
                 <!-- Zorluk Seviyesi -->
-                <div class="form-control w-full">
-                  <label class="label">
-                    <span class="label-text">Zorluk Seviyesi</span>
+                <div class="w-full space-y-2">
+                  <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Zorluk Seviyesi
                   </label>
-                  <select v-model="form.difficulty_level" class="select-bordered select w-full">
+                  <select v-model="form.difficulty_level" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
                     <option :value="1">Kolay</option>
                     <option :value="2">Orta</option>
                     <option :value="3">Zor</option>
                     <option :value="4">Çok Zor</option>
                   </select>
-                  <label v-if="errors.difficulty_level" class="label">
-                    <span class="label-text-alt text-error">{{ errors.difficulty_level }}</span>
-                  </label>
+                  <p v-if="errors.difficulty_level" class="text-xs text-destructive">{{ errors.difficulty_level }}</p>
                 </div>
 
                 <!-- Öğrenme Durumu -->
-                <div class="form-control w-full">
-                  <label class="label">
-                    <span class="label-text">Öğrenme Durumu</span>
+                <div class="w-full space-y-2">
+                  <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Öğrenme Durumu
                   </label>
-                  <select v-model="form.learning_status" class="select-bordered select w-full">
+                  <select v-model="form.learning_status" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
                     <option :value="0">Öğrenilmedi</option>
                     <option :value="1">Öğreniliyor</option>
                     <option :value="2">Öğrenildi</option>
@@ -267,68 +263,79 @@
                 </div>
 
                 <!-- Öne Çıkar -->
-                <div class="form-control">
-                  <label class="label cursor-pointer">
-                    <span class="label-text">Öne Çıkar</span>
-                    <input
-                      type="checkbox"
-                      v-model="form.flag"
-                      class="h-4 w-4 rounded border border-base-300 bg-base-100 text-base-content focus:ring-1 focus:ring-base-content"
-                    />
+                <div class="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    v-model="form.flag"
+                    id="flag"
+                    class="h-4 w-4 rounded border border-input text-primary focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  />
+                  <label for="flag" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
+                    Öne Çıkar
                   </label>
                 </div>
               </div>
 
               <!-- İstatistikler -->
-              <div class="divider">İstatistikler</div>
-              <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div class="stats shadow">
-                  <div class="stat">
-                    <div class="stat-title">Yanlış Sayısı</div>
-                    <div class="stat-value">{{ props.word.incorrect_count }}</div>
-                  </div>
+              <div class="relative my-4">
+                <div class="absolute inset-0 flex items-center">
+                  <span class="w-full border-t border-border"></span>
                 </div>
-                <div class="stats shadow">
-                  <div class="stat">
-                    <div class="stat-title">Toplam İnceleme</div>
-                    <div class="stat-value">{{ props.word.review_count }}</div>
-                  </div>
+                <div class="relative flex justify-center text-xs uppercase">
+                  <span class="bg-background px-2 font-semibold text-foreground">İstatistikler</span>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div class="rounded-lg border border-border bg-muted p-4">
+                  <div class="text-sm font-medium text-muted-foreground">Yanlış Sayısı</div>
+                  <div class="text-2xl font-bold text-foreground">{{ props.word.incorrect_count }}</div>
+                </div>
+                <div class="rounded-lg border border-border bg-muted p-4">
+                  <div class="text-sm font-medium text-muted-foreground">Toplam İnceleme</div>
+                  <div class="text-2xl font-bold text-foreground">{{ props.word.review_count }}</div>
                 </div>
               </div>
 
               <!-- Örnek Cümleler -->
-              <div class="divider">Örnek Cümleler</div>
+              <div class="relative my-4">
+                <div class="absolute inset-0 flex items-center">
+                  <span class="w-full border-t border-border"></span>
+                </div>
+                <div class="relative flex justify-center text-xs uppercase">
+                  <span class="bg-background px-2 font-semibold text-foreground">Örnek Cümleler</span>
+                </div>
+              </div>
               <div class="space-y-4">
                 <div
                   v-for="(sentence, index) in form.example_sentences"
                   :key="index"
                   class="grid grid-cols-1 gap-3 md:grid-cols-2"
                 >
-                  <div class="form-control w-full">
-                    <label class="label">
-                      <span class="label-text">Cümle {{ index + 1 }}</span>
+                  <div class="w-full space-y-2">
+                    <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Cümle {{ index + 1 }}
                     </label>
                     <input
                       v-model="form.example_sentences[index]"
-                      class="input-bordered input w-full"
+                      class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       placeholder="Örnek cümle..."
                     />
                   </div>
                   <div class="flex items-end gap-2">
-                    <div class="form-control w-full">
-                      <label class="label">
-                        <span class="label-text">Çeviri</span>
+                    <div class="w-full space-y-2">
+                      <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        Çeviri
                       </label>
                       <input
                         v-model="form.example_translations[index]"
-                        class="input-bordered input w-full"
+                        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         placeholder="Cümle çevirisi..."
                       />
                     </div>
                     <button
                       type="button"
                       @click="removeExampleSentence(index)"
-                      class="mb-2 rounded border border-red-300 bg-red-50 p-1 text-red-700 transition hover:bg-red-100"
+                      class="mb-2 inline-flex h-10 w-10 items-center justify-center rounded-md border border-destructive/50 bg-destructive/10 text-destructive transition-colors hover:bg-destructive/20"
                     >
                       <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
@@ -344,7 +351,7 @@
                 <button
                   type="button"
                   @click="addExampleSentence"
-                  class="rounded border border-base-300 bg-base-100 px-3 py-2 text-sm font-medium text-base-content transition hover:bg-base-200"
+                  class="inline-flex items-center justify-center rounded-md border border-input bg-background px-3 py-2 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
                 >
                   <svg class="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -359,19 +366,26 @@
               </div>
 
               <!-- Eş Anlamlılar -->
-              <div class="divider">Eş Anlamlılar</div>
+              <div class="relative my-4">
+                <div class="absolute inset-0 flex items-center">
+                  <span class="w-full border-t border-border"></span>
+                </div>
+                <div class="relative flex justify-center text-xs uppercase">
+                  <span class="bg-background px-2 font-semibold text-foreground">Eş Anlamlılar</span>
+                </div>
+              </div>
               <div class="space-y-4">
                 <div class="flex flex-wrap gap-2">
                   <div
                     v-for="(synonym, index) in form.synonyms"
                     :key="index"
-                    class="flex items-center gap-1 rounded border border-base-300 bg-base-200 px-2 py-1 text-sm text-base-content"
+                    class="flex items-center gap-1 rounded-md border border-border bg-muted px-2 py-1 text-sm text-foreground"
                   >
                     {{ synonym }}
                     <button
                       type="button"
                       @click="removeSynonym(index)"
-                      class="rounded border border-base-300 bg-base-100 p-1 text-base-content transition hover:bg-base-200"
+                      class="rounded-md border border-border bg-background p-1 text-foreground transition-colors hover:bg-muted"
                     >
                       <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
@@ -388,7 +402,7 @@
                   <input
                     v-model="newSynonym"
                     type="text"
-                    class="input-bordered input w-full"
+                    class="flex h-10 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     placeholder="Yeni eş anlamlı kelime"
                     @keyup.enter.prevent="addSynonym"
                     @keydown.enter.prevent="addSynonym"
@@ -396,7 +410,7 @@
                   <button
                     type="button"
                     @click="addSynonym"
-                    class="rounded border border-base-300 bg-base-100 px-3 py-2 text-sm font-medium text-base-content transition hover:bg-base-200"
+                    class="inline-flex items-center justify-center rounded-md border border-input bg-background px-3 py-2 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
                   >
                     <svg class="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
@@ -411,15 +425,19 @@
                 </div>
               </div>
             </div>
-          </div>
+          </details>
 
           <!-- Form Buttons -->
-          <div class="divider"></div>
+          <div class="relative my-4">
+            <div class="absolute inset-0 flex items-center">
+              <span class="w-full border-t border-border"></span>
+            </div>
+          </div>
 
           <div class="flex justify-end gap-3">
             <Link
               :href="route('rendition.words.index')"
-              class="rounded border border-base-300 bg-base-100 px-4 py-2 text-sm font-medium text-base-content transition hover:bg-base-200"
+              class="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
             >
               <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -428,19 +446,24 @@
             </Link>
             <button
               type="submit"
-              class="rounded bg-base-content px-4 py-2 text-sm font-medium text-base-100 transition hover:bg-base-300 hover:text-base-content disabled:opacity-50"
+              class="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90"
               :disabled="processing"
             >
-              <span
+              <svg
                 v-if="processing"
-                class="mr-2 inline-block h-3 w-3 animate-spin rounded-full border-2 border-base-100 border-t-transparent"
-              ></span>
+                class="mr-2 h-3 w-3 animate-spin"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
               <span v-if="!processing">Değişiklikleri Kaydet</span>
               <span v-else>Kaydediliyor...</span>
             </button>
           </div>
         </form>
-      </div>
     </div>
   </CheckScreen>
 </template>
@@ -461,7 +484,6 @@ const props = defineProps({
 
 const errors = computed(() => usePage().props.errors);
 const processing = ref(false);
-const showAdvancedOptions = ref(false);
 const newSynonym = ref('');
 
 // Mevcut dil paketlerinin ID'lerini al

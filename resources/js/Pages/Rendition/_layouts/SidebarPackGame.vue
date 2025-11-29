@@ -7,7 +7,7 @@
           v-for="(game, index) in games"
           :key="index"
           @click="updateQuery(game.route)"
-          class="block border-b p-4 transition-all hover:bg-gray-100"
+          class="block border-b border-border p-4 text-foreground transition-all hover:bg-muted"
         >
           {{ game.name }}
         </Link>

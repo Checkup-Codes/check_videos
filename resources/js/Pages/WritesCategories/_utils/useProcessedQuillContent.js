@@ -3,7 +3,7 @@
 // Handles images, code blocks, lists, empty paragraphs, and DaisyUI styling
 
 import { computed, nextTick, ref, watch } from 'vue';
-import './css/quill-content.css';
+import '@/Shared/Css/quill-styles.css';
 
 // Cache for processed content
 const contentCache = new Map();

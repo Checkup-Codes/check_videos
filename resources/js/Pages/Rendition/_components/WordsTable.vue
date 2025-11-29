@@ -1,19 +1,19 @@
 <template>
-  <div class="overflow-hidden rounded-lg bg-white shadow">
-    <div class="border-b p-4">
+  <div class="overflow-hidden rounded-lg border bg-card shadow-sm">
+    <div class="border-b border-border p-4">
       <div class="flex flex-wrap gap-4">
         <div class="min-w-[200px] flex-1">
           <input
             v-model="searchQuery"
             type="text"
             placeholder="Kelime veya anlam ara..."
-            class="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           />
         </div>
         <div class="min-w-[200px] flex-1">
           <select
             v-model="languageFilter"
-            class="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <option value="">Tüm Diller</option>
             <option value="tr">Türkçe (TR)</option>
@@ -28,7 +28,7 @@
         </div>
         <button
           @click="clearFilters"
-          class="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
         >
           Filtreleri Temizle
         </button>
@@ -37,32 +37,32 @@
 
     <!-- Yükleme Durumu -->
     <div v-if="isLoading" class="p-8 text-center">
-      <div class="inline-block h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500"></div>
-      <p class="mt-2 text-gray-600">Kelime listesi yükleniyor...</p>
+      <div class="inline-block h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+      <p class="mt-2 text-muted-foreground">Kelime listesi yükleniyor...</p>
     </div>
 
     <!-- Kelime Tablosu -->
     <div v-else class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+      <table class="min-w-full divide-y divide-border">
+        <thead class="bg-muted">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Kelime</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Anlam</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Tür</th>
-            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Kelime</th>
+            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Anlam</th>
+            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Tür</th>
+            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Başarı Durumu
             </th>
             <th
               v-if="showActions"
-              class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+              class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground"
             >
               İşlemler
             </th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-200 bg-white">
+        <tbody class="divide-y divide-border bg-background">
           <tr v-if="filteredWords.length === 0" class="text-center">
-            <td :colspan="showActions ? 5 : 4" class="px-6 py-4 text-sm text-gray-500">
+            <td :colspan="showActions ? 5 : 4" class="px-6 py-4 text-sm text-muted-foreground">
               {{
                 searchQuery || languageFilter
                   ? 'Arama kriterlerine uygun kelime bulunamadı.'
@@ -70,22 +70,22 @@
               }}
             </td>
           </tr>
-          <tr v-for="word in filteredWords" :key="word.id" class="hover:bg-gray-50">
-            <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">{{ word?.word || '-' }}</td>
-            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{{ word?.meaning || '-' }}</td>
-            <td class="whitespace-nowrap px-6 py-4 text-sm capitalize text-gray-500">{{ word?.type || '-' }}</td>
-            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+          <tr v-for="word in filteredWords" :key="word.id" class="hover:bg-muted/50">
+            <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-foreground">{{ word?.word || '-' }}</td>
+            <td class="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground">{{ word?.meaning || '-' }}</td>
+            <td class="whitespace-nowrap px-6 py-4 text-sm capitalize text-muted-foreground">{{ word?.type || '-' }}</td>
+            <td class="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground">
               <span :class="getSuccessColor(calculateSuccessRate(word))">
                 {{ getSuccessStatus(calculateSuccessRate(word)) }}
               </span>
-              <span class="ml-1 text-xs text-gray-400"> ({{ calculateSuccessRate(word) }}%) </span>
+              <span class="ml-1 text-xs text-muted-foreground/70"> ({{ calculateSuccessRate(word) }}%) </span>
             </td>
-            <td v-if="showActions" class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+            <td v-if="showActions" class="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground">
               <div class="flex space-x-3">
                 <a
                   v-if="word?.id"
                   :href="route('rendition.words.edit', word.id)"
-                  class="text-gray-400 hover:text-blue-600"
+                  class="text-muted-foreground hover:text-primary transition-colors"
                   title="Düzenle"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -97,7 +97,7 @@
                 <button
                   v-if="word?.id && word?.word"
                   @click="confirmDelete(word)"
-                  class="text-gray-400 hover:text-red-600"
+                  class="text-muted-foreground hover:text-destructive transition-colors"
                   title="Sil"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -116,8 +116,8 @@
     </div>
 
     <!-- Toplam Kelime Sayısı -->
-    <div class="border-t bg-gray-50 px-6 py-4">
-      <p class="text-sm text-gray-600">Toplam Kelime Sayısı: {{ filteredWords.length }}</p>
+    <div class="border-t border-border bg-muted px-6 py-4">
+      <p class="text-sm text-muted-foreground">Toplam Kelime Sayısı: {{ filteredWords.length }}</p>
     </div>
   </div>
 </template>
@@ -218,11 +218,11 @@ const getSuccessStatus = (successRate) => {
 
 // Başarı durumuna göre renk
 const getSuccessColor = (successRate) => {
-  if (successRate >= 80) return 'text-green-600';
-  if (successRate >= 60) return 'text-green-500';
-  if (successRate >= 40) return 'text-yellow-500';
-  if (successRate >= 20) return 'text-orange-500';
-  return 'text-red-500';
+  if (successRate >= 80) return 'text-green-600 dark:text-green-400';
+  if (successRate >= 60) return 'text-green-500 dark:text-green-400';
+  if (successRate >= 40) return 'text-yellow-500 dark:text-yellow-400';
+  if (successRate >= 20) return 'text-orange-500 dark:text-orange-400';
+  return 'text-red-500 dark:text-red-400';
 };
 
 // Silme işlemi

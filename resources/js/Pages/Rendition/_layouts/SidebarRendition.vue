@@ -6,11 +6,11 @@
           <div
             v-for="languagePack in languagePacks"
             :key="languagePack.id"
-            class="rounded-lg bg-base-100 p-3 transition-all duration-200"
+            class="rounded-lg bg-background p-3 transition-all duration-200"
             :class="
               getLinkClasses(`/rendition/words/${languagePack.slug}`)
-                ? 'bg-base-content text-base-100'
-                : 'border border-base-300 hover:bg-base-300'
+                ? 'bg-primary text-primary-foreground'
+                : 'border border-border hover:bg-muted'
             "
           >
             <Link
@@ -21,7 +21,7 @@
                 <div
                   class="text-sm font-medium leading-tight"
                   :class="
-                    getLinkClasses(`/rendition/words/${languagePack.slug}`) ? 'text-base-100' : 'text-base-content'
+                    getLinkClasses(`/rendition/words/${languagePack.slug}`) ? 'text-primary-foreground' : 'text-foreground'
                   "
                 >
                   {{ languagePack.name }}
@@ -30,14 +30,16 @@
                   class="text-xs uppercase"
                   :class="
                     getLinkClasses(`/rendition/words/${languagePack.slug}`)
-                      ? 'text-base-100/70'
-                      : 'text-base-content/70'
+                      ? 'text-primary-foreground/70'
+                      : 'text-muted-foreground'
                   "
                 >
                   {{ languagePack.language }}
                 </div>
               </div>
-              <div class="badge badge-sm">{{ languagePack.word_count || 0 }}</div>
+              <div class="inline-flex items-center rounded-full border border-border bg-muted px-2.5 py-0.5 text-xs font-semibold text-foreground">
+                {{ languagePack.word_count || 0 }}
+              </div>
             </Link>
           </div>
         </div>
@@ -76,7 +78,7 @@ const getLinkClasses = (href) => {
 <style scoped>
 /* Embedded sidebar content design - subtle recessed effect */
 :deep(.sidebar-content-embedded) {
-  background: hsl(var(--b1) / 0.7) !important;
+  background: hsl(var(--background) / 0.7) !important;
   position: relative;
 }
 
@@ -87,7 +89,7 @@ const getLinkClasses = (href) => {
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(to right, transparent, hsl(var(--b2) / 0.3), transparent);
+  background: linear-gradient(to right, transparent, hsl(var(--muted) / 0.3), transparent);
   pointer-events: none;
 }
 </style>

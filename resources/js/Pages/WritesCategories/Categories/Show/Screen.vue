@@ -2,39 +2,59 @@
   <CheckScreen>
     <div class="p-4 pt-6 sm:p-6 sm:pt-8">
       <!-- Compact Header Section -->
-      <div v-if="!isLoading" class="mb-6 border-b border-border pb-4">
+      <div v-if="!isLoading" class="mb-8 border-b border-border/60 pb-6">
         <div class="flex items-start justify-between gap-4">
           <div class="min-w-0 flex-1">
-            <h1 class="truncate text-xl font-semibold text-foreground sm:text-2xl">
+            <!-- Breadcrumb -->
+            <nav v-if="categoryBreadcrumb.length > 1" class="mb-3 flex items-center gap-1.5 text-xs">
+              <template v-for="(breadcrumbItem, index) in categoryBreadcrumb" :key="breadcrumbItem.id">
+                <Link
+                  v-if="index < categoryBreadcrumb.length - 1"
+                  :href="route('categories.show', { category: breadcrumbItem.slug })"
+                  class="font-medium text-muted-foreground transition-colors hover:text-primary"
+                >
+                  {{ breadcrumbItem.name }}
+                </Link>
+                <span v-else class="font-semibold text-foreground">{{ breadcrumbItem.name }}</span>
+                <span v-if="index < categoryBreadcrumb.length - 1" class="text-muted-foreground/50">/</span>
+              </template>
+            </nav>
+            <h1 class="mb-3 truncate text-2xl font-bold text-foreground sm:text-3xl">
               {{ category.name }}
             </h1>
-            <div class="mt-1.5 flex flex-wrap items-center gap-2.5 text-xs text-muted-foreground">
-              <span class="font-medium">{{ filteredWrites?.length || 0 }} yazı</span>
-              <span v-if="category.description" class="text-muted-foreground/40">•</span>
-              <span v-if="category.description" class="line-clamp-1">{{ category.description }}</span>
+            <div class="flex flex-wrap items-center gap-3 text-sm">
+              <span class="inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-2.5 py-1 font-medium text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                {{ filteredWrites?.length || 0 }} yazı
+              </span>
+              <span v-if="category.description" class="text-muted-foreground line-clamp-1">
+                {{ category.description }}
+              </span>
             </div>
           </div>
 
           <!-- Minimalist Filter Buttons -->
-          <div class="flex shrink-0 items-center gap-1.5">
+          <div class="flex shrink-0 flex-wrap items-center gap-1.5">
             <button
               @click="statusFilter = 'all'"
-              class="rounded-md px-2.5 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              class="inline-flex h-8 items-center justify-center rounded-md border px-3 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               :class="
                 statusFilter === 'all'
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                  ? 'border-primary bg-primary text-primary-foreground shadow-sm'
+                  : 'border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground'
               "
             >
               Tümü
             </button>
             <button
               @click="statusFilter = 'published'"
-              class="rounded-md px-2.5 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              class="inline-flex h-8 items-center justify-center rounded-md border px-3 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               :class="
                 statusFilter === 'published'
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                  ? 'border-primary bg-primary text-primary-foreground shadow-sm'
+                  : 'border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground'
               "
             >
               Yayında
@@ -42,11 +62,11 @@
             <button
               v-if="auth.user"
               @click="statusFilter = 'private'"
-              class="rounded-md px-2.5 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              class="inline-flex h-8 items-center justify-center rounded-md border px-3 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               :class="
                 statusFilter === 'private'
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                  ? 'border-primary bg-primary text-primary-foreground shadow-sm'
+                  : 'border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground'
               "
             >
               Gizli
@@ -54,11 +74,11 @@
             <button
               v-if="auth.user"
               @click="statusFilter = 'link_only'"
-              class="rounded-md px-2.5 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              class="inline-flex h-8 items-center justify-center rounded-md border px-3 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               :class="
                 statusFilter === 'link_only'
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                  ? 'border-primary bg-primary text-primary-foreground shadow-sm'
+                  : 'border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground'
               "
             >
               Link
@@ -66,7 +86,7 @@
             <button
               v-if="statusFilter !== 'all'"
               @click="clearFilters"
-              class="ml-1 p-1 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-input bg-background text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               title="Filtreyi temizle"
             >
               <svg
@@ -94,85 +114,85 @@
 
       <div v-else>
         <!-- Clean list view - focused on writes -->
-        <div class="space-y-2">
+        <div class="space-y-3">
           <Link
             v-for="write in paginatedWrites"
             :key="write.id"
             :href="route('categories.showByCategory', { category: category.slug, slug: write.slug })"
-            class="group block rounded-lg border border-border bg-card p-4 transition-all duration-200 hover:border-border hover:bg-accent hover:shadow-sm"
+            class="group block rounded-lg border border-border bg-card p-5 transition-all duration-200 hover:border-primary/50 hover:bg-accent/50 hover:shadow-md"
           >
             <div class="flex items-start justify-between gap-4">
               <!-- Main Content -->
               <div class="min-w-0 flex-1">
-                <div class="mb-1.5 flex items-center gap-2">
+                <div class="mb-2 flex items-center gap-2.5">
                   <!-- Status Indicator -->
                   <span class="inline-flex shrink-0 items-center" :title="getStatusText(write.status)">
                     <svg
                       v-if="write.status === 'private'"
                       xmlns="http://www.w3.org/2000/svg"
-                      class="h-3.5 w-3.5 text-muted-foreground"
+                      class="h-4 w-4 text-muted-foreground"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
+                      stroke-width="2"
                     >
                       <path
                         stroke-linecap="round"
                         stroke-linejoin="round"
-                        stroke-width="2"
                         d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                       />
                     </svg>
                     <svg
                       v-else-if="write.status === 'link_only'"
                       xmlns="http://www.w3.org/2000/svg"
-                      class="h-3.5 w-3.5 text-muted-foreground"
+                      class="h-4 w-4 text-muted-foreground"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
+                      stroke-width="2"
                     >
                       <path
                         stroke-linecap="round"
                         stroke-linejoin="round"
-                        stroke-width="2"
                         d="M13.828 10.172a4 4 0 010 5.656l-3 3a4 4 0 01-5.656-5.656l1.5-1.5M10.172 13.828a4 4 0 010-5.656l3-3a4 4 0 015.656 5.656l-1.5 1.5"
                       />
                     </svg>
                     <svg
                       v-else
                       xmlns="http://www.w3.org/2000/svg"
-                      class="h-3.5 w-3.5 text-muted-foreground"
+                      class="h-4 w-4 text-muted-foreground"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
+                      stroke-width="2"
                     >
                       <path
                         stroke-linecap="round"
                         stroke-linejoin="round"
-                        stroke-width="2"
                         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                       />
                     </svg>
                   </span>
                   <h3
-                    class="line-clamp-1 text-base font-medium text-foreground transition-colors group-hover:text-primary"
+                    class="line-clamp-1 text-lg font-semibold text-foreground transition-colors group-hover:text-primary"
                   >
                     {{ write.title }}
                   </h3>
                 </div>
 
-                <p v-if="write.summary" class="mb-2 line-clamp-2 text-sm text-muted-foreground">
+                <p v-if="write.summary" class="mb-3 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
                   {{ write.summary }}
                 </p>
 
                 <!-- Metadata - compact -->
-                <div class="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                  <span class="flex items-center gap-1">
+                <div class="flex flex-wrap items-center gap-4 text-xs">
+                  <span class="inline-flex items-center gap-1.5 text-muted-foreground">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
-                      class="h-3 w-3"
+                      class="h-3.5 w-3.5"
                       stroke-width="2"
                     >
                       <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -182,15 +202,15 @@
                         d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                       />
                     </svg>
-                    {{ formatNumber(write.views_count) }}
+                    <span class="font-medium">{{ formatNumber(write.views_count) }}</span>
                   </span>
-                  <span class="flex items-center gap-1">
+                  <span class="inline-flex items-center gap-1.5 text-muted-foreground">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
-                      class="h-3 w-3"
+                      class="h-3.5 w-3.5"
                       stroke-width="2"
                     >
                       <path
@@ -199,20 +219,20 @@
                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                       />
                     </svg>
-                    {{ formatDateMobile(write.created_at) }}
+                    <span class="font-medium">{{ formatDateMobile(write.created_at) }}</span>
                   </span>
                 </div>
               </div>
 
               <!-- Arrow indicator -->
-              <div class="shrink-0 text-muted-foreground/50 transition-colors group-hover:text-primary">
+              <div class="shrink-0 text-muted-foreground/60 transition-colors group-hover:text-primary">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="2"
+                  stroke-width="2.5"
                   stroke="currentColor"
-                  class="h-4 w-4"
+                  class="h-5 w-5"
                 >
                   <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                 </svg>
@@ -297,11 +317,41 @@ defineOptions({
 const { props } = usePage();
 const category = ref(props.category || {});
 const writes = ref(props.writes || []);
+const categories = ref(props.categories || []);
 const auth = props.auth;
 const flashSuccess = ref(props.flash?.success);
 
 // Loading states
 const isLoading = ref(true);
+
+/**
+ * Get category breadcrumb path (parent > child > current)
+ * @returns {Array} Array of category objects in breadcrumb order
+ */
+const categoryBreadcrumb = computed(() => {
+  if (!category.value || !category.value.id || !categories.value || categories.value.length === 0) {
+    return [];
+  }
+
+  const findCategory = (id) => {
+    return categories.value.find((cat) => cat && cat.id === id);
+  };
+
+  const buildBreadcrumb = (categoryId, breadcrumb = []) => {
+    const cat = findCategory(categoryId);
+    if (!cat) return breadcrumb;
+
+    breadcrumb.unshift(cat);
+
+    if (cat.parent_id) {
+      return buildBreadcrumb(cat.parent_id, breadcrumb);
+    }
+
+    return breadcrumb;
+  };
+
+  return buildBreadcrumb(category.value.id);
+});
 
 // Filter state
 const statusFilter = ref('all');

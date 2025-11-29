@@ -34,6 +34,6 @@ onUnmounted(() => {
 });
 
 const computedClass = computed(() => {
-  return `${props.infoClass} h-[calc(100h)] overflow-hidden`;
+  return `${props.infoClass} h-full overflow-hidden`;
 });
 </script>

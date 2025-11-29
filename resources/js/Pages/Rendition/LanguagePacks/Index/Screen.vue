@@ -1,63 +1,67 @@
 <template>
   <CheckScreen>
-    <div class="rounded-lg bg-base-100 p-6 shadow-lg">
+    <div class="rounded-lg border border-border bg-card p-6 shadow-sm">
       <div class="mb-4 flex items-center justify-between">
         <div class="flex-1">
-          <h1 class="text-2xl font-bold">Dil Paketleri</h1>
+          <h1 class="text-2xl font-bold text-foreground">Dil Paketleri</h1>
         </div>
         <div class="flex gap-2">
-          <button @click="exportAllPacks" class="btn btn-outline">Tümünü Dışa Aktar</button>
+          <button @click="exportAllPacks" class="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground">Tümünü Dışa Aktar</button>
           <Link
             :href="route('rendition.language-packs.create')"
-            class="btn bg-base-content text-base-100 hover:bg-base-300 hover:text-base-content"
+            class="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90"
           >
             Yeni Paket
           </Link>
         </div>
       </div>
 
-      <div class="divider my-2"></div>
+      <div class="relative my-4">
+        <div class="absolute inset-0 flex items-center">
+          <span class="w-full border-t border-border"></span>
+        </div>
+      </div>
 
       <div class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
         <div
           v-for="pack in languagePacks"
           :key="pack.id"
-          class="card-compact card bg-base-100 shadow-xl transition-shadow hover:shadow-2xl"
+          class="rounded-lg border border-border bg-card p-4 shadow-sm transition-shadow hover:shadow-md"
         >
-          <div class="card-body">
-            <div class="flex items-center justify-between">
-              <h2 class="card-title text-base-content">{{ pack.name }}</h2>
-              <div class="badge bg-base-300 text-base-content">{{ pack.language }}</div>
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-foreground">{{ pack.name }}</h2>
+            <div class="inline-flex items-center rounded-full border border-border bg-muted px-2.5 py-0.5 text-xs font-semibold text-foreground">{{ pack.language }}</div>
+          </div>
+          <p class="text-muted-foreground mt-2 text-sm">{{ truncateDescription(pack.description) }}</p>
+          <div class="mt-3 flex items-center justify-between">
+            <div class="flex gap-2">
+              <Link :href="route('rendition.words.show', { word: pack.slug })" class="inline-flex items-center justify-center rounded-md border border-input bg-background px-3 py-1.5 text-xs font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground">
+                Kelimeleri Göster
+              </Link>
+              <button @click="exportPack(pack)" class="inline-flex items-center justify-center rounded-md border border-input bg-background px-3 py-1.5 text-xs font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground">Dışa Aktar</button>
             </div>
-            <p class="text-base-content/70 text-sm">{{ truncateDescription(pack.description) }}</p>
-            <div class="card-actions mt-3 justify-between">
-              <div class="flex gap-2">
-                <Link :href="route('rendition.words.show', { word: pack.slug })" class="btn btn-outline">
-                  Kelimeleri Göster
-                </Link>
-                <button @click="exportPack(pack)" class="btn btn-outline">Dışa Aktar</button>
-              </div>
-              <div class="badge bg-base-200 text-base-content">{{ pack.word_count || 0 }} kelime</div>
-            </div>
+            <div class="inline-flex items-center rounded-full border border-border bg-muted px-2.5 py-0.5 text-xs font-semibold text-foreground">{{ pack.word_count || 0 }} kelime</div>
           </div>
         </div>
       </div>
 
-      <div v-if="languagePacks.length === 0" class="alert mt-6 border-base-300 bg-base-200">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          class="h-6 w-6 shrink-0 stroke-current text-base-content"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          ></path>
-        </svg>
-        <span class="text-base-content">Hiç dil paketi bulunmamaktadır.</span>
+      <div v-if="languagePacks.length === 0" class="mt-6 rounded-lg border border-border bg-muted p-4">
+        <div class="flex items-center gap-3">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            class="h-6 w-6 shrink-0 stroke-current text-muted-foreground"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          <span class="text-foreground">Hiç dil paketi bulunmamaktadır.</span>
+        </div>
       </div>
     </div>
   </CheckScreen>
@@ -178,14 +182,3 @@ const queryParams = computed(() => {
 });
 </script>
 
-<style scoped>
-.badge-outline {
-  background-color: transparent;
-  border-color: rgba(0, 0, 0, 0.2);
-  color: rgba(0, 0, 0, 0.7);
-  font-size: 0.75rem;
-  height: 1.5rem;
-  padding: 0 0.5rem;
-  vertical-align: middle;
-}
-</style>

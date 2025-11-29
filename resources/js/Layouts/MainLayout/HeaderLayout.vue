@@ -343,6 +343,83 @@
           </template>
         </button>
 
+        <!-- Profile Icon - Only show for logged in users -->
+        <template v-if="isLoggedIn">
+          <div class="profile-dropdown-container relative inline-block">
+            <button
+              @click="showProfileDropdown = !showProfileDropdown"
+              class="inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+              :class="{ 'bg-accent text-accent-foreground': showProfileDropdown }"
+              title="Profil"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+            </button>
+
+            <div
+              v-if="showProfileDropdown"
+              class="absolute right-0 top-full z-50 mt-1 w-48 rounded-md border border-border bg-popover shadow-lg"
+            >
+              <div class="flex flex-col gap-1 p-1">
+                <Link
+                  :href="route('profile.edit')"
+                  class="inline-flex h-7 items-center rounded-md px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  @click="showProfileDropdown = false"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="mr-2 h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                  Profil
+                </Link>
+                <button
+                  type="button"
+                  @click="handleLogout"
+                  class="inline-flex h-7 w-full items-center rounded-md px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-destructive hover:text-destructive-foreground"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="mr-2 h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    />
+                  </svg>
+                  Çıkış Yap
+                </button>
+              </div>
+            </div>
+          </div>
+        </template>
+
         <!-- Mobile Menu Toggle for Desktop (fallback) -->
         <button
           @click="toggleMenu"
@@ -422,382 +499,123 @@
                 </template>
               </div>
 
-              <!-- Write Show Page Actions for Mobile -->
-              <template v-if="isWriteShowPage && isLoggedIn && write">
+              <!-- Form Action Buttons for Create/Edit Pages (Mobile) -->
+              <template v-if="isLoggedIn && (isWriteCreatePage || isWriteEditPage || isCategoryCreatePage || isCategoryEditPage)">
                 <div class="border-t border-border pt-3">
-                  <div class="space-y-1">
-                    <Link
-                      :href="route('writes.edit', write.id)"
-                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                      @click="closeMenu"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="h-4 w-4"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                        />
-                      </svg>
-                      <span>Yazıyı Düzenle</span>
-                    </Link>
+                  <div class="space-y-2">
+                    <!-- Reset Button (only for create pages) -->
                     <button
-                      @click="deleteWriteMobile(write.id)"
-                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
+                      v-if="isWriteCreatePage || isCategoryCreatePage"
+                      @click="handleFormResetMobile"
+                      :disabled="isFormProcessing"
+                      class="flex w-full items-center gap-3 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      <span>Sıfırla</span>
+                    </button>
+                    <!-- Save/Update Button -->
+                    <button
+                      @click="handleFormSubmitMobile"
+                      :disabled="isFormProcessing"
+                      class="flex w-full items-center gap-3 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
                     >
                       <svg
+                        v-if="isFormProcessing"
+                        class="h-4 w-4 animate-spin"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="h-4 w-4"
                       >
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                        />
+                          class="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
                       </svg>
-                      <span>Yazıyı Sil</span>
+                      <svg
+                        v-else
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span>{{ isFormProcessing ? (isWriteEditPage || isCategoryEditPage ? 'Güncelleniyor...' : 'Kaydediliyor...') : (isWriteEditPage || isCategoryEditPage ? 'Güncelle' : 'Kaydet') }}</span>
                     </button>
                   </div>
                 </div>
               </template>
 
-              <!-- Category Show Page Actions for Mobile -->
-              <template v-else-if="isCategoryShowPage && isLoggedIn && category">
-                <div class="border-t border-border pt-3">
-                  <div class="space-y-1">
-                    <Link
-                      :href="route('categories.edit', category.id)"
-                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                      @click="closeMenu"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="h-4 w-4"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                        />
-                      </svg>
-                      <span>Kategoriyi Düzenle</span>
-                    </Link>
-                    <button
-                      @click="deleteCategoryMobile(category.id)"
-                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="h-4 w-4"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                        />
-                      </svg>
-                      <span>Kategoriyi Sil</span>
-                    </button>
-                  </div>
-                </div>
-              </template>
-
-              <!-- Language Pack Show Page Actions for Mobile -->
-              <template v-else-if="isLanguagePackShowPage && isLoggedIn && pack">
-                <div class="border-t border-border pt-3">
-                  <div class="space-y-1">
-                    <Link
-                      :href="route('rendition.language-packs.edit', pack.id)"
-                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                      @click="closeMenu"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="h-4 w-4"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                        />
-                      </svg>
-                      <span>Paketi Düzenle</span>
-                    </Link>
-                    <Link
-                      :href="route('rendition.words.create')"
-                      class="flex w-full items-center gap-3 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-                      @click="closeMenu"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                      </svg>
-                      <span>Yeni Kelime Ekle</span>
-                    </Link>
-                  </div>
-                </div>
-              </template>
-
-              <!-- Word Show Page Actions for Mobile -->
-              <template v-else-if="isWordShowPage && isLoggedIn && word">
-                <div class="border-t border-border pt-3">
-                  <div class="space-y-1">
-                    <Link
-                      :href="route('rendition.words.edit', word.id)"
-                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                      @click="closeMenu"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="h-4 w-4"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                        />
-                      </svg>
-                      <span>Kelimeyi Düzenle</span>
-                    </Link>
-                    <button
-                      @click="deleteWordMobile(word.id)"
-                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="h-4 w-4"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                        />
-                      </svg>
-                      <span>Kelimeyi Sil</span>
-                    </button>
-                  </div>
-                </div>
-              </template>
-
-              <!-- Version Show Page Actions for Mobile -->
-              <template v-else-if="isVersionShowPage && isLoggedIn && version">
-                <div class="border-t border-border pt-3">
-                  <div class="space-y-1">
-                    <Link
-                      :href="route('versions.edit', version.id)"
-                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                      @click="closeMenu"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="h-4 w-4"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                        />
-                      </svg>
-                      <span>Versiyonu Düzenle</span>
-                    </Link>
-                    <button
-                      @click="deleteVersionMobile(version.id)"
-                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="h-4 w-4"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                        />
-                      </svg>
-                      <span>Versiyonu Sil</span>
-                    </button>
-                  </div>
-                </div>
-              </template>
-
-              <!-- New Write/Category Buttons for Mobile -->
+              <!-- Create Dropdown for Mobile (Logged In Users) -->
               <template v-else-if="isLoggedIn">
                 <div class="border-t border-border pt-3">
                   <div class="space-y-1">
-                    <!-- Yeni Yazı butonu - Writes sayfasında -->
+                    <div class="text-muted-foreground mb-1 px-3 text-xs font-medium uppercase">Yeni Oluştur</div>
                     <Link
-                      v-if="isActiveRoute('/writes') && !isWriteShowPage"
                       href="/writes/create"
-                      class="flex w-full items-center gap-3 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      @click="closeMenu"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        stroke-width="2"
-                      >
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                       </svg>
                       <span>Yeni Yazı</span>
                     </Link>
-                    <!-- Yeni Kategori butonu - Writes sayfasında -->
                     <Link
-                      v-if="isActiveRoute('/writes') && !isWriteShowPage"
                       href="/categories/create"
-                      class="flex w-full items-center gap-3 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      @click="closeMenu"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        stroke-width="2"
-                      >
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                      </svg>
-                      <span>Yeni Kategori</span>
-                    </Link>
-                    <!-- Yeni Yazı butonu - Categories sayfasında -->
-                    <Link
-                      v-if="isActiveRoute('/categories') && !isCategoryShowPage"
-                      href="/writes/create"
-                      class="flex w-full items-center gap-3 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        stroke-width="2"
-                      >
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                      </svg>
-                      <span>Yeni Yazı</span>
-                    </Link>
-                    <!-- Yeni Kategori butonu - Categories sayfasında -->
-                    <Link
-                      v-if="isActiveRoute('/categories') && !isCategoryShowPage"
-                      href="/categories/create"
-                      class="flex w-full items-center gap-3 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        stroke-width="2"
-                      >
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                       </svg>
                       <span>Yeni Kategori</span>
                     </Link>
                     <Link
-                      v-if="isActiveRoute('/rendition/words') && !isWordShowPage"
                       href="/rendition/words/create"
-                      class="flex w-full items-center gap-3 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                       @click="closeMenu"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
                       </svg>
-                      <span>Yeni Kelime Ekle</span>
+                      <span>Yeni Kelime</span>
                     </Link>
                     <Link
-                      v-if="isActiveRoute('/rendition/words') && !isWordShowPage"
                       href="/rendition/language-packs/create"
-                      class="flex w-full items-center gap-3 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                       @click="closeMenu"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                        />
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                       </svg>
-                      <span>Yeni Paket Ekle</span>
+                      <span>Yeni Kelime Paketi</span>
                     </Link>
                     <Link
-                      v-if="isActiveRoute('/versions') && !isVersionShowPage"
                       href="/versions/create"
-                      class="flex w-full items-center gap-3 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                       @click="closeMenu"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                       </svg>
-                      <span>Yeni Versiyon Ekle</span>
+                      <span>Yeni Versiyon</span>
                     </Link>
                   </div>
                 </div>
               </template>
+
+              <!-- Page Actions for Mobile -->
+              <div v-if="isLoggedIn && (isWriteShowPage || isWriteEditPage || isCategoryShowPage || isCategoryEditPage || isWordShowPage || isVersionShowPage)" class="border-t border-border pt-3">
+                <PageActions variant="mobile" :on-link-click="closeMenu" />
+              </div>
+
+
 
               <!-- Profile Menu for Mobile - Only show for logged in users -->
               <template v-if="isLoggedIn">
@@ -827,29 +645,27 @@
                       </svg>
                       <span>Profil</span>
                     </Link>
-                    <form @submit.prevent="handleLogoutMobile" class="w-full">
-                      <button
-                        type="submit"
-                        class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
-                        @click="closeMenu"
+                    <button
+                      type="button"
+                      @click="handleLogoutMobile"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-4 w-4"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                          />
-                        </svg>
-                        <span>Çıkış Yap</span>
-                      </button>
-                    </form>
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                        />
+                      </svg>
+                      <span>Çıkış Yap</span>
+                    </button>
                   </div>
                 </div>
               </template>
@@ -1036,6 +852,7 @@ import axios from 'axios';
 // Import SidebarLayout components
 import NavItem from '@/Layouts/_components/NavItem.vue';
 import SocialLinks from '@/Layouts/_composable/SocialLinks.vue';
+import PageActions from '@/Layouts/_composable/PageActions.vue';
 
 const props = defineProps({
   title: {
@@ -1055,6 +872,7 @@ const seoTitle = computed(() => {
 });
 
 const isMenuOpen = ref(false);
+const showProfileDropdown = ref(false);
 const page = usePage();
 const store = useStore();
 const imagePath = ref('');
@@ -1202,6 +1020,42 @@ const isLanguagePackShowPage = computed(() => {
   return isWordShowPage.value && !word.value && pack.value;
 });
 
+// Check if we're on create/edit pages
+const isWriteCreatePage = computed(() => {
+  return page.url === '/writes/create';
+});
+
+const isWriteEditPage = computed(() => {
+  const url = page.url;
+  return url.startsWith('/writes/') && url.includes('/edit');
+});
+
+const isCategoryCreatePage = computed(() => {
+  return page.url === '/categories/create';
+});
+
+const isCategoryEditPage = computed(() => {
+  const url = page.url;
+  return url.startsWith('/categories/') && url.includes('/edit');
+});
+
+// Form processing state
+const isFormProcessing = ref(false);
+
+// Handle form submit from mobile menu
+const handleFormSubmitMobile = () => {
+  if (isFormProcessing.value) return;
+  window.dispatchEvent(new CustomEvent('sidebarFormSubmit'));
+  closeMenu();
+};
+
+// Handle form reset from mobile menu
+const handleFormResetMobile = () => {
+  if (isFormProcessing.value) return;
+  window.dispatchEvent(new CustomEvent('sidebarFormReset'));
+  closeMenu();
+};
+
 // Get write and category from props
 const write = computed(() => page.props.write || null);
 const category = computed(() => page.props.category || null);
@@ -1215,8 +1069,25 @@ const deleteWriteMobile = async (id) => {
     return;
   }
   try {
-    await router.delete(route('writes.destroy', { write: id }));
-    closeMenu();
+    const currentUrl = page.url;
+    const isCategoryWritePage = /^\/categories\/[^/]+\/[^/]+$/.test(currentUrl);
+    
+    await router.delete(route('writes.destroy', { write: id }), {
+      onSuccess: () => {
+        closeMenu();
+        if (isCategoryWritePage) {
+          const urlParts = currentUrl.split('/').filter((part) => part.length > 0);
+          if (urlParts.length >= 2 && urlParts[0] === 'categories') {
+            const categorySlug = urlParts[1];
+            router.visit(route('categories.show', { category: categorySlug }));
+          } else {
+            router.visit(route('writes.index'));
+          }
+        } else {
+          router.visit(route('writes.index'));
+        }
+      },
+    });
   } catch (error) {
     console.error('Error deleting write:', error);
   }
@@ -1274,6 +1145,12 @@ const deleteVersionMobile = async (id) => {
 const handleLogoutMobile = () => {
   router.post(route('logout'));
   closeMenu();
+};
+
+// Handle logout for desktop
+const handleLogout = () => {
+  router.post(route('logout'));
+  showProfileDropdown.value = false;
 };
 
 // Watch for page props changes to update auth data
@@ -1532,13 +1409,37 @@ const handleKeydown = (event) => {
 };
 
 // Add keyboard event listener
+let clickOutsideHandler = null;
+
+// Listen for form processing state changes
+let formProcessingHandler = null;
+
 onMounted(() => {
+  // Listen for form processing state
+  formProcessingHandler = (event) => {
+    isFormProcessing.value = event.detail.processing || false;
+  };
+  window.addEventListener('formProcessingState', formProcessingHandler);
+  // Close profile dropdown when clicking outside
+  clickOutsideHandler = (event) => {
+    const profileDropdownElement = event.target.closest('.profile-dropdown-container');
+    if (showProfileDropdown.value && !profileDropdownElement) {
+      showProfileDropdown.value = false;
+    }
+  };
+  document.addEventListener('click', clickOutsideHandler);
   document.addEventListener('keydown', handleKeydown);
 });
 
 // Cleanup
 onUnmounted(() => {
+  if (formProcessingHandler) {
+    window.removeEventListener('formProcessingState', formProcessingHandler);
+  }
   document.removeEventListener('keydown', handleKeydown);
+  if (clickOutsideHandler) {
+    document.removeEventListener('click', clickOutsideHandler);
+  }
   if (searchTimeout.value) {
     clearTimeout(searchTimeout.value);
   }

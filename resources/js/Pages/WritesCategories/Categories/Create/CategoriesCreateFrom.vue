@@ -1,182 +1,169 @@
 <template>
-  <div class="mx-auto mt-6 w-full max-w-full px-3 sm:px-5 lg:mt-0">
-    <div class="container mx-auto p-0 sm:p-4">
-      <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">
-        <div class="p-4 sm:p-6">
-          <div class="mb-4">
-            <h2 class="text-lg font-semibold text-card-foreground">Yeni Kategori</h2>
-            <p class="mt-1 text-sm text-muted-foreground">
-              Kategorileriniz için kategoriler oluşturun. İsterseniz bir üst kategori seçebilirsiniz.
+  <div class="space-y-4 py-6">
+    <form @submit.prevent="submitForm" class="space-y-4">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div class="md:col-span-2" ref="nameRef">
+          <div>
+            <label class="mb-1 block text-sm font-medium text-foreground">İsim</label>
+            <input
+              type="text"
+              :value="form.name"
+              @input="form.name = $event.target.value"
+              placeholder="Kategori ismi"
+              class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              :class="{ 'border-destructive focus-visible:ring-destructive': errors.name || form.errors.name }"
+            />
+            <p v-if="errors.name || form.errors.name" class="mt-1 text-xs text-destructive">
+              {{ errors.name || form.errors.name }}
             </p>
           </div>
+        </div>
 
-          <div class="my-4 border-t border-border"></div>
+        <div ref="slugRef">
+          <label class="mb-1 block text-sm font-medium text-foreground">Slug</label>
+          <input
+            type="text"
+            :value="form.slug"
+            @input="form.slug = $event.target.value"
+            placeholder="kategori-slug"
+            class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            :class="{ 'border-destructive focus-visible:ring-destructive': errors.slug || form.errors.slug }"
+          />
+          <p v-if="errors.slug || form.errors.slug" class="mt-1 text-xs text-destructive">
+            {{ errors.slug || form.errors.slug }}
+          </p>
+        </div>
 
-          <form @submit.prevent="createCategory" class="space-y-6">
-            <!-- Category Name Field -->
-            <div class="w-full">
-              <label class="mb-2 block text-sm font-medium text-foreground">İsim</label>
-              <input
-                type="text"
-                v-model="form.name"
-                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                :class="{ 'border-destructive focus-visible:ring-destructive': form.errors.name }"
-                placeholder="Kategori ismi"
-              />
-              <p v-if="form.errors.name" class="mt-1 text-sm text-destructive">{{ form.errors.name }}</p>
-            </div>
-
-            <!-- Category Slug Field -->
-            <div class="w-full">
-              <label class="mb-2 block text-sm font-medium text-foreground">Slug</label>
-              <input
-                type="text"
-                v-model="form.slug"
-                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                :class="{ 'border-destructive focus-visible:ring-destructive': form.errors.slug }"
-                placeholder="kategori-slug"
-              />
-              <p v-if="form.errors.slug" class="mt-1 text-sm text-destructive">{{ form.errors.slug }}</p>
-            </div>
-
-            <!-- Parent Category Field with Search Dropdown -->
-            <div class="w-full">
-              <label class="mb-2 block text-sm font-medium text-foreground">Üst Kategori</label>
-              <div class="relative w-full">
-                <input
-                  type="text"
-                  v-model="parentSearch"
-                  @focus="handleFocus"
-                  @blur="handleBlur"
-                  @input="handleParentSearch"
-                  @keydown.esc="showParentList = false"
-                  class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  :class="{ 'border-destructive focus-visible:ring-destructive': form.errors.parent_id }"
-                  placeholder="Üst kategori ara"
-                />
-
-                <!-- Dropdown for search results -->
-                <div
-                  v-if="showParentList && filteredCategories.length > 0"
-                  class="absolute z-30 mt-1 w-full rounded-md border border-border bg-popover shadow-lg"
-                >
-                  <ul class="max-h-60 w-full overflow-y-auto p-1">
-                    <li
-                      v-for="category in filteredCategories"
-                      :key="category.id"
-                      @mousedown="selectParentCategory(category)"
-                      class="cursor-pointer rounded-sm px-2 py-1.5 text-sm text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                    >
-                      <div class="flex flex-col gap-0.5">
-                        <span class="font-medium">{{ category.name }}</span>
-                        <span v-if="getCategoryPath(category.id)" class="text-xs text-muted-foreground">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="mr-1 inline h-3 w-3"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
-                            />
-                          </svg>
-                          {{ getCategoryPath(category.id) }}
-                        </span>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-
-                <!-- Selected parent category badge -->
-                <div v-if="form.parent_id" class="mt-2 flex items-center gap-2">
-                  <div
-                    class="inline-flex flex-col items-start rounded-full border border-border bg-secondary px-2 py-1 text-xs font-semibold text-secondary-foreground"
-                  >
-                    <span>{{ parentCategoryName }}</span>
-                    <span v-if="getCategoryPath(form.parent_id)" class="text-[10px] font-normal opacity-80">
-                      {{ getCategoryPath(form.parent_id) }}
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    @click="clearParentCategory"
-                    class="inline-flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                    aria-label="Remove parent category"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-3.5 w-3.5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    >
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <p v-if="form.errors.parent_id" class="mt-1 text-sm text-destructive">{{ form.errors.parent_id }}</p>
-            </div>
-
-            <!-- Category Status Field -->
-            <div class="w-full">
-              <label class="mb-2 block text-sm font-medium text-foreground">Durum</label>
-              <select
-                v-model="form.status"
-                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                :class="{ 'border-destructive focus-visible:ring-destructive': form.errors.status }"
-              >
-                <option value="public">Açık</option>
-                <option value="hidden">Gizli</option>
-              </select>
-              <p v-if="form.errors.status" class="mt-1 text-sm text-destructive">{{ form.errors.status }}</p>
-            </div>
-
-            <!-- Form Actions -->
-            <div class="mt-5 flex justify-end">
+        <div ref="parentIdRef">
+          <div class="mb-1 flex items-center gap-2">
+            <label class="text-sm font-medium text-foreground">Üst Kategori</label>
+            <!-- Selected parent category preview -->
+            <div v-if="form.parent_id" class="flex items-center gap-1.5">
+              <span class="text-xs text-muted-foreground">:</span>
+              <span class="text-sm text-foreground">{{ parentCategoryName }}</span>
+              <span v-if="getCategoryPath(form.parent_id)" class="text-xs text-muted-foreground">
+                ({{ getCategoryPath(form.parent_id) }})
+              </span>
               <button
-                type="submit"
-                class="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                :disabled="form.processing || isFormDisabled"
+                type="button"
+                @click="clearParentCategory"
+                class="flex h-4 w-4 items-center justify-center rounded text-muted-foreground transition-colors hover:text-destructive"
+                aria-label="Kaldır"
               >
-                <svg
-                  v-if="form.processing"
-                  class="mr-2 h-4 w-4 animate-spin"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    class="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    stroke-width="4"
-                  ></circle>
-                  <path
-                    class="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
-                Kategori Oluştur
               </button>
             </div>
-          </form>
+          </div>
+          <div class="relative w-full">
+            <input
+              type="text"
+              v-model="parentSearch"
+              @focus="handleFocus"
+              @blur="handleBlur"
+              @input="handleParentSearch"
+              @keydown.esc="showParentList = false"
+              placeholder="Üst kategori ara (opsiyonel)"
+              class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              :class="{ 'border-destructive focus-visible:ring-destructive': errors.parent_id || form.errors.parent_id }"
+            />
+
+            <!-- Dropdown for search results -->
+            <div
+              v-if="showParentList && filteredCategories.length > 0"
+              class="absolute z-30 mt-1 w-full rounded-md border border-border bg-popover shadow-lg"
+            >
+              <ul class="max-h-60 w-full overflow-y-auto p-1">
+                <li
+                  v-for="category in filteredCategories"
+                  :key="category.id"
+                  @mousedown="selectParentCategory(category)"
+                  class="cursor-pointer rounded-sm px-2 py-1.5 text-sm text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                >
+                  <div class="flex flex-col gap-0.5">
+                    <span class="font-medium">{{ category.name }}</span>
+                    <span v-if="getCategoryPath(category.id)" class="text-xs text-muted-foreground">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="mr-1 inline h-3 w-3"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                        />
+                      </svg>
+                      {{ getCategoryPath(category.id) }}
+                    </span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <p v-if="errors.parent_id || form.errors.parent_id" class="mt-1 text-xs text-destructive">
+            {{ errors.parent_id || form.errors.parent_id }}
+          </p>
+        </div>
+
+        <div ref="statusRef">
+          <label class="mb-1 block text-sm font-medium text-foreground">Durum</label>
+          <select
+            :value="form.status"
+            @change="form.status = $event.target.value"
+            class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            :class="{ 'border-destructive focus-visible:ring-destructive': errors.status || form.errors.status }"
+          >
+            <option value="public">Açık</option>
+            <option value="hidden">Gizli</option>
+          </select>
+          <p v-if="errors.status || form.errors.status" class="mt-1 text-xs text-destructive">
+            {{ errors.status || form.errors.status }}
+          </p>
         </div>
       </div>
-    </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button
+          type="button"
+          @click="resetForm"
+          class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+          :disabled="form.processing"
+        >
+          Sıfırla
+        </button>
+        <button
+          type="submit"
+          class="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+          :disabled="form.processing"
+        >
+          <svg
+            v-if="form.processing"
+            class="mr-2 h-4 w-4 animate-spin"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          {{ form.processing ? 'Kaydediliyor...' : 'Kategoriyi Kaydet' }}
+        </button>
+      </div>
+    </form>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, computed, onMounted, nextTick } from 'vue';
+import { ref, watch, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import { useForm, usePage, router } from '@inertiajs/vue3';
 
 /**
@@ -224,6 +211,22 @@ const form = useForm({
   slug: '',
   parent_id: '',
   status: 'public',
+});
+
+form.processing = false;
+
+// Field refs for scroll to error
+const nameRef = ref(null);
+const slugRef = ref(null);
+const parentIdRef = ref(null);
+const statusRef = ref(null);
+
+// Frontend validation errors
+const errors = ref({
+  name: '',
+  slug: '',
+  parent_id: '',
+  status: '',
 });
 
 /**
@@ -366,12 +369,74 @@ const filteredCategories = computed(() => {
 });
 
 /**
- * Check if form is valid for submission
- * @returns {Boolean} Whether form is disabled
+ * Validate form and set error messages
+ * @returns {Boolean} Whether form has errors
  */
-const isFormDisabled = computed(() => {
-  return !form.name || !form.slug;
-});
+const validateForm = () => {
+  Object.keys(errors.value).forEach((key) => {
+    errors.value[key] = '';
+  });
+  
+  let hasErrors = false;
+
+  if (!form.name || form.name.trim() === '') {
+    errors.value.name = 'İsim zorunludur.';
+    hasErrors = true;
+  }
+
+  if (!form.slug || form.slug.trim() === '') {
+    errors.value.slug = 'Slug zorunludur.';
+    hasErrors = true;
+  }
+
+  if (hasErrors) {
+    scrollToError();
+  }
+
+  return hasErrors;
+};
+
+/**
+ * Scroll to first error field
+ */
+const scrollToError = () => {
+  nextTick(() => {
+    const errorFields = [
+      { ref: nameRef, error: errors.value.name },
+      { ref: slugRef, error: errors.value.slug },
+      { ref: parentIdRef, error: errors.value.parent_id },
+      { ref: statusRef, error: errors.value.status },
+    ];
+
+    for (const field of errorFields) {
+      if (field.error && field.ref.value) {
+        field.ref.value.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        nextTick(() => {
+          const inputElement = field.ref.value.querySelector('input, select');
+          if (inputElement) {
+            inputElement.focus();
+          }
+        });
+        break;
+      }
+    }
+  });
+};
+
+/**
+ * Reset form to initial state
+ */
+const resetForm = () => {
+  form.reset();
+  form.processing = false;
+  form.status = 'public';
+  Object.keys(errors.value).forEach((key) => {
+    errors.value[key] = '';
+  });
+  parentSearch.value = '';
+  parentCategoryName.value = '';
+  form.parent_id = '';
+};
 
 /**
  * Handle parent category search input
@@ -428,24 +493,32 @@ watch(
 /**
  * Submit form to create new category
  */
-const createCategory = () => {
-  form
-    .post(route('categories.store'))
-    .then(() => {
-      console.log('Category created successfully');
-      form.reset();
-      parentSearch.value = '';
-      parentCategoryName.value = '';
-    })
-    .catch((error) => {
-      console.error('Error creating category:', error);
+const submitForm = () => {
+  const hasErrors = validateForm();
+
+  if (!hasErrors) {
+    form.post(route('categories.store'), {
+      onSuccess: () => {
+        router.visit(route('categories.index'));
+      },
+      onError: (serverErrors) => {
+        Object.assign(errors.value, serverErrors);
+        scrollToError();
+      },
     });
+  }
 };
+
+// Listen for sidebar form actions
+let sidebarSubmitHandler = null;
+let sidebarResetHandler = null;
 
 /**
  * Component lifecycle - setup on mount
  */
 onMounted(() => {
+  form.processing = false;
+  
   // Fetch categories if not provided
   if (!categoriesRaw.value || categoriesRaw.value.length === 0) {
     fetchCategories();
@@ -457,7 +530,36 @@ onMounted(() => {
       showParentList.value = false;
     }
   });
+
+  // Listen for sidebar form submit
+  sidebarSubmitHandler = () => {
+    submitForm();
+  };
+  window.addEventListener('sidebarFormSubmit', sidebarSubmitHandler);
+
+  // Listen for sidebar form reset
+  sidebarResetHandler = () => {
+    resetForm();
+  };
+  window.addEventListener('sidebarFormReset', sidebarResetHandler);
 });
+
+onUnmounted(() => {
+  if (sidebarSubmitHandler) {
+    window.removeEventListener('sidebarFormSubmit', sidebarSubmitHandler);
+  }
+  if (sidebarResetHandler) {
+    window.removeEventListener('sidebarFormReset', sidebarResetHandler);
+  }
+});
+
+// Watch form processing state and notify sidebar
+watch(
+  () => form.processing,
+  (processing) => {
+    window.dispatchEvent(new CustomEvent('formProcessingState', { detail: { processing } }));
+  }
+);
 
 /**
  * Fetch categories from API

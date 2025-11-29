@@ -1,45 +1,45 @@
 <template>
   <CheckScreen>
-    <div class="card-body p-4 sm:p-6">
+    <div class="rounded-lg border border-border bg-card p-4 shadow-sm sm:p-6">
       <!-- Header -->
       <div class="mb-6">
-        <h1 class="text-xl font-bold sm:text-2xl">Dil Paketi Düzenle</h1>
-        <p class="text-base-content/60 mt-1 text-sm">Paket bilgilerini güncelleyin</p>
+        <h1 class="text-xl font-bold text-foreground sm:text-2xl">Dil Paketi Düzenle</h1>
+        <p class="text-muted-foreground mt-1 text-sm">Paket bilgilerini güncelleyin</p>
       </div>
 
       <form @submit.prevent="submitForm" class="space-y-4">
         <!-- Paket Adı -->
         <div class="space-y-1.5">
-          <label class="text-sm font-medium text-base-content">Paket Adı</label>
+          <label class="text-sm font-medium text-foreground">Paket Adı</label>
           <input
             v-model="form.name"
             type="text"
-            class="placeholder-base-content/50 border-base-300/50 bg-base-50 focus:border-base-content/50 focus:ring-base-content/20 w-full rounded-lg border px-3 py-2 text-sm text-base-content transition-colors focus:bg-base-100 focus:outline-none focus:ring-1"
+            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             placeholder="Örn: Temel İngilizce Kelimeler"
             required
           />
-          <p v-if="errors.name" class="text-xs text-error">{{ errors.name }}</p>
+          <p v-if="errors.name" class="text-xs text-destructive">{{ errors.name }}</p>
         </div>
 
         <!-- Slug -->
         <div class="space-y-1.5">
-          <label class="text-sm font-medium text-base-content">Slug</label>
+          <label class="text-sm font-medium text-foreground">Slug</label>
           <input
             v-model="form.slug"
             type="text"
-            class="placeholder-base-content/50 border-base-300/50 bg-base-50 focus:border-base-content/50 focus:ring-base-content/20 w-full rounded-lg border px-3 py-2 text-sm text-base-content transition-colors focus:bg-base-100 focus:outline-none focus:ring-1"
+            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             placeholder="temel-ingilizce-kelimeler"
             required
           />
-          <p v-if="errors.slug" class="text-xs text-error">{{ errors.slug }}</p>
+          <p v-if="errors.slug" class="text-xs text-destructive">{{ errors.slug }}</p>
         </div>
 
         <!-- Dil Kodu -->
         <div class="space-y-1.5">
-          <label class="text-sm font-medium text-base-content">Dil Kodu</label>
+          <label class="text-sm font-medium text-foreground">Dil Kodu</label>
           <select
             v-model="form.language"
-            class="border-base-300/50 bg-base-50 focus:border-base-content/50 focus:ring-base-content/20 w-full rounded-lg border px-3 py-2 text-sm text-base-content transition-colors focus:bg-base-100 focus:outline-none focus:ring-1"
+            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             required
           >
             <option value="" disabled>Dil seçiniz</option>
@@ -52,19 +52,19 @@
             <option value="ru">Rusça (RU)</option>
             <option value="ar">Arapça (AR)</option>
           </select>
-          <p v-if="errors.language" class="text-xs text-error">{{ errors.language }}</p>
+          <p v-if="errors.language" class="text-xs text-destructive">{{ errors.language }}</p>
         </div>
 
         <!-- Açıklama -->
         <div class="space-y-1.5">
-          <label class="text-sm font-medium text-base-content">Açıklama</label>
+          <label class="text-sm font-medium text-foreground">Açıklama</label>
           <textarea
             v-model="form.description"
             rows="3"
-            class="placeholder-base-content/50 border-base-300/50 bg-base-50 focus:border-base-content/50 focus:ring-base-content/20 w-full resize-none rounded-lg border px-3 py-2 text-sm text-base-content transition-colors focus:bg-base-100 focus:outline-none focus:ring-1"
+            class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             placeholder="Bu paket hakkında kısa bir açıklama yazın..."
           ></textarea>
-          <p v-if="errors.description" class="text-xs text-error">{{ errors.description }}</p>
+          <p v-if="errors.description" class="text-xs text-destructive">{{ errors.description }}</p>
         </div>
 
         <!-- Butonlar -->
@@ -72,13 +72,19 @@
           <button
             type="button"
             @click="deleteLanguagePack"
-            class="border-error/30 bg-error/10 hover:bg-error/20 rounded-lg border px-4 py-2 text-sm font-medium text-error transition-colors disabled:opacity-50"
+            class="inline-flex items-center justify-center rounded-md border border-destructive/50 bg-destructive/10 px-4 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/20 disabled:opacity-50"
             :disabled="processing"
           >
-            <span
+            <svg
               v-if="processing"
-              class="mr-2 inline-block h-3 w-3 animate-spin rounded-full border-2 border-error border-t-transparent"
-            ></span>
+              class="mr-2 h-3 w-3 animate-spin"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
             {{ processing ? 'Siliniyor...' : 'Sil' }}
           </button>
 
@@ -86,19 +92,25 @@
             <button
               type="button"
               @click="goBack"
-              class="border-base-300/50 rounded-lg border bg-base-100 px-4 py-2 text-sm font-medium text-base-content transition-colors hover:bg-base-200"
+              class="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
             >
               İptal
             </button>
             <button
               type="submit"
-              class="rounded-lg bg-base-content px-4 py-2 text-sm font-medium text-base-100 transition-colors hover:bg-base-300 hover:text-base-content disabled:opacity-50"
+              class="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90"
               :disabled="processing"
             >
-              <span
+              <svg
                 v-if="processing"
-                class="mr-2 inline-block h-3 w-3 animate-spin rounded-full border-2 border-base-100 border-t-transparent"
-              ></span>
+                class="mr-2 h-3 w-3 animate-spin"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
               {{ processing ? 'Kaydediliyor...' : 'Kaydet' }}
             </button>
           </div>
