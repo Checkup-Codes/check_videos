@@ -12,15 +12,7 @@
         <div class="flex justify-center">
           <div class="relative h-32 w-32">
             <svg class="h-32 w-32 -rotate-90 transform">
-              <circle
-                cx="64"
-                cy="64"
-                r="56"
-                stroke="currentColor"
-                stroke-width="8"
-                fill="none"
-                class="text-muted"
-              />
+              <circle cx="64" cy="64" r="56" stroke="currentColor" stroke-width="8" fill="none" class="text-muted" />
               <circle
                 cx="64"
                 cy="64"
@@ -102,7 +94,7 @@
           <div class="space-y-4">
             <div class="rounded-md border border-input bg-background p-4">
               <p class="mb-2 text-sm text-muted-foreground">Paylaşılabilir mesaj:</p>
-              <p class="whitespace-pre-wrap text-foreground font-medium" id="shareMessage">{{ shareMessage }}</p>
+              <p class="whitespace-pre-wrap font-medium text-foreground" id="shareMessage">{{ shareMessage }}</p>
             </div>
             <div class="flex gap-2">
               <button
@@ -151,7 +143,7 @@
         </div>
       </div>
 
-            <!-- Questions Review -->
+      <!-- Questions Review -->
       <div class="space-y-4">
         <h2 class="text-xl font-semibold text-foreground">Sorular ve Cevaplar</h2>
         <div class="space-y-6">
@@ -169,11 +161,7 @@
                 <div class="mb-2 flex items-center gap-2">
                   <span
                     class="rounded-md px-2 py-1 text-sm font-semibold"
-                    :class="
-                      answer.is_correct
-                        ? 'bg-green-500 text-white'
-                        : 'bg-red-500 text-white'
-                    "
+                    :class="answer.is_correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white'"
                   >
                     Soru {{ index + 1 }}
                   </span>
@@ -192,10 +180,7 @@
                     </svg>
                     Doğru
                   </span>
-                  <span
-                    v-else
-                    class="flex items-center gap-1 text-sm font-medium text-red-600 dark:text-red-400"
-                  >
+                  <span v-else class="flex items-center gap-1 text-sm font-medium text-red-600 dark:text-red-400">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="h-4 w-4"
@@ -208,7 +193,9 @@
                     Yanlış
                   </span>
                 </div>
-                <p class="whitespace-pre-wrap text-lg font-medium text-foreground">{{ answer.question?.question_text }}</p>
+                <p class="whitespace-pre-wrap text-lg font-medium text-foreground">
+                  {{ answer.question?.question_text }}
+                </p>
               </div>
             </div>
 
@@ -222,7 +209,8 @@
                   'border-green-500 bg-green-100 dark:bg-green-900': option.is_correct,
                   'border-red-500 bg-red-100 dark:bg-red-900':
                     !option.is_correct && (answer.option_id === option.id || answer.option?.id === option.id),
-                  'border-border bg-background': !option.is_correct && answer.option_id !== option.id && answer.option?.id !== option.id,
+                  'border-border bg-background':
+                    !option.is_correct && answer.option_id !== option.id && answer.option?.id !== option.id,
                 }"
               >
                 <span class="font-medium text-muted-foreground">{{ String.fromCharCode(65 + optIndex) }}.</span>
@@ -266,7 +254,9 @@
                 </svg>
                 <div>
                   <p class="text-sm font-medium text-blue-900 dark:text-blue-100">Açıklama:</p>
-                  <p class="mt-1 whitespace-pre-wrap text-sm text-blue-800 dark:text-blue-200">{{ answer.question.explanation }}</p>
+                  <p class="mt-1 whitespace-pre-wrap text-sm text-blue-800 dark:text-blue-200">
+                    {{ answer.question.explanation }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -378,13 +368,13 @@ const shareMessage = computed(() => {
   const score = Math.round(result.score || 0);
   const totalQuestions = result.total_questions || 0;
   const testSlug = result.test?.slug;
-  
+
   if (!testSlug) {
     return '';
   }
-  
-  const testUrl = window.location.origin + `/tests/${testSlug}`;
-  
+
+  const testUrl = window.location.origin + `/tests/${testSlug}/take`;
+
   return `Checkupcodes sitesindeki "${testTitle}" testindeki ${totalQuestions} soruluk sınavdan ${participantName} ${score} aldım, sen de dener misin? : ${testUrl}`;
 });
 
@@ -424,13 +414,13 @@ const shareResult = async () => {
   const score = Math.round(result.score || 0);
   const totalQuestions = result.total_questions || 0;
   const testSlug = result.test?.slug;
-  
+
   if (!testSlug) {
     return;
   }
-  
-  const testUrl = window.location.origin + `/tests/${testSlug}`;
-  
+
+  const testUrl = window.location.origin + `/tests/${testSlug}/take`;
+
   const shareData = {
     title: `Test Sonucu: ${testTitle}`,
     text: `Checkupcodes sitesindeki "${testTitle}" testindeki ${totalQuestions} soruluk sınavdan ${participantName} ${score} aldım, sen de dener misin?`,
