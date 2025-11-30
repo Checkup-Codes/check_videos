@@ -146,7 +146,32 @@ class TestCategoryService
         $startTime = microtime(true);
         DB::beginTransaction();
         try {
+            // Get all child category IDs recursively (including current category)
+            $allCategoryIds = collect([$category->id]);
+            $this->getChildCategoryIds($category, $allCategoryIds);
+            
+            // Delete all tests in this category and all child categories
+            $tests = \App\Models\Tests\Test::whereIn('category_id', $allCategoryIds)->get();
+            foreach ($tests as $test) {
+                // Delete test results and answers
+                foreach ($test->results as $result) {
+                    $result->answers()->delete();
+                    $result->delete();
+                }
+                // Delete test questions and options
+                foreach ($test->questions as $question) {
+                    $question->options()->delete();
+                    $question->delete();
+                }
+                $test->delete();
+            }
+            
+            // Delete all child categories recursively (from deepest to shallowest)
+            $this->deleteChildCategories($category);
+            
+            // Delete the category itself
             $result = $category->delete();
+            
             DB::commit();
             Cache::forget('public_test_categories_list');
             $executionTime = microtime(true) - $startTime;
@@ -157,6 +182,35 @@ class TestCategoryService
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
+        }
+    }
+    
+    /**
+     * Recursively delete child categories (children are deleted first, then parent)
+     */
+    private function deleteChildCategories(TestCategory $category)
+    {
+        foreach ($category->children as $child) {
+            // Recursively delete grandchildren first
+            if ($child->children->count() > 0) {
+                $this->deleteChildCategories($child);
+            }
+            
+            // Delete the child category (tests already deleted above)
+            $child->delete();
+        }
+    }
+    
+    /**
+     * Get all child category IDs recursively
+     */
+    private function getChildCategoryIds(TestCategory $category, &$categoryIds)
+    {
+        foreach ($category->children as $child) {
+            $categoryIds->push($child->id);
+            if ($child->children->count() > 0) {
+                $this->getChildCategoryIds($child, $categoryIds);
+            }
         }
     }
 

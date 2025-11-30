@@ -260,7 +260,7 @@
         Düzenle
       </Link>
       <button
-        @click="deleteTestCategory(testCategory.id)"
+        @click="deleteTestCategory(testCategory.slug || testCategory.id)"
         :class="deleteButtonClass"
       >
         <svg
@@ -285,7 +285,7 @@
   <!-- Test Category Edit Page Actions - Only Delete Button -->
   <template v-else-if="isTestCategoryEditPage && isLoggedIn && testCategory">
     <button
-      @click="deleteTestCategory(testCategory.id)"
+      @click="deleteTestCategory(testCategory.slug || testCategory.id)"
       :class="deleteButtonClass"
     >
       <svg
@@ -331,7 +331,7 @@
         Düzenle
       </Link>
       <button
-        @click="deleteTest(test.id)"
+        @click="deleteTest(test.slug || test.id)"
         :class="deleteButtonClass"
       >
         <svg
@@ -356,7 +356,7 @@
   <!-- Test Edit Page Actions - Only Delete Button -->
   <template v-else-if="isTestEditPage && isLoggedIn && test">
     <button
-      @click="deleteTest(test.id)"
+      @click="deleteTest(test.slug || test.id)"
       :class="deleteButtonClass"
     >
       <svg
@@ -592,13 +592,13 @@ const deleteVersion = async (id) => {
   }
 };
 
-const deleteTestCategory = async (id) => {
-  if (!confirm('Bu test kategorisini silmek istediğinizden emin misiniz?')) {
+const deleteTestCategory = async (slugOrId) => {
+  if (!confirm('Bu test kategorisini silmek istediğinizden emin misiniz? Altındaki tüm testler ve alt kategoriler de silinecektir.')) {
     return;
   }
   try {
     // Use slug for route model binding
-    const slug = testCategory.value?.slug || id;
+    const slug = testCategory.value?.slug || slugOrId;
     await router.delete(route('test-categories.destroy', { category: slug }), {
       onSuccess: () => {
         router.visit(route('test-categories.index'));
@@ -606,19 +606,24 @@ const deleteTestCategory = async (id) => {
           props.onLinkClick();
         }
       },
+      onError: (errors) => {
+        console.error('Error deleting test category:', errors);
+        alert('Kategori silinirken bir hata oluştu. Lütfen tekrar deneyin.');
+      },
     });
   } catch (error) {
     console.error('Error deleting test category:', error);
+    alert('Kategori silinirken bir hata oluştu. Lütfen tekrar deneyin.');
   }
 };
 
-const deleteTest = async (id) => {
+const deleteTest = async (slugOrId) => {
   if (!confirm('Bu testi silmek istediğinizden emin misiniz?')) {
     return;
   }
   try {
     // Use slug for route model binding
-    const slug = test.value?.slug || id;
+    const slug = test.value?.slug || slugOrId;
     await router.delete(route('tests.destroy', { test: slug }), {
       onSuccess: () => {
         router.visit(route('tests.index'));
@@ -626,9 +631,14 @@ const deleteTest = async (id) => {
           props.onLinkClick();
         }
       },
+      onError: (errors) => {
+        console.error('Error deleting test:', errors);
+        alert('Test silinirken bir hata oluştu. Lütfen tekrar deneyin.');
+      },
     });
   } catch (error) {
     console.error('Error deleting test:', error);
+    alert('Test silinirken bir hata oluştu. Lütfen tekrar deneyin.');
   }
 };
 </script>

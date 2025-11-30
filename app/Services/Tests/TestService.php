@@ -171,7 +171,21 @@ class TestService
     {
         DB::beginTransaction();
         try {
+            // Delete test results and answers
+            foreach ($test->results as $result) {
+                $result->answers()->delete();
+                $result->delete();
+            }
+            
+            // Delete test questions and options
+            foreach ($test->questions as $question) {
+                $question->options()->delete();
+                $question->delete();
+            }
+            
+            // Delete the test itself
             $result = $test->delete();
+            
             DB::commit();
             Cache::forget('public_tests_list');
             return [
