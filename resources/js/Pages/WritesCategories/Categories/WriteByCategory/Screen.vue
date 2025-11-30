@@ -22,7 +22,12 @@
   </div>
 
   <CheckScreen v-else>
-    <div class="mx-auto max-w-4xl">
+    <div
+      class="mx-auto max-w-4xl transition-all duration-300"
+      :class="{
+        'xl:-translate-x-[100px]': !isLoading && showTableOfContents && isTableOfContentsOpen && !showDraw,
+      }"
+    >
       <div class="bg-background transition-colors">
         <div class="p-6 pt-12 sm:p-8 sm:pt-16">
           <div class="mb-8">
@@ -142,7 +147,7 @@
     <button
       v-if="!isLoading && showTableOfContents && !showDraw"
       @click="toggleTableOfContents"
-      class="fixed right-4 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-colors hover:bg-primary/90 2xl:hidden"
+      class="fixed right-4 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-colors hover:bg-primary/90 xl:hidden"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -158,7 +163,7 @@
 
     <div
       v-if="!isLoading && showTableOfContents && !showDraw"
-      class="fixed right-0 top-12 z-40 h-[calc(100vh-3rem)] lg:h-[calc(100vh-5.5rem)] w-80 transform border-l border-border bg-popover shadow-2xl transition-transform duration-300 2xl:hidden"
+      class="fixed right-0 top-12 z-40 h-[calc(100vh-3rem)] w-80 transform border-l border-border bg-popover shadow-2xl transition-transform duration-300 lg:h-[calc(100vh-5.5rem)] xl:hidden"
       :class="{ 'translate-x-full': !isTableOfContentsOpen }"
     >
       <div class="flex h-full flex-col">
@@ -180,7 +185,7 @@
             </svg>
           </button>
         </div>
-        <div class="flex-1 overflow-y-auto p-4">
+        <div ref="mobileTocScrollRef" class="flex-1 overflow-y-auto p-4">
           <div v-if="tableOfContents.length === 0" class="py-8 text-center text-sm text-muted-foreground">
             İçindekiler bulunamadı
           </div>
@@ -188,8 +193,14 @@
             <a
               v-for="(item, index) in tableOfContents"
               :key="index"
-              @click.prevent="scrollToHeading(item.id)"
-              class="block rounded-md px-2 py-1.5 text-sm transition-colors"
+              :ref="(el) => setTocItemRef(el, item.id)"
+              @click="
+                (e) => {
+                  e.preventDefault();
+                  scrollToHeading(item.id);
+                }
+              "
+              class="block cursor-pointer rounded-md px-2 py-1.5 text-sm transition-colors"
               :class="[
                 getTreeHeadingClass(item.level),
                 getActiveHeadingClass(item.id),
@@ -208,7 +219,7 @@
     <button
       v-if="!isLoading && showTableOfContents && !showDraw"
       @click="toggleTableOfContents"
-      class="fixed right-4 top-28 z-50 hidden h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-colors hover:bg-primary/90 2xl:flex"
+      class="fixed right-4 top-28 z-50 hidden h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-colors hover:bg-primary/90 xl:flex"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -224,7 +235,7 @@
 
     <div
       v-if="!isLoading && showTableOfContents && !showDraw"
-      class="fixed right-4 top-28 z-30 hidden w-64 transition-all duration-300 ease-in-out 2xl:block"
+      class="fixed right-4 top-28 z-30 hidden w-64 transition-all duration-300 ease-in-out xl:block"
       :class="isTableOfContentsOpen ? 'translate-x-0 opacity-100' : 'pointer-events-none translate-x-full opacity-0'"
     >
       <div class="rounded-lg border border-border bg-popover shadow-lg">
@@ -246,7 +257,7 @@
             </svg>
           </button>
         </div>
-        <div class="overflow-y-auto p-3" style="max-height: calc(100vh - 220px)">
+        <div ref="desktopTocScrollRef" class="overflow-y-auto p-3" style="max-height: calc(100vh - 220px)">
           <div v-if="tableOfContents.length === 0" class="py-4 text-center text-xs text-muted-foreground">
             İçindekiler bulunamadı
           </div>
@@ -254,8 +265,14 @@
             <a
               v-for="(item, index) in tableOfContents"
               :key="index"
-              @click.prevent="scrollToHeading(item.id)"
-              class="block rounded-md px-2 py-1 text-xs transition-colors"
+              :ref="(el) => setTocItemRef(el, item.id)"
+              @click="
+                (e) => {
+                  e.preventDefault();
+                  scrollToHeading(item.id);
+                }
+              "
+              class="block cursor-pointer rounded-md px-2 py-1 text-xs transition-colors"
               :class="[
                 getTreeHeadingClass(item.level),
                 getActiveHeadingClass(item.id),
@@ -274,7 +291,7 @@
     <div
       v-if="!isLoading && showTableOfContents && isTableOfContentsOpen && !showDraw"
       @click="toggleTableOfContents"
-      class="fixed inset-0 z-30 bg-black/20 2xl:hidden"
+      class="fixed inset-0 z-30 bg-black/20 xl:hidden"
     ></div>
   </CheckScreen>
 </template>
@@ -398,9 +415,12 @@ const tableOfContents = ref([]);
 const showTableOfContents = ref(false);
 const activeHeadingId = ref(null);
 const isLargeScreen = ref(false);
+const mobileTocScrollRef = ref(null);
+const desktopTocScrollRef = ref(null);
+const tocItemRefs = ref(new Map()); // Map to store refs by heading ID
 
 const initializeTableOfContentsState = () => {
-  const isLarge = window.innerWidth >= 1536;
+  const isLarge = window.innerWidth >= 1280; // xl breakpoint
   isLargeScreen.value = isLarge;
   if (isLarge && showTableOfContents.value && tableOfContents.value.length > 0) {
     isTableOfContentsOpen.value = true;
@@ -441,88 +461,110 @@ const formatNumber = (num) => {
 };
 
 let headingObserver = null;
+let scrollHandler = null;
 let contentObserver = null;
 let resizeHandler = null;
 let beforeUnloadHandler = null;
+let isScrollingProgrammatically = false;
 
 const setupActiveHeadingTracking = () => {
   if (!contentRef.value) return;
+
+  // Cleanup previous observers and handlers
   if (headingObserver) {
     headingObserver.disconnect();
+    headingObserver = null;
   }
-  const headings = contentRef.value.querySelectorAll('h1, h2, h3, h4, h5, h6');
+  if (scrollHandler) {
+    window.removeEventListener('scroll', scrollHandler);
+    scrollHandler = null;
+  }
+
+  // Find headings within heading-wrapper (Quill processes headings and wraps them)
+  // Also check for direct headings in case they exist
+  const headings = contentRef.value.querySelectorAll(
+    '.heading-wrapper h1, .heading-wrapper h2, .heading-wrapper h3, .heading-wrapper h4, .heading-wrapper h5, .heading-wrapper h6, h1, h2, h3, h4, h5, h6'
+  );
   if (headings.length === 0) return;
 
-  // Track scroll position to determine active heading
+  // Header offset for sticky navigation
   const headerOffset = 80;
 
+  // Function to update active heading based on scroll position
   const updateActiveHeading = () => {
-    let currentHeading = null;
-    let minDistance = Infinity;
+    // Skip update if we're programmatically scrolling
+    if (isScrollingProgrammatically) return;
 
+    let currentHeading = null;
+    let closestDistance = Infinity;
+
+    // Find the heading that is currently at or just above the header offset
     headings.forEach((heading) => {
       if (!heading.id) return;
 
       const rect = heading.getBoundingClientRect();
-      const distanceFromTop = Math.abs(rect.top - headerOffset);
+      const distanceFromTop = rect.top - headerOffset;
 
-      // Check if heading is above the header offset (visible in viewport)
-      if (rect.top <= headerOffset + 20 && rect.bottom > headerOffset) {
-        if (distanceFromTop < minDistance) {
-          minDistance = distanceFromTop;
+      // If heading is at or above the header offset and visible
+      if (rect.top <= headerOffset + 50 && rect.bottom > 0) {
+        // Prefer headings that are at or just above the header
+        if (distanceFromTop <= 50 && Math.abs(distanceFromTop) < closestDistance) {
+          closestDistance = Math.abs(distanceFromTop);
           currentHeading = heading.id;
         }
       }
     });
 
-    // If no heading is at the top, find the one closest to the top
+    // If no heading found above, find the one closest to the top
     if (!currentHeading) {
       headings.forEach((heading) => {
         if (!heading.id) return;
         const rect = heading.getBoundingClientRect();
-        if (rect.top <= headerOffset + 100) {
+        if (rect.top < headerOffset + 200 && rect.bottom > 0) {
           const distance = Math.abs(rect.top - headerOffset);
-          if (distance < minDistance) {
-            minDistance = distance;
+          if (distance < closestDistance) {
+            closestDistance = distance;
             currentHeading = heading.id;
           }
         }
       });
     }
 
-    if (currentHeading) {
+    // Update active heading if found
+    if (currentHeading && activeHeadingId.value !== currentHeading) {
       activeHeadingId.value = currentHeading;
     }
   };
 
-  // Use IntersectionObserver for better performance
+  // Use IntersectionObserver for efficient tracking
   headingObserver = new IntersectionObserver(
     (entries) => {
-      // Update on scroll
+      if (!isScrollingProgrammatically) {
       updateActiveHeading();
+      }
     },
     {
       root: null,
-      rootMargin: `-${headerOffset}px 0px -70% 0px`,
+      rootMargin: `-${headerOffset + 10}px 0px -60% 0px`,
       threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
     }
   );
 
+  // Observe all headings (wrapper içindeki başlıklar)
   headings.forEach((heading) => {
     if (heading.id) {
       headingObserver.observe(heading);
     }
   });
 
-  // Also listen to scroll events for more accurate tracking
-  const handleScroll = () => {
+  // Add scroll event listener for real-time updates
+  scrollHandler = () => {
+    if (!isScrollingProgrammatically) {
     updateActiveHeading();
+    }
   };
 
-  window.addEventListener('scroll', handleScroll, { passive: true });
-
-  // Store scroll handler for cleanup
-  headingObserver._scrollHandler = handleScroll;
+  window.addEventListener('scroll', scrollHandler, { passive: true });
 
   // Initial update
   updateActiveHeading();
@@ -608,10 +650,11 @@ onUnmounted(() => {
   }
   if (headingObserver) {
     headingObserver.disconnect();
-    // Remove scroll handler if it exists
-    if (headingObserver._scrollHandler) {
-      window.removeEventListener('scroll', headingObserver._scrollHandler);
+    headingObserver = null;
     }
+  if (scrollHandler) {
+    window.removeEventListener('scroll', scrollHandler);
+    scrollHandler = null;
   }
   if (resizeHandler) {
     window.removeEventListener('resize', resizeHandler);
@@ -638,21 +681,68 @@ router.on('before', (event) => {
 
 const generateTableOfContents = () => {
   if (!contentRef.value) return;
+
+  // Find headings within heading-wrapper (Quill processes headings and wraps them)
+  // Priority: wrapper içindeki başlıklar, sonra direkt başlıklar
   const headings = contentRef.value.querySelectorAll(
-    '.heading-wrapper h1, .heading-wrapper h2, .heading-wrapper h3, .heading-wrapper h4, .heading-wrapper h5, .heading-wrapper h6'
+    '.heading-wrapper h1, .heading-wrapper h2, .heading-wrapper h3, .heading-wrapper h4, .heading-wrapper h5, .heading-wrapper h6, h1, h2, h3, h4, h5, h6'
   );
+
   const toc = [];
+  const seenIds = new Set();
+
   headings.forEach((heading) => {
-    // Get ID from the heading or its wrapper
-    const headingId =
-      heading.id ||
-      heading.closest('.heading-wrapper')?.querySelector('a.heading-anchor')?.href?.split('#')[1] ||
-      `heading-${toc.length}`;
+    // Get ID from the heading itself (Quill sets ID on the cloned heading inside wrapper)
+    // Or try to get from anchor link href
+    let headingId = heading.id;
+
+    // If no ID, try to get from anchor link in wrapper
+    if (!headingId) {
+      const wrapper = heading.closest('.heading-wrapper');
+      if (wrapper) {
+        const anchor = wrapper.querySelector('a.heading-anchor');
+        if (anchor && anchor.href) {
+          headingId = anchor.href.split('#')[1];
+        }
+      }
+    }
+
+    // Generate unique ID if still not found
+    if (!headingId) {
+      const text = heading.textContent
+        .trim()
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .substring(0, 50);
+      headingId = text || `heading-${toc.length}`;
+
+      // Ensure uniqueness
+      let uniqueId = headingId;
+      let counter = 1;
+      while (seenIds.has(uniqueId)) {
+        uniqueId = `${headingId}-${counter}`;
+        counter++;
+      }
+      headingId = uniqueId;
+
+      // Set ID on heading if it doesn't have one
     if (!heading.id) {
       heading.id = headingId;
     }
+    }
+
+    // Skip if we've already seen this ID (avoid duplicates)
+    if (seenIds.has(headingId)) {
+      return;
+    }
+
+    seenIds.add(headingId);
+
     const level = parseInt(heading.tagName.charAt(1));
     const text = heading.textContent.trim();
+
     if (text) {
       toc.push({
         id: headingId,
@@ -661,6 +751,7 @@ const generateTableOfContents = () => {
       });
     }
   });
+
   tableOfContents.value = toc;
   showTableOfContents.value = toc.length > 0;
 };
@@ -680,30 +771,54 @@ const toggleContent = () => {
 };
 
 const scrollToHeading = (headingId) => {
-  const element = document.getElementById(headingId);
-  if (element) {
-    // Set active heading immediately for better UX
-    activeHeadingId.value = headingId;
+  if (!headingId) return;
 
-    // Get header height (sticky navigation)
-    const headerOffset = 80;
+  // Find element by ID
+  let element = document.getElementById(headingId);
 
-    // Get element position relative to document
-    const elementTop = element.getBoundingClientRect().top + window.pageYOffset;
+  // If not found, search in contentRef
+  if (!element && contentRef.value) {
+    element = contentRef.value.querySelector(`#${headingId}`);
+  }
 
-    // Calculate scroll position to place heading at top (accounting for header)
-    const scrollPosition = elementTop - headerOffset;
+  // If still not found, search all headings
+  if (!element && contentRef.value) {
+    const allHeadings = contentRef.value.querySelectorAll(
+      '.heading-wrapper h1, .heading-wrapper h2, .heading-wrapper h3, .heading-wrapper h4, .heading-wrapper h5, .heading-wrapper h6, h1, h2, h3, h4, h5, h6'
+    );
+    for (const heading of allHeadings) {
+      if (heading.id === headingId) {
+        element = heading;
+        break;
+      }
+    }
+  }
 
-    // Smooth scroll to position
-    window.scrollTo({
-      top: scrollPosition,
+  if (!element) return;
+
+  // Set flag and active heading
+  isScrollingProgrammatically = true;
+  activeHeadingId.value = headingId;
+
+  // Scroll TOC panel to show active item
+  nextTick(() => {
+    scrollToActiveTocItem();
+  });
+
+  // Simple scroll - CSS scroll-margin-top handles the offset
+  element.scrollIntoView({
       behavior: 'smooth',
+    block: 'start',
     });
 
-    // Close mobile menu if on mobile
-    if (window.innerWidth < 1536) {
+  // Reset flag after scroll
+  setTimeout(() => {
+    isScrollingProgrammatically = false;
+  }, 600);
+
+  // Close mobile menu
+  if (window.innerWidth < 1280) {
       isTableOfContentsOpen.value = false;
-    }
   }
 };
 
@@ -758,6 +873,51 @@ const toggleTableOfContents = () => {
   isTableOfContentsOpen.value = !isTableOfContentsOpen.value;
 };
 
+// Store refs for TOC items
+const setTocItemRef = (el, headingId) => {
+  if (el) {
+    tocItemRefs.value.set(headingId, el);
+  } else {
+    tocItemRefs.value.delete(headingId);
+  }
+};
+
+// Scroll to active item in TOC panel
+const scrollToActiveTocItem = () => {
+  if (!activeHeadingId.value) return;
+
+  const activeItem = tocItemRefs.value.get(activeHeadingId.value);
+  if (!activeItem) return;
+
+  // Determine which scroll container to use based on screen size
+  const scrollContainer = window.innerWidth >= 1280 ? desktopTocScrollRef.value : mobileTocScrollRef.value;
+  if (!scrollContainer) return;
+
+  // Get container and item positions
+  const containerRect = scrollContainer.getBoundingClientRect();
+  const itemRect = activeItem.getBoundingClientRect();
+
+  // Calculate if item is outside visible area
+  const isAboveViewport = itemRect.top < containerRect.top;
+  const isBelowViewport = itemRect.bottom > containerRect.bottom;
+
+  if (isAboveViewport || isBelowViewport) {
+    // Calculate scroll position to center the item in viewport
+    const scrollTop = scrollContainer.scrollTop;
+    const itemOffsetTop = activeItem.offsetTop;
+    const containerHeight = scrollContainer.clientHeight;
+    const itemHeight = activeItem.offsetHeight;
+
+    // Center the item in the container
+    const targetScrollTop = itemOffsetTop - containerHeight / 2 + itemHeight / 2;
+
+    scrollContainer.scrollTo({
+      top: targetScrollTop,
+      behavior: 'smooth',
+    });
+  }
+};
+
 watch(
   processedContent,
   () => {
@@ -775,6 +935,16 @@ watch(
   },
   { flush: 'post' }
 );
+
+// Watch activeHeadingId to scroll TOC panel to active item
+watch(activeHeadingId, (newId, oldId) => {
+  // Only scroll if heading changed and we're not programmatically scrolling
+  if (newId && newId !== oldId && !isScrollingProgrammatically) {
+    nextTick(() => {
+      scrollToActiveTocItem();
+    });
+  }
+});
 </script>
 
 <style scoped>
