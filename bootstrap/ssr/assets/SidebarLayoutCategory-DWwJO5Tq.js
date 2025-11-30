@@ -3,7 +3,7 @@ import { ssrRenderComponent } from "vue/server-renderer";
 import { _ as _sfc_main$1 } from "./CheckSubsidebar-DfwdLh-u.js";
 import { _ as _sfc_main$2 } from "./SubSidebarScreen-DMn-8f1h.js";
 import CategoryTree from "./CategoryTree-C_YNeSgy.js";
-import { u as useSidebar } from "./useSidebar-DbOjWDc5.js";
+import { u as useSidebar } from "./useSidebar-D-dtiIC8.js";
 import { useStore } from "vuex";
 import { _ as _export_sfc } from "../ssr.js";
 import "@inertiajs/vue3";

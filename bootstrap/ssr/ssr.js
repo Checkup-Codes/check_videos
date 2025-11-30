@@ -1109,6 +1109,28 @@ const _sfc_main$4 = {
       const url = page.url;
       return url.startsWith("/versions/") && url !== "/versions" && url !== "/versions/create";
     });
+    const isTestCategoryShowPage = computed(() => {
+      const url = page.url;
+      if (url.startsWith("/test-categories/") && url !== "/test-categories" && url !== "/test-categories/create") {
+        const parts = url.split("/").filter((part) => part.length > 0);
+        if (parts.length === 2 && parts[0] === "test-categories" && !parts[1].includes("edit")) {
+          return true;
+        }
+      }
+      return false;
+    });
+    const isTestCategoryEditPage = computed(() => {
+      const url = page.url;
+      return url.startsWith("/test-categories/") && url.includes("/edit");
+    });
+    const isTestShowPage = computed(() => {
+      const url = page.url;
+      return url.startsWith("/tests/") && url !== "/tests" && url !== "/tests/create" && !url.includes("/take") && !url.includes("/edit");
+    });
+    const isTestEditPage = computed(() => {
+      const url = page.url;
+      return url.startsWith("/tests/") && url.includes("/edit");
+    });
     const isLoggedIn = computed(() => {
       return !!(page.props.auth && page.props.auth.user);
     });
@@ -1116,6 +1138,8 @@ const _sfc_main$4 = {
     const category = computed(() => page.props.category || null);
     const word = computed(() => page.props.word || null);
     const version = computed(() => page.props.version || null);
+    const testCategory = computed(() => page.props.category || null);
+    const test = computed(() => page.props.test || null);
     const containerClass = computed(() => {
       return props.variant === "mobile" ? "flex flex-col gap-2" : "flex items-center gap-2";
     });
@@ -1267,6 +1291,76 @@ const _sfc_main$4 = {
           _: 1
         }, _parent));
         _push(`<button class="${ssrRenderClass(deleteButtonClass.value)}"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="${ssrRenderClass(iconClass.value)}"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path></svg> Sil </button></div>`);
+      } else if (isTestCategoryShowPage.value && !isTestCategoryEditPage.value && isLoggedIn.value && testCategory.value) {
+        _push(`<div${ssrRenderAttrs(mergeProps({ class: containerClass.value }, _attrs))}>`);
+        _push(ssrRenderComponent(unref(Link), {
+          href: _ctx.route("test-categories.edit", testCategory.value.slug),
+          class: editButtonClass.value,
+          onClick: __props.onLinkClick
+        }, {
+          default: withCtx((_2, _push2, _parent2, _scopeId) => {
+            if (_push2) {
+              _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="${ssrRenderClass(iconClass.value)}"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"${_scopeId}></path></svg> Düzenle `);
+            } else {
+              return [
+                (openBlock(), createBlock("svg", {
+                  xmlns: "http://www.w3.org/2000/svg",
+                  fill: "none",
+                  viewBox: "0 0 24 24",
+                  "stroke-width": "1.5",
+                  stroke: "currentColor",
+                  class: iconClass.value
+                }, [
+                  createVNode("path", {
+                    "stroke-linecap": "round",
+                    "stroke-linejoin": "round",
+                    d: "M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                  })
+                ], 2)),
+                createTextVNode(" Düzenle ")
+              ];
+            }
+          }),
+          _: 1
+        }, _parent));
+        _push(`<button class="${ssrRenderClass(deleteButtonClass.value)}"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="${ssrRenderClass(iconClass.value)}"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path></svg> Sil </button></div>`);
+      } else if (isTestCategoryEditPage.value && isLoggedIn.value && testCategory.value) {
+        _push(`<button${ssrRenderAttrs(mergeProps({ class: deleteButtonClass.value }, _attrs))}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="${ssrRenderClass(iconClass.value)}"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path></svg> Sil </button>`);
+      } else if (isTestShowPage.value && !isTestEditPage.value && isLoggedIn.value && test.value) {
+        _push(`<div${ssrRenderAttrs(mergeProps({ class: containerClass.value }, _attrs))}>`);
+        _push(ssrRenderComponent(unref(Link), {
+          href: _ctx.route("tests.edit", test.value.slug),
+          class: editButtonClass.value,
+          onClick: __props.onLinkClick
+        }, {
+          default: withCtx((_2, _push2, _parent2, _scopeId) => {
+            if (_push2) {
+              _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="${ssrRenderClass(iconClass.value)}"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"${_scopeId}></path></svg> Düzenle `);
+            } else {
+              return [
+                (openBlock(), createBlock("svg", {
+                  xmlns: "http://www.w3.org/2000/svg",
+                  fill: "none",
+                  viewBox: "0 0 24 24",
+                  "stroke-width": "1.5",
+                  stroke: "currentColor",
+                  class: iconClass.value
+                }, [
+                  createVNode("path", {
+                    "stroke-linecap": "round",
+                    "stroke-linejoin": "round",
+                    d: "M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                  })
+                ], 2)),
+                createTextVNode(" Düzenle ")
+              ];
+            }
+          }),
+          _: 1
+        }, _parent));
+        _push(`<button class="${ssrRenderClass(deleteButtonClass.value)}"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="${ssrRenderClass(iconClass.value)}"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path></svg> Sil </button></div>`);
+      } else if (isTestEditPage.value && isLoggedIn.value && test.value) {
+        _push(`<button${ssrRenderAttrs(mergeProps({ class: deleteButtonClass.value }, _attrs))}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="${ssrRenderClass(iconClass.value)}"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path></svg> Sil </button>`);
       } else {
         _push(`<!---->`);
       }
@@ -1379,6 +1473,28 @@ const _sfc_main$3 = {
       const url = page.url;
       return url.startsWith("/rendition/words/") && url !== "/rendition/words" && url !== "/rendition/words/create";
     });
+    const isTestCategoryShowPage = computed(() => {
+      const url = page.url;
+      if (url.startsWith("/test-categories/") && url !== "/test-categories" && url !== "/test-categories/create") {
+        const parts = url.split("/").filter((part) => part.length > 0);
+        if (parts.length === 2 && parts[0] === "test-categories" && !parts[1].includes("edit")) {
+          return true;
+        }
+      }
+      return false;
+    });
+    const isTestCategoryEditPage = computed(() => {
+      const url = page.url;
+      return url.startsWith("/test-categories/") && url.includes("/edit");
+    });
+    const isTestShowPage = computed(() => {
+      const url = page.url;
+      return url.startsWith("/tests/") && url !== "/tests" && url !== "/tests/create" && !url.includes("/take") && !url.includes("/edit");
+    });
+    const isTestEditPage = computed(() => {
+      const url = page.url;
+      return url.startsWith("/tests/") && url.includes("/edit");
+    });
     computed(() => {
       return isWordShowPage.value && !word.value && pack.value;
     });
@@ -1482,7 +1598,7 @@ const _sfc_main$3 = {
       }
     });
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<!--[--><header class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur transition-all duration-300 supports-[backdrop-filter]:bg-background/60" data-v-04481ea5><div class="flex h-12 items-center justify-between px-3 sm:px-4 lg:hidden" data-v-04481ea5>`);
+      _push(`<!--[--><header class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur transition-all duration-300 supports-[backdrop-filter]:bg-background/60" data-v-875a991e><div class="flex h-12 items-center justify-between px-3 sm:px-4 lg:hidden" data-v-875a991e>`);
       if (basePath.value) {
         _push(ssrRenderComponent(unref(Link), {
           href: `/${basePath.value}`,
@@ -1500,13 +1616,13 @@ const _sfc_main$3 = {
           _: 1
         }, _parent));
       } else {
-        _push(`<div class="w-10" data-v-04481ea5></div>`);
+        _push(`<div class="w-10" data-v-875a991e></div>`);
       }
-      _push(`<div class="flex items-center space-x-2" data-v-04481ea5><div class="flex h-7 w-7 items-center justify-center overflow-hidden rounded-md bg-primary/10 ring-1 ring-primary/20" data-v-04481ea5>`);
+      _push(`<div class="flex items-center space-x-2" data-v-875a991e><div class="flex h-7 w-7 items-center justify-center overflow-hidden rounded-md bg-primary/10 ring-1 ring-primary/20" data-v-875a991e>`);
       if (logoPath.value && !isLoading.value) {
-        _push(`<img${ssrRenderAttr("src", logoPath.value)}${ssrRenderAttr("alt", logoAlt.value)} class="h-full w-full object-cover" data-v-04481ea5>`);
+        _push(`<img${ssrRenderAttr("src", logoPath.value)}${ssrRenderAttr("alt", logoAlt.value)} class="h-full w-full object-cover" data-v-875a991e>`);
       } else {
-        _push(`<span class="text-xs font-semibold text-primary" data-v-04481ea5>${ssrInterpolate(seoTitle.value.charAt(0).toUpperCase())}</span>`);
+        _push(`<span class="text-xs font-semibold text-primary" data-v-875a991e>${ssrInterpolate(seoTitle.value.charAt(0).toUpperCase())}</span>`);
       }
       _push(`</div>`);
       _push(ssrRenderComponent(unref(Link), {
@@ -1524,11 +1640,11 @@ const _sfc_main$3 = {
         }),
         _: 1
       }, _parent));
-      _push(`</div><button class="inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" data-v-04481ea5><svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-v-04481ea5><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16m-7 6h7" data-v-04481ea5></path></svg></button></div><div class="hidden h-12 items-center justify-between px-4 lg:flex" data-v-04481ea5><div class="flex items-center space-x-4" data-v-04481ea5><div class="flex items-center space-x-2.5" data-v-04481ea5><div class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-md bg-primary/10 ring-1 ring-primary/20" data-v-04481ea5>`);
+      _push(`</div><button class="inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" data-v-875a991e><svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-v-875a991e><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16m-7 6h7" data-v-875a991e></path></svg></button></div><div class="hidden h-12 items-center justify-between px-4 lg:flex" data-v-875a991e><div class="flex items-center space-x-4" data-v-875a991e><div class="flex items-center space-x-2.5" data-v-875a991e><div class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-md bg-primary/10 ring-1 ring-primary/20" data-v-875a991e>`);
       if (logoPath.value && !isLoading.value) {
-        _push(`<img${ssrRenderAttr("src", logoPath.value)}${ssrRenderAttr("alt", logoAlt.value)} class="h-full w-full object-cover" data-v-04481ea5>`);
+        _push(`<img${ssrRenderAttr("src", logoPath.value)}${ssrRenderAttr("alt", logoAlt.value)} class="h-full w-full object-cover" data-v-875a991e>`);
       } else {
-        _push(`<span class="text-sm font-semibold text-primary" data-v-04481ea5>${ssrInterpolate(seoTitle.value.charAt(0).toUpperCase())}</span>`);
+        _push(`<span class="text-sm font-semibold text-primary" data-v-875a991e>${ssrInterpolate(seoTitle.value.charAt(0).toUpperCase())}</span>`);
       }
       _push(`</div>`);
       _push(ssrRenderComponent(unref(Link), {
@@ -1546,24 +1662,24 @@ const _sfc_main$3 = {
         }),
         _: 1
       }, _parent));
-      _push(`</div></div><div class="mx-6 flex-1 sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl" data-v-04481ea5><div class="relative" data-v-04481ea5><div class="relative" data-v-04481ea5><div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3" data-v-04481ea5><svg class="h-4 w-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-v-04481ea5><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" data-v-04481ea5></path></svg></div><input${ssrRenderAttr("value", searchQuery.value)} type="text" placeholder="Ara..." class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 pl-9 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" data-v-04481ea5><div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3" data-v-04481ea5><kbd class="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100" data-v-04481ea5>⌘K</kbd></div></div>`);
+      _push(`</div></div><div class="mx-6 flex-1 sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl" data-v-875a991e><div class="relative" data-v-875a991e><div class="relative" data-v-875a991e><div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3" data-v-875a991e><svg class="h-4 w-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-v-875a991e><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" data-v-875a991e></path></svg></div><input${ssrRenderAttr("value", searchQuery.value)} type="text" placeholder="Ara..." class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 pl-9 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" data-v-875a991e><div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3" data-v-875a991e><kbd class="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100" data-v-875a991e>⌘K</kbd></div></div>`);
       if (showSearchResults.value && (searchResults.value.articles && searchResults.value.articles.length > 0 || searchResults.value.categories && searchResults.value.categories.length > 0 || searchQuery.value.length > 0)) {
-        _push(`<div class="search-results-dropdown absolute left-0 right-0 top-full z-50 mt-1.5 max-h-[32rem] w-full min-w-[400px] overflow-y-auto rounded-md border border-border bg-popover text-popover-foreground shadow-lg sm:min-w-[500px] md:min-w-[600px] lg:min-w-[700px] xl:min-w-[800px] 2xl:min-w-[900px]" data-v-04481ea5>`);
+        _push(`<div class="search-results-dropdown absolute left-0 right-0 top-full z-50 mt-1.5 max-h-[32rem] w-full min-w-[400px] overflow-y-auto rounded-md border border-border bg-popover text-popover-foreground shadow-lg sm:min-w-[500px] md:min-w-[600px] lg:min-w-[700px] xl:min-w-[800px] 2xl:min-w-[900px]" data-v-875a991e>`);
         if (isSearching.value) {
-          _push(`<div class="flex items-center justify-center p-4" data-v-04481ea5><div class="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" data-v-04481ea5></div><span class="ml-2 text-sm text-muted-foreground" data-v-04481ea5>Aranıyor...</span></div>`);
+          _push(`<div class="flex items-center justify-center p-4" data-v-875a991e><div class="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" data-v-875a991e></div><span class="ml-2 text-sm text-muted-foreground" data-v-875a991e>Aranıyor...</span></div>`);
         } else if (searchQuery.value.length > 0 && (!searchResults.value.articles || searchResults.value.articles.length === 0) && (!searchResults.value.categories || searchResults.value.categories.length === 0)) {
-          _push(`<div class="flex flex-col items-center justify-center p-6 text-center" data-v-04481ea5><div class="mb-2 text-muted-foreground" data-v-04481ea5><svg class="mx-auto h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-04481ea5><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" data-v-04481ea5></path></svg></div><span class="text-sm text-muted-foreground" data-v-04481ea5>&quot;${ssrInterpolate(searchQuery.value)}&quot; için sonuç bulunamadı</span></div>`);
+          _push(`<div class="flex flex-col items-center justify-center p-6 text-center" data-v-875a991e><div class="mb-2 text-muted-foreground" data-v-875a991e><svg class="mx-auto h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-875a991e><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" data-v-875a991e></path></svg></div><span class="text-sm text-muted-foreground" data-v-875a991e>&quot;${ssrInterpolate(searchQuery.value)}&quot; için sonuç bulunamadı</span></div>`);
         } else if (searchResults.value.articles && searchResults.value.articles.length > 0 || searchResults.value.categories && searchResults.value.categories.length > 0) {
-          _push(`<div class="py-2" data-v-04481ea5>`);
+          _push(`<div class="py-2" data-v-875a991e>`);
           if (searchResults.value.articles && searchResults.value.articles.length > 0) {
-            _push(`<div class="mb-3" data-v-04481ea5><div class="border-b border-border px-3 py-1.5 text-xs font-medium text-muted-foreground" data-v-04481ea5>Yazılar</div><!--[-->`);
+            _push(`<div class="mb-3" data-v-875a991e><div class="border-b border-border px-3 py-1.5 text-xs font-medium text-muted-foreground" data-v-875a991e>Yazılar</div><!--[-->`);
             ssrRenderList(searchResults.value.articles, (article, index) => {
               _push(`<div${ssrRenderAttr("data-selected-index", index)} class="${ssrRenderClass([
                 "cursor-pointer border-b border-border px-3 py-2 transition-colors last:border-b-0",
                 selectedIndex.value === index ? "bg-accent text-accent-foreground" : "hover:bg-accent hover:text-accent-foreground"
-              ])}" data-v-04481ea5><div class="text-sm font-medium leading-none" data-v-04481ea5>${highlightText(article.title) ?? ""}</div><div class="mt-0.5 text-xs leading-tight text-muted-foreground" data-v-04481ea5>${highlightText(article.excerpt) ?? ""}</div>`);
+              ])}" data-v-875a991e><div class="text-sm font-medium leading-none" data-v-875a991e>${highlightText(article.title) ?? ""}</div><div class="mt-0.5 text-xs leading-tight text-muted-foreground" data-v-875a991e>${highlightText(article.excerpt) ?? ""}</div>`);
               if (article.category) {
-                _push(`<div class="mt-1" data-v-04481ea5><span class="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary" data-v-04481ea5>${ssrInterpolate(article.category)}</span></div>`);
+                _push(`<div class="mt-1" data-v-875a991e><span class="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary" data-v-875a991e>${ssrInterpolate(article.category)}</span></div>`);
               } else {
                 _push(`<!---->`);
               }
@@ -1574,12 +1690,12 @@ const _sfc_main$3 = {
             _push(`<!---->`);
           }
           if (searchResults.value.categories && searchResults.value.categories.length > 0) {
-            _push(`<div class="mb-3" data-v-04481ea5><div class="border-b border-border px-3 py-1.5 text-xs font-medium text-muted-foreground" data-v-04481ea5> Kategoriler </div><!--[-->`);
+            _push(`<div class="mb-3" data-v-875a991e><div class="border-b border-border px-3 py-1.5 text-xs font-medium text-muted-foreground" data-v-875a991e> Kategoriler </div><!--[-->`);
             ssrRenderList(searchResults.value.categories, (category, index) => {
               _push(`<div${ssrRenderAttr("data-selected-index", searchResults.value.articles.length + index)} class="${ssrRenderClass([
                 "cursor-pointer border-b border-border px-3 py-2 transition-colors last:border-b-0",
                 selectedIndex.value === searchResults.value.articles.length + index ? "bg-accent text-accent-foreground" : "hover:bg-accent hover:text-accent-foreground"
-              ])}" data-v-04481ea5><div class="text-sm font-medium leading-none" data-v-04481ea5>${highlightText(category.name) ?? ""}</div></div>`);
+              ])}" data-v-875a991e><div class="text-sm font-medium leading-none" data-v-875a991e>${highlightText(category.name) ?? ""}</div></div>`);
             });
             _push(`<!--]--></div>`);
           } else {
@@ -1587,19 +1703,19 @@ const _sfc_main$3 = {
           }
           _push(`</div>`);
         } else {
-          _push(`<div class="py-2" data-v-04481ea5><div class="border-b border-border px-3 py-1.5 text-xs font-medium text-muted-foreground" data-v-04481ea5> Hızlı Eylemler </div><div data-selected-index="0" class="${ssrRenderClass([
+          _push(`<div class="py-2" data-v-875a991e><div class="border-b border-border px-3 py-1.5 text-xs font-medium text-muted-foreground" data-v-875a991e> Hızlı Eylemler </div><div data-selected-index="0" class="${ssrRenderClass([
             "cursor-pointer border-b border-border px-3 py-2 transition-colors last:border-b-0",
             selectedIndex.value === 0 ? "bg-accent text-accent-foreground" : "hover:bg-accent hover:text-accent-foreground"
-          ])}" data-v-04481ea5><div class="text-sm font-medium" data-v-04481ea5>Tüm Yazıları Görüntüle</div><div class="mt-0.5 text-xs text-muted-foreground" data-v-04481ea5>Tüm yayınlanmış yazıları görüntüle</div></div><div data-selected-index="1" class="${ssrRenderClass([
+          ])}" data-v-875a991e><div class="text-sm font-medium" data-v-875a991e>Tüm Yazıları Görüntüle</div><div class="mt-0.5 text-xs text-muted-foreground" data-v-875a991e>Tüm yayınlanmış yazıları görüntüle</div></div><div data-selected-index="1" class="${ssrRenderClass([
             "cursor-pointer border-b border-border px-3 py-2 transition-colors last:border-b-0",
             selectedIndex.value === 1 ? "bg-accent text-accent-foreground" : "hover:bg-accent hover:text-accent-foreground"
-          ])}" data-v-04481ea5><div class="text-sm font-medium" data-v-04481ea5>Tüm Kategorileri Görüntüle</div><div class="mt-0.5 text-xs text-muted-foreground" data-v-04481ea5>Tüm kategorileri görüntüle</div></div></div>`);
+          ])}" data-v-875a991e><div class="text-sm font-medium" data-v-875a991e>Tüm Kategorileri Görüntüle</div><div class="mt-0.5 text-xs text-muted-foreground" data-v-875a991e>Tüm kategorileri görüntüle</div></div></div>`);
         }
         _push(`</div>`);
       } else {
         _push(`<!---->`);
       }
-      _push(`</div></div><div class="flex items-center space-x-2" data-v-04481ea5><div class="hidden items-center space-x-1 xl:flex" data-v-04481ea5>`);
+      _push(`</div></div><div class="flex items-center space-x-2" data-v-875a991e><div class="hidden items-center space-x-1 xl:flex" data-v-875a991e>`);
       _push(ssrRenderComponent(unref(Link), {
         href: "/dashboard",
         class: "inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
@@ -1615,16 +1731,16 @@ const _sfc_main$3 = {
         }),
         _: 1
       }, _parent));
-      _push(`<a href="https://youtu.be/FPsx8xHLR1k?si=nZnBfqjYQun9R06h" target="_blank" class="inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" data-v-04481ea5> Destek </a></div>`);
+      _push(`<a href="https://youtu.be/FPsx8xHLR1k?si=nZnBfqjYQun9R06h" target="_blank" class="inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" data-v-875a991e> Destek </a></div>`);
       if (!isLoggedIn.value) {
-        _push(`<div class="tooltip tooltip-bottom" data-tip="Aramıza Katıl" data-v-04481ea5>`);
+        _push(`<div class="tooltip tooltip-bottom" data-tip="Aramıza Katıl" data-v-875a991e>`);
         _push(ssrRenderComponent(unref(Link), {
           href: "/join-us",
           class: "block"
         }, {
           default: withCtx((_2, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`<button class="inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" data-v-04481ea5${_scopeId}><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-04481ea5${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" data-v-04481ea5${_scopeId}></path></svg></button>`);
+              _push2(`<button class="inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" data-v-875a991e${_scopeId}><svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-v-875a991e${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" data-v-875a991e${_scopeId}></path></svg></button>`);
             } else {
               return [
                 createVNode("button", { class: "inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" }, [
@@ -1651,17 +1767,17 @@ const _sfc_main$3 = {
       } else {
         _push(`<!---->`);
       }
-      _push(`<button class="inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" data-v-04481ea5>`);
+      _push(`<button class="inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" data-v-875a991e>`);
       if (isDarkMode.value) {
-        _push(`<svg class="h-3.5 w-3.5 fill-current text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-v-04481ea5><path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" data-v-04481ea5></path></svg>`);
+        _push(`<svg class="h-3.5 w-3.5 fill-current text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-v-875a991e><path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" data-v-875a991e></path></svg>`);
       } else {
-        _push(`<svg class="h-3.5 w-3.5 fill-current text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-v-04481ea5><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" data-v-04481ea5></path></svg>`);
+        _push(`<svg class="h-3.5 w-3.5 fill-current text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-v-875a991e><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" data-v-875a991e></path></svg>`);
       }
       _push(`</button>`);
       if (isLoggedIn.value) {
-        _push(`<div class="profile-dropdown-container relative inline-block" data-v-04481ea5><button class="${ssrRenderClass([{ "bg-accent text-accent-foreground": showProfileDropdown.value }, "inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"])}" title="Profil" data-v-04481ea5><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-04481ea5><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" data-v-04481ea5></path></svg></button>`);
+        _push(`<div class="profile-dropdown-container relative inline-block" data-v-875a991e><button class="${ssrRenderClass([{ "bg-accent text-accent-foreground": showProfileDropdown.value }, "inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"])}" title="Profil" data-v-875a991e><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-875a991e><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" data-v-875a991e></path></svg></button>`);
         if (showProfileDropdown.value) {
-          _push(`<div class="absolute right-0 top-full z-50 mt-1 w-48 rounded-md border border-border bg-popover shadow-lg" data-v-04481ea5><div class="flex flex-col gap-1 p-1" data-v-04481ea5>`);
+          _push(`<div class="absolute right-0 top-full z-50 mt-1 w-48 rounded-md border border-border bg-popover shadow-lg" data-v-875a991e><div class="flex flex-col gap-1 p-1" data-v-875a991e>`);
           _push(ssrRenderComponent(unref(Link), {
             href: _ctx.route("profile.edit"),
             class: "inline-flex h-7 items-center rounded-md px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
@@ -1669,7 +1785,7 @@ const _sfc_main$3 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-04481ea5${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" data-v-04481ea5${_scopeId}></path></svg> Profil `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-875a991e${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" data-v-875a991e${_scopeId}></path></svg> Profil `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -1692,7 +1808,7 @@ const _sfc_main$3 = {
             }),
             _: 1
           }, _parent));
-          _push(`<button type="button" class="inline-flex h-7 w-full items-center rounded-md px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-destructive hover:text-destructive-foreground" data-v-04481ea5><svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-04481ea5><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" data-v-04481ea5></path></svg> Çıkış Yap </button></div></div>`);
+          _push(`<button type="button" class="inline-flex h-7 w-full items-center rounded-md px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-destructive hover:text-destructive-foreground" data-v-875a991e><svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-875a991e><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" data-v-875a991e></path></svg> Çıkış Yap </button></div></div>`);
         } else {
           _push(`<!---->`);
         }
@@ -1700,9 +1816,9 @@ const _sfc_main$3 = {
       } else {
         _push(`<!---->`);
       }
-      _push(`<button class="inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 xl:hidden" data-v-04481ea5><svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-v-04481ea5><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16m-7 6h7" data-v-04481ea5></path></svg></button></div></div></header>`);
+      _push(`<button class="inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 xl:hidden" data-v-875a991e><svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-v-875a991e><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16m-7 6h7" data-v-875a991e></path></svg></button></div></div></header>`);
       if (isMenuOpen.value) {
-        _push(`<div class="${ssrRenderClass([isMenuOpen.value ? "opacity-100" : "opacity-0", "fixed inset-0 z-50 transition-all duration-300 ease-out"])}" data-v-04481ea5><div class="bg-base-content/20 absolute inset-0 backdrop-blur-sm" data-v-04481ea5></div><div class="relative flex h-full items-end justify-center" data-v-04481ea5><div class="${ssrRenderClass([isMenuOpen.value ? "translate-y-0" : "translate-y-full", "w-full max-w-sm transform transition-all duration-300 ease-out"])}" data-v-04481ea5><div class="border-border bg-popover mx-4 mb-4 max-h-[85vh] overflow-y-auto rounded-lg border shadow-lg" data-v-04481ea5><div class="flex justify-center pb-2 pt-4" data-v-04481ea5><div class="bg-muted h-1.5 w-16 rounded-full" data-v-04481ea5></div></div><div class="px-4 pb-6 sm:px-6" data-v-04481ea5>`);
+        _push(`<div class="${ssrRenderClass([isMenuOpen.value ? "opacity-100" : "opacity-0", "fixed inset-0 z-50 transition-all duration-300 ease-out"])}" data-v-875a991e><div class="bg-base-content/20 absolute inset-0 backdrop-blur-sm" data-v-875a991e></div><div class="relative flex h-full items-end justify-center" data-v-875a991e><div class="${ssrRenderClass([isMenuOpen.value ? "translate-y-0" : "translate-y-full", "w-full max-w-sm transform transition-all duration-300 ease-out"])}" data-v-875a991e><div class="border-border bg-popover mx-4 mb-4 max-h-[85vh] overflow-y-auto rounded-lg border shadow-lg" data-v-875a991e><div class="flex justify-center pb-2 pt-4" data-v-875a991e><div class="bg-muted h-1.5 w-16 rounded-full" data-v-875a991e></div></div><div class="px-4 pb-6 sm:px-6" data-v-875a991e>`);
         _push(ssrRenderComponent(unref(Link), {
           href: "/",
           class: "mb-4 block",
@@ -1710,13 +1826,13 @@ const _sfc_main$3 = {
         }, {
           default: withCtx((_2, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`<div class="flex items-center space-x-3 rounded-lg border border-border bg-card p-3" data-v-04481ea5${_scopeId}><div class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-md bg-primary/10" data-v-04481ea5${_scopeId}>`);
+              _push2(`<div class="flex items-center space-x-3 rounded-lg border border-border bg-card p-3" data-v-875a991e${_scopeId}><div class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-md bg-primary/10" data-v-875a991e${_scopeId}>`);
               if (logoPath.value && !isLoading.value) {
-                _push2(`<img${ssrRenderAttr("src", logoPath.value)}${ssrRenderAttr("alt", logoAlt.value)} class="h-full w-full object-cover" data-v-04481ea5${_scopeId}>`);
+                _push2(`<img${ssrRenderAttr("src", logoPath.value)}${ssrRenderAttr("alt", logoAlt.value)} class="h-full w-full object-cover" data-v-875a991e${_scopeId}>`);
               } else {
-                _push2(`<span class="text-sm font-bold text-primary" data-v-04481ea5${_scopeId}>${ssrInterpolate(seoTitle.value.charAt(0).toUpperCase())}</span>`);
+                _push2(`<span class="text-sm font-bold text-primary" data-v-875a991e${_scopeId}>${ssrInterpolate(seoTitle.value.charAt(0).toUpperCase())}</span>`);
               }
-              _push2(`</div><div data-v-04481ea5${_scopeId}><h3 class="text-card-foreground text-base font-semibold" data-v-04481ea5${_scopeId}>${ssrInterpolate(seoTitle.value)}</h3><p class="text-muted-foreground text-xs" data-v-04481ea5${_scopeId}>${ssrInterpolate(appName.value)}</p></div></div>`);
+              _push2(`</div><div data-v-875a991e${_scopeId}><h3 class="text-card-foreground text-base font-semibold" data-v-875a991e${_scopeId}>${ssrInterpolate(seoTitle.value)}</h3><p class="text-muted-foreground text-xs" data-v-875a991e${_scopeId}>${ssrInterpolate(appName.value)}</p></div></div>`);
             } else {
               return [
                 createVNode("div", { class: "flex items-center space-x-3 rounded-lg border border-border bg-card p-3" }, [
@@ -1742,7 +1858,7 @@ const _sfc_main$3 = {
           }),
           _: 1
         }, _parent));
-        _push(`<div class="space-y-2" data-v-04481ea5><div class="space-y-1" data-v-04481ea5>`);
+        _push(`<div class="space-y-2" data-v-875a991e><div class="space-y-1" data-v-875a991e>`);
         _push(ssrRenderComponent(NavItem, {
           href: "/",
           icon: "home",
@@ -1757,6 +1873,11 @@ const _sfc_main$3 = {
           href: "/categories",
           icon: "fa-solid fa-book",
           label: "Kategoriler"
+        }, null, _parent));
+        _push(ssrRenderComponent(NavItem, {
+          href: "/test-categories",
+          icon: "fa-solid fa-clipboard-question",
+          label: "Testler"
         }, null, _parent));
         if (isLoggedIn.value) {
           _push(`<!--[-->`);
@@ -1775,22 +1896,22 @@ const _sfc_main$3 = {
           _push(`<!---->`);
         }
         _push(`</div>`);
-        if (isLoggedIn.value && (isWriteCreatePage.value || isWriteEditPage.value || isCategoryCreatePage.value || isCategoryEditPage.value)) {
-          _push(`<div class="border-t border-border pt-3" data-v-04481ea5><div class="space-y-2" data-v-04481ea5>`);
-          if (isWriteCreatePage.value || isCategoryCreatePage.value) {
-            _push(`<button${ssrIncludeBooleanAttr(isFormProcessing.value) ? " disabled" : ""} class="flex w-full items-center gap-3 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50" data-v-04481ea5><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-v-04481ea5><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" data-v-04481ea5></path></svg><span data-v-04481ea5>Sıfırla</span></button>`);
+        if (isLoggedIn.value && (isWriteCreatePage.value || isWriteEditPage.value || isCategoryCreatePage.value || isCategoryEditPage.value || _ctx.isTestCreatePage || isTestEditPage.value || _ctx.isTestCategoryCreatePage || isTestCategoryEditPage.value)) {
+          _push(`<div class="border-t border-border pt-3" data-v-875a991e><div class="space-y-2" data-v-875a991e>`);
+          if (isWriteCreatePage.value || isCategoryCreatePage.value || _ctx.isTestCreatePage || _ctx.isTestCategoryCreatePage) {
+            _push(`<button${ssrIncludeBooleanAttr(isFormProcessing.value) ? " disabled" : ""} class="flex w-full items-center gap-3 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50" data-v-875a991e><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-v-875a991e><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" data-v-875a991e></path></svg><span data-v-875a991e>Sıfırla</span></button>`);
           } else {
             _push(`<!---->`);
           }
-          _push(`<button${ssrIncludeBooleanAttr(isFormProcessing.value) ? " disabled" : ""} class="flex w-full items-center gap-3 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50" data-v-04481ea5>`);
+          _push(`<button${ssrIncludeBooleanAttr(isFormProcessing.value) ? " disabled" : ""} class="flex w-full items-center gap-3 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50" data-v-875a991e>`);
           if (isFormProcessing.value) {
-            _push(`<svg class="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" data-v-04481ea5><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" data-v-04481ea5></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" data-v-04481ea5></path></svg>`);
+            _push(`<svg class="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" data-v-875a991e><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" data-v-875a991e></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" data-v-875a991e></path></svg>`);
           } else {
-            _push(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-v-04481ea5><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" data-v-04481ea5></path></svg>`);
+            _push(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-v-875a991e><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" data-v-875a991e></path></svg>`);
           }
-          _push(`<span data-v-04481ea5>${ssrInterpolate(isFormProcessing.value ? isWriteEditPage.value || isCategoryEditPage.value ? "Güncelleniyor..." : "Kaydediliyor..." : isWriteEditPage.value || isCategoryEditPage.value ? "Güncelle" : "Kaydet")}</span></button></div></div>`);
+          _push(`<span data-v-875a991e>${ssrInterpolate(isFormProcessing.value ? isWriteEditPage.value || isCategoryEditPage.value || isTestEditPage.value || isTestCategoryEditPage.value ? "Güncelleniyor..." : "Kaydediliyor..." : isWriteEditPage.value || isCategoryEditPage.value || isTestEditPage.value || isTestCategoryEditPage.value ? "Güncelle" : "Kaydet")}</span></button></div></div>`);
         } else if (isLoggedIn.value) {
-          _push(`<div class="border-t border-border pt-3" data-v-04481ea5><div class="space-y-1" data-v-04481ea5><div class="text-muted-foreground mb-1 px-3 text-xs font-medium uppercase" data-v-04481ea5>Yeni Oluştur</div>`);
+          _push(`<div class="border-t border-border pt-3" data-v-875a991e><div class="space-y-1" data-v-875a991e><div class="text-muted-foreground mb-1 px-3 text-xs font-medium uppercase" data-v-875a991e>Yeni Oluştur</div>`);
           _push(ssrRenderComponent(unref(Link), {
             href: "/writes/create",
             class: "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
@@ -1798,7 +1919,7 @@ const _sfc_main$3 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-v-04481ea5${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" data-v-04481ea5${_scopeId}></path></svg><span data-v-04481ea5${_scopeId}>Yeni Yazı</span>`);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-v-875a991e${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" data-v-875a991e${_scopeId}></path></svg><span data-v-875a991e${_scopeId}>Yeni Yazı</span>`);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -1828,7 +1949,7 @@ const _sfc_main$3 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-v-04481ea5${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" data-v-04481ea5${_scopeId}></path></svg><span data-v-04481ea5${_scopeId}>Yeni Kategori</span>`);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-v-875a991e${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" data-v-875a991e${_scopeId}></path></svg><span data-v-875a991e${_scopeId}>Yeni Kategori</span>`);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -1858,7 +1979,7 @@ const _sfc_main$3 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-v-04481ea5${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" data-v-04481ea5${_scopeId}></path></svg><span data-v-04481ea5${_scopeId}>Yeni Kelime</span>`);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-v-875a991e${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" data-v-875a991e${_scopeId}></path></svg><span data-v-875a991e${_scopeId}>Yeni Kelime</span>`);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -1888,7 +2009,7 @@ const _sfc_main$3 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-v-04481ea5${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" data-v-04481ea5${_scopeId}></path></svg><span data-v-04481ea5${_scopeId}>Yeni Kelime Paketi</span>`);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-v-875a991e${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" data-v-875a991e${_scopeId}></path></svg><span data-v-875a991e${_scopeId}>Yeni Kelime Paketi</span>`);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -1918,7 +2039,7 @@ const _sfc_main$3 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-v-04481ea5${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" data-v-04481ea5${_scopeId}></path></svg><span data-v-04481ea5${_scopeId}>Yeni Versiyon</span>`);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-v-875a991e${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" data-v-875a991e${_scopeId}></path></svg><span data-v-875a991e${_scopeId}>Yeni Versiyon</span>`);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -1941,12 +2062,72 @@ const _sfc_main$3 = {
             }),
             _: 1
           }, _parent));
+          _push(ssrRenderComponent(unref(Link), {
+            href: "/tests/create",
+            class: "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
+            onClick: closeMenu
+          }, {
+            default: withCtx((_2, _push2, _parent2, _scopeId) => {
+              if (_push2) {
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-v-875a991e${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" data-v-875a991e${_scopeId}></path></svg><span data-v-875a991e${_scopeId}>Yeni Test</span>`);
+              } else {
+                return [
+                  (openBlock(), createBlock("svg", {
+                    xmlns: "http://www.w3.org/2000/svg",
+                    class: "h-4 w-4",
+                    fill: "none",
+                    viewBox: "0 0 24 24",
+                    stroke: "currentColor"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    })
+                  ])),
+                  createVNode("span", null, "Yeni Test")
+                ];
+              }
+            }),
+            _: 1
+          }, _parent));
+          _push(ssrRenderComponent(unref(Link), {
+            href: "/test-categories/create",
+            class: "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
+            onClick: closeMenu
+          }, {
+            default: withCtx((_2, _push2, _parent2, _scopeId) => {
+              if (_push2) {
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-v-875a991e${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" data-v-875a991e${_scopeId}></path></svg><span data-v-875a991e${_scopeId}>Yeni Test Kategorisi</span>`);
+              } else {
+                return [
+                  (openBlock(), createBlock("svg", {
+                    xmlns: "http://www.w3.org/2000/svg",
+                    class: "h-4 w-4",
+                    fill: "none",
+                    viewBox: "0 0 24 24",
+                    stroke: "currentColor"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      "stroke-width": "2",
+                      d: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    })
+                  ])),
+                  createVNode("span", null, "Yeni Test Kategorisi")
+                ];
+              }
+            }),
+            _: 1
+          }, _parent));
           _push(`</div></div>`);
         } else {
           _push(`<!---->`);
         }
-        if (isLoggedIn.value && (isWriteShowPage.value || isWriteEditPage.value || isCategoryShowPage.value || isCategoryEditPage.value || isWordShowPage.value || isVersionShowPage.value)) {
-          _push(`<div class="border-t border-border pt-3" data-v-04481ea5>`);
+        if (isLoggedIn.value && (isWriteShowPage.value || isWriteEditPage.value || isCategoryShowPage.value || isCategoryEditPage.value || isWordShowPage.value || isVersionShowPage.value || isTestCategoryShowPage.value || isTestCategoryEditPage.value || isTestShowPage.value || isTestEditPage.value)) {
+          _push(`<div class="border-t border-border pt-3" data-v-875a991e>`);
           _push(ssrRenderComponent(_sfc_main$4, {
             variant: "mobile",
             "on-link-click": closeMenu
@@ -1956,7 +2137,7 @@ const _sfc_main$3 = {
           _push(`<!---->`);
         }
         if (isLoggedIn.value) {
-          _push(`<div class="border-t border-border pt-3" data-v-04481ea5><div class="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground" data-v-04481ea5> Hesap </div><div class="space-y-1" data-v-04481ea5>`);
+          _push(`<div class="border-t border-border pt-3" data-v-875a991e><div class="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground" data-v-875a991e> Hesap </div><div class="space-y-1" data-v-875a991e>`);
           _push(ssrRenderComponent(unref(Link), {
             href: _ctx.route("profile.edit"),
             class: "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
@@ -1964,7 +2145,7 @@ const _sfc_main$3 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-04481ea5${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" data-v-04481ea5${_scopeId}></path></svg><span data-v-04481ea5${_scopeId}>Profil</span>`);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-875a991e${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" data-v-875a991e${_scopeId}></path></svg><span data-v-875a991e${_scopeId}>Profil</span>`);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -1987,12 +2168,12 @@ const _sfc_main$3 = {
             }),
             _: 1
           }, _parent));
-          _push(`<button type="button" class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10" data-v-04481ea5><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-04481ea5><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" data-v-04481ea5></path></svg><span data-v-04481ea5>Çıkış Yap</span></button></div></div>`);
+          _push(`<button type="button" class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10" data-v-875a991e><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-875a991e><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" data-v-875a991e></path></svg><span data-v-875a991e>Çıkış Yap</span></button></div></div>`);
         } else {
           _push(`<!---->`);
         }
         if (isAdminPanelPage.value && isLoggedIn.value) {
-          _push(`<div class="border-t border-border pt-3" data-v-04481ea5><div class="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground" data-v-04481ea5> Panel </div><div class="space-y-1" data-v-04481ea5>`);
+          _push(`<div class="border-t border-border pt-3" data-v-875a991e><div class="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground" data-v-875a991e> Panel </div><div class="space-y-1" data-v-875a991e>`);
           _push(ssrRenderComponent(unref(Link), {
             href: _ctx.route("dashboard"),
             class: [
@@ -2003,7 +2184,7 @@ const _sfc_main$3 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-04481ea5${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" data-v-04481ea5${_scopeId}></path></svg><span data-v-04481ea5${_scopeId}>Dashboard</span>`);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-875a991e${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" data-v-875a991e${_scopeId}></path></svg><span data-v-875a991e${_scopeId}>Dashboard</span>`);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -2036,7 +2217,7 @@ const _sfc_main$3 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-04481ea5${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" data-v-04481ea5${_scopeId}></path></svg><span data-v-04481ea5${_scopeId}>Medya Yönetimi</span>`);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-875a991e${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" data-v-875a991e${_scopeId}></path></svg><span data-v-875a991e${_scopeId}>Medya Yönetimi</span>`);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -2069,7 +2250,7 @@ const _sfc_main$3 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-04481ea5${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" data-v-04481ea5${_scopeId}></path></svg><span data-v-04481ea5${_scopeId}>Sosyal Medya Yönetimi</span>`);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-875a991e${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" data-v-875a991e${_scopeId}></path></svg><span data-v-875a991e${_scopeId}>Sosyal Medya Yönetimi</span>`);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -2102,7 +2283,7 @@ const _sfc_main$3 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-04481ea5${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" data-v-04481ea5${_scopeId}></path></svg><span data-v-04481ea5${_scopeId}>SEO Yönetimi</span>`);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-875a991e${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" data-v-875a991e${_scopeId}></path></svg><span data-v-875a991e${_scopeId}>SEO Yönetimi</span>`);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -2131,24 +2312,24 @@ const _sfc_main$3 = {
         }
         _push(`</div>`);
         if (!isLoggedIn.value) {
-          _push(`<div class="mt-4 border-t border-border pt-3" data-v-04481ea5><a href="https://youtu.be/FPsx8xHLR1k?si=3dNFdwhk5s8LyqOe" target="_blank" data-v-04481ea5><div class="rounded-md bg-primary/10 p-3 text-center transition-colors hover:bg-primary/20" data-v-04481ea5><span class="text-sm font-medium text-primary" data-v-04481ea5>Powered by Notiriel</span></div></a></div>`);
+          _push(`<div class="mt-4 border-t border-border pt-3" data-v-875a991e><a href="https://youtu.be/FPsx8xHLR1k?si=3dNFdwhk5s8LyqOe" target="_blank" data-v-875a991e><div class="rounded-md bg-primary/10 p-3 text-center transition-colors hover:bg-primary/20" data-v-875a991e><span class="text-sm font-medium text-primary" data-v-875a991e>Powered by Notiriel</span></div></a></div>`);
         } else {
           _push(`<!---->`);
         }
         if (!isLoggedIn.value) {
-          _push(`<div class="mt-3" data-v-04481ea5>`);
+          _push(`<div class="mt-3" data-v-875a991e>`);
           _push(ssrRenderComponent(_sfc_main$5, { "is-compact": false }, null, _parent));
           _push(`</div>`);
         } else {
           _push(`<!---->`);
         }
-        _push(`<div class="mt-4 flex flex-col items-center space-y-2" data-v-04481ea5><button class="flex items-center space-x-2 rounded-md border border-border bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground" data-v-04481ea5>`);
+        _push(`<div class="mt-4 flex flex-col items-center space-y-2" data-v-875a991e><button class="flex items-center space-x-2 rounded-md border border-border bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground" data-v-875a991e>`);
         if (isDarkMode.value) {
-          _push(`<svg class="h-4 w-4 fill-current text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-v-04481ea5><path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" data-v-04481ea5></path></svg>`);
+          _push(`<svg class="h-4 w-4 fill-current text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-v-875a991e><path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" data-v-875a991e></path></svg>`);
         } else {
-          _push(`<svg class="h-4 w-4 fill-current text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-v-04481ea5><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" data-v-04481ea5></path></svg>`);
+          _push(`<svg class="h-4 w-4 fill-current text-blue-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-v-875a991e><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" data-v-875a991e></path></svg>`);
         }
-        _push(`<span class="text-sm font-medium" data-v-04481ea5>${ssrInterpolate(currentThemeName.value)}</span></button><p class="text-xs text-muted-foreground" data-v-04481ea5>Notiriel - Tüm Hakları Saklıdır</p></div></div></div></div></div></div>`);
+        _push(`<span class="text-sm font-medium" data-v-875a991e>${ssrInterpolate(currentThemeName.value)}</span></button><p class="text-xs text-muted-foreground" data-v-875a991e>Notiriel - Tüm Hakları Saklıdır</p></div></div></div></div></div></div>`);
       } else {
         _push(`<!---->`);
       }
@@ -2162,7 +2343,7 @@ _sfc_main$3.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/MainLayout/HeaderLayout.vue");
   return _sfc_setup$3 ? _sfc_setup$3(props, ctx) : void 0;
 };
-const HeaderLayout = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-04481ea5"]]);
+const HeaderLayout = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-875a991e"]]);
 const _sfc_main$2 = {
   __name: "TabNavItem",
   __ssrInlineRender: true,
@@ -2445,6 +2626,20 @@ const _sfc_main$1 = {
       const url = page.url;
       return url.startsWith("/categories/") && url.includes("/edit");
     });
+    const isTestCreatePage = computed(() => {
+      return page.url === "/tests/create";
+    });
+    const isTestEditPage = computed(() => {
+      const url = page.url;
+      return url.startsWith("/tests/") && url.includes("/edit");
+    });
+    const isTestCategoryCreatePage = computed(() => {
+      return page.url === "/test-categories/create";
+    });
+    const isTestCategoryEditPage = computed(() => {
+      const url = page.url;
+      return url.startsWith("/test-categories/") && url.includes("/edit");
+    });
     let formProcessingHandler = null;
     onMounted(() => {
       formProcessingHandler = (event) => {
@@ -2463,14 +2658,14 @@ const _sfc_main$1 = {
     computed(() => page.props.version || null);
     const pack = computed(() => page.props.pack || null);
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<nav${ssrRenderAttrs(mergeProps({ class: "sticky top-12 z-40 hidden w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 lg:block" }, _attrs))} data-v-b66eb552><div class="flex h-9 items-center justify-between px-3" data-v-b66eb552><div class="flex items-center gap-0.5" data-v-b66eb552>`);
+      _push(`<nav${ssrRenderAttrs(mergeProps({ class: "sticky top-12 z-40 hidden w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 lg:block" }, _attrs))} data-v-47c47c94><div class="flex h-9 items-center justify-between px-3" data-v-47c47c94><div class="flex items-center gap-0.5" data-v-47c47c94>`);
       _push(ssrRenderComponent(_sfc_main$2, {
         href: "/",
         icon: "home",
         label: "Ana Sayfa",
         "is-active": isActiveRoute("/")
       }, null, _parent));
-      _push(`<div class="write-filter-dropdown-container relative inline-flex items-center" data-v-b66eb552>`);
+      _push(`<div class="write-filter-dropdown-container relative inline-flex items-center" data-v-47c47c94>`);
       _push(ssrRenderComponent(_sfc_main$2, {
         href: "/writes",
         icon: "fa-solid fa-pencil",
@@ -2478,18 +2673,18 @@ const _sfc_main$1 = {
         "is-active": isActiveRoute("/writes")
       }, null, _parent));
       if (isLoggedIn.value) {
-        _push(`<div class="relative -ml-0.5 flex items-center gap-0.5" data-v-b66eb552>`);
+        _push(`<div class="relative -ml-0.5 flex items-center gap-0.5" data-v-47c47c94>`);
         if (writeFilter.value !== "all" && isActiveRoute("/writes")) {
-          _push(`<button class="inline-flex h-7 w-6 items-center justify-center rounded text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" title="Filtreyi temizle" data-v-b66eb552><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b66eb552><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" data-v-b66eb552></path></svg></button>`);
+          _push(`<button class="inline-flex h-7 w-6 items-center justify-center rounded text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" title="Filtreyi temizle" data-v-47c47c94><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" data-v-47c47c94></path></svg></button>`);
         } else {
           _push(`<!---->`);
         }
-        _push(`<div class="relative" data-v-b66eb552><button class="${ssrRenderClass([[
+        _push(`<div class="relative" data-v-47c47c94><button class="${ssrRenderClass([[
           showWriteFilterDropdown.value && isActiveRoute("/writes") ? "bg-accent text-accent-foreground" : "",
           !isActiveRoute("/writes") ? "opacity-40 cursor-not-allowed" : ""
-        ], "inline-flex h-7 w-6 items-center justify-center rounded text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"])}"${ssrIncludeBooleanAttr(!isActiveRoute("/writes")) ? " disabled" : ""} title="Filtrele" data-v-b66eb552><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b66eb552><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A2 2 0 0013 14.586V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-3.414a2 2 0 00-.293-1.172L2.293 6.707A1 1 0 012 6V4z" data-v-b66eb552></path></svg></button>`);
+        ], "inline-flex h-7 w-6 items-center justify-center rounded text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"])}"${ssrIncludeBooleanAttr(!isActiveRoute("/writes")) ? " disabled" : ""} title="Filtrele" data-v-47c47c94><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A2 2 0 0013 14.586V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-3.414a2 2 0 00-.293-1.172L2.293 6.707A1 1 0 012 6V4z" data-v-47c47c94></path></svg></button>`);
         if (showWriteFilterDropdown.value && isActiveRoute("/writes")) {
-          _push(`<div class="absolute right-0 top-full z-50 mt-1 w-36 rounded-md border border-border bg-popover shadow-md" data-v-b66eb552><div class="flex flex-col p-1" data-v-b66eb552><button class="${ssrRenderClass([{ "bg-accent text-accent-foreground": writeFilter.value === "all" }, "inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"])}" data-v-b66eb552><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b66eb552><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" data-v-b66eb552></path></svg> Tümü </button><button class="${ssrRenderClass([{ "bg-accent text-accent-foreground": writeFilter.value === "published" }, "inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"])}" data-v-b66eb552><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b66eb552><circle cx="12" cy="12" r="10" data-v-b66eb552></circle><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" data-v-b66eb552></path></svg> Herkese Açık </button><button class="${ssrRenderClass([{ "bg-accent text-accent-foreground": writeFilter.value === "link_only" }, "inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"])}" data-v-b66eb552><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b66eb552><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 010 5.656l-3 3a4 4 0 01-5.656-5.656l1.5-1.5M10.172 13.828a4 4 0 010-5.656l3-3a4 4 0 015.656 5.656l-1.5 1.5" data-v-b66eb552></path></svg> Sadece Link </button><button class="${ssrRenderClass([{ "bg-accent text-accent-foreground": writeFilter.value === "private" }, "inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"])}" data-v-b66eb552><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b66eb552><path stroke-linecap="round" stroke-linejoin="round" d="M12 11c1.104 0 2-.896 2-2V7a2 2 0 10-4 0v2c0 1.104.896 2 2 2zm6 2v5a2 2 0 01-2 2H8a2 2 0 01-2-2v-5a2 2 0 012-2h8a2 2 0 012 2z" data-v-b66eb552></path></svg> Gizli </button></div></div>`);
+          _push(`<div class="absolute right-0 top-full z-50 mt-1 w-36 rounded-md border border-border bg-popover shadow-md" data-v-47c47c94><div class="flex flex-col p-1" data-v-47c47c94><button class="${ssrRenderClass([{ "bg-accent text-accent-foreground": writeFilter.value === "all" }, "inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"])}" data-v-47c47c94><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" data-v-47c47c94></path></svg> Tümü </button><button class="${ssrRenderClass([{ "bg-accent text-accent-foreground": writeFilter.value === "published" }, "inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"])}" data-v-47c47c94><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94><circle cx="12" cy="12" r="10" data-v-47c47c94></circle><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" data-v-47c47c94></path></svg> Herkese Açık </button><button class="${ssrRenderClass([{ "bg-accent text-accent-foreground": writeFilter.value === "link_only" }, "inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"])}" data-v-47c47c94><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 010 5.656l-3 3a4 4 0 01-5.656-5.656l1.5-1.5M10.172 13.828a4 4 0 010-5.656l3-3a4 4 0 015.656 5.656l-1.5 1.5" data-v-47c47c94></path></svg> Sadece Link </button><button class="${ssrRenderClass([{ "bg-accent text-accent-foreground": writeFilter.value === "private" }, "inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"])}" data-v-47c47c94><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94><path stroke-linecap="round" stroke-linejoin="round" d="M12 11c1.104 0 2-.896 2-2V7a2 2 0 10-4 0v2c0 1.104.896 2 2 2zm6 2v5a2 2 0 01-2 2H8a2 2 0 01-2-2v-5a2 2 0 012-2h8a2 2 0 012 2z" data-v-47c47c94></path></svg> Gizli </button></div></div>`);
         } else {
           _push(`<!---->`);
         }
@@ -2497,7 +2692,7 @@ const _sfc_main$1 = {
       } else {
         _push(`<!---->`);
       }
-      _push(`</div><div class="category-collapse-dropdown-container relative inline-flex items-center" data-v-b66eb552>`);
+      _push(`</div><div class="category-collapse-dropdown-container relative inline-flex items-center" data-v-47c47c94>`);
       _push(ssrRenderComponent(_sfc_main$2, {
         href: "/categories",
         icon: "fa-solid fa-book",
@@ -2510,7 +2705,13 @@ const _sfc_main$1 = {
       ])}"${ssrIncludeBooleanAttr(!isActiveRoute("/categories")) ? " disabled" : ""}${ssrRenderAttr(
         "title",
         isActiveRoute("/categories") ? areAllCategoriesExpanded.value ? "Tümünü Daralt" : "Tümünü Genişlet" : "Kategoriler sayfasında kullanılabilir"
-      )} data-v-b66eb552><svg xmlns="http://www.w3.org/2000/svg" class="${ssrRenderClass([{ "rotate-180": areAllCategoriesExpanded.value && isActiveRoute("/categories") }, "h-3 w-3 transition-transform duration-200"])}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b66eb552><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" data-v-b66eb552></path></svg></button></div>`);
+      )} data-v-47c47c94><svg xmlns="http://www.w3.org/2000/svg" class="${ssrRenderClass([{ "rotate-180": areAllCategoriesExpanded.value && isActiveRoute("/categories") }, "h-3 w-3 transition-transform duration-200"])}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" data-v-47c47c94></path></svg></button></div>`);
+      _push(ssrRenderComponent(_sfc_main$2, {
+        href: "/test-categories",
+        icon: "fa-solid fa-clipboard-question",
+        label: "Testler",
+        "is-active": isActiveRoute("/test-categories") || isActiveRoute("/tests")
+      }, null, _parent));
       if (isLoggedIn.value) {
         _push(`<!--[-->`);
         _push(ssrRenderComponent(_sfc_main$2, {
@@ -2529,29 +2730,29 @@ const _sfc_main$1 = {
       } else {
         _push(`<!---->`);
       }
-      _push(`</div><div class="flex items-center gap-1.5" data-v-b66eb552>`);
+      _push(`</div><div class="flex items-center gap-1.5" data-v-47c47c94>`);
       _push(ssrRenderComponent(_sfc_main$4, { variant: "desktop" }, null, _parent));
-      if (isLoggedIn.value && (isWriteCreatePage.value || isWriteEditPage.value || isCategoryCreatePage.value || isCategoryEditPage.value)) {
-        _push(`<div class="flex items-center gap-1.5" data-v-b66eb552>`);
-        if (isWriteCreatePage.value || isCategoryCreatePage.value) {
-          _push(`<button${ssrIncludeBooleanAttr(isFormProcessing.value) ? " disabled" : ""} class="inline-flex h-7 items-center justify-center rounded-md border border-input bg-background px-2.5 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" title="Formu sıfırla" data-v-b66eb552> Sıfırla </button>`);
+      if (isLoggedIn.value && (isWriteCreatePage.value || isWriteEditPage.value || isCategoryCreatePage.value || isCategoryEditPage.value || isTestCreatePage.value || isTestEditPage.value || isTestCategoryCreatePage.value || isTestCategoryEditPage.value)) {
+        _push(`<div class="flex items-center gap-1.5" data-v-47c47c94>`);
+        if (isWriteCreatePage.value || isCategoryCreatePage.value || isTestCreatePage.value || isTestCategoryCreatePage.value) {
+          _push(`<button${ssrIncludeBooleanAttr(isFormProcessing.value) ? " disabled" : ""} class="inline-flex h-7 items-center justify-center rounded-md border border-input bg-background px-2.5 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" title="Formu sıfırla" data-v-47c47c94> Sıfırla </button>`);
         } else {
           _push(`<!---->`);
         }
-        _push(`<button${ssrIncludeBooleanAttr(isFormProcessing.value) ? " disabled" : ""} class="inline-flex h-7 items-center justify-center gap-1.5 rounded-md bg-primary px-2.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"${ssrRenderAttr("title", isWriteEditPage.value || isCategoryEditPage.value ? "Değişiklikleri kaydet" : "Yazıyı kaydet")} data-v-b66eb552>`);
+        _push(`<button${ssrIncludeBooleanAttr(isFormProcessing.value) ? " disabled" : ""} class="inline-flex h-7 items-center justify-center gap-1.5 rounded-md bg-primary px-2.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"${ssrRenderAttr("title", isWriteEditPage.value || isCategoryEditPage.value ? "Değişiklikleri kaydet" : "Yazıyı kaydet")} data-v-47c47c94>`);
         if (isFormProcessing.value) {
-          _push(`<svg class="h-3 w-3 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" data-v-b66eb552><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" data-v-b66eb552></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" data-v-b66eb552></path></svg>`);
+          _push(`<svg class="h-3 w-3 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" data-v-47c47c94><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" data-v-47c47c94></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" data-v-47c47c94></path></svg>`);
         } else {
-          _push(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b66eb552><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" data-v-b66eb552></path></svg>`);
+          _push(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" data-v-47c47c94></path></svg>`);
         }
         _push(` ${ssrInterpolate(isFormProcessing.value ? isWriteEditPage.value || isCategoryEditPage.value ? "Güncelleniyor..." : "Kaydediliyor..." : isWriteEditPage.value || isCategoryEditPage.value ? "Güncelle" : "Kaydet")}</button></div>`);
       } else {
         _push(`<!---->`);
       }
       if (isLoggedIn.value) {
-        _push(`<div class="create-dropdown-container relative inline-block" data-v-b66eb552><button class="${ssrRenderClass([{ "bg-primary/90": showCreateDropdown.value }, "inline-flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"])}" title="Yeni içerik oluştur" data-v-b66eb552><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b66eb552><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" data-v-b66eb552></path></svg></button>`);
+        _push(`<div class="create-dropdown-container relative inline-block" data-v-47c47c94><button class="${ssrRenderClass([{ "bg-primary/90": showCreateDropdown.value }, "inline-flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"])}" title="Yeni içerik oluştur" data-v-47c47c94><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" data-v-47c47c94></path></svg></button>`);
         if (showCreateDropdown.value) {
-          _push(`<div class="absolute right-0 top-full z-50 mt-1 w-44 rounded-md border border-border bg-popover shadow-md" data-v-b66eb552><div class="flex flex-col p-1" data-v-b66eb552>`);
+          _push(`<div class="absolute right-0 top-full z-50 mt-1 w-44 rounded-md border border-border bg-popover shadow-md" data-v-47c47c94><div class="flex flex-col p-1" data-v-47c47c94>`);
           _push(ssrRenderComponent(unref(Link), {
             href: "/writes/create",
             class: "inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
@@ -2559,7 +2760,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b66eb552${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" data-v-b66eb552${_scopeId}></path></svg> Yeni Yazı `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" data-v-47c47c94${_scopeId}></path></svg> Yeni Yazı `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -2589,7 +2790,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b66eb552${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" data-v-b66eb552${_scopeId}></path></svg> Yeni Kategori `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" data-v-47c47c94${_scopeId}></path></svg> Yeni Kategori `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -2619,7 +2820,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b66eb552${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" data-v-b66eb552${_scopeId}></path></svg> Yeni Kelime `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" data-v-47c47c94${_scopeId}></path></svg> Yeni Kelime `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -2649,7 +2850,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b66eb552${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" data-v-b66eb552${_scopeId}></path></svg> Yeni Kelime Paketi `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" data-v-47c47c94${_scopeId}></path></svg> Yeni Kelime Paketi `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -2679,7 +2880,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b66eb552${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" data-v-b66eb552${_scopeId}></path></svg> Yeni Versiyon `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" data-v-47c47c94${_scopeId}></path></svg> Yeni Versiyon `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -2702,6 +2903,66 @@ const _sfc_main$1 = {
             }),
             _: 1
           }, _parent));
+          _push(ssrRenderComponent(unref(Link), {
+            href: "/tests/create",
+            class: "inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
+            onClick: ($event) => showCreateDropdown.value = false
+          }, {
+            default: withCtx((_2, _push2, _parent2, _scopeId) => {
+              if (_push2) {
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" data-v-47c47c94${_scopeId}></path></svg> Yeni Test `);
+              } else {
+                return [
+                  (openBlock(), createBlock("svg", {
+                    xmlns: "http://www.w3.org/2000/svg",
+                    class: "h-3.5 w-3.5",
+                    fill: "none",
+                    viewBox: "0 0 24 24",
+                    stroke: "currentColor",
+                    "stroke-width": "2"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      d: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    })
+                  ])),
+                  createTextVNode(" Yeni Test ")
+                ];
+              }
+            }),
+            _: 1
+          }, _parent));
+          _push(ssrRenderComponent(unref(Link), {
+            href: "/test-categories/create",
+            class: "inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
+            onClick: ($event) => showCreateDropdown.value = false
+          }, {
+            default: withCtx((_2, _push2, _parent2, _scopeId) => {
+              if (_push2) {
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" data-v-47c47c94${_scopeId}></path></svg> Yeni Test Kategorisi `);
+              } else {
+                return [
+                  (openBlock(), createBlock("svg", {
+                    xmlns: "http://www.w3.org/2000/svg",
+                    class: "h-3.5 w-3.5",
+                    fill: "none",
+                    viewBox: "0 0 24 24",
+                    stroke: "currentColor",
+                    "stroke-width": "2"
+                  }, [
+                    createVNode("path", {
+                      "stroke-linecap": "round",
+                      "stroke-linejoin": "round",
+                      d: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    })
+                  ])),
+                  createTextVNode(" Yeni Test Kategorisi ")
+                ];
+              }
+            }),
+            _: 1
+          }, _parent));
           _push(`</div></div>`);
         } else {
           _push(`<!---->`);
@@ -2715,7 +2976,7 @@ const _sfc_main$1 = {
         }, {
           default: withCtx((_2, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5" data-v-b66eb552${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" data-v-b66eb552${_scopeId}></path></svg>`);
+              _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5" data-v-47c47c94${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" data-v-47c47c94${_scopeId}></path></svg>`);
             } else {
               return [
                 (openBlock(), createBlock("svg", {
@@ -2741,9 +3002,9 @@ const _sfc_main$1 = {
         _push(`<!---->`);
       }
       if (isAdminPanelPage.value && isLoggedIn.value) {
-        _push(`<div class="admin-panel-dropdown-container relative inline-block" data-v-b66eb552><button class="${ssrRenderClass([{ "bg-accent text-accent-foreground": showAdminPanelDropdown.value }, "inline-flex h-7 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-2 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"])}" data-v-b66eb552><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b66eb552><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" data-v-b66eb552></path></svg> Panel <svg xmlns="http://www.w3.org/2000/svg" class="${ssrRenderClass([{ "rotate-180": showAdminPanelDropdown.value }, "h-3 w-3 transition-transform"])}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b66eb552><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" data-v-b66eb552></path></svg></button>`);
+        _push(`<div class="admin-panel-dropdown-container relative inline-block" data-v-47c47c94><button class="${ssrRenderClass([{ "bg-accent text-accent-foreground": showAdminPanelDropdown.value }, "inline-flex h-7 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-2 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"])}" data-v-47c47c94><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" data-v-47c47c94></path></svg> Panel <svg xmlns="http://www.w3.org/2000/svg" class="${ssrRenderClass([{ "rotate-180": showAdminPanelDropdown.value }, "h-3 w-3 transition-transform"])}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" data-v-47c47c94></path></svg></button>`);
         if (showAdminPanelDropdown.value) {
-          _push(`<div class="absolute right-0 top-full z-50 mt-1 w-44 rounded-md border border-border bg-popover shadow-md" data-v-b66eb552><div class="flex flex-col p-1" data-v-b66eb552>`);
+          _push(`<div class="absolute right-0 top-full z-50 mt-1 w-44 rounded-md border border-border bg-popover shadow-md" data-v-47c47c94><div class="flex flex-col p-1" data-v-47c47c94>`);
           _push(ssrRenderComponent(unref(Link), {
             href: _ctx.route("dashboard"),
             class: ["inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground", { "bg-accent text-accent-foreground": isActiveRoute("/dashboard") }],
@@ -2751,7 +3012,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b66eb552${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" data-v-b66eb552${_scopeId}></path></svg> Dashboard `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" data-v-47c47c94${_scopeId}></path></svg> Dashboard `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -2781,7 +3042,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b66eb552${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" data-v-b66eb552${_scopeId}></path></svg> Medya Yönetimi `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" data-v-47c47c94${_scopeId}></path></svg> Medya Yönetimi `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -2811,7 +3072,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b66eb552${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" data-v-b66eb552${_scopeId}></path></svg> Sosyal Medya Yönetimi `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" data-v-47c47c94${_scopeId}></path></svg> Sosyal Medya Yönetimi `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -2841,7 +3102,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-b66eb552${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" data-v-b66eb552${_scopeId}></path></svg> SEO Yönetimi `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-47c47c94${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" data-v-47c47c94${_scopeId}></path></svg> SEO Yönetimi `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -2873,7 +3134,7 @@ const _sfc_main$1 = {
         _push(`<!---->`);
       }
       if (!isLoggedIn.value) {
-        _push(`<div class="hidden md:flex" data-v-b66eb552>`);
+        _push(`<div class="hidden md:flex" data-v-47c47c94>`);
         _push(ssrRenderComponent(_sfc_main$5, { "is-compact": true }, null, _parent));
         _push(`</div>`);
       } else {
@@ -2889,7 +3150,7 @@ _sfc_main$1.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/MainLayout/SidebarLayout.vue");
   return _sfc_setup$1 ? _sfc_setup$1(props, ctx) : void 0;
 };
-const SidebarLayout = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-b66eb552"]]);
+const SidebarLayout = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-47c47c94"]]);
 const _sfc_main = {
   __name: "MainLayout",
   __ssrInlineRender: true,
@@ -3212,7 +3473,7 @@ function render(page) {
   return createInertiaApp({
     page,
     resolve: async (name) => {
-      const page2 = (await resolvePageComponent(`./Pages/${name}.vue`, /* @__PURE__ */ Object.assign({ "./Pages/Auth/ConfirmPassword.vue": () => import("./assets/ConfirmPassword-sRjXXmNx.js"), "./Pages/Auth/ForgotPassword.vue": () => import("./assets/ForgotPassword-Bm1FWiOi.js"), "./Pages/Auth/Login.vue": () => import("./assets/Login-CrV4Xi13.js"), "./Pages/Auth/Register.vue": () => import("./assets/Register-BFT6rCyC.js"), "./Pages/Auth/ResetPassword.vue": () => import("./assets/ResetPassword-MPSkIPiF.js"), "./Pages/Auth/VerifyEmail.vue": () => import("./assets/VerifyEmail-gXEKt2rp.js"), "./Pages/Bookmarks/CreateBookmarks.vue": () => import("./assets/CreateBookmarks-DVJTJcy3.js"), "./Pages/Bookmarks/EditBookmarks.vue": () => import("./assets/EditBookmarks-DZrKHk0d.js"), "./Pages/Bookmarks/IndexBookmarks.vue": () => import("./assets/IndexBookmarks-BH0g04d3.js"), "./Pages/Bookmarks/ShowBookmarks.vue": () => import("./assets/ShowBookmarks-B_Ty2lxF.js"), "./Pages/Bookmarks/SidebarLayoutBookmarks.vue": () => import("./assets/SidebarLayoutBookmarks-B16ebHBN.js"), "./Pages/Category/TypescriptTutorial.vue": () => import("./assets/TypescriptTutorial-UDcIixY-.js"), "./Pages/Dashboard.vue": () => import("./assets/Dashboard-DakEfyw-.js"), "./Pages/Equipments/Create/Screen.vue": () => import("./assets/Screen-D1PJcqvP.js"), "./Pages/Equipments/CreateEquipment.vue": () => import("./assets/CreateEquipment-CxmoL0yv.js"), "./Pages/Equipments/Edit/Screen.vue": () => import("./assets/Screen-Ca5kb9UJ.js"), "./Pages/Equipments/EditEquipment.vue": () => import("./assets/EditEquipment-D2FCZljd.js"), "./Pages/Equipments/Index/Screen.vue": () => import("./assets/Screen-Cuce7w9O.js"), "./Pages/Equipments/IndexEquipment.vue": () => import("./assets/IndexEquipment-BqyUdMbS.js"), "./Pages/Equipments/ShowEquipment.vue": () => import("./assets/ShowEquipment-Di6pVRrk.js"), "./Pages/Excalidraw.vue": () => import("./assets/Excalidraw-5bxgffy3.js"), "./Pages/FBVersions/Versions/Create/Screen.vue": () => import("./assets/Screen-COB41vb5.js"), "./Pages/FBVersions/Versions/CreateVersion.vue": () => import("./assets/CreateVersion-BsE-q10f.js"), "./Pages/FBVersions/Versions/Edit/Screen.vue": () => import("./assets/Screen-5r_sPds6.js"), "./Pages/FBVersions/Versions/EditVersion.vue": () => import("./assets/EditVersion-B9hFHiu7.js"), "./Pages/FBVersions/Versions/Index/Screen.vue": () => import("./assets/Screen-BmaGrTyH.js"), "./Pages/FBVersions/Versions/IndexVersion.vue": () => import("./assets/IndexVersion-BjpICHPs.js"), "./Pages/FBVersions/Versions/Show/Screen.vue": () => import("./assets/Screen-BirpD2RG.js"), "./Pages/FBVersions/Versions/ShowVersion.vue": () => import("./assets/ShowVersion-DLcUrOPK.js"), "./Pages/FBVersions/_components/VersionList.vue": () => import("./assets/VersionList-CEVMYLL5.js"), "./Pages/FBVersions/_layouts/LayoutFBVersions.vue": () => import("./assets/LayoutFBVersions-BgC9PqbC.js"), "./Pages/FBVersions/_layouts/SidebarLayoutVersion.vue": () => import("./assets/SidebarLayoutVersion-wzzH9sRu.js"), "./Pages/Index/Factory.vue": () => import("./assets/Factory-2ZHSsfDx.js"), "./Pages/Index/Index.vue": () => import("./assets/Index-zhWjniTa.js"), "./Pages/JoinUs/Index.vue": () => import("./assets/Index-D3YooWAL.js"), "./Pages/Lessons/Create/Screen.vue": () => import("./assets/Screen-BPSGiJmO.js"), "./Pages/Lessons/CreateLesson.vue": () => import("./assets/CreateLesson-S7LbqP0M.js"), "./Pages/Lessons/Edit/Screen.vue": () => import("./assets/Screen-DWpenVUd.js"), "./Pages/Lessons/EditLesson.vue": () => import("./assets/EditLesson-CRjhXrol.js"), "./Pages/Lessons/Index/Screen.vue": () => import("./assets/Screen-DuKoq3Xc.js"), "./Pages/Lessons/IndexLesson.vue": () => import("./assets/IndexLesson-B3yBz852.js"), "./Pages/Lessons/Show/Screen.vue": () => import("./assets/Screen-DLvSDSEY.js"), "./Pages/Lessons/ShowLesson.vue": () => import("./assets/ShowLesson-CVJmKWuO.js"), "./Pages/Lessons/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-Dj2LdwWi.js"), "./Pages/Lessons/_layouts/SidebarLayoutLesson.vue": () => import("./assets/SidebarLayoutLesson-3ph7vEE9.js"), "./Pages/Media/Index.vue": () => import("./assets/Index-CU1hrLcf.js"), "./Pages/Profile/Edit.vue": () => import("./assets/Edit-Cxi0k0Dk.js"), "./Pages/Profile/Partials/DeleteUserForm.vue": () => import("./assets/DeleteUserForm-D66YmZYS.js"), "./Pages/Profile/Partials/UpdatePasswordForm.vue": () => import("./assets/UpdatePasswordForm-DUHglCIa.js"), "./Pages/Profile/Partials/UpdateProfileInformationForm.vue": () => import("./assets/UpdateProfileInformationForm-Dp6jjNY2.js"), "./Pages/Projects/Customers/Create/Screen.vue": () => import("./assets/Screen-CuKaKnWq.js"), "./Pages/Projects/Customers/CreateCustomer.vue": () => import("./assets/CreateCustomer-BzE2DRAf.js"), "./Pages/Projects/Customers/Edit/Screen.vue": () => import("./assets/Screen-Cg3GkLpP.js"), "./Pages/Projects/Customers/EditCustomer.vue": () => import("./assets/EditCustomer-CjxTnlVq.js"), "./Pages/Projects/Customers/Index/Screen.vue": () => import("./assets/Screen-DoHAontP.js"), "./Pages/Projects/Customers/IndexCustomer.vue": () => import("./assets/IndexCustomer-DbHVWGKx.js"), "./Pages/Projects/Customers/Show/Screen.vue": () => import("./assets/Screen-CKUyiJ5u.js"), "./Pages/Projects/Customers/ShowCustomer.vue": () => import("./assets/ShowCustomer-CPeys8Im.js"), "./Pages/Projects/Index/Screen.vue": () => import("./assets/Screen-CKKw3u0F.js"), "./Pages/Projects/Project/Create/Screen.vue": () => import("./assets/Screen-BRcvz-DP.js"), "./Pages/Projects/Project/CreateProject.vue": () => import("./assets/CreateProject-Hp0J9-sF.js"), "./Pages/Projects/Project/Edit/Screen.vue": () => import("./assets/Screen-C_iXs8Z5.js"), "./Pages/Projects/Project/EditProject.vue": () => import("./assets/EditProject-Be-VpU5o.js"), "./Pages/Projects/Project/Index/Screen.vue": () => import("./assets/Screen-DfDUaFxc.js"), "./Pages/Projects/Project/IndexProject.vue": () => import("./assets/IndexProject-Ch0nrjnJ.js"), "./Pages/Projects/Project/Show/Screen.vue": () => import("./assets/Screen-B84QTM_L.js"), "./Pages/Projects/Project/ShowProject.vue": () => import("./assets/ShowProject-CAuBDMtg.js"), "./Pages/Projects/Services/Create/Screen.vue": () => import("./assets/Screen-Ck1zZRtr.js"), "./Pages/Projects/Services/CreateService.vue": () => import("./assets/CreateService-BzMQ3hnL.js"), "./Pages/Projects/Services/Edit/Screen.vue": () => import("./assets/Screen-jAyYNsej.js"), "./Pages/Projects/Services/EditService.vue": () => import("./assets/EditService-CnIMgnbr.js"), "./Pages/Projects/Services/Index/Screen.vue": () => import("./assets/Screen-DtsoGuso.js"), "./Pages/Projects/Services/Index/ServiceItem.vue": () => import("./assets/ServiceItem-Dv3XwMme.js"), "./Pages/Projects/Services/IndexService.vue": () => import("./assets/IndexService-Bbz0VY53.js"), "./Pages/Projects/Services/Show/Screen.vue": () => import("./assets/Screen-CkiAq9Qd.js"), "./Pages/Projects/Services/ShowService.vue": () => import("./assets/ShowService-vdXazE4s.js"), "./Pages/Projects/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-BH0qsqUS.js"), "./Pages/Projects/_layouts/LayoutProjects.vue": () => import("./assets/LayoutProjects-Cw1TQUWm.js"), "./Pages/Projects/_layouts/SidebarLayoutProject.vue": () => import("./assets/SidebarLayoutProject-C4x7YDcn.js"), "./Pages/Rendition/LanguagePacks/Create/Screen.vue": () => import("./assets/Screen-BlaOY-5j.js"), "./Pages/Rendition/LanguagePacks/CreateLanguagePacks.vue": () => import("./assets/CreateLanguagePacks-BvLOWp3Z.js"), "./Pages/Rendition/LanguagePacks/Edit/Screen.vue": () => import("./assets/Screen-CsS-RI-9.js"), "./Pages/Rendition/LanguagePacks/EditLanguagePacks.vue": () => import("./assets/EditLanguagePacks-N3ar6bPY.js"), "./Pages/Rendition/LanguagePacks/Index/PacksTable.vue": () => import("./assets/PacksTable-BRaypF59.js"), "./Pages/Rendition/LanguagePacks/Index/Screen.vue": () => import("./assets/Screen-Dxh7U0UK.js"), "./Pages/Rendition/LanguagePacks/IndexLanguagePacks.vue": () => import("./assets/IndexLanguagePacks-BoSuX2DV.js"), "./Pages/Rendition/LanguagePacks/ShowLanguagePacks.vue": () => import("./assets/ShowLanguagePacks-CJjzOTld.js"), "./Pages/Rendition/LanguagePacks/Words.vue": () => import("./assets/Words-scFTcnVs.js"), "./Pages/Rendition/LanguagePacks/Words/Screen.vue": () => import("./assets/Screen-VDfznxoB.js"), "./Pages/Rendition/Words/Create/Screen.vue": () => import("./assets/Screen-CegQR5Ik.js"), "./Pages/Rendition/Words/CreateWord.vue": () => import("./assets/CreateWord-BNfCZfhw.js"), "./Pages/Rendition/Words/Edit/Screen.vue": () => import("./assets/Screen-COq-tEG9.js"), "./Pages/Rendition/Words/EditWord.vue": () => import("./assets/EditWord-DETNSt33.js"), "./Pages/Rendition/Words/Index/Screen.vue": () => import("./assets/Screen-s5G_cjeJ.js"), "./Pages/Rendition/Words/IndexWord.vue": () => import("./assets/IndexWord-CSSVF-Su.js"), "./Pages/Rendition/Words/Show/Screen.vue": () => import("./assets/Screen-DqCIELYr.js"), "./Pages/Rendition/Words/ShowWord.vue": () => import("./assets/ShowWord-BIe7orNC.js"), "./Pages/Rendition/_components/MultipleChoice.vue": () => import("./assets/MultipleChoice-u5pTSo_A.js"), "./Pages/Rendition/_components/TranslateWord.vue": () => import("./assets/TranslateWord-CGHthvW-.js"), "./Pages/Rendition/_components/WordCompletion.vue": () => import("./assets/WordCompletion-CSmlEb1_.js"), "./Pages/Rendition/_components/WordsTable.vue": () => import("./assets/WordsTable-D4oJJB5N.js"), "./Pages/Rendition/_layouts/LayoutRendition.vue": () => import("./assets/LayoutRendition-onRKgy3z.js"), "./Pages/Rendition/_layouts/SidebarPackGame.vue": () => import("./assets/SidebarPackGame-B-T1nrbq.js"), "./Pages/Rendition/_layouts/SidebarRendition.vue": () => import("./assets/SidebarRendition-DjXs2hnm.js"), "./Pages/Seo/Create.vue": () => import("./assets/Create-CUD49S05.js"), "./Pages/Seo/Edit.vue": () => import("./assets/Edit-D6y1GpJA.js"), "./Pages/Seo/Index.vue": () => import("./assets/Index-DQYkelsi.js"), "./Pages/SocialMedia/Index.vue": () => import("./assets/Index-DUoBKF7m.js"), "./Pages/SoftwareProducts/Create.vue": () => import("./assets/Create-BdSBTOmf.js"), "./Pages/SoftwareProducts/Edit.vue": () => import("./assets/Edit-BvkfhlLO.js"), "./Pages/SoftwareProducts/Index.vue": () => import("./assets/Index-BDG1qC-T.js"), "./Pages/SoftwareProducts/Show.vue": () => import("./assets/Show-C4u6lUfx.js"), "./Pages/SoftwareProducts/component/Box.vue": () => import("./assets/Box-CvUfE-UW.js"), "./Pages/SoftwareProducts/component/ConfirmModal.vue": () => import("./assets/ConfirmModal-8bTg5PxV.js"), "./Pages/SoftwareProducts/component/SPAddress.vue": () => import("./assets/SPAddress-C4B-URBw.js"), "./Pages/SoftwareProducts/component/SPPrice.vue": () => import("./assets/SPPrice-DDe_ZJN3.js"), "./Pages/SoftwareProducts/component/SPSpaces.vue": () => import("./assets/SPSpaces-C-9fwGUn.js"), "./Pages/ThemeManagement.vue": () => import("./assets/ThemeManagement-DgzGwL0z.js"), "./Pages/Welcome.vue": () => import("./assets/Welcome-bSatZHEn.js"), "./Pages/WritesCategories/Categories/Create/CategoriesCreateFrom.vue": () => import("./assets/CategoriesCreateFrom-LFKkqJl6.js"), "./Pages/WritesCategories/Categories/Create/Screen.vue": () => import("./assets/Screen-GdVasAqA.js"), "./Pages/WritesCategories/Categories/CreateCategory.vue": () => import("./assets/CreateCategory-BSpuBZd9.js"), "./Pages/WritesCategories/Categories/Edit/CategoriesEditFrom.vue": () => import("./assets/CategoriesEditFrom-BKupmvHY.js"), "./Pages/WritesCategories/Categories/Edit/Screen.vue": () => import("./assets/Screen-D939D8w4.js"), "./Pages/WritesCategories/Categories/EditCategory.vue": () => import("./assets/EditCategory-DBvjPZ3E.js"), "./Pages/WritesCategories/Categories/Index/Screen.vue": () => import("./assets/Screen-DWCmbl6T.js"), "./Pages/WritesCategories/Categories/IndexCategory.vue": () => import("./assets/IndexCategory-CAtitPUw.js"), "./Pages/WritesCategories/Categories/Show/Screen.vue": () => import("./assets/Screen-C7td838w.js"), "./Pages/WritesCategories/Categories/ShowCategory.vue": () => import("./assets/ShowCategory-DSpozw27.js"), "./Pages/WritesCategories/Categories/WriteByCategory.vue": () => import("./assets/WriteByCategory-B7Ep5J4i.js"), "./Pages/WritesCategories/Categories/WriteByCategory/Screen.vue": () => import("./assets/Screen-DeOWyRL0.js"), "./Pages/WritesCategories/Writes/Create/FormField.vue": () => import("./assets/FormField-DPlgYte7.js"), "./Pages/WritesCategories/Writes/Create/Screen.vue": () => import("./assets/Screen-C2IOay4C.js"), "./Pages/WritesCategories/Writes/Create/WriteCreateForm.vue": () => import("./assets/WriteCreateForm-Cu9CekRJ.js"), "./Pages/WritesCategories/Writes/CreateWrite.vue": () => import("./assets/CreateWrite-C-_FmH6d.js"), "./Pages/WritesCategories/Writes/Edit/Screen.vue": () => import("./assets/Screen-DxfVo2fY.js"), "./Pages/WritesCategories/Writes/Edit/WriteUpdateForm.vue": () => import("./assets/WriteUpdateForm-Ckkv7BMQ.js"), "./Pages/WritesCategories/Writes/EditWrite.vue": () => import("./assets/EditWrite-ss3VUpKs.js"), "./Pages/WritesCategories/Writes/Index/Screen.vue": () => import("./assets/Screen-BbDZ2Q-R.js"), "./Pages/WritesCategories/Writes/IndexWrite.vue": () => import("./assets/IndexWrite-Bgu3oFrt.js"), "./Pages/WritesCategories/Writes/Show/Screen.vue": () => import("./assets/Screen-DmlSZ9pM.js"), "./Pages/WritesCategories/Writes/ShowWrite.vue": () => import("./assets/ShowWrite-DajPE26e.js"), "./Pages/WritesCategories/_components/RichTextEditor.vue": () => import("./assets/RichTextEditor-DOsunnna.js"), "./Pages/WritesCategories/_composables/CategoryTree.vue": () => import("./assets/CategoryTree-C_YNeSgy.js"), "./Pages/WritesCategories/_composables/WriteList.vue": () => import("./assets/WriteList-DDi5QWJr.js"), "./Pages/WritesCategories/_layouts/LayoutWritesCategories.vue": () => import("./assets/LayoutWritesCategories-DuaM9WRv.js"), "./Pages/WritesCategories/_layouts/SidebarLayoutCategory.vue": () => import("./assets/SidebarLayoutCategory-DWwJO5Tq.js"), "./Pages/WritesCategories/_layouts/SidebarLayoutWrite.vue": () => import("./assets/SidebarLayoutWrite-65-dY_yA.js") }))).default;
+      const page2 = (await resolvePageComponent(`./Pages/${name}.vue`, /* @__PURE__ */ Object.assign({ "./Pages/Auth/ConfirmPassword.vue": () => import("./assets/ConfirmPassword-sRjXXmNx.js"), "./Pages/Auth/ForgotPassword.vue": () => import("./assets/ForgotPassword-Bm1FWiOi.js"), "./Pages/Auth/Login.vue": () => import("./assets/Login-CrV4Xi13.js"), "./Pages/Auth/Register.vue": () => import("./assets/Register-BFT6rCyC.js"), "./Pages/Auth/ResetPassword.vue": () => import("./assets/ResetPassword-MPSkIPiF.js"), "./Pages/Auth/VerifyEmail.vue": () => import("./assets/VerifyEmail-gXEKt2rp.js"), "./Pages/Bookmarks/CreateBookmarks.vue": () => import("./assets/CreateBookmarks-DVJTJcy3.js"), "./Pages/Bookmarks/EditBookmarks.vue": () => import("./assets/EditBookmarks-DZrKHk0d.js"), "./Pages/Bookmarks/IndexBookmarks.vue": () => import("./assets/IndexBookmarks-BH0g04d3.js"), "./Pages/Bookmarks/ShowBookmarks.vue": () => import("./assets/ShowBookmarks-B_Ty2lxF.js"), "./Pages/Bookmarks/SidebarLayoutBookmarks.vue": () => import("./assets/SidebarLayoutBookmarks-B16ebHBN.js"), "./Pages/Category/TypescriptTutorial.vue": () => import("./assets/TypescriptTutorial-UDcIixY-.js"), "./Pages/Dashboard.vue": () => import("./assets/Dashboard-DakEfyw-.js"), "./Pages/Equipments/Create/Screen.vue": () => import("./assets/Screen-D1PJcqvP.js"), "./Pages/Equipments/CreateEquipment.vue": () => import("./assets/CreateEquipment-CxmoL0yv.js"), "./Pages/Equipments/Edit/Screen.vue": () => import("./assets/Screen-Ca5kb9UJ.js"), "./Pages/Equipments/EditEquipment.vue": () => import("./assets/EditEquipment-D2FCZljd.js"), "./Pages/Equipments/Index/Screen.vue": () => import("./assets/Screen-Cuce7w9O.js"), "./Pages/Equipments/IndexEquipment.vue": () => import("./assets/IndexEquipment-BqyUdMbS.js"), "./Pages/Equipments/ShowEquipment.vue": () => import("./assets/ShowEquipment-Di6pVRrk.js"), "./Pages/Excalidraw.vue": () => import("./assets/Excalidraw-5bxgffy3.js"), "./Pages/FBVersions/Versions/Create/Screen.vue": () => import("./assets/Screen-COB41vb5.js"), "./Pages/FBVersions/Versions/CreateVersion.vue": () => import("./assets/CreateVersion-B7E_U4Wk.js"), "./Pages/FBVersions/Versions/Edit/Screen.vue": () => import("./assets/Screen-5r_sPds6.js"), "./Pages/FBVersions/Versions/EditVersion.vue": () => import("./assets/EditVersion-XoD9Dsus.js"), "./Pages/FBVersions/Versions/Index/Screen.vue": () => import("./assets/Screen-BmaGrTyH.js"), "./Pages/FBVersions/Versions/IndexVersion.vue": () => import("./assets/IndexVersion-DoLvhfA8.js"), "./Pages/FBVersions/Versions/Show/Screen.vue": () => import("./assets/Screen-BirpD2RG.js"), "./Pages/FBVersions/Versions/ShowVersion.vue": () => import("./assets/ShowVersion-h21UdoGO.js"), "./Pages/FBVersions/_components/VersionList.vue": () => import("./assets/VersionList-CEVMYLL5.js"), "./Pages/FBVersions/_layouts/LayoutFBVersions.vue": () => import("./assets/LayoutFBVersions-CBxbOQZ8.js"), "./Pages/FBVersions/_layouts/SidebarLayoutVersion.vue": () => import("./assets/SidebarLayoutVersion-wzzH9sRu.js"), "./Pages/Index/Factory.vue": () => import("./assets/Factory-2ZHSsfDx.js"), "./Pages/Index/Index.vue": () => import("./assets/Index-zhWjniTa.js"), "./Pages/JoinUs/Index.vue": () => import("./assets/Index-D3YooWAL.js"), "./Pages/Lessons/Create/Screen.vue": () => import("./assets/Screen-BPSGiJmO.js"), "./Pages/Lessons/CreateLesson.vue": () => import("./assets/CreateLesson-S7LbqP0M.js"), "./Pages/Lessons/Edit/Screen.vue": () => import("./assets/Screen-DWpenVUd.js"), "./Pages/Lessons/EditLesson.vue": () => import("./assets/EditLesson-CRjhXrol.js"), "./Pages/Lessons/Index/Screen.vue": () => import("./assets/Screen-DuKoq3Xc.js"), "./Pages/Lessons/IndexLesson.vue": () => import("./assets/IndexLesson-B3yBz852.js"), "./Pages/Lessons/Show/Screen.vue": () => import("./assets/Screen-DLvSDSEY.js"), "./Pages/Lessons/ShowLesson.vue": () => import("./assets/ShowLesson-CVJmKWuO.js"), "./Pages/Lessons/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-Dj2LdwWi.js"), "./Pages/Lessons/_layouts/SidebarLayoutLesson.vue": () => import("./assets/SidebarLayoutLesson-3ph7vEE9.js"), "./Pages/Media/Index.vue": () => import("./assets/Index-CU1hrLcf.js"), "./Pages/Profile/Edit.vue": () => import("./assets/Edit-Cxi0k0Dk.js"), "./Pages/Profile/Partials/DeleteUserForm.vue": () => import("./assets/DeleteUserForm-D66YmZYS.js"), "./Pages/Profile/Partials/UpdatePasswordForm.vue": () => import("./assets/UpdatePasswordForm-DUHglCIa.js"), "./Pages/Profile/Partials/UpdateProfileInformationForm.vue": () => import("./assets/UpdateProfileInformationForm-Dp6jjNY2.js"), "./Pages/Projects/Customers/Create/Screen.vue": () => import("./assets/Screen-CuKaKnWq.js"), "./Pages/Projects/Customers/CreateCustomer.vue": () => import("./assets/CreateCustomer-BC_muZw2.js"), "./Pages/Projects/Customers/Edit/Screen.vue": () => import("./assets/Screen-Cg3GkLpP.js"), "./Pages/Projects/Customers/EditCustomer.vue": () => import("./assets/EditCustomer-De79v4Wi.js"), "./Pages/Projects/Customers/Index/Screen.vue": () => import("./assets/Screen-DoHAontP.js"), "./Pages/Projects/Customers/IndexCustomer.vue": () => import("./assets/IndexCustomer-C8yFZiYO.js"), "./Pages/Projects/Customers/Show/Screen.vue": () => import("./assets/Screen-CKUyiJ5u.js"), "./Pages/Projects/Customers/ShowCustomer.vue": () => import("./assets/ShowCustomer-DLeY267K.js"), "./Pages/Projects/Index/Screen.vue": () => import("./assets/Screen-CKKw3u0F.js"), "./Pages/Projects/Project/Create/Screen.vue": () => import("./assets/Screen-BRcvz-DP.js"), "./Pages/Projects/Project/CreateProject.vue": () => import("./assets/CreateProject-CTwD4vFd.js"), "./Pages/Projects/Project/Edit/Screen.vue": () => import("./assets/Screen-C_iXs8Z5.js"), "./Pages/Projects/Project/EditProject.vue": () => import("./assets/EditProject-ezy_yTz5.js"), "./Pages/Projects/Project/Index/Screen.vue": () => import("./assets/Screen-DfDUaFxc.js"), "./Pages/Projects/Project/IndexProject.vue": () => import("./assets/IndexProject-BZZydqoN.js"), "./Pages/Projects/Project/Show/Screen.vue": () => import("./assets/Screen-B84QTM_L.js"), "./Pages/Projects/Project/ShowProject.vue": () => import("./assets/ShowProject-Bu9ZGgCH.js"), "./Pages/Projects/Services/Create/Screen.vue": () => import("./assets/Screen-Ck1zZRtr.js"), "./Pages/Projects/Services/CreateService.vue": () => import("./assets/CreateService-BGCA1zk0.js"), "./Pages/Projects/Services/Edit/Screen.vue": () => import("./assets/Screen-jAyYNsej.js"), "./Pages/Projects/Services/EditService.vue": () => import("./assets/EditService-Dx0TH1n6.js"), "./Pages/Projects/Services/Index/Screen.vue": () => import("./assets/Screen-DtsoGuso.js"), "./Pages/Projects/Services/Index/ServiceItem.vue": () => import("./assets/ServiceItem-Dv3XwMme.js"), "./Pages/Projects/Services/IndexService.vue": () => import("./assets/IndexService-k86MJeo6.js"), "./Pages/Projects/Services/Show/Screen.vue": () => import("./assets/Screen-CkiAq9Qd.js"), "./Pages/Projects/Services/ShowService.vue": () => import("./assets/ShowService-DfwqeOC1.js"), "./Pages/Projects/_layouts/CheckLayout.vue": () => import("./assets/CheckLayout-BH0qsqUS.js"), "./Pages/Projects/_layouts/LayoutProjects.vue": () => import("./assets/LayoutProjects-Dsp3IFJe.js"), "./Pages/Projects/_layouts/SidebarLayoutProject.vue": () => import("./assets/SidebarLayoutProject-C4x7YDcn.js"), "./Pages/Rendition/LanguagePacks/Create/Screen.vue": () => import("./assets/Screen-BlaOY-5j.js"), "./Pages/Rendition/LanguagePacks/CreateLanguagePacks.vue": () => import("./assets/CreateLanguagePacks-Js16eT3Y.js"), "./Pages/Rendition/LanguagePacks/Edit/Screen.vue": () => import("./assets/Screen-CsS-RI-9.js"), "./Pages/Rendition/LanguagePacks/EditLanguagePacks.vue": () => import("./assets/EditLanguagePacks-DR4DMGQd.js"), "./Pages/Rendition/LanguagePacks/Index/PacksTable.vue": () => import("./assets/PacksTable-BRaypF59.js"), "./Pages/Rendition/LanguagePacks/Index/Screen.vue": () => import("./assets/Screen-Dxh7U0UK.js"), "./Pages/Rendition/LanguagePacks/IndexLanguagePacks.vue": () => import("./assets/IndexLanguagePacks-DaTrGqZn.js"), "./Pages/Rendition/LanguagePacks/ShowLanguagePacks.vue": () => import("./assets/ShowLanguagePacks-o7e_kA6f.js"), "./Pages/Rendition/LanguagePacks/Words.vue": () => import("./assets/Words-DPQThnyW.js"), "./Pages/Rendition/LanguagePacks/Words/Screen.vue": () => import("./assets/Screen-VDfznxoB.js"), "./Pages/Rendition/Words/Create/Screen.vue": () => import("./assets/Screen-CegQR5Ik.js"), "./Pages/Rendition/Words/CreateWord.vue": () => import("./assets/CreateWord-D1slFN0q.js"), "./Pages/Rendition/Words/Edit/Screen.vue": () => import("./assets/Screen-COq-tEG9.js"), "./Pages/Rendition/Words/EditWord.vue": () => import("./assets/EditWord-DQBJVQX-.js"), "./Pages/Rendition/Words/Index/Screen.vue": () => import("./assets/Screen-s5G_cjeJ.js"), "./Pages/Rendition/Words/IndexWord.vue": () => import("./assets/IndexWord-BX93xMyz.js"), "./Pages/Rendition/Words/Show/Screen.vue": () => import("./assets/Screen-DqCIELYr.js"), "./Pages/Rendition/Words/ShowWord.vue": () => import("./assets/ShowWord-BF9v09n4.js"), "./Pages/Rendition/_components/MultipleChoice.vue": () => import("./assets/MultipleChoice-u5pTSo_A.js"), "./Pages/Rendition/_components/TranslateWord.vue": () => import("./assets/TranslateWord-CGHthvW-.js"), "./Pages/Rendition/_components/WordCompletion.vue": () => import("./assets/WordCompletion-CSmlEb1_.js"), "./Pages/Rendition/_components/WordsTable.vue": () => import("./assets/WordsTable-D4oJJB5N.js"), "./Pages/Rendition/_layouts/LayoutRendition.vue": () => import("./assets/LayoutRendition-DF8pYZkU.js"), "./Pages/Rendition/_layouts/SidebarPackGame.vue": () => import("./assets/SidebarPackGame-B-T1nrbq.js"), "./Pages/Rendition/_layouts/SidebarRendition.vue": () => import("./assets/SidebarRendition-DjXs2hnm.js"), "./Pages/Seo/Create.vue": () => import("./assets/Create-CUD49S05.js"), "./Pages/Seo/Edit.vue": () => import("./assets/Edit-D6y1GpJA.js"), "./Pages/Seo/Index.vue": () => import("./assets/Index-DQYkelsi.js"), "./Pages/SocialMedia/Index.vue": () => import("./assets/Index-DUoBKF7m.js"), "./Pages/SoftwareProducts/Create.vue": () => import("./assets/Create-BdSBTOmf.js"), "./Pages/SoftwareProducts/Edit.vue": () => import("./assets/Edit-BvkfhlLO.js"), "./Pages/SoftwareProducts/Index.vue": () => import("./assets/Index-BDG1qC-T.js"), "./Pages/SoftwareProducts/Show.vue": () => import("./assets/Show-C4u6lUfx.js"), "./Pages/SoftwareProducts/component/Box.vue": () => import("./assets/Box-CvUfE-UW.js"), "./Pages/SoftwareProducts/component/ConfirmModal.vue": () => import("./assets/ConfirmModal-8bTg5PxV.js"), "./Pages/SoftwareProducts/component/SPAddress.vue": () => import("./assets/SPAddress-C4B-URBw.js"), "./Pages/SoftwareProducts/component/SPPrice.vue": () => import("./assets/SPPrice-DDe_ZJN3.js"), "./Pages/SoftwareProducts/component/SPSpaces.vue": () => import("./assets/SPSpaces-C-9fwGUn.js"), "./Pages/TestCategories/Categories/Create/Screen.vue": () => import("./assets/Screen-wPC1KaEz.js"), "./Pages/TestCategories/Categories/Create/TestCategoriesCreateForm.vue": () => import("./assets/TestCategoriesCreateForm-BbuUxS0K.js"), "./Pages/TestCategories/Categories/CreateCategory.vue": () => import("./assets/CreateCategory-BR0zNETk.js"), "./Pages/TestCategories/Categories/Edit/Screen.vue": () => import("./assets/Screen-BDfXsBcr.js"), "./Pages/TestCategories/Categories/Edit/TestCategoriesEditForm.vue": () => import("./assets/TestCategoriesEditForm-B842GjX9.js"), "./Pages/TestCategories/Categories/EditCategory.vue": () => import("./assets/EditCategory-BZ5nz9-N.js"), "./Pages/TestCategories/Categories/Index/Screen.vue": () => import("./assets/Screen-DDlq1h4u.js"), "./Pages/TestCategories/Categories/IndexCategory.vue": () => import("./assets/IndexCategory-Cg1MyM4W.js"), "./Pages/TestCategories/Categories/Show/Screen.vue": () => import("./assets/Screen-BxyOGMzr.js"), "./Pages/TestCategories/Categories/ShowCategory.vue": () => import("./assets/ShowCategory-BdeUg1_n.js"), "./Pages/TestCategories/Tests/Create/Screen.vue": () => import("./assets/Screen-B1GBnFe4.js"), "./Pages/TestCategories/Tests/Create/TestCreateForm.vue": () => import("./assets/TestCreateForm-Cm3aj6bh.js"), "./Pages/TestCategories/Tests/CreateTest.vue": () => import("./assets/CreateTest-DpkjRnXC.js"), "./Pages/TestCategories/Tests/Edit/Screen.vue": () => import("./assets/Screen-CUaqceDQ.js"), "./Pages/TestCategories/Tests/Edit/TestUpdateForm.vue": () => import("./assets/TestUpdateForm-Dox7qfab.js"), "./Pages/TestCategories/Tests/EditTest.vue": () => import("./assets/EditTest-Cbk9q9X6.js"), "./Pages/TestCategories/Tests/Index/Screen.vue": () => import("./assets/Screen-Cx9CrwyX.js"), "./Pages/TestCategories/Tests/IndexTest.vue": () => import("./assets/IndexTest-3AvlTuC5.js"), "./Pages/TestCategories/Tests/Result/Screen.vue": () => import("./assets/Screen-CthOyeFn.js"), "./Pages/TestCategories/Tests/Show/Screen.vue": () => import("./assets/Screen-CJcQ5CLf.js"), "./Pages/TestCategories/Tests/ShowTest.vue": () => import("./assets/ShowTest-Dl9488XA.js"), "./Pages/TestCategories/Tests/Take/Screen.vue": () => import("./assets/Screen-CQFTAzxW.js"), "./Pages/TestCategories/Tests/TakeTest.vue": () => import("./assets/TakeTest-BtpHhuBN.js"), "./Pages/TestCategories/Tests/TestResult.vue": () => import("./assets/TestResult-BlGeQhpr.js"), "./Pages/TestCategories/_composables/CategoryTree.vue": () => import("./assets/CategoryTree-mQ-15a0V.js"), "./Pages/TestCategories/_composables/TestList.vue": () => import("./assets/TestList-D_f7BfrK.js"), "./Pages/TestCategories/_layouts/LayoutTestCategories.vue": () => import("./assets/LayoutTestCategories-CPJEl1HF.js"), "./Pages/TestCategories/_layouts/SidebarLayoutCategory.vue": () => import("./assets/SidebarLayoutCategory-DhpuPQAL.js"), "./Pages/TestCategories/_layouts/SidebarLayoutTest.vue": () => import("./assets/SidebarLayoutTest-tzEkhXZS.js"), "./Pages/ThemeManagement.vue": () => import("./assets/ThemeManagement-DgzGwL0z.js"), "./Pages/Welcome.vue": () => import("./assets/Welcome-bSatZHEn.js"), "./Pages/WritesCategories/Categories/Create/CategoriesCreateFrom.vue": () => import("./assets/CategoriesCreateFrom-LFKkqJl6.js"), "./Pages/WritesCategories/Categories/Create/Screen.vue": () => import("./assets/Screen-GdVasAqA.js"), "./Pages/WritesCategories/Categories/CreateCategory.vue": () => import("./assets/CreateCategory-BfUFy5T6.js"), "./Pages/WritesCategories/Categories/Edit/CategoriesEditFrom.vue": () => import("./assets/CategoriesEditFrom-BKupmvHY.js"), "./Pages/WritesCategories/Categories/Edit/Screen.vue": () => import("./assets/Screen-D939D8w4.js"), "./Pages/WritesCategories/Categories/EditCategory.vue": () => import("./assets/EditCategory-B_SmYD9k.js"), "./Pages/WritesCategories/Categories/Index/Screen.vue": () => import("./assets/Screen-DWCmbl6T.js"), "./Pages/WritesCategories/Categories/IndexCategory.vue": () => import("./assets/IndexCategory-3GEUqJe4.js"), "./Pages/WritesCategories/Categories/Show/Screen.vue": () => import("./assets/Screen-C7td838w.js"), "./Pages/WritesCategories/Categories/ShowCategory.vue": () => import("./assets/ShowCategory-DewLp7qC.js"), "./Pages/WritesCategories/Categories/WriteByCategory.vue": () => import("./assets/WriteByCategory-D4kz7VoL.js"), "./Pages/WritesCategories/Categories/WriteByCategory/Screen.vue": () => import("./assets/Screen-DPnJi06J.js"), "./Pages/WritesCategories/Writes/Create/FormField.vue": () => import("./assets/FormField-DPlgYte7.js"), "./Pages/WritesCategories/Writes/Create/Screen.vue": () => import("./assets/Screen-C2IOay4C.js"), "./Pages/WritesCategories/Writes/Create/WriteCreateForm.vue": () => import("./assets/WriteCreateForm-Cu9CekRJ.js"), "./Pages/WritesCategories/Writes/CreateWrite.vue": () => import("./assets/CreateWrite-DnSTyHWc.js"), "./Pages/WritesCategories/Writes/Edit/Screen.vue": () => import("./assets/Screen-DxfVo2fY.js"), "./Pages/WritesCategories/Writes/Edit/WriteUpdateForm.vue": () => import("./assets/WriteUpdateForm-Ckkv7BMQ.js"), "./Pages/WritesCategories/Writes/EditWrite.vue": () => import("./assets/EditWrite-B4K6DZAb.js"), "./Pages/WritesCategories/Writes/Index/Screen.vue": () => import("./assets/Screen-BbDZ2Q-R.js"), "./Pages/WritesCategories/Writes/IndexWrite.vue": () => import("./assets/IndexWrite-BXzs50kE.js"), "./Pages/WritesCategories/Writes/Show/Screen.vue": () => import("./assets/Screen-aw3aqb5-.js"), "./Pages/WritesCategories/Writes/ShowWrite.vue": () => import("./assets/ShowWrite-DWXn_mXH.js"), "./Pages/WritesCategories/_components/RichTextEditor.vue": () => import("./assets/RichTextEditor-DOsunnna.js"), "./Pages/WritesCategories/_composables/CategoryTree.vue": () => import("./assets/CategoryTree-C_YNeSgy.js"), "./Pages/WritesCategories/_composables/WriteList.vue": () => import("./assets/WriteList-DDi5QWJr.js"), "./Pages/WritesCategories/_layouts/LayoutWritesCategories.vue": () => import("./assets/LayoutWritesCategories-gAUIZUtn.js"), "./Pages/WritesCategories/_layouts/SidebarLayoutCategory.vue": () => import("./assets/SidebarLayoutCategory-DWwJO5Tq.js"), "./Pages/WritesCategories/_layouts/SidebarLayoutWrite.vue": () => import("./assets/SidebarLayoutWrite-65-dY_yA.js") }))).default;
       page2.layout = page2.layout || _sfc_main;
       return page2;
     },
