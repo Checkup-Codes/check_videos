@@ -102,7 +102,7 @@
                 </span>
                 <span class="text-sm text-muted-foreground">({{ question.points }} puan)</span>
               </div>
-              <p class="text-lg font-medium text-foreground">{{ question.question_text }}</p>
+              <p class="whitespace-pre-wrap text-lg font-medium text-foreground">{{ question.question_text }}</p>
             </div>
             <div
               v-if="answers[question.id]"
@@ -143,7 +143,7 @@
               <div class="flex-1">
                 <div class="flex items-center gap-2">
                   <span class="font-medium text-muted-foreground">{{ String.fromCharCode(65 + optIndex) }}.</span>
-                  <span class="text-foreground">{{ option.option_text }}</span>
+                  <span class="whitespace-pre-wrap text-foreground">{{ option.option_text }}</span>
                 </div>
               </div>
             </label>

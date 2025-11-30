@@ -154,7 +154,7 @@
                     Yanlış
                   </span>
                 </div>
-                <p class="text-lg font-medium text-foreground">{{ answer.question?.question_text }}</p>
+                <p class="whitespace-pre-wrap text-lg font-medium text-foreground">{{ answer.question?.question_text }}</p>
               </div>
             </div>
 
@@ -172,7 +172,7 @@
                 }"
               >
                 <span class="font-medium text-muted-foreground">{{ String.fromCharCode(65 + optIndex) }}.</span>
-                <span class="flex-1 text-foreground">{{ option.option_text }}</span>
+                <span class="flex-1 whitespace-pre-wrap text-foreground">{{ option.option_text }}</span>
                 <div class="flex gap-2">
                   <span
                     v-if="option.is_correct"
@@ -212,7 +212,7 @@
                 </svg>
                 <div>
                   <p class="text-sm font-medium text-blue-900 dark:text-blue-100">Açıklama:</p>
-                  <p class="mt-1 text-sm text-blue-800 dark:text-blue-200">{{ answer.question.explanation }}</p>
+                  <p class="mt-1 whitespace-pre-wrap text-sm text-blue-800 dark:text-blue-200">{{ answer.question.explanation }}</p>
                 </div>
               </div>
             </div>

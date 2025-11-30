@@ -91,7 +91,7 @@
           >
             <div class="mb-4">
               <span class="text-sm font-medium text-muted-foreground">Soru {{ index + 1 }}</span>
-              <p class="mt-2 text-foreground">{{ question.question_text }}</p>
+              <p class="mt-2 whitespace-pre-wrap text-foreground">{{ question.question_text }}</p>
             </div>
             <div class="space-y-2">
               <div
@@ -101,14 +101,14 @@
                 :class="option.is_correct ? 'border-green-500 bg-green-50 dark:bg-green-950' : ''"
               >
                 <span class="text-sm font-medium text-muted-foreground">{{ String.fromCharCode(65 + optIndex) }}.</span>
-                <span class="text-sm text-foreground">{{ option.option_text }}</span>
+                <span class="whitespace-pre-wrap text-sm text-foreground">{{ option.option_text }}</span>
                 <span v-if="option.is_correct" class="ml-auto text-xs font-medium text-green-600 dark:text-green-400">
                   ✓ Doğru
                 </span>
               </div>
             </div>
             <div v-if="question.explanation" class="mt-3 rounded-md bg-muted p-2 text-sm text-muted-foreground">
-              <strong>Açıklama:</strong> {{ question.explanation }}
+              <strong>Açıklama:</strong> <span class="whitespace-pre-wrap">{{ question.explanation }}</span>
             </div>
           </div>
         </div>
