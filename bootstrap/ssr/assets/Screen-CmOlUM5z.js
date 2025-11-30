@@ -128,14 +128,14 @@ const _sfc_main = {
               } else {
                 _push2(`<span class="flex items-center gap-1 text-sm font-medium text-red-600 dark:text-red-400"${_scopeId}><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"${_scopeId}></path></svg> Yanlış </span>`);
               }
-              _push2(`</div><p class="text-lg font-medium text-foreground"${_scopeId}>${ssrInterpolate((_a2 = answer.question) == null ? void 0 : _a2.question_text)}</p></div></div><div class="space-y-2"${_scopeId}><!--[-->`);
+              _push2(`</div><p class="whitespace-pre-wrap text-lg font-medium text-foreground"${_scopeId}>${ssrInterpolate((_a2 = answer.question) == null ? void 0 : _a2.question_text)}</p></div></div><div class="space-y-2"${_scopeId}><!--[-->`);
               ssrRenderList(getQuestionOptions(answer.question), (option, optIndex) => {
                 var _a3, _b3, _c2;
                 _push2(`<div class="${ssrRenderClass([{
                   "border-green-500 bg-green-100 dark:bg-green-900": option.is_correct,
                   "border-red-500 bg-red-100 dark:bg-red-900": !option.is_correct && (answer.option_id === option.id || ((_a3 = answer.option) == null ? void 0 : _a3.id) === option.id),
                   "border-border bg-background": !option.is_correct && answer.option_id !== option.id && ((_b3 = answer.option) == null ? void 0 : _b3.id) !== option.id
-                }, "flex items-start gap-3 rounded-lg border p-3"])}"${_scopeId}><span class="font-medium text-muted-foreground"${_scopeId}>${ssrInterpolate(String.fromCharCode(65 + optIndex))}.</span><span class="flex-1 text-foreground"${_scopeId}>${ssrInterpolate(option.option_text)}</span><div class="flex gap-2"${_scopeId}>`);
+                }, "flex items-start gap-3 rounded-lg border p-3"])}"${_scopeId}><span class="font-medium text-muted-foreground"${_scopeId}>${ssrInterpolate(String.fromCharCode(65 + optIndex))}.</span><span class="flex-1 whitespace-pre-wrap text-foreground"${_scopeId}>${ssrInterpolate(option.option_text)}</span><div class="flex gap-2"${_scopeId}>`);
                 if (option.is_correct) {
                   _push2(`<span class="rounded-md bg-green-500 px-2 py-1 text-xs font-medium text-white"${_scopeId}> Doğru Cevap </span>`);
                 } else {
@@ -150,7 +150,7 @@ const _sfc_main = {
               });
               _push2(`<!--]--></div>`);
               if ((_b2 = answer.question) == null ? void 0 : _b2.explanation) {
-                _push2(`<div class="rounded-md border border-blue-200 bg-blue-50 p-3 dark:border-blue-800 dark:bg-blue-950"${_scopeId}><div class="flex items-start gap-2"${_scopeId}><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"${_scopeId}></path></svg><div${_scopeId}><p class="text-sm font-medium text-blue-900 dark:text-blue-100"${_scopeId}>Açıklama:</p><p class="mt-1 text-sm text-blue-800 dark:text-blue-200"${_scopeId}>${ssrInterpolate(answer.question.explanation)}</p></div></div></div>`);
+                _push2(`<div class="rounded-md border border-blue-200 bg-blue-50 p-3 dark:border-blue-800 dark:bg-blue-950"${_scopeId}><div class="flex items-start gap-2"${_scopeId}><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"${_scopeId}></path></svg><div${_scopeId}><p class="text-sm font-medium text-blue-900 dark:text-blue-100"${_scopeId}>Açıklama:</p><p class="mt-1 whitespace-pre-wrap text-sm text-blue-800 dark:text-blue-200"${_scopeId}>${ssrInterpolate(answer.question.explanation)}</p></div></div></div>`);
               } else {
                 _push2(`<!---->`);
               }
@@ -367,7 +367,7 @@ const _sfc_main = {
                                 createTextVNode(" Yanlış ")
                               ]))
                             ]),
-                            createVNode("p", { class: "text-lg font-medium text-foreground" }, toDisplayString((_a2 = answer.question) == null ? void 0 : _a2.question_text), 1)
+                            createVNode("p", { class: "whitespace-pre-wrap text-lg font-medium text-foreground" }, toDisplayString((_a2 = answer.question) == null ? void 0 : _a2.question_text), 1)
                           ])
                         ]),
                         createVNode("div", { class: "space-y-2" }, [
@@ -382,7 +382,7 @@ const _sfc_main = {
                               }]
                             }, [
                               createVNode("span", { class: "font-medium text-muted-foreground" }, toDisplayString(String.fromCharCode(65 + optIndex)) + ".", 1),
-                              createVNode("span", { class: "flex-1 text-foreground" }, toDisplayString(option.option_text), 1),
+                              createVNode("span", { class: "flex-1 whitespace-pre-wrap text-foreground" }, toDisplayString(option.option_text), 1),
                               createVNode("div", { class: "flex gap-2" }, [
                                 option.is_correct ? (openBlock(), createBlock("span", {
                                   key: 0,
@@ -417,7 +417,7 @@ const _sfc_main = {
                             ])),
                             createVNode("div", null, [
                               createVNode("p", { class: "text-sm font-medium text-blue-900 dark:text-blue-100" }, "Açıklama:"),
-                              createVNode("p", { class: "mt-1 text-sm text-blue-800 dark:text-blue-200" }, toDisplayString(answer.question.explanation), 1)
+                              createVNode("p", { class: "mt-1 whitespace-pre-wrap text-sm text-blue-800 dark:text-blue-200" }, toDisplayString(answer.question.explanation), 1)
                             ])
                           ])
                         ])) : createCommentVNode("", true)

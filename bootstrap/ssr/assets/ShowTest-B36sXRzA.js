@@ -2,7 +2,7 @@ import { computed, withCtx, createVNode, useSSRContext } from "vue";
 import { ssrRenderComponent } from "vue/server-renderer";
 import { usePage } from "@inertiajs/vue3";
 import _sfc_main$2 from "./LayoutTestCategories-CPJEl1HF.js";
-import _sfc_main$3 from "./Screen-CJcQ5CLf.js";
+import _sfc_main$3 from "./Screen-DL5D89r-.js";
 import { _ as _sfc_main$1 } from "./PageMeta-Dly5tI55.js";
 import "./FlashMessage-CQHak4HA.js";
 import "./SidebarLayoutTest-tzEkhXZS.js";

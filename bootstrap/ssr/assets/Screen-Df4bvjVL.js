@@ -299,7 +299,7 @@ const _sfc_main = {
             }
             _push2(`</div></div><div class="space-y-2"${_scopeId}><div class="flex items-center justify-between text-sm"${_scopeId}><span class="text-muted-foreground"${_scopeId}>İlerleme</span><span class="font-medium text-foreground"${_scopeId}>${ssrInterpolate(answeredCount.value)} / ${ssrInterpolate(unref(test).total_questions)} soru cevaplandı</span></div><div class="h-2 w-full overflow-hidden rounded-full bg-muted"${_scopeId}><div class="h-full bg-primary transition-all duration-300" style="${ssrRenderStyle({ width: `${progressPercentage.value}%` })}"${_scopeId}></div></div></div><form class="space-y-6"${_scopeId}><!--[-->`);
             ssrRenderList(unref(test).questions, (question, index) => {
-              _push2(`<div${ssrRenderAttr("id", `question-${question.id}`)} class="space-y-4 rounded-lg border border-border bg-card p-6 scroll-mt-24"${_scopeId}><div class="flex items-start justify-between"${_scopeId}><div class="flex-1"${_scopeId}><div class="mb-2 flex items-center gap-2"${_scopeId}><span class="rounded-md bg-primary px-2 py-1 text-sm font-semibold text-primary-foreground"${_scopeId}> Soru ${ssrInterpolate(index + 1)}</span><span class="text-sm text-muted-foreground"${_scopeId}>(${ssrInterpolate(question.points)} puan)</span></div><p class="text-lg font-medium text-foreground"${_scopeId}>${ssrInterpolate(question.question_text)}</p></div>`);
+              _push2(`<div${ssrRenderAttr("id", `question-${question.id}`)} class="space-y-4 rounded-lg border border-border bg-card p-6 scroll-mt-24"${_scopeId}><div class="flex items-start justify-between"${_scopeId}><div class="flex-1"${_scopeId}><div class="mb-2 flex items-center gap-2"${_scopeId}><span class="rounded-md bg-primary px-2 py-1 text-sm font-semibold text-primary-foreground"${_scopeId}> Soru ${ssrInterpolate(index + 1)}</span><span class="text-sm text-muted-foreground"${_scopeId}>(${ssrInterpolate(question.points)} puan)</span></div><p class="whitespace-pre-wrap text-lg font-medium text-foreground"${_scopeId}>${ssrInterpolate(question.question_text)}</p></div>`);
               if (answers.value[question.id]) {
                 _push2(`<div class="ml-4 flex h-8 w-8 items-center justify-center rounded-full bg-green-500 text-white"${_scopeId}><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"${_scopeId}></path></svg></div>`);
               } else {
@@ -310,7 +310,7 @@ const _sfc_main = {
                 _push2(`<label${ssrRenderAttr("for", `question-${question.id}-option-${option.id}`)} class="${ssrRenderClass([{
                   "border-primary bg-primary/5": answers.value[question.id] === option.id,
                   "border-border": answers.value[question.id] !== option.id
-                }, "flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-background p-4 transition-colors hover:bg-accent"])}"${_scopeId}><input${ssrRenderAttr("id", `question-${question.id}-option-${option.id}`)} type="radio"${ssrRenderAttr("name", `question-${question.id}`)}${ssrRenderAttr("value", option.id)}${ssrIncludeBooleanAttr(ssrLooseEqual(answers.value[question.id], option.id)) ? " checked" : ""} class="mt-1 h-4 w-4 cursor-pointer text-primary focus:ring-primary"${_scopeId}><div class="flex-1"${_scopeId}><div class="flex items-center gap-2"${_scopeId}><span class="font-medium text-muted-foreground"${_scopeId}>${ssrInterpolate(String.fromCharCode(65 + optIndex))}.</span><span class="text-foreground"${_scopeId}>${ssrInterpolate(option.option_text)}</span></div></div></label>`);
+                }, "flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-background p-4 transition-colors hover:bg-accent"])}"${_scopeId}><input${ssrRenderAttr("id", `question-${question.id}-option-${option.id}`)} type="radio"${ssrRenderAttr("name", `question-${question.id}`)}${ssrRenderAttr("value", option.id)}${ssrIncludeBooleanAttr(ssrLooseEqual(answers.value[question.id], option.id)) ? " checked" : ""} class="mt-1 h-4 w-4 cursor-pointer text-primary focus:ring-primary"${_scopeId}><div class="flex-1"${_scopeId}><div class="flex items-center gap-2"${_scopeId}><span class="font-medium text-muted-foreground"${_scopeId}>${ssrInterpolate(String.fromCharCode(65 + optIndex))}.</span><span class="whitespace-pre-wrap text-foreground"${_scopeId}>${ssrInterpolate(option.option_text)}</span></div></div></label>`);
               });
               _push2(`<!--]--></div></div>`);
             });
@@ -497,7 +497,7 @@ const _sfc_main = {
                             createVNode("span", { class: "rounded-md bg-primary px-2 py-1 text-sm font-semibold text-primary-foreground" }, " Soru " + toDisplayString(index + 1), 1),
                             createVNode("span", { class: "text-sm text-muted-foreground" }, "(" + toDisplayString(question.points) + " puan)", 1)
                           ]),
-                          createVNode("p", { class: "text-lg font-medium text-foreground" }, toDisplayString(question.question_text), 1)
+                          createVNode("p", { class: "whitespace-pre-wrap text-lg font-medium text-foreground" }, toDisplayString(question.question_text), 1)
                         ]),
                         answers.value[question.id] ? (openBlock(), createBlock("div", {
                           key: 0,
@@ -543,7 +543,7 @@ const _sfc_main = {
                             createVNode("div", { class: "flex-1" }, [
                               createVNode("div", { class: "flex items-center gap-2" }, [
                                 createVNode("span", { class: "font-medium text-muted-foreground" }, toDisplayString(String.fromCharCode(65 + optIndex)) + ".", 1),
-                                createVNode("span", { class: "text-foreground" }, toDisplayString(option.option_text), 1)
+                                createVNode("span", { class: "whitespace-pre-wrap text-foreground" }, toDisplayString(option.option_text), 1)
                               ])
                             ])
                           ], 10, ["for"]);

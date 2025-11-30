@@ -229,9 +229,9 @@ const _sfc_main = {
             if (unref(test).questions && unref(test).questions.length > 0) {
               _push2(`<div class="space-y-4"${_scopeId}><h2 class="text-xl font-semibold text-foreground"${_scopeId}>Sorular</h2><div class="space-y-6"${_scopeId}><!--[-->`);
               ssrRenderList(unref(test).questions, (question, index) => {
-                _push2(`<div${ssrRenderAttr("id", `question-${question.id}`)} class="scroll-mt-24 rounded-lg border border-border bg-card p-4"${_scopeId}><div class="mb-4"${_scopeId}><span class="text-sm font-medium text-muted-foreground"${_scopeId}>Soru ${ssrInterpolate(index + 1)}</span><p class="mt-2 text-foreground"${_scopeId}>${ssrInterpolate(question.question_text)}</p></div><div class="space-y-2"${_scopeId}><!--[-->`);
+                _push2(`<div${ssrRenderAttr("id", `question-${question.id}`)} class="scroll-mt-24 rounded-lg border border-border bg-card p-4"${_scopeId}><div class="mb-4"${_scopeId}><span class="text-sm font-medium text-muted-foreground"${_scopeId}>Soru ${ssrInterpolate(index + 1)}</span><p class="mt-2 whitespace-pre-wrap text-foreground"${_scopeId}>${ssrInterpolate(question.question_text)}</p></div><div class="space-y-2"${_scopeId}><!--[-->`);
                 ssrRenderList(question.options, (option, optIndex) => {
-                  _push2(`<div class="${ssrRenderClass([option.is_correct ? "border-green-500 bg-green-50 dark:bg-green-950" : "", "flex items-center gap-2 rounded-md border border-border bg-background p-2"])}"${_scopeId}><span class="text-sm font-medium text-muted-foreground"${_scopeId}>${ssrInterpolate(String.fromCharCode(65 + optIndex))}.</span><span class="text-sm text-foreground"${_scopeId}>${ssrInterpolate(option.option_text)}</span>`);
+                  _push2(`<div class="${ssrRenderClass([option.is_correct ? "border-green-500 bg-green-50 dark:bg-green-950" : "", "flex items-center gap-2 rounded-md border border-border bg-background p-2"])}"${_scopeId}><span class="text-sm font-medium text-muted-foreground"${_scopeId}>${ssrInterpolate(String.fromCharCode(65 + optIndex))}.</span><span class="whitespace-pre-wrap text-sm text-foreground"${_scopeId}>${ssrInterpolate(option.option_text)}</span>`);
                   if (option.is_correct) {
                     _push2(`<span class="ml-auto text-xs font-medium text-green-600 dark:text-green-400"${_scopeId}> ✓ Doğru </span>`);
                   } else {
@@ -241,7 +241,7 @@ const _sfc_main = {
                 });
                 _push2(`<!--]--></div>`);
                 if (question.explanation) {
-                  _push2(`<div class="mt-3 rounded-md bg-muted p-2 text-sm text-muted-foreground"${_scopeId}><strong${_scopeId}>Açıklama:</strong> ${ssrInterpolate(question.explanation)}</div>`);
+                  _push2(`<div class="mt-3 rounded-md bg-muted p-2 text-sm text-muted-foreground"${_scopeId}><strong${_scopeId}>Açıklama:</strong> <span class="whitespace-pre-wrap"${_scopeId}>${ssrInterpolate(question.explanation)}</span></div>`);
                 } else {
                   _push2(`<!---->`);
                 }
@@ -423,7 +423,7 @@ const _sfc_main = {
                       }, [
                         createVNode("div", { class: "mb-4" }, [
                           createVNode("span", { class: "text-sm font-medium text-muted-foreground" }, "Soru " + toDisplayString(index + 1), 1),
-                          createVNode("p", { class: "mt-2 text-foreground" }, toDisplayString(question.question_text), 1)
+                          createVNode("p", { class: "mt-2 whitespace-pre-wrap text-foreground" }, toDisplayString(question.question_text), 1)
                         ]),
                         createVNode("div", { class: "space-y-2" }, [
                           (openBlock(true), createBlock(Fragment, null, renderList(question.options, (option, optIndex) => {
@@ -432,7 +432,7 @@ const _sfc_main = {
                               class: ["flex items-center gap-2 rounded-md border border-border bg-background p-2", option.is_correct ? "border-green-500 bg-green-50 dark:bg-green-950" : ""]
                             }, [
                               createVNode("span", { class: "text-sm font-medium text-muted-foreground" }, toDisplayString(String.fromCharCode(65 + optIndex)) + ".", 1),
-                              createVNode("span", { class: "text-sm text-foreground" }, toDisplayString(option.option_text), 1),
+                              createVNode("span", { class: "whitespace-pre-wrap text-sm text-foreground" }, toDisplayString(option.option_text), 1),
                               option.is_correct ? (openBlock(), createBlock("span", {
                                 key: 0,
                                 class: "ml-auto text-xs font-medium text-green-600 dark:text-green-400"
@@ -445,7 +445,8 @@ const _sfc_main = {
                           class: "mt-3 rounded-md bg-muted p-2 text-sm text-muted-foreground"
                         }, [
                           createVNode("strong", null, "Açıklama:"),
-                          createTextVNode(" " + toDisplayString(question.explanation), 1)
+                          createTextVNode(),
+                          createVNode("span", { class: "whitespace-pre-wrap" }, toDisplayString(question.explanation), 1)
                         ])) : createCommentVNode("", true)
                       ], 8, ["id"]);
                     }), 128))

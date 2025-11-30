@@ -1,7 +1,7 @@
 import { withCtx, createVNode, useSSRContext } from "vue";
 import { ssrRenderComponent } from "vue/server-renderer";
 import _sfc_main$1 from "./LayoutTestCategories-CPJEl1HF.js";
-import _sfc_main$2 from "./Screen-CQFTAzxW.js";
+import _sfc_main$2 from "./Screen-CmOlUM5z.js";
 import "@inertiajs/vue3";
 import "./FlashMessage-CQHak4HA.js";
 import "./SidebarLayoutTest-tzEkhXZS.js";
@@ -20,9 +20,9 @@ import "./SidebarLayoutCategory-DhpuPQAL.js";
 import "./CategoryTree-mQ-15a0V.js";
 import "./CheckScreen-juRHZR4N.js";
 const _sfc_main = /* @__PURE__ */ Object.assign({
-  name: "TakeTestPage"
+  name: "TestResultPage"
 }, {
-  __name: "TakeTest",
+  __name: "TestResult",
   __ssrInlineRender: true,
   setup(__props) {
     return (_ctx, _push, _parent, _attrs) => {
@@ -44,7 +44,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign({
 const _sfc_setup = _sfc_main.setup;
 _sfc_main.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
-  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/TestCategories/Tests/TakeTest.vue");
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Pages/TestCategories/Tests/TestResult.vue");
   return _sfc_setup ? _sfc_setup(props, ctx) : void 0;
 };
 export {
