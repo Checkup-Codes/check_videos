@@ -95,6 +95,60 @@
             <span>{{ formatDate(result.completed_at) }}</span>
           </div>
         </div>
+
+        <!-- Share Section (for guests) -->
+        <div v-if="isGuest" class="border-t border-border pt-4">
+          <h3 class="mb-4 text-lg font-semibold text-foreground">Sonucunu Paylaş</h3>
+          <div class="space-y-4">
+            <div class="rounded-md border border-input bg-background p-4">
+              <p class="mb-2 text-sm text-muted-foreground">Paylaşılabilir mesaj:</p>
+              <p class="whitespace-pre-wrap text-foreground font-medium" id="shareMessage">{{ shareMessage }}</p>
+            </div>
+            <div class="flex gap-2">
+              <button
+                @click="copyToClipboard"
+                class="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+                {{ copyButtonText }}
+              </button>
+              <button
+                v-if="canShare"
+                @click="shareResult"
+                class="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8.684 13.342C8.885 12.938 9 12.482 9 12c0-.482-.115-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                  />
+                </svg>
+                Paylaş
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
             <!-- Questions Review -->
@@ -220,45 +274,6 @@
         </div>
       </div>
 
-      <!-- Share Section (for guests) -->
-      <div v-if="isGuest" class="rounded-lg border border-border bg-card p-6">
-        <h3 class="mb-4 text-lg font-semibold text-foreground">Sonucunu Paylaş</h3>
-        <div class="space-y-4">
-          <div class="rounded-md border border-input bg-background p-4">
-            <p class="text-sm text-muted-foreground mb-2">Paylaşılabilir mesaj:</p>
-            <p class="text-foreground font-medium" id="shareMessage">{{ shareMessage }}</p>
-          </div>
-          <div class="flex gap-2">
-            <button
-              @click="copyToClipboard"
-              class="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                />
-              </svg>
-              {{ copyButtonText }}
-            </button>
-            <Link
-              :href="`/tests/${result.test?.slug}`"
-              class="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
-            >
-              Teste Geri Dön
-            </Link>
-          </div>
-        </div>
-      </div>
-
       <!-- Actions (for logged in users) -->
       <div v-else class="flex gap-4">
         <Link
@@ -351,6 +366,11 @@ const formatDate = (dateString) => {
   });
 };
 
+// Check if Web Share API is available
+const canShare = computed(() => {
+  return typeof navigator !== 'undefined' && 'share' in navigator;
+});
+
 // Share message
 const shareMessage = computed(() => {
   const testTitle = result.test?.title || 'Test';
@@ -365,7 +385,7 @@ const shareMessage = computed(() => {
   
   const testUrl = window.location.origin + `/tests/${testSlug}`;
   
-  return `${testUrl} sitesindeki "${testTitle}" testindeki ${totalQuestions} soruluk sınavdan ${participantName} ${score} aldım, sen de dener misin? : ${testUrl}`;
+  return `Checkupcodes sitesindeki "${testTitle}" testindeki ${totalQuestions} soruluk sınavdan ${participantName} ${score} aldım, sen de dener misin? : ${testUrl}`;
 });
 
 // Copy to clipboard
@@ -394,6 +414,38 @@ const copyToClipboard = async () => {
       console.error('Kopyalama hatası:', err);
     }
     document.body.removeChild(textArea);
+  }
+};
+
+// Share using Web Share API
+const shareResult = async () => {
+  const testTitle = result.test?.title || 'Test';
+  const participantName = result.participant_name || 'Ben';
+  const score = Math.round(result.score || 0);
+  const totalQuestions = result.total_questions || 0;
+  const testSlug = result.test?.slug;
+  
+  if (!testSlug) {
+    return;
+  }
+  
+  const testUrl = window.location.origin + `/tests/${testSlug}`;
+  
+  const shareData = {
+    title: `Test Sonucu: ${testTitle}`,
+    text: `Checkupcodes sitesindeki "${testTitle}" testindeki ${totalQuestions} soruluk sınavdan ${participantName} ${score} aldım, sen de dener misin?`,
+    url: testUrl,
+  };
+
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+    }
+  } catch (err) {
+    // User cancelled or error occurred
+    if (err.name !== 'AbortError') {
+      console.error('Paylaşım hatası:', err);
+    }
   }
 };
 </script>
