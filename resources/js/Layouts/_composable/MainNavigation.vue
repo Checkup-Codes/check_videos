@@ -3,6 +3,7 @@
     <NavItem href="/" icon="home" label="Ana Sayfa" :is-compact="isCompact" />
     <NavItem href="/writes" icon="fa-solid fa-pencil" label="Yazılar" :is-compact="isCompact" />
     <NavItem href="/categories" icon="fa-solid fa-book" label="Kategoriler" :is-compact="isCompact" />
+    <NavItem href="/test-categories" icon="fa-solid fa-clipboard-question" label="Testler" :is-compact="isCompact" />
     <NavItem
       v-if="isLoggedIn"
       href="/rendition/words"

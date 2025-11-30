@@ -754,11 +754,27 @@ const scrollToHeading = (headingId) => {
     scrollToActiveTocItem();
   });
 
-  // Simple scroll - CSS scroll-margin-top handles the offset
-  element.scrollIntoView({
-    behavior: 'smooth',
-    block: 'start',
-  });
+  // Find the CheckScreen scroll container (the overflow-y-auto div)
+  const scrollContainer = element.closest('.overflow-y-auto');
+  if (scrollContainer) {
+    // Calculate scroll position relative to the scroll container
+    const containerRect = scrollContainer.getBoundingClientRect();
+    const elementRect = element.getBoundingClientRect();
+    const scrollTop = scrollContainer.scrollTop;
+    const elementOffsetTop = elementRect.top - containerRect.top + scrollTop;
+    const headerOffset = 80; // Account for sticky header
+
+    scrollContainer.scrollTo({
+      top: elementOffsetTop - headerOffset,
+      behavior: 'smooth',
+    });
+  } else {
+    // Fallback to scrollIntoView if container not found
+    element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  }
 
   // Reset flag after scroll
   setTimeout(() => {

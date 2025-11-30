@@ -19,6 +19,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WriteImageController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\SocialMediaController;
+use App\Http\Controllers\Tests\TestsController;
+use App\Http\Controllers\Tests\TestCategoriesController;
 use App\Http\Middleware\CheckWriteAccess;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +41,13 @@ Route::post('/writes/{write}/draw', [WritesController::class, 'storeDraw']);
 Route::delete('/writes/{write}/draw/{version}', [WritesController::class, 'destroyDraw']);
 Route::resource('/categories', CategoriesController::class);
 Route::get('/categories/{category}/{slug}', [CategoriesController::class, 'showByCategory'])->name('categories.showByCategory');
+
+// Tests & Test Categories Routes (Public)
+Route::resource('/tests', TestsController::class);
+Route::get('/tests/{test}/take', [TestsController::class, 'take'])->name('tests.take');
+Route::post('/tests/{test}/submit', [TestsController::class, 'submit'])->name('tests.submit');
+Route::get('/tests/result/{result}', [TestsController::class, 'result'])->name('tests.result');
+Route::resource('/test-categories', TestCategoriesController::class);
 
 // Equipments Routes (Public - View Only)
 Route::get('/equipments', [EquipmentsController::class, 'index'])->name('equipments.index');

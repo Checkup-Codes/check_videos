@@ -51,11 +51,13 @@
 </template>
 
 <script setup>
-import { ref, watchEffect } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
 
 const props = defineProps({
   message: String,
 });
+
+const emit = defineEmits(['close']);
 
 const localMessage = ref(props.message);
 let timeoutId = null;
@@ -66,17 +68,37 @@ const closeMessage = () => {
     clearTimeout(timeoutId);
     timeoutId = null;
   }
+  emit('close');
 };
 
-watchEffect(() => {
-  if (localMessage.value) {
+// Watch props.message and update localMessage
+watch(
+  () => props.message,
+  (newMessage) => {
+    localMessage.value = newMessage;
+    
+    // Clear existing timeout
     if (timeoutId) {
       clearTimeout(timeoutId);
-    }
-    timeoutId = setTimeout(() => {
-      localMessage.value = null;
       timeoutId = null;
-    }, 5000);
+    }
+    
+    // Set new timeout for 3 seconds
+    if (newMessage) {
+      timeoutId = setTimeout(() => {
+        localMessage.value = null;
+        timeoutId = null;
+        emit('close');
+      }, 3000);
+    }
+  },
+  { immediate: true }
+);
+
+onBeforeUnmount(() => {
+  if (timeoutId) {
+    clearTimeout(timeoutId);
+    timeoutId = null;
   }
 });
 </script>

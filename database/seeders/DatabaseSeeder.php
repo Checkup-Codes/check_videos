@@ -88,6 +88,11 @@ class DatabaseSeeder extends Seeder
             RenditionSeeder::class,
         ]);
 
+        // Test seeder
+        $this->call([
+            TestSeeder::class,
+        ]);
+
         // İlişki tablosunu güncelle
         $this->command->info('Yazı-kategori ilişkileri güncelleniyor...');
         Artisan::call('writes:update-relations');

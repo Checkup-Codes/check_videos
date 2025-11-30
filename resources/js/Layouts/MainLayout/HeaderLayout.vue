@@ -492,6 +492,7 @@
                 <NavItem href="/" icon="home" label="Ana Sayfa" />
                 <NavItem href="/writes" icon="fa-solid fa-pencil" label="Yazılar" />
                 <NavItem href="/categories" icon="fa-solid fa-book" label="Kategoriler" />
+                <NavItem href="/test-categories" icon="fa-solid fa-clipboard-question" label="Testler" />
                 <!-- Admin Navigation for Logged In Users -->
                 <template v-if="isLoggedIn">
                   <NavItem href="/rendition/words" icon="fa-solid fa-globe" label="Kelimeler" />
@@ -500,12 +501,12 @@
               </div>
 
               <!-- Form Action Buttons for Create/Edit Pages (Mobile) -->
-              <template v-if="isLoggedIn && (isWriteCreatePage || isWriteEditPage || isCategoryCreatePage || isCategoryEditPage)">
+              <template v-if="isLoggedIn && (isWriteCreatePage || isWriteEditPage || isCategoryCreatePage || isCategoryEditPage || isTestCreatePage || isTestEditPage || isTestCategoryCreatePage || isTestCategoryEditPage)">
                 <div class="border-t border-border pt-3">
                   <div class="space-y-2">
                     <!-- Reset Button (only for create pages) -->
                     <button
-                      v-if="isWriteCreatePage || isCategoryCreatePage"
+                      v-if="isWriteCreatePage || isCategoryCreatePage || isTestCreatePage || isTestCategoryCreatePage"
                       @click="handleFormResetMobile"
                       :disabled="isFormProcessing"
                       class="flex w-full items-center gap-3 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50"
@@ -545,7 +546,7 @@
                       >
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                       </svg>
-                      <span>{{ isFormProcessing ? (isWriteEditPage || isCategoryEditPage ? 'Güncelleniyor...' : 'Kaydediliyor...') : (isWriteEditPage || isCategoryEditPage ? 'Güncelle' : 'Kaydet') }}</span>
+                      <span>{{ isFormProcessing ? (isWriteEditPage || isCategoryEditPage || isTestEditPage || isTestCategoryEditPage ? 'Güncelleniyor...' : 'Kaydediliyor...') : (isWriteEditPage || isCategoryEditPage || isTestEditPage || isTestCategoryEditPage ? 'Güncelle' : 'Kaydet') }}</span>
                     </button>
                   </div>
                 </div>
@@ -606,12 +607,32 @@
                       </svg>
                       <span>Yeni Versiyon</span>
                     </Link>
+                    <Link
+                      href="/tests/create"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      @click="closeMenu"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      <span>Yeni Test</span>
+                    </Link>
+                    <Link
+                      href="/test-categories/create"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      @click="closeMenu"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      <span>Yeni Test Kategorisi</span>
+                    </Link>
                   </div>
                 </div>
               </template>
 
               <!-- Page Actions for Mobile -->
-              <div v-if="isLoggedIn && (isWriteShowPage || isWriteEditPage || isCategoryShowPage || isCategoryEditPage || isWordShowPage || isVersionShowPage)" class="border-t border-border pt-3">
+              <div v-if="isLoggedIn && (isWriteShowPage || isWriteEditPage || isCategoryShowPage || isCategoryEditPage || isWordShowPage || isVersionShowPage || isTestCategoryShowPage || isTestCategoryEditPage || isTestShowPage || isTestEditPage)" class="border-t border-border pt-3">
                 <PageActions variant="mobile" :on-link-click="closeMenu" />
               </div>
 
@@ -1013,6 +1034,32 @@ const isVersionShowPage = computed(() => {
 const isWordShowPage = computed(() => {
   const url = page.url;
   return url.startsWith('/rendition/words/') && url !== '/rendition/words' && url !== '/rendition/words/create';
+});
+
+const isTestCategoryShowPage = computed(() => {
+  const url = page.url;
+  if (url.startsWith('/test-categories/') && url !== '/test-categories' && url !== '/test-categories/create') {
+    const parts = url.split('/').filter((part) => part.length > 0);
+    if (parts.length === 2 && parts[0] === 'test-categories' && !parts[1].includes('edit')) {
+      return true;
+    }
+  }
+  return false;
+});
+
+const isTestCategoryEditPage = computed(() => {
+  const url = page.url;
+  return url.startsWith('/test-categories/') && url.includes('/edit');
+});
+
+const isTestShowPage = computed(() => {
+  const url = page.url;
+  return url.startsWith('/tests/') && url !== '/tests' && url !== '/tests/create' && !url.includes('/take') && !url.includes('/edit');
+});
+
+const isTestEditPage = computed(() => {
+  const url = page.url;
+  return url.startsWith('/tests/') && url.includes('/edit');
 });
 
 // Check if we're on a language pack show page (not word edit page)
