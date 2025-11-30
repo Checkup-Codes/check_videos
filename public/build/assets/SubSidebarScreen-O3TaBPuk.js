@@ -1,0 +1,1 @@
+import{c as a,r as o,n as s,o as l}from"./ssr-BDs4_-3i.js";const t={__name:"SubSidebarScreen",props:{infoClass:{type:String,default:"h-[calc(100vh-3rem)] lg:h-[calc(100vh-5.5rem)] overflow-y-auto overscroll-none"}},setup(e){return(r,n)=>(l(),a("p",{class:s(e.infoClass)},[o(r.$slots,"default")],2))}};export{t as _};

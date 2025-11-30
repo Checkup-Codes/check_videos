@@ -275,7 +275,7 @@
       </div>
 
       <!-- Actions (for logged in users) -->
-      <div v-else class="flex gap-4">
+      <div v-if="!isGuest" class="flex gap-4">
         <Link
           :href="`/tests/${result.test?.slug}`"
           class="inline-flex h-11 items-center justify-center rounded-md border border-input bg-background px-6 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
