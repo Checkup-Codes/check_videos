@@ -2,7 +2,12 @@
   <FlashMessage :message="flashMessage" />
   <CheckLayout :isCollapsed="!shouldHideSidebarContent">
     <template #sidebar>
-      <KeepAlive v-if="!shouldHideSidebarContent" :max="5" :include="['SidebarLayoutWrite', 'SidebarLayoutCategory']">
+      <!-- SSR'da sidebar içeriğini gizle, sadece client-side'da göster -->
+      <KeepAlive
+        v-if="!shouldHideSidebarContent && isMounted"
+        :max="5"
+        :include="['SidebarLayoutWrite', 'SidebarLayoutCategory']"
+      >
         <component
           :is="sidebarComponent"
           :key="screenName"
@@ -139,8 +144,13 @@ const handleSidebarWidthChange = (isNarrow) => {
   isSidebarNarrow.value = isNarrow;
 };
 
+// Track if component is mounted (client-side only)
+const isMounted = ref(false);
+
 // Prevent body scrolling on writes pages
 onMounted(() => {
+  // Mark as mounted to enable sidebar rendering (client-side only)
+  isMounted.value = true;
   document.body.style.overflow = 'hidden';
 });
 
