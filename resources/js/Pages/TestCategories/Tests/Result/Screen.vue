@@ -375,7 +375,7 @@ const shareMessage = computed(() => {
 
   const testUrl = window.location.origin + `/tests/${testSlug}/take`;
 
-  return `Checkupcodes sitesindeki "${testTitle}" testindeki ${totalQuestions} soruluk sınavdan ${participantName} ${score} aldım, sen de dener misin? : ${testUrl}`;
+  return `${participantName}, Checkupcodes'taki "${testTitle}" testinden ${totalQuestions} soruluk sınavda ${score} puan aldı. Sen de dener misin? ${testUrl}`;
 });
 
 // Copy to clipboard
@@ -423,7 +423,7 @@ const shareResult = async () => {
 
   const shareData = {
     title: `Test Sonucu: ${testTitle}`,
-    text: `Checkupcodes sitesindeki "${testTitle}" testindeki ${totalQuestions} soruluk sınavdan ${participantName} ${score} aldım, sen de dener misin?`,
+    text: `${participantName}, Checkupcodes'taki "${testTitle}" testinden ${totalQuestions} soruluk sınavda ${score} puan aldı. Sen de dener misin?`,
     url: testUrl,
   };
 
