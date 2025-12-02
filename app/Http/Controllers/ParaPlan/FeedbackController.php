@@ -157,15 +157,20 @@ class FeedbackController extends Controller
         try {
             $ids = $request->input('ids');
 
-            // Fetch only the feedbacks that exist in the database
+            // Fetch all feedback data for the requested IDs
             $feedbacks = FeedbackSubmission::whereIn('id', $ids)
-                ->select('id', 'status')
+                ->select('id', 'email', 'message', 'language', 'platform', 'status', 'submitted_at')
                 ->get();
 
             // Map to the required format
             $data = $feedbacks->map(function ($feedback) {
                 return [
                     'id' => $feedback->id,
+                    'email' => $feedback->email,
+                    'message' => $feedback->message,
+                    'timestamp' => $feedback->submitted_at ? $feedback->submitted_at->toIso8601String() : null,
+                    'language' => $feedback->language,
+                    'platform' => $feedback->platform,
                     'status' => $feedback->status ?? 'pending',
                 ];
             });
