@@ -30,6 +30,14 @@ class FeedbackController extends Controller
         ]);
 
         if ($validator->fails()) {
+            // Log validation errors for debugging
+            Log::warning('Feedback validation failed', [
+                'errors' => $validator->errors()->toArray(),
+                'request_data' => $request->except(['message']), // Exclude message for privacy
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed',
@@ -42,16 +50,9 @@ class FeedbackController extends Controller
             $ipAddress = $request->ip();
             $userAgent = $request->userAgent();
 
-            // Parse and validate timestamp
-            $submittedAt = null;
-            if ($request->has('timestamp')) {
-                try {
-                    $submittedAt = \Carbon\Carbon::parse($request->input('timestamp'));
-                } catch (\Exception $e) {
-                    // If timestamp parsing fails, use current time
-                    $submittedAt = now();
-                }
-            }
+            // Always use server timestamp for consistency and security
+            // Frontend timestamp is ignored - backend creates its own timestamp
+            $submittedAt = now();
 
             // Create feedback submission
             $feedback = FeedbackSubmission::create([
@@ -62,7 +63,7 @@ class FeedbackController extends Controller
                 'status' => 'pending', // Default status
                 'ip_address' => $ipAddress,
                 'user_agent' => $userAgent,
-                'submitted_at' => $submittedAt ?? now(),
+                'submitted_at' => $submittedAt,
             ]);
 
             // Log the feedback
@@ -83,9 +84,16 @@ class FeedbackController extends Controller
                 'message' => 'Feedback başarıyla kaydedildi',
             ], 201);
         } catch (\Exception $e) {
+            // Detailed error logging
             Log::error('Error storing feedback', [
                 'error' => $e->getMessage(),
+                'error_code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString(),
+                'request_data' => $request->except(['message']), // Exclude message for privacy
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
             ]);
 
             return response()->json([
@@ -147,6 +155,14 @@ class FeedbackController extends Controller
         ]);
 
         if ($validator->fails()) {
+            // Log validation errors for debugging
+            Log::warning('Feedback status request validation failed', [
+                'errors' => $validator->errors()->toArray(),
+                'request_data' => $request->all(),
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed',
@@ -179,9 +195,16 @@ class FeedbackController extends Controller
                 'data' => $data,
             ], 200);
         } catch (\Exception $e) {
+            // Detailed error logging
             Log::error('Error fetching feedback statuses', [
                 'error' => $e->getMessage(),
+                'error_code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all(),
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
             ]);
 
             return response()->json([
