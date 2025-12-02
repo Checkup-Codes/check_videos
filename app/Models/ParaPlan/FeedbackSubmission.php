@@ -23,6 +23,7 @@ class FeedbackSubmission extends Model
         'message',
         'language',
         'platform',
+        'status',
         'ip_address',
         'user_agent',
         'submitted_at',

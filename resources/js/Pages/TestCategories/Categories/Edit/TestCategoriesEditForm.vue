@@ -231,44 +231,65 @@ const flattenCategories = (categories) => {
 /**
  * Get data from page props
  */
-const { props } = usePage();
-const categoriesRaw = ref(props.categories || []);
+const page = usePage();
+const categoriesRaw = ref(page.props.categories || []);
 const categories = computed(() => flattenCategories(categoriesRaw.value));
-const currentCategory = computed(() => props.category || {});
+const currentCategory = computed(() => page.props.category || {});
 
 /**
- * Initialize form with category data
+ * Initialize form with category data if available
  */
+const categoryData = page.props.category || {};
 const form = useForm({
-  name: '',
-  slug: '',
-  parent_id: null,
-  status: 'public',
-  description: '',
+  name: categoryData.name || '',
+  slug: categoryData.slug || '',
+  parent_id: categoryData.parent_id || null,
+  status: categoryData.status || 'public',
+  description: categoryData.description || '',
 });
 
 form.processing = false;
 
+/**
+ * Fill form with category data
+ */
+const fillFormWithCategoryData = (category) => {
+  if (category && category.id) {
+    form.name = category.name || '';
+    form.slug = category.slug || '';
+    form.parent_id = category.parent_id || null;
+    form.status = category.status || 'public';
+    form.description = category.description || '';
+
+    // Update parent category name
+    if (category.parent) {
+      parentCategoryName.value = category.parent.name || '';
+    } else {
+      parentCategoryName.value = '';
+    }
+  }
+};
+
 // Update form when category data is available
+watch(
+  () => page.props.category,
+  (category) => {
+    if (category && category.id) {
+      fillFormWithCategoryData(category);
+    }
+  },
+  { immediate: true, deep: true }
+);
+
+// Also watch currentCategory computed for additional safety
 watch(
   () => currentCategory.value,
   (category) => {
     if (category && category.id) {
-      form.name = category.name || '';
-      form.slug = category.slug || '';
-      form.parent_id = category.parent_id || null;
-      form.status = category.status || 'public';
-      form.description = category.description || '';
-
-      // Update parent category name
-      if (category.parent) {
-        parentCategoryName.value = category.parent.name || '';
-      } else {
-        parentCategoryName.value = '';
-      }
+      fillFormWithCategoryData(category);
     }
   },
-  { immediate: true }
+  { immediate: true, deep: true }
 );
 
 // Field refs for scroll to error
@@ -505,25 +526,36 @@ let sidebarSubmitHandler = null;
  * Component lifecycle - setup on mount
  */
 onMounted(() => {
+  // Reset form processing state when component mounts
   form.processing = false;
+  window.dispatchEvent(new CustomEvent('formProcessingState', { detail: { processing: false } }));
+  
+  // Fill form with category data on mount using nextTick to ensure props are loaded
+  nextTick(() => {
+    const category = page.props.category || currentCategory.value;
+    
+    if (category && category.id) {
+      fillFormWithCategoryData(category);
+      
+      // Set initial parent category name with full path
+      if (category.parent) {
+        parentCategoryName.value = category.parent.name || '';
+        const fullPath = getFullCategoryPath(category.parent.id);
+        parentSearch.value = fullPath;
+      } else if (form.parent_id) {
+        const parentCategory = categories.value.find((c) => c.id === form.parent_id);
+        if (parentCategory) {
+          const fullPath = getFullCategoryPath(parentCategory.id);
+          parentSearch.value = fullPath;
+          parentCategoryName.value = parentCategory.name;
+        }
+      }
+    }
+  });
   
   // Fetch categories if not provided
   if (!categoriesRaw.value || categoriesRaw.value.length === 0) {
     fetchCategories();
-  }
-
-  // Set initial parent category name with full path
-  if (currentCategory.value.parent) {
-    parentCategoryName.value = currentCategory.value.parent.name || '';
-    const fullPath = getFullCategoryPath(currentCategory.value.parent.id);
-    parentSearch.value = fullPath;
-  } else if (form.parent_id) {
-    const category = categories.value.find((c) => c.id === form.parent_id);
-    if (category) {
-      const fullPath = getFullCategoryPath(category.id);
-      parentSearch.value = fullPath;
-      parentCategoryName.value = category.name;
-    }
   }
 
   // Add global escape key listener to close dropdown
@@ -577,7 +609,7 @@ const handleBlur = () => {
  * Handle parent category search input
  */
 const handleParentSearch = () => {
-  form.parent_id = '';
+  form.parent_id = null;
   if (parentSearch.value.length >= 1) {
     showParentList.value = true;
   }
@@ -603,7 +635,7 @@ const selectParentCategory = (category) => {
  * Clear selected parent category
  */
 const clearParentCategory = () => {
-  form.parent_id = '';
+  form.parent_id = null;
   parentSearch.value = '';
   parentCategoryName.value = '';
 };

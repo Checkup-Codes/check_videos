@@ -348,7 +348,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useForm, usePage, router, Link } from '@inertiajs/vue3';
 
 const { props } = usePage();
@@ -591,5 +591,58 @@ const submitForm = () => {
 if (form.questions.length === 0) {
   addQuestion();
 }
+
+// Watch form processing state and notify sidebar
+watch(
+  () => form.processing,
+  (processing) => {
+    window.dispatchEvent(new CustomEvent('formProcessingState', { detail: { processing } }));
+  }
+);
+
+// Listen for sidebar form actions
+let sidebarSubmitHandler = null;
+let sidebarResetHandler = null;
+
+// Reset form function
+const resetForm = () => {
+  form.reset();
+  form.processing = false;
+  Object.keys(errors.value).forEach((key) => {
+    errors.value[key] = '';
+  });
+  publishDateObj.value = { date: '', time: '' };
+  categorySearch.value = '';
+  form.category_id = null;
+  // Reset questions to initial state
+  form.questions = [];
+  addQuestion();
+};
+
+onMounted(() => {
+  form.processing = false;
+  window.dispatchEvent(new CustomEvent('formProcessingState', { detail: { processing: false } }));
+
+  // Listen for sidebar form submit
+  sidebarSubmitHandler = () => {
+    submitForm();
+  };
+  window.addEventListener('sidebarFormSubmit', sidebarSubmitHandler);
+
+  // Listen for sidebar form reset
+  sidebarResetHandler = () => {
+    resetForm();
+  };
+  window.addEventListener('sidebarFormReset', sidebarResetHandler);
+});
+
+onUnmounted(() => {
+  if (sidebarSubmitHandler) {
+    window.removeEventListener('sidebarFormSubmit', sidebarSubmitHandler);
+  }
+  if (sidebarResetHandler) {
+    window.removeEventListener('sidebarFormReset', sidebarResetHandler);
+  }
+});
 </script>
 

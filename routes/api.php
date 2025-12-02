@@ -28,4 +28,8 @@ Route::prefix('paraplan')->middleware(\App\Http\Middleware\ParaPlan\ValidateApiK
     // Feedback endpoint with rate limiting (5 requests per minute)
     Route::post('/feedback', [\App\Http\Controllers\ParaPlan\FeedbackController::class, 'store'])
         ->middleware('throttle:5,1');
+
+    // Feedback requests status endpoint with rate limiting (30 requests per minute)
+    Route::post('/feedback/requests', [\App\Http\Controllers\ParaPlan\FeedbackController::class, 'getRequestsStatus'])
+        ->middleware('throttle:30,1');
 });

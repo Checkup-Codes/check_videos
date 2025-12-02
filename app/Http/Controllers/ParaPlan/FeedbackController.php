@@ -25,7 +25,7 @@ class FeedbackController extends Controller
             'email' => ['nullable', 'email', 'max:60'],
             'message' => ['required', 'string', 'max:100'],
             'language' => ['required', 'string', 'in:tr,en'],
-            'timestamp' => ['required', 'date'],
+            'timestamp' => ['nullable', 'date'],
             'platform' => ['required', 'string', 'in:ios,android'],
         ]);
 
@@ -59,6 +59,7 @@ class FeedbackController extends Controller
                 'message' => trim($request->input('message')),
                 'language' => $request->input('language'),
                 'platform' => $request->input('platform'),
+                'status' => 'pending', // Default status
                 'ip_address' => $ipAddress,
                 'user_agent' => $userAgent,
                 'submitted_at' => $submittedAt ?? now(),
@@ -78,9 +79,9 @@ class FeedbackController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Feedback submitted successfully',
-            ], 200);
-
+                'id' => $feedback->id, // Return ID for status tracking
+                'message' => 'Feedback başarıyla kaydedildi',
+            ], 201);
         } catch (\Exception $e) {
             Log::error('Error storing feedback', [
                 'error' => $e->getMessage(),
@@ -104,19 +105,19 @@ class FeedbackController extends Controller
     {
         try {
             $adminEmail = config('mail.from.address');
-            
+
             if (!$adminEmail) {
                 return;
             }
 
             Mail::raw(
                 "New feedback received:\n\n" .
-                "Email: " . ($feedback->email ?? 'N/A') . "\n" .
-                "Message: " . $feedback->message . "\n" .
-                "Language: " . $feedback->language . "\n" .
-                "Platform: " . $feedback->platform . "\n" .
-                "Submitted at: " . $feedback->submitted_at?->format('Y-m-d H:i:s') . "\n" .
-                "IP Address: " . ($feedback->ip_address ?? 'N/A') . "\n",
+                    "Email: " . ($feedback->email ?? 'N/A') . "\n" .
+                    "Message: " . $feedback->message . "\n" .
+                    "Language: " . $feedback->language . "\n" .
+                    "Platform: " . $feedback->platform . "\n" .
+                    "Submitted at: " . $feedback->submitted_at?->format('Y-m-d H:i:s') . "\n" .
+                    "IP Address: " . ($feedback->ip_address ?? 'N/A') . "\n",
                 function ($message) use ($adminEmail, $feedback) {
                     $message->to($adminEmail)
                         ->subject('New Feedback Submission - ' . $feedback->platform);
@@ -128,6 +129,60 @@ class FeedbackController extends Controller
                 'error' => $e->getMessage(),
                 'feedback_id' => $feedback->id,
             ]);
+        }
+    }
+
+    /**
+     * Get status for multiple feedback requests.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getRequestsStatus(Request $request): JsonResponse
+    {
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'ids' => ['required', 'array'],
+            'ids.*' => ['integer', 'min:1'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        try {
+            $ids = $request->input('ids');
+
+            // Fetch only the feedbacks that exist in the database
+            $feedbacks = FeedbackSubmission::whereIn('id', $ids)
+                ->select('id', 'status')
+                ->get();
+
+            // Map to the required format
+            $data = $feedbacks->map(function ($feedback) {
+                return [
+                    'id' => $feedback->id,
+                    'status' => $feedback->status ?? 'pending',
+                ];
+            });
+
+            return response()->json([
+                'data' => $data,
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error fetching feedback statuses', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while fetching feedback statuses',
+            ], 500);
         }
     }
 }

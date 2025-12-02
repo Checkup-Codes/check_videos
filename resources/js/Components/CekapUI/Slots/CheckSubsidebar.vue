@@ -1,5 +1,5 @@
 <template>
-  <div :class="computedClass">
+  <div :class="computedClass" class="flex flex-col h-[calc(100vh-3rem)] lg:h-[calc(100vh-5.5rem)]">
     <slot />
   </div>
 </template>

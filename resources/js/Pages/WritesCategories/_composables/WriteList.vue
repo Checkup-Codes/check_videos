@@ -1,6 +1,7 @@
 <template>
-  <div ref="scrollContainer" class="write-list-container space-y-1 overflow-y-auto p-3">
-    <div class="space-y-2">
+  <div class="flex flex-col h-full min-h-0">
+    <div ref="scrollContainer" class="write-list-container flex-1 min-h-0 space-y-1 overflow-y-auto overscroll-none p-3">
+      <div class="space-y-2">
       <Link
         v-for="write in filteredWrites"
         :key="write.id"
@@ -93,8 +94,9 @@
       </Link>
     </div>
 
-    <div v-if="filteredWrites.length === 0" class="flex h-32 items-center justify-center text-center text-muted-foreground">
-      <div>Henüz yazı bulunmuyor</div>
+      <div v-if="filteredWrites.length === 0" class="flex h-32 items-center justify-center text-center text-muted-foreground">
+        <div>Henüz yazı bulunmuyor</div>
+      </div>
     </div>
   </div>
 </template>
@@ -130,6 +132,12 @@ let isActive = false;
 const activeWrite = ref('');
 
 const adminFilter = ref('all');
+
+// Check if we're on list view (writes) or category view
+const isListView = computed(() => {
+  const url = page.url;
+  return url.startsWith('/writes') && !url.startsWith('/categories');
+});
 
 const getWriteRoute = (write) => {
   const currentPath = window.location.pathname;

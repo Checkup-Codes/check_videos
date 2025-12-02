@@ -463,7 +463,9 @@ let sidebarSubmitHandler = null;
  * Component lifecycle - setup on mount
  */
 onMounted(() => {
+  // Reset form processing state when component mounts
   form.processing = false;
+  window.dispatchEvent(new CustomEvent('formProcessingState', { detail: { processing: false } }));
   
   // Fetch categories if not provided
   if (!categoriesRaw.value || categoriesRaw.value.length === 0) {

@@ -706,23 +706,30 @@ watch(
 let sidebarSubmitHandler = null;
 
 // Load saved form data from localStorage (before the first onMounted)
-const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-if (saved) {
-  try {
-    const parsed = JSON.parse(saved);
-    // Only restore if data exists and is valid
-    if (parsed && typeof parsed === 'object') {
-      // Don't restore processing state - it should always start as false
-      const { processing, ...formData } = parsed;
-      Object.assign(form, formData);
-    }
-  } catch (e) {
-    console.error('Error loading saved form data:', e);
-  }
-}
+// IMPORTANT: Only load from localStorage if user explicitly wants to restore draft
+// For now, we'll skip auto-loading to prevent accidental updates
+// Users can manually restore drafts if needed
+// const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+// if (saved) {
+//   try {
+//     const parsed = JSON.parse(saved);
+//     // Only restore if data exists and is valid
+//     if (parsed && typeof parsed === 'object') {
+//       // Don't restore processing state - it should always start as false
+//       const { processing, ...formData } = parsed;
+//       Object.assign(form, formData);
+//     }
+//   } catch (e) {
+//     console.error('Error loading saved form data:', e);
+//   }
+// }
 
 // Listen for sidebar form submit
 onMounted(() => {
+  // Reset form processing state when component mounts
+  form.processing = false;
+  window.dispatchEvent(new CustomEvent('formProcessingState', { detail: { processing: false } }));
+
   sidebarSubmitHandler = () => {
     updateWrite();
   };

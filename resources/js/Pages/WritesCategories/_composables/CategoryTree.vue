@@ -1,404 +1,200 @@
 <template>
-  <div ref="scrollContainer" class="category-tree-container space-y-1 overflow-y-auto p-3">
-    <!-- Filter buttons -->
-    <div class="mb-3 flex flex-wrap items-center gap-2">
-      <!-- Responsive filter buttons for logged-in users -->
-      <div v-if="isAdmin" class="hidden gap-2 sm:flex">
-        <button
-          class="inline-flex h-7 items-center justify-center rounded-md border border-input bg-background px-2 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-          :class="{ 'bg-accent text-accent-foreground': adminFilter === 'all' }"
-          @click="adminFilter = 'all'"
-        >
-          <span v-if="props.isCollapsed">
-            <!-- List icon -->
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </span>
-          <span v-else>Tümü</span>
-        </button>
-        <button
-          class="inline-flex h-7 items-center justify-center rounded-md border border-input bg-background px-2 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-          :class="{ 'bg-accent text-accent-foreground': adminFilter === 'public' }"
-          @click="adminFilter = 'public'"
-        >
-          <span v-if="props.isCollapsed">
-            <!-- Globe icon -->
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <circle cx="12" cy="12" r="10" stroke-width="2" />
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"
-              />
-            </svg>
-          </span>
-          <span v-else>Herkese Açık</span>
-        </button>
-        <button
-          class="inline-flex h-7 items-center justify-center rounded-md border border-input bg-background px-2 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-          :class="{ 'bg-accent text-accent-foreground': adminFilter === 'link_only' }"
-          @click="adminFilter = 'link_only'"
-        >
-          <span v-if="props.isCollapsed">
-            <!-- Link icon -->
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13.828 10.172a4 4 0 010 5.656l-3 3a4 4 0 01-5.656-5.656l1.5-1.5M10.172 13.828a4 4 0 010-5.656l3-3a4 4 0 015.656 5.656l-1.5 1.5"
-              />
-            </svg>
-          </span>
-          <span v-else>Sadece Link</span>
-        </button>
-        <button
-          class="inline-flex h-7 items-center justify-center rounded-md border border-input bg-background px-2 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-          :class="{ 'bg-accent text-accent-foreground': adminFilter === 'hidden' }"
-          @click="adminFilter = 'hidden'"
-        >
-          <span v-if="props.isCollapsed">
-            <!-- Lock icon -->
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 11c1.104 0 2-.896 2-2V7a2 2 0 10-4 0v2c0 1.104.896 2 2 2zm6 2v5a2 2 0 01-2 2H8a2 2 0 01-2-2v-5a2 2 0 012-2h8a2 2 0 012 2z"
-              />
-            </svg>
-          </span>
-          <span v-else>Gizli</span>
-        </button>
-      </div>
-      <!-- Mobile: show filter icon -->
-      <div class="relative inline-block sm:hidden">
-        <button
-          @click="showFilterMenu = !showFilterMenu"
-          class="inline-flex h-7 items-center justify-center rounded-md px-2 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-        >
-          <!-- Heroicons funnel icon -->
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A2 2 0 0013 14.586V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-3.414a2 2 0 00-.293-1.172L2.293 6.707A1 1 0 012 6V4z"
-            />
-          </svg>
-        </button>
-        <div
-          v-if="showFilterMenu"
-          class="absolute z-10 mt-2 w-40 rounded-md bg-popover border border-border shadow-lg"
-        >
-          <div class="flex flex-col gap-1 py-1">
-            <button
-              class="inline-flex h-7 w-full items-center justify-center rounded-md border border-input bg-background px-2 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-              :class="{ 'bg-accent text-accent-foreground': adminFilter === 'all' }"
-              @click="
-                adminFilter = 'all';
-                showFilterMenu = false;
-              "
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-            <button
-              class="inline-flex h-7 w-full items-center justify-center rounded-md border border-input bg-background px-2 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-              :class="{ 'bg-accent text-accent-foreground': adminFilter === 'public' }"
-              @click="
-                adminFilter = 'public';
-                showFilterMenu = false;
-              "
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <circle cx="12" cy="12" r="10" stroke-width="2" />
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"
-                />
-              </svg>
-            </button>
-            <button
-              class="inline-flex h-7 w-full items-center justify-center rounded-md border border-input bg-background px-2 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-              :class="{ 'bg-accent text-accent-foreground': adminFilter === 'link_only' }"
-              @click="
-                adminFilter = 'link_only';
-                showFilterMenu = false;
-              "
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13.828 10.172a4 4 0 010 5.656l-3 3a4 4 0 01-5.656-5.656l1.5-1.5M10.172 13.828a4 4 0 010-5.656l3-3a4 4 0 015.656 5.656l-1.5 1.5"
-                />
-              </svg>
-            </button>
-            <button
-              class="inline-flex h-7 w-full items-center justify-center rounded-md border border-input bg-background px-2 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-              :class="{ 'bg-accent text-accent-foreground': adminFilter === 'hidden' }"
-              @click="
-                adminFilter = 'hidden';
-                showFilterMenu = false;
-              "
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 11c1.104 0 2-.896 2-2V7a2 2 0 10-4 0v2c0 1.104.896 2 2 2zm6 2v5a2 2 0 01-2 2H8a2 2 0 01-2-2v-5a2 2 0 012-2h8a2 2 0 012 2z"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Category List -->
-    <div class="space-y-1">
-      <div v-for="category in filteredParentCategories" :key="category.id">
-        <!-- Ana kategori -->
-        <div
-          :class="[
-            'group rounded-md transition-colors',
-            url === `/categories/${category.slug}`
-              ? 'bg-accent text-accent-foreground'
-              : 'hover:bg-accent/50',
-          ]"
-        >
-          <Link :href="route('categories.show', { category: category.slug })" class="block px-3 py-2">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2 min-w-0 flex-1">
-                <!-- Status icons -->
-                <span v-if="category.status === 'hidden'" class="shrink-0 text-yellow-500" title="Gizli kategori">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fill-rule="evenodd"
-                      d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </span>
-                <span v-if="hasLinkOnlyWrites(category)" class="shrink-0 text-primary" title="Sadece link yazıları">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fill-rule="evenodd"
-                      d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </span>
-                <h3
-                  class="truncate text-sm font-medium"
-                  :class="url === `/categories/${category.slug}` ? 'text-accent-foreground' : 'text-foreground'"
-                  :title="category.name"
-                >
-                  {{ category.name }}
-                </h3>
-              </div>
-              <div class="flex items-center gap-2 shrink-0">
-                <button
-                  v-if="category.children.length"
-                  @click.prevent.stop="toggleCollapse(category.id)"
-                  class="inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-3 w-3 transition-transform duration-200"
-                    :class="{ 'rotate-180': !isCollapsed(category.id) }"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2"
+  <div class="flex h-full min-h-0 flex-col">
+    <div
+      ref="scrollContainer"
+      class="category-tree-container min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-none p-3"
+    >
+      <!-- Category List -->
+      <div class="space-y-1">
+        <div v-for="category in filteredParentCategories" :key="category.id">
+          <!-- Ana kategori -->
+          <div
+            :class="[
+              'group rounded-md transition-colors',
+              url === `/categories/${category.slug}` ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50',
+            ]"
+          >
+            <Link :href="route('categories.show', { category: category.slug })" class="block px-3 py-2">
+              <div class="flex items-center justify-between">
+                <div class="flex min-w-0 flex-1 items-center gap-2">
+                  <!-- Status icons -->
+                  <span v-if="category.status === 'hidden'" class="shrink-0 text-yellow-500" title="Gizli kategori">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        fill-rule="evenodd"
+                        d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </span>
+                  <span v-if="hasLinkOnlyWrites(category)" class="shrink-0 text-primary" title="Sadece link yazıları">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        fill-rule="evenodd"
+                        d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </span>
+                  <h3
+                    class="truncate text-sm font-medium"
+                    :class="url === `/categories/${category.slug}` ? 'text-accent-foreground' : 'text-foreground'"
+                    :title="category.name"
                   >
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                <div
-                  class="inline-flex items-center rounded-full border border-border bg-secondary px-2 py-0.5 text-xs font-semibold text-secondary-foreground"
-                >
-                  {{ getTotalWriteCount(category) }}
+                    {{ category.name }}
+                  </h3>
+                </div>
+                <div class="flex shrink-0 items-center gap-2">
+                  <button
+                    v-if="category.children.length"
+                    @click.prevent.stop="toggleCollapse(category.id)"
+                    class="inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-3 w-3 transition-transform duration-200"
+                      :class="{ 'rotate-180': !isCollapsed(category.id) }"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div
+                    class="inline-flex items-center rounded-full border border-border bg-secondary px-2 py-0.5 text-xs font-semibold text-secondary-foreground"
+                  >
+                    {{ getTotalWriteCount(category) }}
+                  </div>
                 </div>
               </div>
-            </div>
-          </Link>
+            </Link>
 
-          <!-- Alt kategoriler -->
-          <div v-if="category.children.length" class="pb-1" v-show="!isCollapsed(category.id)">
-            <div class="space-y-0.5 pl-4">
-              <div v-for="child in category.children" :key="child.id">
-                <div
-                  :class="[
-                    'group rounded-md transition-colors',
-                    url === `/categories/${child.slug}`
-                      ? 'bg-accent text-accent-foreground'
-                      : 'hover:bg-accent/50',
-                  ]"
-                >
-                  <Link :href="route('categories.show', { category: child.slug })" class="block px-3 py-1.5">
-                    <div class="flex items-center justify-between">
-                      <div class="flex items-center gap-2 min-w-0 flex-1">
-                        <!-- Status icons -->
-                        <span
-                          v-if="child.status === 'hidden' || child.parent_hidden"
-                          class="shrink-0 text-yellow-500"
-                          title="Gizli kategori"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-3 w-3"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
+            <!-- Alt kategoriler -->
+            <div v-if="category.children.length" class="pb-1" v-show="!isCollapsed(category.id)">
+              <div class="space-y-0.5 pl-4">
+                <div v-for="child in category.children" :key="child.id">
+                  <div
+                    :class="[
+                      'group rounded-md transition-colors',
+                      url === `/categories/${child.slug}` ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50',
+                    ]"
+                  >
+                    <Link :href="route('categories.show', { category: child.slug })" class="block px-3 py-1.5">
+                      <div class="flex items-center justify-between">
+                        <div class="flex min-w-0 flex-1 items-center gap-2">
+                          <!-- Status icons -->
+                          <span
+                            v-if="child.status === 'hidden' || child.parent_hidden"
+                            class="shrink-0 text-yellow-500"
+                            title="Gizli kategori"
                           >
-                            <path
-                              fill-rule="evenodd"
-                              d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                              clip-rule="evenodd"
-                            />
-                          </svg>
-                        </span>
-                        <span
-                          class="truncate text-sm font-medium"
-                          :class="url === `/categories/${child.slug}` ? 'text-accent-foreground' : 'text-foreground'"
-                          :title="child.name"
-                        >
-                          {{ child.name }}
-                        </span>
-                      </div>
-                      <div class="flex items-center gap-2 shrink-0">
-                        <button
-                          v-if="child.children.length"
-                          @click.prevent.stop="toggleCollapse(child.id)"
-                          class="inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-3 w-3 transition-transform duration-200"
-                            :class="{ 'rotate-180': !isCollapsed(child.id) }"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2"
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              class="h-3 w-3"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                                clip-rule="evenodd"
+                              />
+                            </svg>
+                          </span>
+                          <span
+                            class="truncate text-sm font-medium"
+                            :class="url === `/categories/${child.slug}` ? 'text-accent-foreground' : 'text-foreground'"
+                            :title="child.name"
                           >
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </button>
-                        <div
-                          class="inline-flex items-center rounded-full border border-border bg-secondary px-1.5 py-0.5 text-[10px] font-semibold text-secondary-foreground"
-                        >
-                          {{ getTotalWriteCount(child) }}
+                            {{ child.name }}
+                          </span>
+                        </div>
+                        <div class="flex shrink-0 items-center gap-2">
+                          <button
+                            v-if="child.children.length"
+                            @click.prevent.stop="toggleCollapse(child.id)"
+                            class="inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              class="h-3 w-3 transition-transform duration-200"
+                              :class="{ 'rotate-180': !isCollapsed(child.id) }"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              stroke-width="2"
+                            >
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+                          <div
+                            class="inline-flex items-center rounded-full border border-border bg-secondary px-1.5 py-0.5 text-[10px] font-semibold text-secondary-foreground"
+                          >
+                            {{ getTotalWriteCount(child) }}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Link>
+                    </Link>
 
-                  <!-- Üçüncü seviye kategoriler -->
-                  <div v-if="child.children.length" class="pb-1" v-show="!isCollapsed(child.id)">
-                    <div class="space-y-0.5 pl-4">
-                      <div v-for="subChild in child.children" :key="subChild.id">
-                        <div
-                          :class="[
-                            'group rounded-md transition-colors',
-                            url === `/categories/${subChild.slug}`
-                              ? 'bg-accent text-accent-foreground'
-                              : 'hover:bg-accent/50',
-                          ]"
-                        >
-                          <Link :href="route('categories.show', { category: subChild.slug })" class="block px-3 py-1.5">
-                            <div class="flex items-center justify-between">
-                              <div class="flex items-center gap-2 min-w-0 flex-1">
-                                <!-- Status icons -->
-                                <span
-                                  v-if="subChild.status === 'hidden' || subChild.parent_hidden"
-                                  class="shrink-0 text-yellow-500"
-                                  title="Gizli kategori"
-                                >
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    class="h-3 w-3"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
+                    <!-- Üçüncü seviye kategoriler -->
+                    <div v-if="child.children.length" class="pb-1" v-show="!isCollapsed(child.id)">
+                      <div class="space-y-0.5 pl-4">
+                        <div v-for="subChild in child.children" :key="subChild.id">
+                          <div
+                            :class="[
+                              'group rounded-md transition-colors',
+                              url === `/categories/${subChild.slug}`
+                                ? 'bg-accent text-accent-foreground'
+                                : 'hover:bg-accent/50',
+                            ]"
+                          >
+                            <Link
+                              :href="route('categories.show', { category: subChild.slug })"
+                              class="block px-3 py-1.5"
+                            >
+                              <div class="flex items-center justify-between">
+                                <div class="flex min-w-0 flex-1 items-center gap-2">
+                                  <!-- Status icons -->
+                                  <span
+                                    v-if="subChild.status === 'hidden' || subChild.parent_hidden"
+                                    class="shrink-0 text-yellow-500"
+                                    title="Gizli kategori"
                                   >
-                                    <path
-                                      fill-rule="evenodd"
-                                      d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                                      clip-rule="evenodd"
-                                    />
-                                  </svg>
-                                </span>
-                                <span
-                                  class="truncate text-xs font-medium"
-                                  :class="
-                                    url === `/categories/${subChild.slug}` ? 'text-accent-foreground' : 'text-foreground'
-                                  "
-                                  :title="subChild.name"
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      class="h-3 w-3"
+                                      fill="currentColor"
+                                      viewBox="0 0 20 20"
+                                    >
+                                      <path
+                                        fill-rule="evenodd"
+                                        d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                                        clip-rule="evenodd"
+                                      />
+                                    </svg>
+                                  </span>
+                                  <span
+                                    class="truncate text-xs font-medium"
+                                    :class="
+                                      url === `/categories/${subChild.slug}`
+                                        ? 'text-accent-foreground'
+                                        : 'text-foreground'
+                                    "
+                                    :title="subChild.name"
+                                  >
+                                    {{ subChild.name }}
+                                  </span>
+                                </div>
+                                <div
+                                  class="inline-flex shrink-0 items-center rounded-full border border-border bg-secondary px-1.5 py-0.5 text-[10px] font-semibold text-secondary-foreground"
                                 >
-                                  {{ subChild.name }}
-                                </span>
+                                  {{ getTotalWriteCount(subChild) }}
+                                </div>
                               </div>
-                              <div
-                                class="inline-flex items-center rounded-full border border-border bg-secondary px-1.5 py-0.5 text-[10px] font-semibold text-secondary-foreground shrink-0"
-                              >
-                                {{ getTotalWriteCount(subChild) }}
-                              </div>
-                            </div>
-                          </Link>
+                            </Link>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -408,14 +204,14 @@
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Boş durum -->
-      <div
-        v-if="filteredParentCategories.length === 0"
-        class="flex h-32 items-center justify-center text-center text-muted-foreground opacity-50"
-      >
-        <div>Henüz kategori bulunmuyor</div>
+        <!-- Boş durum -->
+        <div
+          v-if="filteredParentCategories.length === 0"
+          class="flex h-32 items-center justify-center text-center text-muted-foreground opacity-50"
+        >
+          <div>Henüz kategori bulunmuyor</div>
+        </div>
       </div>
     </div>
   </div>
@@ -440,6 +236,8 @@ const categories = inject('categories', []);
 const isAdmin = inject('isAdmin', false);
 const adminFilter = ref('all');
 const showFilterMenu = ref(false);
+
+const page = usePage();
 
 // Recursive filter for status only
 function filterCategories(categories, status) {
@@ -478,7 +276,6 @@ const parentCategories = computed(() =>
 const filteredParentCategories = computed(() => filterCategories(parentCategories.value, adminFilter.value));
 
 const emit = defineEmits(['update:expandAll']);
-const page = usePage();
 const url = computed(() => page.url);
 
 const scrollContainer = ref(null);

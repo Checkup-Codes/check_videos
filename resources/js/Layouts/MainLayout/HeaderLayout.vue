@@ -491,7 +491,6 @@
               <div class="space-y-1">
                 <NavItem href="/" icon="home" label="Ana Sayfa" />
                 <NavItem href="/writes" icon="fa-solid fa-pencil" label="Yazılar" />
-                <NavItem href="/categories" icon="fa-solid fa-book" label="Kategoriler" />
                 <NavItem href="/test-categories" icon="fa-solid fa-clipboard-question" label="Testler" />
                 <!-- Admin Navigation for Logged In Users -->
                 <template v-if="isLoggedIn">

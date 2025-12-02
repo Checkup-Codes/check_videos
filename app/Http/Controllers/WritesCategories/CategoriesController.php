@@ -129,9 +129,10 @@ class CategoriesController extends Controller
         ]);
 
         $result = $this->categoryService->createCategory($request->all());
+        $category = $result['data'];
 
         return redirect()
-            ->route('categories.index')
+            ->route('categories.show', ['category' => $category->slug])
             ->with('success', 'Kategori başarıyla oluşturuldu.');
     }
 
@@ -165,9 +166,10 @@ class CategoriesController extends Controller
         }
 
         $result = $this->categoryService->updateCategory($category, $request->all());
+        $updatedCategory = $result['data'];
 
         return redirect()
-            ->route('categories.index')
+            ->route('categories.show', ['category' => $updatedCategory->slug])
             ->with('success', 'Kategori başarıyla güncellendi.');
     }
 

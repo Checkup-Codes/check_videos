@@ -1,7 +1,7 @@
 <template>
-  <p :class="infoClass">
+  <div :class="infoClass">
     <slot />
-  </p>
+  </div>
 </template>
 
 <script setup>

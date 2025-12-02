@@ -23,12 +23,12 @@
               {{ category.name }}
             </h1>
             <div class="flex flex-wrap items-center gap-3 text-sm">
-              <span class="inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-2.5 py-1 font-medium text-primary">
+              <Badge variant="primary" size="sm" class="inline-flex items-center gap-1.5">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 {{ filteredWrites?.length || 0 }} yazı
-              </span>
+              </Badge>
               <span v-if="category.description" class="text-muted-foreground line-clamp-1">
                 {{ category.description }}
               </span>
@@ -37,56 +37,46 @@
 
           <!-- Minimalist Filter Buttons -->
           <div class="flex shrink-0 flex-wrap items-center gap-1.5">
-            <button
+            <Button
               @click="statusFilter = 'all'"
-              class="inline-flex h-8 items-center justify-center rounded-md border px-3 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              :class="
-                statusFilter === 'all'
-                  ? 'border-primary bg-primary text-primary-foreground shadow-sm'
-                  : 'border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground'
-              "
+              :variant="statusFilter === 'all' ? 'default' : 'outline'"
+              size="sm"
+              class="h-8"
             >
               Tümü
-            </button>
-            <button
+            </Button>
+            <Button
               @click="statusFilter = 'published'"
-              class="inline-flex h-8 items-center justify-center rounded-md border px-3 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              :class="
-                statusFilter === 'published'
-                  ? 'border-primary bg-primary text-primary-foreground shadow-sm'
-                  : 'border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground'
-              "
+              :variant="statusFilter === 'published' ? 'default' : 'outline'"
+              size="sm"
+              class="h-8"
             >
               Yayında
-            </button>
-            <button
+            </Button>
+            <Button
               v-if="auth.user"
               @click="statusFilter = 'private'"
-              class="inline-flex h-8 items-center justify-center rounded-md border px-3 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              :class="
-                statusFilter === 'private'
-                  ? 'border-primary bg-primary text-primary-foreground shadow-sm'
-                  : 'border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground'
-              "
+              :variant="statusFilter === 'private' ? 'default' : 'outline'"
+              size="sm"
+              class="h-8"
             >
               Gizli
-            </button>
-            <button
+            </Button>
+            <Button
               v-if="auth.user"
               @click="statusFilter = 'link_only'"
-              class="inline-flex h-8 items-center justify-center rounded-md border px-3 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              :class="
-                statusFilter === 'link_only'
-                  ? 'border-primary bg-primary text-primary-foreground shadow-sm'
-                  : 'border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground'
-              "
+              :variant="statusFilter === 'link_only' ? 'default' : 'outline'"
+              size="sm"
+              class="h-8"
             >
               Link
-            </button>
-            <button
+            </Button>
+            <Button
               v-if="statusFilter !== 'all'"
               @click="clearFilters"
-              class="inline-flex h-8 w-8 items-center justify-center rounded-md border border-input bg-background text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              variant="ghost"
+              size="sm"
+              class="h-8 w-8 p-0"
               title="Filtreyi temizle"
             >
               <svg
@@ -99,7 +89,7 @@
               >
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -115,11 +105,12 @@
       <div v-else>
         <!-- Clean list view - focused on writes -->
         <div class="space-y-3">
-          <Link
+          <Card
             v-for="write in paginatedWrites"
             :key="write.id"
-            :href="route('categories.showByCategory', { category: category.slug, slug: write.slug })"
-            class="group block rounded-lg border border-border bg-card p-5 transition-all duration-200 hover:border-primary/50 hover:bg-accent/50 hover:shadow-md"
+            class="group cursor-pointer transition-all duration-200 hover:border-primary/50 hover:shadow-md"
+            compact
+            @click="router.visit(route('categories.showByCategory', { category: category.slug, slug: write.slug }))"
           >
             <div class="flex items-start justify-between gap-4">
               <!-- Main Content -->
@@ -238,7 +229,7 @@
                 </svg>
               </div>
             </div>
-          </Link>
+          </Card>
 
           <!-- Load More Section - sade tasarım -->
           <div v-if="(hasMore || isLoadingMore) && filteredWrites.length > perPage" class="flex justify-center py-6">
@@ -246,10 +237,12 @@
               <div class="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
               Yükleniyor...
             </div>
-            <button
+            <Button
               v-else
               @click="loadMore"
-              class="inline-flex h-9 items-center justify-center gap-2 rounded-md px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+              variant="outline"
+              size="sm"
+              class="h-9"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -262,7 +255,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
               </svg>
               Daha Fazla
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -303,6 +296,9 @@
 import { ref, computed, onMounted, nextTick, watch, onUnmounted } from 'vue';
 import { usePage, Link, router } from '@inertiajs/vue3';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import Card from '@/Components/UI/Card.vue';
+import Button from '@/Components/UI/Button.vue';
+import Badge from '@/Components/UI/Badge.vue';
 
 /**
  * Component name definition

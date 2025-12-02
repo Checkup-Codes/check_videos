@@ -347,7 +347,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useForm, usePage, router, Link } from '@inertiajs/vue3';
 
 const { props } = usePage();
@@ -449,8 +449,15 @@ const form = useForm({
   questions: [],
 });
 
+// Listen for sidebar form actions
+let sidebarSubmitHandler = null;
+
 // Load questions from test
 onMounted(() => {
+  // Reset form processing state when component mounts
+  form.processing = false;
+  window.dispatchEvent(new CustomEvent('formProcessingState', { detail: { processing: false } }));
+
   if (test.value.questions && test.value.questions.length > 0) {
     form.questions = test.value.questions.map((q) => ({
       question_text: q.question_text || '',
@@ -468,7 +475,27 @@ onMounted(() => {
     // If no questions, add one empty question
     addQuestion();
   }
+
+  // Listen for sidebar form submit
+  sidebarSubmitHandler = () => {
+    updateTest();
+  };
+  window.addEventListener('sidebarFormSubmit', sidebarSubmitHandler);
 });
+
+onUnmounted(() => {
+  if (sidebarSubmitHandler) {
+    window.removeEventListener('sidebarFormSubmit', sidebarSubmitHandler);
+  }
+});
+
+// Watch form processing state and notify sidebar
+watch(
+  () => form.processing,
+  (processing) => {
+    window.dispatchEvent(new CustomEvent('formProcessingState', { detail: { processing } }));
+  }
+);
 
 // Questions management
 const addQuestion = () => {

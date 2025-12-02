@@ -1,7 +1,7 @@
 <template>
   <CheckScreen>
     <div
-      class="mx-auto max-w-4xl space-y-6 p-6 transition-all duration-300"
+      class="space-y-6 p-6 transition-all duration-300 max-w-[240px] xl:max-w-[800px]"
       :class="{
         'xl:-translate-x-[100px]': showQuestionNavigation && isQuestionNavigationOpen,
       }"
@@ -10,12 +10,12 @@
       <div class="space-y-4">
         <div class="flex items-center justify-between">
           <h1 class="text-3xl font-bold text-foreground">{{ test.title }}</h1>
-          <div v-if="isAdmin" class="flex gap-2">
+          <div class="flex gap-2">
             <Link
-              :href="`/tests/${test.id}/edit`"
+              :href="`/tests/${test.slug}/take`"
               class="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
             >
-              Düzenle
+              Testi Çöz
             </Link>
           </div>
         </div>
@@ -81,8 +81,24 @@
 
       <!-- Test Questions Preview -->
       <div v-if="test.questions && test.questions.length > 0" class="space-y-4">
-        <h2 class="text-xl font-semibold text-foreground">Sorular</h2>
-        <div class="space-y-6">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold text-foreground">Sorular</h2>
+          <button
+            v-if="!showQuestions"
+            @click="showQuestions = true"
+            class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
+          >
+            Soruları Göster
+          </button>
+          <button
+            v-else
+            @click="showQuestions = false"
+            class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
+          >
+            Soruları Gizle
+          </button>
+        </div>
+        <div class="space-y-6 max-w-[240px] xl:max-w-[800px]" :class="{ 'blur-sm select-none pointer-events-none': !showQuestions }">
           <div
             v-for="(question, index) in test.questions"
             :key="question.id"
@@ -116,12 +132,6 @@
 
       <!-- Actions -->
       <div class="flex gap-4">
-        <Link
-          :href="`/tests/${test.slug}/take`"
-          class="inline-flex h-10 items-center justify-center rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-        >
-          Testi Çöz
-        </Link>
         <Link
           href="/tests"
           class="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-6 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
@@ -277,9 +287,12 @@ const { props } = usePage();
 const test = props.test || {};
 const isAdmin = props.isAdmin || false;
 
+// Show questions state - default to false (blurred)
+const showQuestions = ref(false);
+
 // Question Navigation State
 const isQuestionNavigationOpen = ref(false);
-const showQuestionNavigation = computed(() => test.questions && test.questions.length > 0);
+const showQuestionNavigation = computed(() => test.questions && test.questions.length > 0 && showQuestions.value);
 const currentQuestionId = ref(null);
 const questionNavItemRefs = ref(new Map());
 const mobileQuestionNavScrollRef = ref(null);

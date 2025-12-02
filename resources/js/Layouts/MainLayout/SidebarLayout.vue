@@ -7,131 +7,12 @@
       <!-- Tab Navigation Links -->
       <div class="flex items-center gap-0.5">
         <TabNavItem href="/" icon="home" label="Ana Sayfa" :is-active="isActiveRoute('/')" />
-        <div class="write-filter-dropdown-container relative inline-flex items-center">
-          <TabNavItem
-            href="/writes"
-            icon="fa-solid fa-pencil"
-            :label="writesLabel"
-            :is-active="isActiveRoute('/writes')"
-          />
-          <!-- X button to clear filter and Filter dropdown button - Only for logged in users -->
-          <div v-if="isLoggedIn" class="relative -ml-0.5 flex items-center gap-0.5">
-            <!-- X button to clear filter - Only show when filter is active -->
-            <button
-              v-if="writeFilter !== 'all' && isActiveRoute('/writes')"
-              @click.stop="clearWriteFilter"
-              class="inline-flex h-7 w-6 items-center justify-center rounded text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-              title="Filtreyi temizle"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            <!-- Write Filter Dropdown button -->
-            <div class="relative">
-              <button
-                @click="handleFilterClick"
-                class="inline-flex h-7 w-6 items-center justify-center rounded text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                :class="[
-                  showWriteFilterDropdown && isActiveRoute('/writes') ? 'bg-accent text-accent-foreground' : '',
-                  !isActiveRoute('/writes') ? 'opacity-40 cursor-not-allowed' : '',
-                ]"
-                :disabled="!isActiveRoute('/writes')"
-                title="Filtrele"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A2 2 0 0013 14.586V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-3.414a2 2 0 00-.293-1.172L2.293 6.707A1 1 0 012 6V4z" />
-                </svg>
-              </button>
-              <div
-                v-if="showWriteFilterDropdown && isActiveRoute('/writes')"
-                class="absolute right-0 top-full z-50 mt-1 w-36 rounded-md border border-border bg-popover shadow-md"
-              >
-                <div class="flex flex-col p-1">
-                  <button
-                    class="inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                    :class="{ 'bg-accent text-accent-foreground': writeFilter === 'all' }"
-                    @click="setWriteFilter('all')"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                    Tümü
-                  </button>
-                  <button
-                    class="inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                    :class="{ 'bg-accent text-accent-foreground': writeFilter === 'published' }"
-                    @click="setWriteFilter('published')"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" />
-                    </svg>
-                    Herkese Açık
-                  </button>
-                  <button
-                    class="inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                    :class="{ 'bg-accent text-accent-foreground': writeFilter === 'link_only' }"
-                    @click="setWriteFilter('link_only')"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 010 5.656l-3 3a4 4 0 01-5.656-5.656l1.5-1.5M10.172 13.828a4 4 0 010-5.656l3-3a4 4 0 015.656 5.656l-1.5 1.5" />
-                    </svg>
-                    Sadece Link
-                  </button>
-                  <button
-                    class="inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                    :class="{ 'bg-accent text-accent-foreground': writeFilter === 'private' }"
-                    @click="setWriteFilter('private')"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 11c1.104 0 2-.896 2-2V7a2 2 0 10-4 0v2c0 1.104.896 2 2 2zm6 2v5a2 2 0 01-2 2H8a2 2 0 01-2-2v-5a2 2 0 012-2h8a2 2 0 012 2z" />
-                    </svg>
-                    Gizli
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="category-collapse-dropdown-container relative inline-flex items-center">
-          <TabNavItem
-            href="/categories"
-            icon="fa-solid fa-book"
-            label="Kategoriler"
-            :is-active="isActiveRoute('/categories')"
-          />
-          <!-- Collapse/Expand button - Always visible but only enabled on /categories page -->
-          <button
-            @click="toggleAllCategories"
-            class="relative -ml-0.5 inline-flex h-7 w-6 items-center justify-center rounded text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40"
-            :class="
-              isActiveRoute('/categories') && areAllCategoriesExpanded
-                ? 'bg-accent text-accent-foreground'
-                : ''
-            "
-            :disabled="!isActiveRoute('/categories')"
-            :title="
-              isActiveRoute('/categories')
-                ? areAllCategoriesExpanded
-                  ? 'Tümünü Daralt'
-                  : 'Tümünü Genişlet'
-                : 'Kategoriler sayfasında kullanılabilir'
-            "
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-3 w-3 transition-transform duration-200"
-              :class="{ 'rotate-180': areAllCategoriesExpanded && isActiveRoute('/categories') }"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-        </div>
+        <TabNavItem
+          href="/writes"
+          icon="fa-solid fa-pencil"
+          label="Yazılar"
+          :is-active="isActiveRoute('/writes') || isActiveRoute('/categories')"
+        />
         <TabNavItem
           href="/test-categories"
           icon="fa-solid fa-clipboard-question"
@@ -165,45 +46,41 @@
         <template v-if="isLoggedIn && (isWriteCreatePage || isWriteEditPage || isCategoryCreatePage || isCategoryEditPage || isTestCreatePage || isTestEditPage || isTestCategoryCreatePage || isTestCategoryEditPage)">
           <div class="flex items-center gap-1.5">
             <!-- Reset Button (only for create pages) -->
-            <button
+            <Button
               v-if="isWriteCreatePage || isCategoryCreatePage || isTestCreatePage || isTestCategoryCreatePage"
               @click="handleFormReset"
               :disabled="isFormProcessing"
-              class="inline-flex h-7 items-center justify-center rounded-md border border-input bg-background px-2.5 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+              variant="outline"
+              size="sm"
+              class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
               title="Formu sıfırla"
             >
               Sıfırla
-            </button>
+            </Button>
             <!-- Save/Update Button -->
-            <button
+            <Button
               @click="handleFormSubmit"
               :disabled="isFormProcessing"
-              class="inline-flex h-7 items-center justify-center gap-1.5 rounded-md bg-primary px-2.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-              :title="isWriteEditPage || isCategoryEditPage ? 'Değişiklikleri kaydet' : 'Yazıyı kaydet'"
+              :loading="isFormProcessing"
+              variant="default"
+              size="sm"
+              class="h-8 bg-foreground text-background hover:bg-foreground/90"
+              :title="isWriteEditPage || isCategoryEditPage || isTestEditPage || isTestCategoryEditPage ? 'Değişiklikleri kaydet' : 'Kaydet'"
             >
-              <svg
-                v-if="isFormProcessing"
-                class="h-3 w-3 animate-spin"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              <svg
-                v-else
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-3 w-3"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-              {{ isFormProcessing ? (isWriteEditPage || isCategoryEditPage ? 'Güncelleniyor...' : 'Kaydediliyor...') : (isWriteEditPage || isCategoryEditPage ? 'Güncelle' : 'Kaydet') }}
-            </button>
+              <template v-if="!isFormProcessing">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="mr-1.5 h-3.5 w-3.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </template>
+              {{ isFormProcessing ? (isWriteEditPage || isCategoryEditPage || isTestEditPage || isTestCategoryEditPage ? 'Güncelleniyor...' : 'Kaydediliyor...') : (isWriteEditPage || isCategoryEditPage || isTestEditPage || isTestCategoryEditPage ? 'Güncelle' : 'Kaydet') }}
+            </Button>
           </div>
         </template>
 
@@ -400,16 +277,13 @@
 import TabNavItem from '@/Layouts/_components/TabNavItem.vue';
 import SocialLinks from '@/Layouts/_composable/SocialLinks.vue';
 import PageActions from '@/Layouts/_composable/PageActions.vue';
+import Button from '@/Components/UI/Button.vue';
 import { usePage, Link, router } from '@inertiajs/vue3';
-import { computed, ref, onMounted, onUnmounted, watch, inject } from 'vue';
+import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
 import { useStore } from 'vuex';
 
 const page = usePage();
 const store = useStore();
-
-// Write filter dropdown state
-const showWriteFilterDropdown = ref(false);
-const writeFilter = ref('all');
 
 // Admin panel dropdown state
 const showAdminPanelDropdown = ref(false);
@@ -420,38 +294,14 @@ const showCreateDropdown = ref(false);
 // Form processing state
 const isFormProcessing = ref(false);
 
-
-// Category collapse/expand state
-const injectedCategories = inject('categories', []);
-const categories = computed(() => {
-  // Try inject first, then props
-  if (injectedCategories && Array.isArray(injectedCategories) && injectedCategories.length > 0) {
-    return injectedCategories;
-  }
-  if (page.props.categories && Array.isArray(page.props.categories) && page.props.categories.length > 0) {
-    return page.props.categories;
-  }
-  return [];
-});
-const areAllCategoriesExpanded = computed(() => store.getters['CategorySidebar/collapsedSet'].size === 0);
-
 // Load filter from localStorage on mount
 let clickOutsideHandler = null;
 
 onMounted(() => {
-  const savedFilter = localStorage.getItem('writeListFilter');
-  if (savedFilter) {
-    writeFilter.value = savedFilter;
-  }
-
   // Close dropdown when clicking outside
   clickOutsideHandler = (event) => {
-    const dropdownElement = event.target.closest('.write-filter-dropdown-container');
     const adminDropdownElement = event.target.closest('.admin-panel-dropdown-container');
     const createDropdownElement = event.target.closest('.create-dropdown-container');
-    if (showWriteFilterDropdown.value && !dropdownElement) {
-      showWriteFilterDropdown.value = false;
-    }
     if (showAdminPanelDropdown.value && !adminDropdownElement) {
       showAdminPanelDropdown.value = false;
     }
@@ -459,16 +309,6 @@ onMounted(() => {
       showCreateDropdown.value = false;
     }
   };
-
-  // Close dropdown when navigating away from /writes page
-  const handleRouteChange = () => {
-    if (!isActiveRoute('/writes')) {
-      showWriteFilterDropdown.value = false;
-    }
-  };
-
-  // Watch for route changes
-  watch(() => page.url, handleRouteChange);
 
   document.addEventListener('click', clickOutsideHandler);
 });
@@ -478,89 +318,6 @@ onUnmounted(() => {
     document.removeEventListener('click', clickOutsideHandler);
   }
 });
-
-// Handle filter button click - only allow on /writes page
-const handleFilterClick = () => {
-  if (isActiveRoute('/writes')) {
-    showWriteFilterDropdown.value = !showWriteFilterDropdown.value;
-  }
-};
-
-// Get filter label in Turkish
-const getFilterLabel = (filter) => {
-  const filterLabels = {
-    all: 'Tümü',
-    published: 'Herkese Açık',
-    link_only: 'Sadece Link',
-    private: 'Gizli',
-  };
-  return filterLabels[filter] || 'Tümü';
-};
-
-// Computed label for writes tab
-const writesLabel = computed(() => {
-  const currentUrl = page.url;
-  const isOnWritesPage = currentUrl.startsWith('/writes') && currentUrl !== '/writes/create';
-
-  if (isLoggedIn.value && writeFilter.value !== 'all' && isOnWritesPage) {
-    return `Yazılar: ${getFilterLabel(writeFilter.value)}`;
-  }
-  return 'Yazılar';
-});
-
-// Clear write filter
-const clearWriteFilter = () => {
-  setWriteFilter('all');
-};
-
-// Helper function to get all category IDs recursively
-const getAllCategoryIds = (categories) => {
-  if (!categories || !Array.isArray(categories) || categories.length === 0) {
-    return [];
-  }
-  
-  let ids = [];
-  categories.forEach((category) => {
-    if (category && category.id) {
-      ids.push(category.id);
-      // Recursively get children IDs
-      if (category.children && Array.isArray(category.children) && category.children.length > 0) {
-        ids = ids.concat(getAllCategoryIds(category.children));
-      }
-    }
-  });
-  return ids;
-};
-
-// Toggle all categories expand/collapse
-const toggleAllCategories = () => {
-  const cats = categories.value;
-  if (!cats || cats.length === 0) {
-    console.warn('Categories not available for toggle');
-    return;
-  }
-  
-  if (areAllCategoriesExpanded.value) {
-    // If expanded, collapse all
-    const allIds = getAllCategoryIds(cats);
-    if (allIds.length > 0) {
-      store.dispatch('CategorySidebar/collapseAll', allIds);
-    }
-  } else {
-    // If collapsed, expand all
-    store.dispatch('CategorySidebar/expandAll');
-  }
-};
-
-// Set write filter and save to localStorage
-const setWriteFilter = (filter) => {
-  writeFilter.value = filter;
-  localStorage.setItem('writeListFilter', filter);
-  showWriteFilterDropdown.value = false;
-
-  // Trigger a custom event to notify WriteList component
-  window.dispatchEvent(new CustomEvent('writeFilterChanged', { detail: filter }));
-};
 
 const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
 
@@ -707,6 +464,9 @@ const handleFormReset = () => {
 let formProcessingHandler = null;
 
 onMounted(() => {
+  // Reset form processing state on mount
+  isFormProcessing.value = false;
+
   // Listen for form processing state
   formProcessingHandler = (event) => {
     isFormProcessing.value = event.detail.processing || false;
@@ -718,7 +478,17 @@ onUnmounted(() => {
   if (formProcessingHandler) {
     window.removeEventListener('formProcessingState', formProcessingHandler);
   }
+  // Reset form processing state on unmount
+  isFormProcessing.value = false;
 });
+
+// Watch for page changes and reset form processing state
+watch(
+  () => page.url,
+  () => {
+    isFormProcessing.value = false;
+  }
+);
 
 // Get write and category from props
 const write = computed(() => page.props.write || null);

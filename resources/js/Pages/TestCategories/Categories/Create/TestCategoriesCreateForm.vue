@@ -225,7 +225,7 @@ const categories = computed(() => flattenCategories(categoriesRaw.value));
 const form = useForm({
   name: '',
   slug: '',
-  parent_id: '',
+  parent_id: null,
   status: 'public',
   description: '',
 });
@@ -456,7 +456,7 @@ const resetForm = () => {
   });
   parentSearch.value = '';
   parentCategoryName.value = '';
-  form.parent_id = '';
+  form.parent_id = null;
 };
 
 /**
@@ -464,7 +464,7 @@ const resetForm = () => {
  * Resets parent_id and shows dropdown when input changes
  */
 const handleParentSearch = () => {
-  form.parent_id = '';
+  form.parent_id = null;
   if (parentSearch.value.length >= 1) {
     showParentList.value = true;
   }
@@ -491,7 +491,7 @@ const selectParentCategory = (category) => {
  * Clear selected parent category
  */
 const clearParentCategory = () => {
-  form.parent_id = '';
+  form.parent_id = null;
   parentSearch.value = '';
   parentCategoryName.value = '';
 };

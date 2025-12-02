@@ -79,9 +79,24 @@ class TestCategoriesController extends Controller
         $categoriesResult = $this->categoryService->getCategories();
         $isAdmin = Auth::check();
 
+        // Load parent relationship and ensure all attributes are included
+        $category->load('parent');
+
         return inertia('TestCategories/Categories/EditCategory', [
             'categories' => $categoriesResult['data'],
-            'category' => $category->load('parent'),
+            'category' => [
+                'id' => $category->id,
+                'name' => $category->name,
+                'slug' => $category->slug,
+                'parent_id' => $category->parent_id,
+                'status' => $category->status,
+                'description' => $category->description,
+                'parent' => $category->parent ? [
+                    'id' => $category->parent->id,
+                    'name' => $category->parent->name,
+                    'slug' => $category->parent->slug,
+                ] : null,
+            ],
             'screen'     => $this->categoryService->getScreenData(isMobile: true),
             'isAdmin' => $isAdmin
         ]);
@@ -97,10 +112,17 @@ class TestCategoriesController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        $result = $this->categoryService->createCategory($request->all());
+        $data = $request->all();
+        // Convert empty string to null for parent_id
+        if (isset($data['parent_id']) && $data['parent_id'] === '') {
+            $data['parent_id'] = null;
+        }
+
+        $result = $this->categoryService->createCategory($data);
+        $category = $result['data'];
 
         return redirect()
-            ->route('test-categories.index')
+            ->route('test-categories.show', ['test_category' => $category->slug])
             ->with('success', 'Kategori başarıyla oluşturuldu.');
     }
 
@@ -114,11 +136,16 @@ class TestCategoriesController extends Controller
             'description' => 'nullable|string',
         ]);
 
+        // Convert empty string to null for parent_id
+        if (isset($validated['parent_id']) && $validated['parent_id'] === '') {
+            $validated['parent_id'] = null;
+        }
+
         try {
             $result = $this->categoryService->updateCategory($category, $validated);
 
             return redirect()
-                ->route('test-categories.show', ['category' => $category->slug])
+                ->route('test-categories.show', ['test_category' => $category->slug])
                 ->with('success', 'Kategori başarıyla güncellendi.');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Güncelleme sırasında bir hata oluştu.']);

@@ -112,7 +112,7 @@ const variantClass = computed(() => {
 const sizeClass = computed(() => {
   switch (props.size) {
     case 'sm':
-      return 'h-9 rounded-md px-3 text-xs';
+      return 'h-8 rounded-md px-3 text-xs';
     case 'lg':
       return 'h-11 rounded-md px-8';
     case 'icon':

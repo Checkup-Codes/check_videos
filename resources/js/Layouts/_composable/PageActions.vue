@@ -1,11 +1,22 @@
 <template>
+  <!-- Delete Confirmation Modal -->
+  <DeleteConfirmationModal
+    :is-open="showDeleteModal"
+    :title="deleteModalTitle"
+    :message="deleteModalMessage"
+    :warning="deleteModalWarning"
+    :is-deleting="isDeleting"
+    @close="closeDeleteModal"
+    @confirm="confirmDelete"
+  />
+
   <!-- Write Show Page Actions -->
   <template v-if="isWriteShowPage && !isWriteEditPage && isLoggedIn && write">
     <div :class="containerClass">
       <Link
         :href="route('writes.edit', write.id)"
-        :class="editButtonClass"
         @click="onLinkClick"
+        class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -13,7 +24,7 @@
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          :class="iconClass"
+          class="h-3.5 w-3.5"
         >
           <path
             stroke-linecap="round"
@@ -23,9 +34,11 @@
         </svg>
         Düzenle
       </Link>
-      <button
+      <Button
         @click="deleteWrite(write.id)"
-        :class="deleteButtonClass"
+        variant="outline"
+        size="sm"
+        class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -33,7 +46,7 @@
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          :class="iconClass"
+          class="mr-1.5 h-3.5 w-3.5"
         >
           <path
             stroke-linecap="round"
@@ -42,15 +55,17 @@
           />
         </svg>
         Sil
-      </button>
+      </Button>
     </div>
   </template>
 
   <!-- Write Edit Page Actions - Only Delete Button -->
   <template v-else-if="isWriteEditPage && isLoggedIn && write">
-    <button
+    <Button
       @click="deleteWrite(write.id)"
-      :class="deleteButtonClass"
+      variant="outline"
+      size="sm"
+      class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -58,7 +73,7 @@
         viewBox="0 0 24 24"
         stroke-width="1.5"
         stroke="currentColor"
-        :class="iconClass"
+        class="mr-1.5 h-3.5 w-3.5"
       >
         <path
           stroke-linecap="round"
@@ -67,7 +82,7 @@
         />
       </svg>
       Sil
-    </button>
+    </Button>
   </template>
 
   <!-- Category Show Page Actions -->
@@ -75,8 +90,8 @@
     <div :class="containerClass">
       <Link
         :href="route('categories.edit', category.id)"
-        :class="editButtonClass"
         @click="onLinkClick"
+        class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -84,7 +99,7 @@
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          :class="iconClass"
+          class="h-3.5 w-3.5"
         >
           <path
             stroke-linecap="round"
@@ -94,9 +109,11 @@
         </svg>
         Düzenle
       </Link>
-      <button
+      <Button
         @click="deleteCategory(category.id)"
-        :class="deleteButtonClass"
+        variant="outline"
+        size="sm"
+        class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -104,7 +121,7 @@
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          :class="iconClass"
+          class="mr-1.5 h-3.5 w-3.5"
         >
           <path
             stroke-linecap="round"
@@ -113,15 +130,17 @@
           />
         </svg>
         Sil
-      </button>
+      </Button>
     </div>
   </template>
 
   <!-- Category Edit Page Actions - Only Delete Button -->
   <template v-else-if="isCategoryEditPage && isLoggedIn && category">
-    <button
+    <Button
       @click="deleteCategory(category.id)"
-      :class="deleteButtonClass"
+      variant="outline"
+      size="sm"
+      class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -129,7 +148,7 @@
         viewBox="0 0 24 24"
         stroke-width="1.5"
         stroke="currentColor"
-        :class="iconClass"
+        class="mr-1.5 h-3.5 w-3.5"
       >
         <path
           stroke-linecap="round"
@@ -138,7 +157,7 @@
         />
       </svg>
       Sil
-    </button>
+    </Button>
   </template>
 
   <!-- Word Show Page Actions -->
@@ -146,8 +165,8 @@
     <div :class="containerClass">
       <Link
         :href="route('rendition.words.edit', word.id)"
-        :class="editButtonClass"
         @click="onLinkClick"
+        class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -155,7 +174,7 @@
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          :class="iconClass"
+          class="h-3.5 w-3.5"
         >
           <path
             stroke-linecap="round"
@@ -165,9 +184,11 @@
         </svg>
         Düzenle
       </Link>
-      <button
+      <Button
         @click="deleteWord(word.id)"
-        :class="deleteButtonClass"
+        variant="outline"
+        size="sm"
+        class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -175,7 +196,7 @@
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          :class="iconClass"
+          class="mr-1.5 h-3.5 w-3.5"
         >
           <path
             stroke-linecap="round"
@@ -184,7 +205,7 @@
           />
         </svg>
         Sil
-      </button>
+      </Button>
     </div>
   </template>
 
@@ -193,8 +214,8 @@
     <div :class="containerClass">
       <Link
         :href="route('versions.edit', version.id)"
-        :class="editButtonClass"
         @click="onLinkClick"
+        class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -202,7 +223,7 @@
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          :class="iconClass"
+          class="h-3.5 w-3.5"
         >
           <path
             stroke-linecap="round"
@@ -212,9 +233,11 @@
         </svg>
         Düzenle
       </Link>
-      <button
+      <Button
         @click="deleteVersion(version.id)"
-        :class="deleteButtonClass"
+        variant="outline"
+        size="sm"
+        class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -222,7 +245,7 @@
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          :class="iconClass"
+          class="mr-1.5 h-3.5 w-3.5"
         >
           <path
             stroke-linecap="round"
@@ -231,7 +254,7 @@
           />
         </svg>
         Sil
-      </button>
+      </Button>
     </div>
   </template>
 
@@ -240,8 +263,8 @@
     <div :class="containerClass">
       <Link
         :href="route('test-categories.edit', testCategory.slug)"
-        :class="editButtonClass"
         @click="onLinkClick"
+        class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -249,7 +272,7 @@
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          :class="iconClass"
+          class="h-3.5 w-3.5"
         >
           <path
             stroke-linecap="round"
@@ -259,9 +282,11 @@
         </svg>
         Düzenle
       </Link>
-      <button
+      <Button
         @click="deleteTestCategory(testCategory.slug || testCategory.id)"
-        :class="deleteButtonClass"
+        variant="outline"
+        size="sm"
+        class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -269,7 +294,7 @@
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          :class="iconClass"
+          class="mr-1.5 h-3.5 w-3.5"
         >
           <path
             stroke-linecap="round"
@@ -278,15 +303,17 @@
           />
         </svg>
         Sil
-      </button>
+      </Button>
     </div>
   </template>
 
   <!-- Test Category Edit Page Actions - Only Delete Button -->
   <template v-else-if="isTestCategoryEditPage && isLoggedIn && testCategory">
-    <button
+    <Button
       @click="deleteTestCategory(testCategory.slug || testCategory.id)"
-      :class="deleteButtonClass"
+      variant="outline"
+      size="sm"
+      class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -294,7 +321,7 @@
         viewBox="0 0 24 24"
         stroke-width="1.5"
         stroke="currentColor"
-        :class="iconClass"
+        class="mr-1.5 h-3.5 w-3.5"
       >
         <path
           stroke-linecap="round"
@@ -303,7 +330,7 @@
         />
       </svg>
       Sil
-    </button>
+    </Button>
   </template>
 
   <!-- Test Show Page Actions -->
@@ -311,8 +338,8 @@
     <div :class="containerClass">
       <Link
         :href="route('tests.edit', test.slug)"
-        :class="editButtonClass"
         @click="onLinkClick"
+        class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -320,7 +347,7 @@
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          :class="iconClass"
+          class="h-3.5 w-3.5"
         >
           <path
             stroke-linecap="round"
@@ -330,9 +357,11 @@
         </svg>
         Düzenle
       </Link>
-      <button
+      <Button
         @click="deleteTest(test.slug || test.id)"
-        :class="deleteButtonClass"
+        variant="outline"
+        size="sm"
+        class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -340,7 +369,7 @@
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          :class="iconClass"
+          class="mr-1.5 h-3.5 w-3.5"
         >
           <path
             stroke-linecap="round"
@@ -349,15 +378,17 @@
           />
         </svg>
         Sil
-      </button>
+      </Button>
     </div>
   </template>
 
   <!-- Test Edit Page Actions - Only Delete Button -->
   <template v-else-if="isTestEditPage && isLoggedIn && test">
-    <button
+    <Button
       @click="deleteTest(test.slug || test.id)"
-      :class="deleteButtonClass"
+      variant="outline"
+      size="sm"
+      class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -365,7 +396,7 @@
         viewBox="0 0 24 24"
         stroke-width="1.5"
         stroke="currentColor"
-        :class="iconClass"
+        class="mr-1.5 h-3.5 w-3.5"
       >
         <path
           stroke-linecap="round"
@@ -374,13 +405,15 @@
         />
       </svg>
       Sil
-    </button>
+    </Button>
   </template>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { Link, usePage, router } from '@inertiajs/vue3';
+import Button from '@/Components/UI/Button.vue';
+import DeleteConfirmationModal from '@/Components/CekapUI/Dialog/DeleteConfirmationModal.vue';
 
 const props = defineProps({
   variant: {
@@ -462,7 +495,13 @@ const isTestCategoryEditPage = computed(() => {
 
 const isTestShowPage = computed(() => {
   const url = page.url;
-  return url.startsWith('/tests/') && url !== '/tests' && url !== '/tests/create' && !url.includes('/take') && !url.includes('/edit');
+  return (
+    url.startsWith('/tests/') &&
+    url !== '/tests' &&
+    url !== '/tests/create' &&
+    !url.includes('/take') &&
+    !url.includes('/edit')
+  );
 });
 
 const isTestEditPage = computed(() => {
@@ -483,22 +522,22 @@ const test = computed(() => page.props.test || null);
 
 // Dynamic classes based on variant
 const containerClass = computed(() => {
-  return props.variant === 'mobile'
-    ? 'flex flex-col gap-2'
-    : 'flex items-center gap-2';
+  return props.variant === 'mobile' ? 'flex flex-col gap-2' : 'flex items-center gap-2';
 });
 
 const editButtonClass = computed(() => {
-  const base = props.variant === 'mobile'
-    ? 'flex w-full items-center gap-3 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground'
-    : 'inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
+  const base =
+    props.variant === 'mobile'
+      ? 'flex w-full items-center gap-3 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground'
+      : 'inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
   return base;
 });
 
 const deleteButtonClass = computed(() => {
-  const base = props.variant === 'mobile'
-    ? 'flex w-full items-center gap-3 rounded-md border border-destructive bg-background px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive hover:text-destructive-foreground'
-    : 'inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-destructive bg-background px-3 text-xs font-medium text-destructive transition-colors hover:bg-destructive hover:text-destructive-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
+  const base =
+    props.variant === 'mobile'
+      ? 'flex w-full items-center gap-3 rounded-md border border-destructive bg-background px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive hover:text-destructive-foreground'
+      : 'inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-destructive bg-background px-3 text-xs font-medium text-destructive transition-colors hover:bg-destructive hover:text-destructive-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
   return base;
 });
 
@@ -506,15 +545,57 @@ const iconClass = computed(() => {
   return props.variant === 'mobile' ? 'h-4 w-4' : 'h-3.5 w-3.5';
 });
 
+// Delete modal state
+const showDeleteModal = ref(false);
+const isDeleting = ref(false);
+const deleteModalTitle = ref('');
+const deleteModalMessage = ref('');
+const deleteModalWarning = ref('');
+const pendingDeleteAction = ref(null);
+
+const openDeleteModal = (title, message, warning = '', action) => {
+  deleteModalTitle.value = title;
+  deleteModalMessage.value = message;
+  deleteModalWarning.value = warning;
+  pendingDeleteAction.value = action;
+  showDeleteModal.value = true;
+};
+
+const closeDeleteModal = () => {
+  if (!isDeleting.value) {
+    showDeleteModal.value = false;
+    pendingDeleteAction.value = null;
+    deleteModalTitle.value = '';
+    deleteModalMessage.value = '';
+    deleteModalWarning.value = '';
+  }
+};
+
+const confirmDelete = async () => {
+  if (pendingDeleteAction.value) {
+    isDeleting.value = true;
+    try {
+      await pendingDeleteAction.value();
+      // Silme başarılı olduğunda modal'ı kapat
+      showDeleteModal.value = false;
+      pendingDeleteAction.value = null;
+      deleteModalTitle.value = '';
+      deleteModalMessage.value = '';
+      deleteModalWarning.value = '';
+    } catch (error) {
+      console.error('Error during delete:', error);
+    } finally {
+      isDeleting.value = false;
+    }
+  }
+};
+
 // Delete functions
 const deleteWrite = async (id) => {
-  if (!confirm('Bu yazıyı silmek istediğinizden emin misiniz?')) {
-    return;
-  }
-  try {
-    const currentUrl = page.url;
-    const isCategoryWritePage = /^\/categories\/[^/]+\/[^/]+$/.test(currentUrl);
-    
+  const currentUrl = page.url;
+  const isCategoryWritePage = /^\/categories\/[^/]+\/[^/]+$/.test(currentUrl);
+
+  const performDelete = async () => {
     await router.delete(route('writes.destroy', { write: id }), {
       onSuccess: () => {
         if (isCategoryWritePage) {
@@ -532,17 +613,23 @@ const deleteWrite = async (id) => {
           props.onLinkClick();
         }
       },
+      onError: (errors) => {
+        console.error('Error deleting write:', errors);
+        alert('Yazı silinirken bir hata oluştu. Lütfen tekrar deneyin.');
+      },
     });
-  } catch (error) {
-    console.error('Error deleting write:', error);
-  }
+  };
+
+  openDeleteModal(
+    'Yazıyı Sil',
+    'Bu yazıyı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+    '',
+    performDelete
+  );
 };
 
 const deleteCategory = async (id) => {
-  if (!confirm('Bu kategoriyi silmek istediğinizden emin misiniz?')) {
-    return;
-  }
-  try {
+  const performDelete = async () => {
     await router.delete(route('categories.destroy', id), {
       onSuccess: () => {
         router.visit(route('categories.index'));
@@ -550,17 +637,23 @@ const deleteCategory = async (id) => {
           props.onLinkClick();
         }
       },
+      onError: (errors) => {
+        console.error('Error deleting category:', errors);
+        alert('Kategori silinirken bir hata oluştu. Lütfen tekrar deneyin.');
+      },
     });
-  } catch (error) {
-    console.error('Error deleting category:', error);
-  }
+  };
+
+  openDeleteModal(
+    'Kategoriyi Sil',
+    'Bu kategoriyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+    '',
+    performDelete
+  );
 };
 
 const deleteWord = async (id) => {
-  if (!confirm('Bu kelimeyi silmek istediğinizden emin misiniz?')) {
-    return;
-  }
-  try {
+  const performDelete = async () => {
     await router.delete(route('rendition.words.destroy', id), {
       onSuccess: () => {
         router.visit(route('rendition.words.index'));
@@ -568,17 +661,23 @@ const deleteWord = async (id) => {
           props.onLinkClick();
         }
       },
+      onError: (errors) => {
+        console.error('Error deleting word:', errors);
+        alert('Kelime silinirken bir hata oluştu. Lütfen tekrar deneyin.');
+      },
     });
-  } catch (error) {
-    console.error('Error deleting word:', error);
-  }
+  };
+
+  openDeleteModal(
+    'Kelimeyi Sil',
+    'Bu kelimeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+    '',
+    performDelete
+  );
 };
 
 const deleteVersion = async (id) => {
-  if (!confirm('Bu versiyonu silmek istediğinizden emin misiniz?')) {
-    return;
-  }
-  try {
+  const performDelete = async () => {
     await router.delete(route('versions.destroy', id), {
       onSuccess: () => {
         router.visit(route('versions.index'));
@@ -586,17 +685,23 @@ const deleteVersion = async (id) => {
           props.onLinkClick();
         }
       },
+      onError: (errors) => {
+        console.error('Error deleting version:', errors);
+        alert('Versiyon silinirken bir hata oluştu. Lütfen tekrar deneyin.');
+      },
     });
-  } catch (error) {
-    console.error('Error deleting version:', error);
-  }
+  };
+
+  openDeleteModal(
+    'Versiyonu Sil',
+    'Bu versiyonu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+    '',
+    performDelete
+  );
 };
 
 const deleteTestCategory = async (slugOrId) => {
-  if (!confirm('Bu test kategorisini silmek istediğinizden emin misiniz? Altındaki tüm testler ve alt kategoriler de silinecektir.')) {
-    return;
-  }
-  try {
+  const performDelete = async () => {
     // Use slug for route model binding
     const slug = testCategory.value?.slug || slugOrId;
     await router.delete(route('test-categories.destroy', { category: slug }), {
@@ -611,17 +716,18 @@ const deleteTestCategory = async (slugOrId) => {
         alert('Kategori silinirken bir hata oluştu. Lütfen tekrar deneyin.');
       },
     });
-  } catch (error) {
-    console.error('Error deleting test category:', error);
-    alert('Kategori silinirken bir hata oluştu. Lütfen tekrar deneyin.');
-  }
+  };
+
+  openDeleteModal(
+    'Test Kategorisini Sil',
+    'Bu test kategorisini silmek istediğinizden emin misiniz?',
+    'Altındaki tüm testler ve alt kategoriler de silinecektir. Bu işlem geri alınamaz.',
+    performDelete
+  );
 };
 
 const deleteTest = async (slugOrId) => {
-  if (!confirm('Bu testi silmek istediğinizden emin misiniz?')) {
-    return;
-  }
-  try {
+  const performDelete = async () => {
     // Use slug for route model binding
     const slug = test.value?.slug || slugOrId;
     await router.delete(route('tests.destroy', { test: slug }), {
@@ -636,10 +742,13 @@ const deleteTest = async (slugOrId) => {
         alert('Test silinirken bir hata oluştu. Lütfen tekrar deneyin.');
       },
     });
-  } catch (error) {
-    console.error('Error deleting test:', error);
-    alert('Test silinirken bir hata oluştu. Lütfen tekrar deneyin.');
-  }
+  };
+
+  openDeleteModal(
+    'Testi Sil',
+    'Bu testi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+    '',
+    performDelete
+  );
 };
 </script>
-
