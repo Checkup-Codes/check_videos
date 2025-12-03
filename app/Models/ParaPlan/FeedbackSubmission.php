@@ -21,6 +21,7 @@ class FeedbackSubmission extends Model
     protected $fillable = [
         'email',
         'message',
+        'admin_message',
         'language',
         'platform',
         'status',

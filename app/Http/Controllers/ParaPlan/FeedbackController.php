@@ -23,7 +23,7 @@ class FeedbackController extends Controller
         // Validate the request
         $validator = Validator::make($request->all(), [
             'email' => ['nullable', 'email', 'max:60'],
-            'message' => ['required', 'string', 'max:100'],
+            'message' => ['required', 'string', 'max:500'], // 100'den 500'e çıkarıldı
             'language' => ['required', 'string', 'in:tr,en'],
             'timestamp' => ['nullable', 'date'],
             'platform' => ['required', 'string', 'in:ios,android'],
@@ -175,7 +175,7 @@ class FeedbackController extends Controller
 
             // Fetch all feedback data for the requested IDs
             $feedbacks = FeedbackSubmission::whereIn('id', $ids)
-                ->select('id', 'email', 'message', 'language', 'platform', 'status', 'submitted_at')
+                ->select('id', 'email', 'message', 'admin_message', 'language', 'platform', 'status', 'submitted_at')
                 ->get();
 
             // Map to the required format
@@ -184,6 +184,7 @@ class FeedbackController extends Controller
                     'id' => $feedback->id,
                     'email' => $feedback->email,
                     'message' => $feedback->message,
+                    'admin_message' => $feedback->admin_message, // Admin mesajı
                     'timestamp' => $feedback->submitted_at ? $feedback->submitted_at->toIso8601String() : null,
                     'language' => $feedback->language,
                     'platform' => $feedback->platform,
@@ -210,6 +211,89 @@ class FeedbackController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred while fetching feedback statuses',
+            ], 500);
+        }
+    }
+
+    /**
+     * Update admin message for a feedback submission.
+     * Admin can add/update a response message to user feedback.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function updateAdminMessage(Request $request, int $id): JsonResponse
+    {
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'admin_message' => ['nullable', 'string', 'max:2000'], // Admin mesajı daha uzun olabilir
+        ]);
+
+        if ($validator->fails()) {
+            // Log validation errors for debugging
+            Log::warning('Admin message update validation failed', [
+                'errors' => $validator->errors()->toArray(),
+                'feedback_id' => $id,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        try {
+            $feedback = FeedbackSubmission::findOrFail($id);
+
+            $feedback->update([
+                'admin_message' => $request->input('admin_message') ? trim($request->input('admin_message')) : null,
+            ]);
+
+            // Log the update
+            Log::info('Admin message updated', [
+                'feedback_id' => $feedback->id,
+                'has_admin_message' => !empty($feedback->admin_message),
+                'ip_address' => $request->ip(),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Admin mesajı güncellendi',
+                'data' => [
+                    'id' => $feedback->id,
+                    'admin_message' => $feedback->admin_message,
+                ],
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::warning('Feedback not found for admin message update', [
+                'feedback_id' => $id,
+                'ip_address' => $request->ip(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Feedback bulunamadı',
+            ], 404);
+        } catch (\Exception $e) {
+            // Detailed error logging
+            Log::error('Error updating admin message', [
+                'error' => $e->getMessage(),
+                'error_code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+                'feedback_id' => $id,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Admin mesajı güncellenirken bir hata oluştu',
             ], 500);
         }
     }
