@@ -48,4 +48,9 @@ class Service extends Model
     {
         return $this->belongsTo(Service::class, 'sub_category_id');
     }
+
+    public function todos()
+    {
+        return $this->hasMany(\App\Models\Projects\ProjectServiceTodo::class, 'service_id');
+    }
 }

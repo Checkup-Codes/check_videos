@@ -1,7 +1,7 @@
 <template>
   <CheckSubsidebar :isNarrow="isNarrow">
-    <!-- Collapse/Expand Controls - Only for logged in users -->
-    <div v-if="isLoggedIn" class="shrink-0 border-b border-border bg-background/95 p-2">
+    <!-- View Toggle - Always visible -->
+    <div class="shrink-0 border-b border-border bg-background/95 p-2">
       <div class="flex items-center justify-between gap-2">
         <!-- View Toggle (Left) -->
         <div class="flex items-center gap-1">
@@ -54,8 +54,8 @@
             <span v-if="!isNarrow">Kategori</span>
           </Link>
         </div>
-        <!-- Collapse/Expand Button (Right) -->
-        <div class="flex items-center gap-1">
+        <!-- Collapse/Expand Button (Right) - Only for logged in users -->
+        <div v-if="isLoggedIn" class="flex items-center gap-1">
           <button
             @click="toggleAllCategories"
             class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"

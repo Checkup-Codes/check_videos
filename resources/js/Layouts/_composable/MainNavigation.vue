@@ -2,7 +2,20 @@
   <nav class="w-full space-y-1 bg-background px-2 py-1">
     <NavItem href="/" icon="home" label="Ana Sayfa" :is-compact="isCompact" />
     <NavItem href="/writes" icon="fa-solid fa-pencil" label="Yazılar" :is-compact="isCompact" />
-    <NavItem href="/test-categories" icon="fa-solid fa-clipboard-question" label="Testler" :is-compact="isCompact" />
+    <NavItem
+      v-if="isLoggedIn"
+      href="/test-categories"
+      icon="fa-solid fa-clipboard-question"
+      label="Testler"
+      :is-compact="isCompact"
+    />
+    <NavItem
+      v-if="isLoggedIn"
+      href="/services"
+      icon="fa-solid fa-bolt"
+      label="Servisler"
+      :is-compact="isCompact"
+    />
     <NavItem
       v-if="isLoggedIn"
       href="/rendition/words"

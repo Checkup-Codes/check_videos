@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Projects;
 
 use App\Http\Controllers\Controller;
 use App\Models\Projects\Customer;
+use App\Models\Projects\Project;
+use App\Models\Projects\Service;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -22,10 +24,14 @@ class CustomersController extends Controller
     public function index()
     {
         $customers = Customer::select('id', 'first_name', 'last_name', 'email', 'created_at')->get();
+        $projects = Project::with(['customer'])->get();
+        $services = Service::all();
 
         return Inertia::render('Projects/Customers/IndexCustomer', [
             'screen' => array_merge($this->screen, ['isMobileSidebar' => true]),
-            'customers' => $customers
+            'customers' => $customers,
+            'projects' => $projects,
+            'services' => $services,
         ]);
     }
 

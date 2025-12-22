@@ -14,7 +14,7 @@ class Project extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
-    protected $fillable = ['project_name', 'customer_id'];
+    protected $fillable = ['project_name', 'customer_id', 'category_id'];
 
     protected static function boot()
     {
@@ -36,5 +36,15 @@ class Project extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_id');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(\App\Models\WritesCategories\Category::class, 'category_id');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(ProjectPayment::class, 'project_id');
     }
 }

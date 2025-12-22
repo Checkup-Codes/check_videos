@@ -1,7 +1,7 @@
 <template>
   <CheckSubsidebar :isNarrow="isNarrow">
-    <!-- Filter Controls - Only for logged in users -->
-    <div v-if="isLoggedIn" class="shrink-0 border-b border-border bg-background/95 p-2">
+    <!-- View Toggle - Always visible -->
+    <div class="shrink-0 border-b border-border bg-background/95 p-2">
       <div class="flex items-center justify-between gap-2">
         <!-- View Toggle (Left) -->
         <div class="flex items-center gap-1">
@@ -28,8 +28,8 @@
             <span v-if="!isNarrow">Kategori</span>
           </Link>
         </div>
-        <!-- Filter Controls (Right) -->
-        <div class="flex items-center gap-1">
+        <!-- Filter Controls (Right) - Only for logged in users -->
+        <div v-if="isLoggedIn" class="flex items-center gap-1">
           <button
             v-if="writeFilter !== 'all'"
             @click="clearWriteFilter"

@@ -13,6 +13,7 @@ use App\Http\Controllers\LessonsController;
 use App\Http\Controllers\Projects\ProjectsController;
 use App\Http\Controllers\Projects\ServicesController;
 use App\Http\Controllers\Projects\CustomersController;
+use App\Http\Controllers\Projects\ProjectServiceTodoController;
 use App\Http\Controllers\Rendition\WordController;
 use App\Http\Controllers\Rendition\LanguagePackController;
 use App\Http\Controllers\DashboardController;
@@ -101,6 +102,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('/projects', ProjectsController::class);
     Route::resource('/services', ServicesController::class);
     Route::resource('/customers', CustomersController::class);
+    
+    // Project Service Todos
+    Route::post('/project-service-todos', [ProjectServiceTodoController::class, 'store'])->name('project-service-todos.store');
+    Route::put('/project-service-todos/{id}', [ProjectServiceTodoController::class, 'update'])->name('project-service-todos.update');
+    Route::delete('/project-service-todos/{id}', [ProjectServiceTodoController::class, 'destroy'])->name('project-service-todos.destroy');
 
     // Other Resources
     Route::resource('/bookmarks', BookmarksController::class);
