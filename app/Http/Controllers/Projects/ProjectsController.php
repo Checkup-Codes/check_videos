@@ -44,11 +44,15 @@ class ProjectsController extends Controller
         $customers = Customer::all();
         $categories = Category::where('status', '!=', 'hidden')->get();
 
+        // Load sidebar data
+        $projects = Project::with(['customer'])->get();
+
         return Inertia::render('Projects/Project/CreateProject', [
             'screen' => array_merge($this->screen, ['isMobileSidebar' => false]),
             'services' => $services,
             'customers' => $customers,
             'categories' => $categories,
+            'projects' => $projects,
         ]);
     }
 
@@ -116,9 +120,17 @@ class ProjectsController extends Controller
             }]);
         }
 
+        // Load sidebar data
+        $services = Service::all();
+        $projects = Project::with(['customer'])->get();
+        $customers = Customer::all();
+
         return Inertia::render('Projects/Project/ShowProject', [
             'screen' => $this->screen,
-            'project' => $project
+            'project' => $project,
+            'services' => $services,
+            'projects' => $projects,
+            'customers' => $customers,
         ]);
     }
 
@@ -140,12 +152,16 @@ class ProjectsController extends Controller
         $customers = Customer::all();
         $categories = Category::where('status', '!=', 'hidden')->get();
 
+        // Load sidebar data
+        $projects = Project::with(['customer'])->get();
+
         return Inertia::render('Projects/Project/EditProject', [
             'screen' => $this->screen,
             'project' => $project,
             'services' => $services,
             'customers' => $customers,
             'categories' => $categories,
+            'projects' => $projects,
         ]);
     }
 

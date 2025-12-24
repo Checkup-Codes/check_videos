@@ -1,22 +1,22 @@
 <template>
   <FlashMessage :message="flashMessage" @close="handleFlashClose" />
-  <CheckLayout :isCollapsed="!shouldHideSidebarContent">
+  <CheckLayout
+    :isCollapsed="!shouldHideSidebarContent"
+    :show-sidebar-on-mobile="shouldShowSidebarOnMobile"
+    :show-main-content-on-mobile="shouldShowMainContentOnMobile"
+  >
     <template #sidebar>
       <!-- SSR'da sidebar içeriğini gizle, sadece client-side'da göster -->
+      <!-- Mobil show sayfalarında sidebar hiç render edilmez -->
       <KeepAlive
-        v-if="!shouldHideSidebarContent && isMounted"
+        v-if="shouldShowSidebarOnMobile && !shouldHideSidebarContent && isMounted"
         :max="5"
         :include="['SidebarLayoutWrite', 'SidebarLayoutCategory']"
       >
-        <component
-          :is="sidebarComponent"
-          :key="screenName"
-          :class="sidebarStyle"
-          @update:isNarrow="handleSidebarWidthChange"
-        />
+        <component :is="sidebarComponent" :key="screenName" @update:isNarrow="handleSidebarWidthChange" />
       </KeepAlive>
     </template>
-    <div :class="[isMobile ? 'hidden lg:block' : 'block', mainContentClass]">
+    <div :class="[shouldShowMainContentOnMobile ? 'block' : 'hidden lg:block', mainContentClass]">
       <slot name="screen"></slot>
     </div>
   </CheckLayout>
@@ -39,18 +39,28 @@ defineOptions({
 });
 
 // Composables
-const { isCollapsed, isMobile, toggleSidebar, sidebarStyle } = useSidebar();
+const { isCollapsed, toggleSidebar, sidebarStyle } = useSidebar();
 const { flashMessage } = useFlashMessage();
 const store = useStore();
+
+// Real mobile detection based on window width (client-side only)
+const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024);
+const isMobile = computed(() => windowWidth.value < 1024);
+
+// Update window width on resize
+const updateWindowWidth = () => {
+  if (typeof window !== 'undefined') {
+    windowWidth.value = window.innerWidth;
+  }
+};
 
 const handleFlashClose = () => {
   flashMessage.value = '';
 };
 
-// Get screen name from props
+// Get screen name from props - make it reactive
 const page = usePage();
-const { props } = page;
-const screenName = props.screen?.name || '';
+const screenName = computed(() => page.props.screen?.name || 'writes');
 
 // Sidebar component mapping
 const sidebarComponents = {
@@ -60,67 +70,81 @@ const sidebarComponents = {
 
 // Check if user is logged in
 const isLoggedIn = computed(() => {
-  return !!(props.auth && props.auth.user);
+  return !!(page.props.auth && page.props.auth.user);
+});
+
+// Check if we're on a non-index page (show, create, or edit) - on mobile, hide sidebar for these pages
+const isNonIndexPage = computed(() => {
+  const currentUrl = page.url || '';
+
+  // Write show page: /writes/{slug} (but not /writes, /writes/create, /writes/edit)
+  const isWriteShowPage =
+    currentUrl.startsWith('/writes/') &&
+    currentUrl !== '/writes' &&
+    !currentUrl.includes('/writes/create') &&
+    !currentUrl.includes('/writes/edit');
+
+  // Write create/edit pages
+  const isWriteCreateEditPage = currentUrl === '/writes/create' || currentUrl.includes('/writes/edit');
+
+  // Category show page: /categories/{slug} or /categories/{slug}/{write}
+  // (but not /categories, /categories/create, /categories/edit)
+  const isCategoryShowPage =
+    currentUrl.startsWith('/categories/') &&
+    currentUrl !== '/categories' &&
+    !currentUrl.includes('/categories/create') &&
+    !currentUrl.includes('/categories/edit');
+
+  // Category create/edit pages
+  const isCategoryCreateEditPage = currentUrl === '/categories/create' || currentUrl.includes('/categories/edit');
+
+  return isWriteShowPage || isWriteCreateEditPage || isCategoryShowPage || isCategoryCreateEditPage;
 });
 
 // Check if current write is link-only and user is not logged in
 const shouldHideSidebarContent = computed(() => {
-  // Debug logging
-  console.log('LayoutWritesCategories Debug:', {
-    isLoggedIn: isLoggedIn.value,
-    currentUrl: props.url,
-    currentWrite: props.write,
-    writeStatus: props.write?.status,
-    screenName: screenName,
-  });
-
   // If user is logged in, always show sidebar content
   if (isLoggedIn.value) {
-    console.log('User is logged in, showing sidebar');
     return false;
   }
 
   // Check if we're on a write show page and the write is link-only
-  const currentUrl = page.url || props.url || '';
-  const isWriteShowPage =
+  const currentUrl = page.url || '';
+  const isWriteShowPageCheck =
     currentUrl.includes('/writes/') && !currentUrl.includes('/writes/create') && !currentUrl.includes('/writes/edit');
 
   // Also check for categories with link-only writes
-  const isCategoryShowPage =
+  const isCategoryShowPageCheck =
     currentUrl.includes('/categories/') &&
     !currentUrl.includes('/categories/create') &&
     !currentUrl.includes('/categories/edit');
 
-  console.log('Page check:', { currentUrl, isWriteShowPage, isCategoryShowPage });
-
-  if (isWriteShowPage || isCategoryShowPage) {
+  if (isWriteShowPageCheck || isCategoryShowPageCheck) {
     // Check if the current write has link_only status
-    const currentWrite = props.write;
-    console.log('Current write status:', currentWrite?.status);
-
+    const currentWrite = page.props.write;
     if (currentWrite && currentWrite.status === 'link_only') {
-      console.log('Hiding sidebar for link-only write');
       return true;
     }
   }
 
-  console.log('Showing sidebar (default)');
   return false;
 });
 
-// Debug shouldHideSidebarContent value
-watch(
-  shouldHideSidebarContent,
-  (newValue) => {
-    console.log('shouldHideSidebarContent changed:', newValue);
-  },
-  { immediate: true }
-);
+// On mobile: show only sidebar on index pages, only main content on non-index pages (show, create, edit)
+const shouldShowSidebarOnMobile = computed(() => {
+  if (!isMobile.value) return true; // Desktop: always show sidebar if collapsed
+  return !isNonIndexPage.value; // Mobile: show sidebar only on index pages
+});
+
+const shouldShowMainContentOnMobile = computed(() => {
+  if (!isMobile.value) return true; // Desktop: always show main content
+  return isNonIndexPage.value; // Mobile: show main content on non-index pages (show, create, edit)
+});
 
 // Determine which sidebar component to display based on screen name
 const sidebarComponent = computed(() => {
-  if (isCollapsed.value && screenName && !shouldHideSidebarContent.value) {
-    return sidebarComponents[screenName] || null;
+  if (isCollapsed.value && screenName.value && !shouldHideSidebarContent.value && shouldShowSidebarOnMobile.value) {
+    return sidebarComponents[screenName.value] || null;
   }
   return null;
 });
@@ -156,14 +180,29 @@ onMounted(() => {
   // Mark as mounted to enable sidebar rendering (client-side only)
   isMounted.value = true;
   document.body.style.overflow = 'hidden';
+
+  // Initialize window width and add resize listener
+  if (typeof window !== 'undefined') {
+    windowWidth.value = window.innerWidth;
+    window.addEventListener('resize', updateWindowWidth);
+  }
 });
 
 onBeforeUnmount(() => {
   document.body.style.overflow = '';
+
+  // Remove resize listener
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('resize', updateWindowWidth);
+  }
 });
 
-provide('categories', props.categories || []);
-provide('writes', props.writes || []);
+// Provide reactive data
+const categories = computed(() => page.props.categories || []);
+const writes = computed(() => page.props.writes || []);
+
+provide('categories', categories);
+provide('writes', writes);
 </script>
 
 <style>

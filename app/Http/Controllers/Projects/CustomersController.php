@@ -37,8 +37,16 @@ class CustomersController extends Controller
 
     public function create()
     {
+        // Load sidebar data
+        $services = Service::all();
+        $projects = Project::with(['customer'])->get();
+        $customers = Customer::select('id', 'first_name', 'last_name', 'email', 'created_at')->get();
+
         return Inertia::render('Projects/Customers/CreateCustomer', [
-            'screen' => $this->screen
+            'screen' => $this->screen,
+            'services' => $services,
+            'projects' => $projects,
+            'customers' => $customers,
         ]);
     }
 
@@ -65,18 +73,35 @@ class CustomersController extends Controller
     {
         $customer = Customer::findOrFail($id);
 
+        // Load sidebar data
+        $services = Service::all();
+        $projects = Project::with(['customer'])->get();
+        $customers = Customer::select('id', 'first_name', 'last_name', 'email', 'created_at')->get();
+
         return Inertia::render('Projects/Customers/ShowCustomer', [
             'screen' => $this->screen,
-            'customer' => $customer
+            'customer' => $customer,
+            'services' => $services,
+            'projects' => $projects,
+            'customers' => $customers,
         ]);
     }
 
     public function edit($id)
     {
         $customer = Customer::findOrFail($id);
+
+        // Load sidebar data
+        $services = Service::all();
+        $projects = Project::with(['customer'])->get();
+        $customers = Customer::select('id', 'first_name', 'last_name', 'email', 'created_at')->get();
+
         return Inertia::render('Projects/Customers/EditCustomer', [
             'screen' => $this->screen,
-            'customer' => $customer
+            'customer' => $customer,
+            'services' => $services,
+            'projects' => $projects,
+            'customers' => $customers,
         ]);
     }
 

@@ -29,7 +29,7 @@
       }"
     >
       <div class="bg-background transition-colors">
-        <div class="p-6 pt-12 sm:p-8 sm:pt-16">
+        <div class="p-3 pt-6 sm:p-6 sm:pt-12 lg:p-8 lg:pt-16">
           <div class="mb-8">
             <div v-if="isLoading" class="space-y-3">
               <div class="skeleton h-8 w-3/4 rounded-md"></div>

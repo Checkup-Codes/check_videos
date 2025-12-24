@@ -101,6 +101,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             DefaultSeoSeeder::class,
             ProjectsSeeder::class,
+            JourneySeeder::class,
         ]);
     }
 }

@@ -22,7 +22,7 @@
               <p v-if="errors.project_name || form.errors.project_name" class="mt-1 text-xs text-destructive">
                 {{ errors.project_name || form.errors.project_name }}
               </p>
-            </div>
+          </div>
 
             <div ref="customerIdRef">
               <label class="mb-1 block text-sm font-medium text-foreground">Müşteri Seçin</label>
@@ -32,11 +32,11 @@
                 :class="{ 'border-destructive focus-visible:ring-destructive': errors.customer_id || form.errors.customer_id }"
                 required
               >
-                <option disabled value="">Bir müşteri seçin</option>
-                <option v-for="customer in customers" :key="customer.id" :value="customer.id">
-                  {{ customer.first_name }} {{ customer.last_name }}
-                </option>
-              </select>
+              <option disabled value="">Bir müşteri seçin</option>
+              <option v-for="customer in customers" :key="customer.id" :value="customer.id">
+                {{ customer.first_name }} {{ customer.last_name }}
+              </option>
+            </select>
               <p v-if="errors.customer_id || form.errors.customer_id" class="mt-1 text-xs text-destructive">
                 {{ errors.customer_id || form.errors.customer_id }}
               </p>

@@ -1,6 +1,6 @@
 <template>
   <CheckScreen>
-    <div class="p-4 pt-6 sm:p-6 sm:pt-8">
+    <div class="p-2 pt-4 sm:p-4 sm:pt-6 lg:p-6 lg:pt-8">
       <!-- Compact Header Section -->
       <div v-if="!isLoading" class="mb-8 border-b border-border/60 pb-6">
         <div class="flex items-start justify-between gap-4">

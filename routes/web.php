@@ -22,6 +22,7 @@ use App\Http\Controllers\MediaController;
 use App\Http\Controllers\SocialMediaController;
 use App\Http\Controllers\Tests\TestsController;
 use App\Http\Controllers\Tests\TestCategoriesController;
+use App\Http\Controllers\JourneyController;
 use App\Http\Middleware\CheckWriteAccess;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -49,6 +50,9 @@ Route::get('/tests/{test}/take', [TestsController::class, 'take'])->name('tests.
 Route::post('/tests/{test}/submit', [TestsController::class, 'submit'])->name('tests.submit');
 Route::get('/tests/result/{result}', [TestsController::class, 'result'])->name('tests.result');
 Route::resource('/test-categories', TestCategoriesController::class);
+
+// Journey Routes (Public - View only index, show is below with proper order)
+Route::get('/journey', [JourneyController::class, 'index'])->name('journey.index');
 
 // Equipments Routes (Public - View Only)
 Route::get('/equipments', [EquipmentsController::class, 'index'])->name('equipments.index');
@@ -114,6 +118,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('/software-products', SoftwareProductsController::class);
     Route::resource('/versions', VersionsController::class);
 
+    // Journey CRUD (Admin only)
+    Route::get('/journey/create', [JourneyController::class, 'create'])->name('journey.create');
+    Route::post('/journey', [JourneyController::class, 'store'])->name('journey.store');
+    Route::get('/journey/{id}/edit', [JourneyController::class, 'edit'])->name('journey.edit');
+    Route::put('/journey/{id}', [JourneyController::class, 'update'])->name('journey.update');
+    Route::delete('/journey/{id}', [JourneyController::class, 'destroy'])->name('journey.destroy');
+
     // SEO Management
     Route::get('/seo', [SeoController::class, 'edit'])->name('seo.edit');
     Route::put('/seo', [SeoController::class, 'update'])->name('seo.update');
@@ -123,6 +134,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('ThemeManagement');
     })->name('theme.management');
 });
+
+// Journey Show (Public - must be after /journey/create to avoid route conflict)
+Route::get('/journey/{id}', [JourneyController::class, 'show'])->name('journey.show');
 
 // Rendition Routes
 Route::group(['prefix' => 'rendition', 'as' => 'rendition.'], function () {

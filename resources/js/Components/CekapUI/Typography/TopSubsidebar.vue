@@ -1,16 +1,13 @@
 <template>
   <div
-    class="border-base-200/20 bg-base-200/30 relative overflow-hidden border-b backdrop-blur-sm transition-all duration-300"
+    class="relative z-10 shrink-0 border-b border-border bg-background overflow-hidden transition-all duration-300"
   >
-    <!-- Subtle inset shadow for embedded effect -->
-    <div class="from-base-300/10 pointer-events-none absolute inset-0 bg-gradient-to-b to-transparent"></div>
-
     <div
-      class="text-base-content/60 relative flex h-9 items-center justify-between px-3 text-xs font-semibold uppercase tracking-wider"
+      class="relative flex h-9 items-center justify-between px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
     >
       <span
         @click="toggleWidth"
-        class="hover:text-base-content/90 cursor-pointer transition-colors duration-200"
+        class="hover:text-foreground cursor-pointer transition-colors duration-200"
         :title="isNarrow ? 'Genişlet' : 'Daralt'"
       >
         {{ title }}
@@ -23,7 +20,7 @@
         <button
           v-if="showExpandCollapseButton"
           @click.stop="$emit('toggle-expand')"
-          class="hover:bg-base-300/60 flex h-6 w-6 items-center justify-center rounded-md px-1 transition-all duration-200"
+          class="hover:bg-accent hover:text-accent-foreground flex h-6 w-6 items-center justify-center rounded-md px-1 transition-all duration-200 text-muted-foreground"
           :title="isExpanded ? 'Tümünü Daralt' : 'Tümünü Genişlet'"
         >
           <svg
@@ -41,7 +38,7 @@
         <Link
           v-if="userName && href"
           :href="href"
-          class="bg-base-300/50 text-base-content/70 hover:bg-base-300/80 group flex h-6 w-6 items-center justify-center rounded-md transition-all duration-200 hover:text-base-content"
+          class="bg-accent/50 text-muted-foreground hover:bg-accent hover:text-accent-foreground group flex h-6 w-6 items-center justify-center rounded-md transition-all duration-200"
           :title="`Yeni ${title?.toLowerCase() || 'öğe'} ekle`"
           @click.stop
         >
@@ -101,3 +98,10 @@ const toggleWidth = () => {
   emit('toggle-width', isNarrow.value);
 };
 </script>
+
+<style scoped>
+/* Ensure header background is not affected by parent bg-muted */
+.relative.z-10.shrink-0 {
+  background: hsl(var(--background)) !important;
+}
+</style>

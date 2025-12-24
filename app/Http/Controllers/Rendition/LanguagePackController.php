@@ -22,12 +22,17 @@ class LanguagePackController extends Controller
         foreach ($languagePacks as $languagePack) {
             $languagePack->word_count = $languagePack->words()->count();
         }
+        
+        // Index sayfasında zaten languagePacks var ve word_count ekleniyor
+        // Sidebar için de aynı veriyi kullanabiliriz, duplicate key hatası olmaması için
+        // languagePacks'i hem index hem sidebar için kullanıyoruz
+        
         return Inertia::render('Rendition/LanguagePacks/IndexLanguagePacks', [
             'languagePacks' => $languagePacks,
             'screen' => [
                 'isMobileSidebar' => false,
                 'name' => 'packs'
-            ]
+            ],
         ]);
     }
 
@@ -48,11 +53,26 @@ class LanguagePackController extends Controller
     // }
     public function create()
     {
+        // Load sidebar data
+        $languagePacks = \DB::table('lang_language_packs')->select([
+            'lang_language_packs.id',
+            'lang_language_packs.name',
+            'lang_language_packs.slug',
+            'lang_language_packs.language',
+            \DB::raw('COUNT(lang_words.id) as word_count')
+        ])
+            ->leftJoin('lang_word_pack_relations', 'lang_language_packs.id', '=', 'lang_word_pack_relations.pack_id')
+            ->leftJoin('lang_words', 'lang_word_pack_relations.word_id', '=', 'lang_words.id')
+            ->groupBy('lang_language_packs.id', 'lang_language_packs.name', 'lang_language_packs.slug', 'lang_language_packs.language')
+            ->orderBy('lang_language_packs.language')
+            ->get();
+        
         return Inertia::render('Rendition/LanguagePacks/CreateLanguagePacks', [
             'screen' => [
                 'isMobileSidebar' => false,
                 'name' => 'packs'
-            ]
+            ],
+            'languagePacks' => $languagePacks,
         ]);
     }
 
@@ -168,12 +188,27 @@ class LanguagePackController extends Controller
     {
         $languagePack = LanguagePack::findOrFail($id);
 
+        // Load sidebar data
+        $languagePacks = \DB::table('lang_language_packs')->select([
+            'lang_language_packs.id',
+            'lang_language_packs.name',
+            'lang_language_packs.slug',
+            'lang_language_packs.language',
+            \DB::raw('COUNT(lang_words.id) as word_count')
+        ])
+            ->leftJoin('lang_word_pack_relations', 'lang_language_packs.id', '=', 'lang_word_pack_relations.pack_id')
+            ->leftJoin('lang_words', 'lang_word_pack_relations.word_id', '=', 'lang_words.id')
+            ->groupBy('lang_language_packs.id', 'lang_language_packs.name', 'lang_language_packs.slug', 'lang_language_packs.language')
+            ->orderBy('lang_language_packs.language')
+            ->get();
+
         return Inertia::render('Rendition/LanguagePacks/EditLanguagePacks', [
             'languagePack' => $languagePack,
             'screen' => [
                 'isMobileSidebar' => false,
                 'name' => 'packs'
-            ]
+            ],
+            'languagePacks' => $languagePacks,
         ]);
     }
 

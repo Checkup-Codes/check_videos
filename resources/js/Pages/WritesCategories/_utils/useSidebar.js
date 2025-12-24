@@ -4,6 +4,7 @@ import { usePage } from '@inertiajs/vue3';
 export function useSidebar() {
   const { props } = usePage();
   const isCollapsed = ref(true);
+  // Note: isMobile is now handled in LayoutWritesCategories.vue for real device detection
   const isMobile = computed(() => props.screen?.isMobileSidebar || false);
 
   // Sidebar state management

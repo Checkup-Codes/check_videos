@@ -20,7 +20,7 @@
               <p v-if="errors.first_name || form.errors.first_name" class="mt-1 text-xs text-destructive">
                 {{ errors.first_name || form.errors.first_name }}
               </p>
-            </div>
+      </div>
 
             <div ref="lastNameRef">
               <label class="mb-1 block text-sm font-medium text-foreground">Soy Adı</label>
@@ -35,7 +35,7 @@
               <p v-if="errors.last_name || form.errors.last_name" class="mt-1 text-xs text-destructive">
                 {{ errors.last_name || form.errors.last_name }}
               </p>
-            </div>
+      </div>
 
             <div ref="emailRef">
               <label class="mb-1 block text-sm font-medium text-foreground">E-posta</label>
@@ -50,7 +50,7 @@
               <p v-if="errors.email || form.errors.email" class="mt-1 text-xs text-destructive">
                 {{ errors.email || form.errors.email }}
               </p>
-            </div>
+      </div>
 
             <div ref="phoneRef">
               <label class="mb-1 block text-sm font-medium text-foreground">Telefon</label>
@@ -64,7 +64,7 @@
               <p v-if="errors.phone || form.errors.phone" class="mt-1 text-xs text-destructive">
                 {{ errors.phone || form.errors.phone }}
               </p>
-            </div>
+      </div>
 
             <div class="md:col-span-2" ref="addressRef">
               <label class="mb-1 block text-sm font-medium text-foreground">Adres</label>
@@ -78,7 +78,7 @@
               <p v-if="errors.address || form.errors.address" class="mt-1 text-xs text-destructive">
                 {{ errors.address || form.errors.address }}
               </p>
-            </div>
+      </div>
 
             <div ref="cityRef">
               <label class="mb-1 block text-sm font-medium text-foreground">Şehir</label>
@@ -92,7 +92,7 @@
               <p v-if="errors.city || form.errors.city" class="mt-1 text-xs text-destructive">
                 {{ errors.city || form.errors.city }}
               </p>
-            </div>
+      </div>
 
             <div ref="stateRef">
               <label class="mb-1 block text-sm font-medium text-foreground">Bölge</label>
@@ -106,7 +106,7 @@
               <p v-if="errors.state || form.errors.state" class="mt-1 text-xs text-destructive">
                 {{ errors.state || form.errors.state }}
               </p>
-            </div>
+      </div>
 
             <div ref="postalCodeRef">
               <label class="mb-1 block text-sm font-medium text-foreground">Posta Kodu</label>
@@ -120,7 +120,7 @@
               <p v-if="errors.postal_code || form.errors.postal_code" class="mt-1 text-xs text-destructive">
                 {{ errors.postal_code || form.errors.postal_code }}
               </p>
-            </div>
+      </div>
 
             <div ref="countryRef">
               <label class="mb-1 block text-sm font-medium text-foreground">Ülke</label>
@@ -135,7 +135,7 @@
                 {{ errors.country || form.errors.country }}
               </p>
             </div>
-          </div>
+      </div>
 
           <div class="flex justify-end gap-2 border-t border-border pt-4">
             <Link
@@ -164,10 +164,10 @@
                 ></path>
               </svg>
               {{ form.processing ? 'Kaydediliyor...' : 'Müşteriyi Kaydet' }}
-            </button>
+      </button>
           </div>
-        </form>
-      </div>
+    </form>
+  </div>
     </div>
   </CheckScreen>
 </template>

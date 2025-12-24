@@ -1,5 +1,5 @@
 <template>
-  <div :class="computedClass" class="flex flex-col h-[calc(100vh-3rem)] lg:h-[calc(100vh-5.5rem)]">
+  <div :class="computedClass" class="flex flex-col h-full">
     <slot />
   </div>
 </template>
@@ -19,7 +19,7 @@ const props = defineProps({
 });
 
 const computedClass = computed(() => {
-  const baseClasses = `${props.infoClass} bg-base-100/95 backdrop-blur-md overscroll-none border-r border-base-300/50 subsidebar-enhanced`;
+  const baseClasses = `${props.infoClass} bg-muted overscroll-none border-r border-border subsidebar-enhanced`;
   return props.isNarrow ? `${baseClasses} subsidebar-narrow` : baseClasses;
 });
 </script>
@@ -32,6 +32,12 @@ const computedClass = computed(() => {
 
 .subsidebar-narrow .overflow-hidden {
   width: 200px;
+}
+
+/* Ensure consistent height across all pages */
+.subsidebar-enhanced {
+  min-height: 0;
+  height: 100%;
 }
 
 /* Enhanced sidebar design with inner shadow and depth */

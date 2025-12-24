@@ -1,7 +1,7 @@
 <template>
   <CheckScreen>
     <div
-      class="space-y-6 p-6 transition-all duration-300 max-w-[240px] xl:max-w-[800px]"
+      class="space-y-6 p-3 pt-6 transition-all duration-300 max-w-full sm:p-6 sm:pt-12 lg:max-w-[800px] lg:pt-16"
       :class="{
         'xl:-translate-x-[100px]': showQuestionNavigation && isQuestionNavigationOpen,
       }"
@@ -98,7 +98,7 @@
             Soruları Gizle
           </button>
         </div>
-        <div class="space-y-6 max-w-[240px] xl:max-w-[800px]" :class="{ 'blur-sm select-none pointer-events-none': !showQuestions }">
+        <div class="space-y-6 max-w-full lg:max-w-[800px]" :class="{ 'blur-sm select-none pointer-events-none': !showQuestions }">
           <div
             v-for="(question, index) in test.questions"
             :key="question.id"

@@ -3,32 +3,54 @@
     <GoBackButton url="/projects" />
     <TopScreen title="Proje Detayı" />
 
-    <div class="rounded-lg border border-border bg-card shadow-sm">
+    <div class="rounded-lg border border-border bg-card shadow-sm" id="project-detail-content">
       <div class="p-6">
         <div class="mb-6 flex items-center justify-between">
           <div>
             <h1 class="text-2xl font-bold text-foreground">{{ project.project_name }}</h1>
           </div>
-          <Link
-            :href="`/projects/${project.id}/edit`"
-            class="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
+          <div class="flex items-center gap-2">
+            <button
+              @click="exportToPDF"
+              class="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-              />
-            </svg>
-            Düzenle
-          </Link>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+              PDF'e Aktar
+            </button>
+            <Link
+              :href="`/projects/${project.id}/edit`"
+              class="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                />
+              </svg>
+              Düzenle
+            </Link>
+          </div>
         </div>
 
         <div class="space-y-6 border-t border-border pt-6">
@@ -280,8 +302,9 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, nextTick } from 'vue';
 import { usePage, Link } from '@inertiajs/vue3';
+import html2pdf from 'html2pdf.js';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
 import GoBackButton from '@/Components/GoBackButton.vue';
@@ -345,5 +368,54 @@ const getServiceCompletionPercentage = (service) => {
   if (!service.todos || service.todos.length === 0) return 0;
   const completed = service.todos.filter((t) => t.is_completed).length;
   return Math.round((completed / service.todos.length) * 100);
+};
+
+// PDF Export Function - Basit ve çalışır versiyon
+const exportToPDF = async () => {
+  // DOM'un hazır olmasını bekle
+  await nextTick();
+
+  // Mevcut sayfadaki içeriği al
+  const element = document.getElementById('project-detail-content');
+
+  if (!element) {
+    console.error('PDF element not found');
+    alert('PDF oluşturulamadı: İçerik bulunamadı');
+    return;
+  }
+
+  // Element'in içeriğini kontrol et
+  if (!element.innerHTML || element.innerHTML.trim() === '') {
+    console.error('PDF element is empty');
+    alert('PDF oluşturulamadı: İçerik boş');
+    return;
+  }
+
+  // PDF seçenekleri
+  const opt = {
+    margin: [10, 10, 10, 10],
+    filename: `proje-${project.value.project_name?.toLowerCase().replace(/\s+/g, '-') || 'detay'}-${new Date().toISOString().split('T')[0]}.pdf`,
+    image: { type: 'jpeg', quality: 0.95 },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      letterRendering: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+    },
+    jsPDF: {
+      unit: 'mm',
+      format: 'a4',
+      orientation: 'portrait',
+    },
+  };
+
+  try {
+    // PDF oluştur
+    await html2pdf().set(opt).from(element).save();
+  } catch (error) {
+    console.error('PDF export error:', error);
+    alert('PDF oluşturulurken bir hata oluştu: ' + error.message);
+  }
 };
 </script>

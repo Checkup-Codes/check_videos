@@ -1,40 +1,61 @@
 <template>
-  <li class="mb-2 rounded-md border border-border bg-card shadow-sm transition-colors hover:bg-accent/50">
-    <div @click="toggle" class="flex cursor-pointer items-center justify-between p-4">
-      <div class="flex-1">
-        <div class="flex items-center gap-3">
-          <div class="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4 text-primary"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
-          <span class="font-semibold text-foreground">{{ service.name }}</span>
+  <li class="group rounded-lg border border-border bg-card transition-all hover:border-primary/50 hover:shadow-sm">
+    <div class="flex items-center justify-between gap-4 p-4">
+      <div class="flex flex-1 items-center gap-3" @click="toggle">
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 text-primary"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
         </div>
-        <p v-if="service.description" class="mt-1.5 pl-11 text-sm text-muted-foreground">
-          {{ service.description }}
-        </p>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-2">
+            <h3 class="font-medium text-foreground">{{ service.name }}</h3>
+            <button
+              v-if="hasChildren"
+              @click.stop="toggle"
+              class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground"
+              :title="isOpen ? 'Daralt' : 'Genişlet'"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4 transition-transform"
+                :class="{ 'rotate-180': isOpen }"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
+          <p v-if="service.description" class="mt-1 line-clamp-1 text-sm text-muted-foreground">
+            {{ service.description }}
+          </p>
+        </div>
       </div>
 
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-3">
         <div
           v-if="service.price"
-          class="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground"
+          class="hidden items-center rounded-md bg-muted px-2.5 py-1 text-xs font-medium text-foreground sm:flex"
         >
           {{ formatPrice(service.price) }}
         </div>
 
-        <div class="flex gap-1">
+        <div class="flex items-center gap-1">
           <Link
             :href="`/services/${service.id}`"
             class="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
             title="Görüntüle"
+            @click.stop
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -57,6 +78,7 @@
             :href="`/services/${service.id}/edit`"
             class="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
             title="Düzenle"
+            @click.stop
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -74,42 +96,12 @@
             </svg>
           </Link>
         </div>
-
-        <button
-          v-if="hasChildren"
-          class="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-          @click.stop="toggle"
-          :title="isOpen ? 'Daralt' : 'Genişlet'"
-        >
-          <svg
-            v-if="isOpen"
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-4 w-4 transition-transform"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
-          </svg>
-          <svg
-            v-else
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-4 w-4 transition-transform"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
       </div>
     </div>
 
-    <div v-if="isOpen && children.length" class="rounded-b-md border-t border-border bg-muted/30 p-4 pt-3">
-      <p class="mb-2 text-xs font-medium text-muted-foreground">Alt Kategoriler:</p>
-      <ul class="ml-4 space-y-2">
+    <div v-if="isOpen && children.length" class="border-t border-border bg-muted/30 px-4 pb-3 pt-3">
+      <p class="mb-2 text-xs font-medium text-muted-foreground">Alt Kategoriler</p>
+      <ul class="space-y-2">
         <ServiceItem v-for="child in children" :key="child.id" :service="child" :all-services="allServices" />
       </ul>
     </div>
@@ -118,8 +110,8 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import ServiceItem from './ServiceItem.vue';
 import { Link } from '@inertiajs/vue3';
+import ServiceItem from './ServiceItem.vue';
 
 const props = defineProps({
   service: {
@@ -143,16 +135,13 @@ const children = computed(() => {
 const isOpen = ref(false);
 
 const toggle = () => {
-  isOpen.value = !isOpen.value;
+  if (hasChildren.value) {
+    isOpen.value = !isOpen.value;
+  }
 };
 
 const formatPrice = (price) => {
-  return price ? `${parseFloat(price).toLocaleString()} USD` : 'Uygun Değil';
+  if (!price) return 'Fiyat yok';
+  return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2 }).format(price);
 };
 </script>
-
-<style scoped>
-.ml-4 {
-  margin-left: 1rem;
-}
-</style>

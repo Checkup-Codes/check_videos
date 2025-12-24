@@ -1,5 +1,6 @@
 const state = () => ({
   collapsed: new Set(),
+  scrollPosition: 0,
 });
 
 const mutations = {
@@ -18,6 +19,9 @@ const mutations = {
   COLLAPSE_ALL(state, allIds) {
     state.collapsed = new Set(allIds);
   },
+  SET_SCROLL_POSITION(state, position) {
+    state.scrollPosition = position;
+  },
 };
 
 const actions = {
@@ -30,11 +34,15 @@ const actions = {
   collapseAll({ commit }, allIds) {
     commit('COLLAPSE_ALL', allIds);
   },
+  setScrollPosition({ commit }, position) {
+    commit('SET_SCROLL_POSITION', position);
+  },
 };
 
 const getters = {
   isCollapsed: (state) => (id) => state.collapsed.has(id),
   collapsedSet: (state) => state.collapsed,
+  scrollPosition: (state) => state.scrollPosition,
 };
 
 export default {

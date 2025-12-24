@@ -1,34 +1,140 @@
 <template>
-  <CheckSubsidebar :isNarrow="isNarrow" :class="currentTheme">
-    <SubSidebarScreen ref="scrollableRef" class="sidebar-content-embedded">
+  <CheckSubsidebar :isNarrow="isNarrow">
+    <!-- Header -->
+    <div class="relative z-10 shrink-0 border-b border-border bg-background p-3">
+      <div class="flex items-center justify-between gap-2">
+        <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Versiyonlar</span>
+      </div>
+    </div>
+    <!-- Scrollable Content -->
+    <SubSidebarScreen ref="scrollableRef" class="sidebar-content-embedded min-h-0 flex-1" :infoClass="'flex-1 min-h-0'">
       <VersionsList :versions="versions" :currentUrl="url" />
     </SubSidebarScreen>
   </CheckSubsidebar>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, inject, watch, onMounted, onBeforeUnmount, onActivated, onDeactivated, nextTick } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
 import VersionsList from '@/Pages/FBVersions/_components/VersionList.vue';
 import SubSidebarScreen from '@/Components/CekapUI/Slots/SubSidebarScreen.vue';
 import { useStore } from 'vuex';
 
-const page = usePage();
-const props = computed(() => page.props);
-const url = computed(() => page.url);
-const versions = computed(() => props.value.versions || []);
+defineOptions({
+  name: 'SidebarLayoutVersion',
+});
 
+const page = usePage();
 const store = useStore();
-const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
-const isNarrow = ref(false);
+const url = computed(() => page.url);
+
+// Inject versions - handle both computed ref and plain array
+const injectedVersions = inject('versions', []);
+const versions = computed(() => {
+  const versionsValue = injectedVersions?.value ?? injectedVersions;
+  if (versionsValue && Array.isArray(versionsValue) && versionsValue.length > 0) {
+    return versionsValue;
+  }
+  if (page.props.versions && Array.isArray(page.props.versions) && page.props.versions.length > 0) {
+    return page.props.versions;
+  }
+  return [];
+});
+
+const isNarrow = ref(store.getters['Writes/isCollapsed']);
 const scrollableRef = ref(null);
+
+const emit = defineEmits(['update:isNarrow']);
+
+watch(isNarrow, (newValue) => {
+  emit('update:isNarrow', newValue);
+});
+
+// Scroll handling with Vuex store
+let scrollHandler = null;
+
+const getScrollElement = () => {
+  if (scrollableRef.value?.$el?.value) {
+    return scrollableRef.value.$el.value;
+  }
+  if (scrollableRef.value?.$el) {
+    return scrollableRef.value.$el;
+  }
+  return scrollableRef.value;
+};
+
+const saveScrollPosition = () => {
+  const scrollElement = getScrollElement();
+  if (scrollElement) {
+    const scrollTop = scrollElement.scrollTop || 0;
+    store.dispatch('Versions/setScrollPosition', scrollTop);
+  }
+};
+
+const restoreScrollPosition = () => {
+  nextTick(() => {
+    const scrollElement = getScrollElement();
+    if (scrollElement) {
+      const savedPosition = store.getters['Versions/scrollPosition'];
+      if (savedPosition > 0) {
+        scrollElement.scrollTop = savedPosition;
+      }
+    }
+  });
+};
+
+const setupScrollListener = () => {
+  const scrollElement = getScrollElement();
+  if (scrollElement && !scrollHandler) {
+    scrollHandler = () => saveScrollPosition();
+    scrollElement.addEventListener('scroll', scrollHandler, { passive: true });
+  }
+};
+
+const removeScrollListener = () => {
+  const scrollElement = getScrollElement();
+  if (scrollElement && scrollHandler) {
+    scrollElement.removeEventListener('scroll', scrollHandler);
+    scrollHandler = null;
+  }
+};
+
+onMounted(() => {
+  isNarrow.value = store.getters['Writes/isCollapsed'];
+  nextTick(() => {
+    setupScrollListener();
+    restoreScrollPosition();
+  });
+});
+
+onActivated(() => {
+  nextTick(() => {
+    setupScrollListener();
+    restoreScrollPosition();
+  });
+});
+
+onDeactivated(() => {
+  saveScrollPosition();
+  removeScrollListener();
+});
+
+onBeforeUnmount(() => {
+  saveScrollPosition();
+  removeScrollListener();
+});
 </script>
 
 <style scoped>
+/* Ensure header background is not affected by parent bg-muted */
+.shrink-0.border-b {
+  background: hsl(var(--background)) !important;
+}
+
 /* Embedded sidebar content design - subtle recessed effect */
 :deep(.sidebar-content-embedded) {
-  background: hsl(var(--muted) / 0.5) !important;
+  background: hsl(var(--muted) / 0.7) !important;
   position: relative;
 }
 
@@ -39,7 +145,7 @@ const scrollableRef = ref(null);
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(to right, transparent, hsl(var(--border) / 0.5), transparent);
+  background: linear-gradient(to right, transparent, hsl(var(--border) / 0.3), transparent);
   pointer-events: none;
 }
 </style>

@@ -19,14 +19,23 @@ class AppServiceProvider extends ServiceProvider
 
         // Configure dynamic storage path based on domain
         $storagePath = storage_path('multi/' . $host);
+        $publicStoragePath = $storagePath . '/public';
 
-        // Create domain-specific storage directory if it doesn't exist
+        // Create domain-specific storage directories if they don't exist
         if (!file_exists($storagePath)) {
             mkdir($storagePath, 0755, true);
         }
+        if (!file_exists($publicStoragePath)) {
+            mkdir($publicStoragePath, 0755, true);
+        }
 
-        // Override storage path for this domain
+        // Override storage paths for this domain
         Config::set('filesystems.disks.local.root', $storagePath);
+        Config::set('filesystems.disks.public.root', $publicStoragePath);
+        
+        // URL stays the same - server.php handles domain-based routing
+        // Files are stored in storage/multi/{domain}/public/
+        // URLs are /storage/... and server.php redirects to correct domain folder
 
         // WARNING: Config caching should be disabled when using dynamic storage paths
         // Add this to your .env file: CONFIG_CACHE_ENABLED=false

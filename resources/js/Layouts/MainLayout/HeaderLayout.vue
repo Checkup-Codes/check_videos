@@ -491,11 +491,13 @@
               <div class="space-y-1">
                 <NavItem href="/" icon="home" label="Ana Sayfa" />
                 <NavItem href="/writes" icon="fa-solid fa-pencil" label="Yazılar" />
+                <!-- Journey - visible to everyone -->
+                <NavItem href="/journey" icon="fa-solid fa-road" label="Yolculuk" />
                 <!-- Admin Navigation for Logged In Users -->
                 <template v-if="isLoggedIn">
                   <NavItem href="/test-categories" icon="fa-solid fa-clipboard-question" label="Testler" />
-                  <NavItem href="/services" icon="fa-solid fa-bolt" label="Servisler" />
                   <NavItem href="/rendition/words" icon="fa-solid fa-globe" label="Kelimeler" />
+                  <NavItem href="/services" icon="fa-solid fa-bolt" label="Servisler" />
                   <NavItem href="/versions" icon="fa-solid fa-sync" label="Versiyonlar" />
                 </template>
               </div>
@@ -580,26 +582,26 @@
                         Yazılar
                       </div>
                       <div class="space-y-0.5">
-                        <Link
-                          href="/writes/create"
-                          class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                          @click="closeMenu"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                          </svg>
-                          <span>Yeni Yazı</span>
-                        </Link>
-                        <Link
-                          href="/categories/create"
-                          class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                          @click="closeMenu"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                          </svg>
-                          <span>Yeni Kategori</span>
-                        </Link>
+                    <Link
+                      href="/writes/create"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      @click="closeMenu"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                      <span>Yeni Yazı</span>
+                    </Link>
+                    <Link
+                      href="/categories/create"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      @click="closeMenu"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                      </svg>
+                      <span>Yeni Kategori</span>
+                    </Link>
                       </div>
                     </div>
 
@@ -609,26 +611,26 @@
                         Kelimeler
                       </div>
                       <div class="space-y-0.5">
-                        <Link
-                          href="/rendition/words/create"
-                          class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                          @click="closeMenu"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-                          </svg>
-                          <span>Yeni Kelime</span>
-                        </Link>
-                        <Link
-                          href="/rendition/language-packs/create"
-                          class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                          @click="closeMenu"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                          </svg>
-                          <span>Yeni Kelime Paketi</span>
-                        </Link>
+                    <Link
+                      href="/rendition/words/create"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      @click="closeMenu"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                      </svg>
+                      <span>Yeni Kelime</span>
+                    </Link>
+                    <Link
+                      href="/rendition/language-packs/create"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      @click="closeMenu"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                      </svg>
+                      <span>Yeni Kelime Paketi</span>
+                    </Link>
                       </div>
                     </div>
 
@@ -638,26 +640,26 @@
                         Testler
                       </div>
                       <div class="space-y-0.5">
-                        <Link
+                    <Link
                           href="/tests/create"
-                          class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                          @click="closeMenu"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      @click="closeMenu"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                          </svg>
+                      </svg>
                           <span>Yeni Test</span>
-                        </Link>
-                        <Link
+                    </Link>
+                    <Link
                           href="/test-categories/create"
-                          class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                          @click="closeMenu"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                          </svg>
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      @click="closeMenu"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
                           <span>Yeni Test Kategorisi</span>
-                        </Link>
+                    </Link>
                       </div>
                     </div>
 
@@ -667,14 +669,14 @@
                         Projeler
                       </div>
                       <div class="space-y-0.5">
-                        <Link
+                    <Link
                           href="/projects/create"
-                          class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                          @click="closeMenu"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                      @click="closeMenu"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                          </svg>
+                      </svg>
                           <span>Yeni Proje</span>
                         </Link>
                         <Link
@@ -696,7 +698,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                           </svg>
                           <span>Yeni Servis</span>
-                        </Link>
+                    </Link>
                       </div>
                     </div>
 
@@ -713,12 +715,26 @@
                         <span>Yeni Versiyon</span>
                       </Link>
                     </div>
+
+                    <!-- Yolculuk (Tek başına) -->
+                    <div class="border-t border-border pt-2">
+                      <Link
+                        href="/journey/create"
+                        class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                        @click="closeMenu"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                        </svg>
+                        <span>Yeni Yolculuk</span>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </template>
 
               <!-- Page Actions for Mobile -->
-              <div v-if="isLoggedIn && (isWriteShowPage || isWriteEditPage || isCategoryShowPage || isCategoryEditPage || isWordShowPage || isVersionShowPage || isTestCategoryShowPage || isTestCategoryEditPage || isTestShowPage || isTestEditPage)" class="border-t border-border pt-3">
+              <div v-if="isLoggedIn && (isWriteShowPage || isWriteEditPage || isCategoryShowPage || isCategoryEditPage || isWordShowPage || isLanguagePackShowPage || isVersionShowPage || isTestCategoryShowPage || isTestCategoryEditPage || isTestShowPage || isTestEditPage || isJourneyShowPage || isJourneyEditPage || isServiceShowPage || isServiceEditPage)" class="border-t border-border pt-3">
                 <PageActions variant="mobile" :on-link-click="closeMenu" />
               </div>
 
@@ -1147,6 +1163,36 @@ const isTestShowPage = computed(() => {
 const isTestEditPage = computed(() => {
   const url = page.url;
   return url.startsWith('/tests/') && url.includes('/edit');
+});
+
+const isJourneyShowPage = computed(() => {
+  const url = page.url;
+  return (
+    url.startsWith('/journey/') &&
+    url !== '/journey' &&
+    url !== '/journey/create' &&
+    !url.includes('/journey/edit')
+  );
+});
+
+const isJourneyEditPage = computed(() => {
+  const url = page.url;
+  return url.startsWith('/journey/') && url.includes('/edit');
+});
+
+const isServiceShowPage = computed(() => {
+  const url = page.url;
+  return (
+    url.startsWith('/services/') &&
+    url !== '/services' &&
+    url !== '/services/create' &&
+    !url.includes('/edit')
+  );
+});
+
+const isServiceEditPage = computed(() => {
+  const url = page.url;
+  return url.startsWith('/services/') && url.includes('/edit');
 });
 
 // Check if we're on a language pack show page (not word edit page)

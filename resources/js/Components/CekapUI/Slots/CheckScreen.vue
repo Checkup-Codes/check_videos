@@ -1,7 +1,7 @@
 <template>
   <div :class="computedClass">
     <div class="h-[calc(100vh-3rem)] overflow-y-auto overscroll-none lg:h-[calc(100vh-5.5rem)]">
-      <div class="container mx-auto max-w-[920px]" :class="{ 'xl:mx-auto': isWideScreen }">
+      <div class="mx-auto max-w-full sm:max-w-[920px]" :class="{ 'xl:mx-auto': isWideScreen }">
         <slot />
       </div>
     </div>
@@ -34,6 +34,6 @@ onUnmounted(() => {
 });
 
 const computedClass = computed(() => {
-  return `${props.infoClass} h-full overflow-hidden`;
+  return `${props.infoClass} h-full overflow-hidden px-2 sm:px-4 lg:px-8`;
 });
 </script>

@@ -1,30 +1,34 @@
 <template>
   <CheckSubsidebar :isNarrow="isNarrow">
     <!-- View Toggle - Always visible -->
-    <div class="shrink-0 border-b border-border bg-background/95 p-2">
+    <div class="relative z-10 shrink-0 border-b border-border bg-background p-2">
       <div class="flex items-center justify-between gap-2">
         <!-- View Toggle (Left) -->
         <div class="flex items-center gap-1">
           <Link
             :href="route('writes.index')"
             class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs transition-colors"
-            :class="isListView ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'"
+            :class="
+              isListView
+                ? 'bg-accent text-accent-foreground'
+                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+            "
             title="Liste görünümü"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            <IconMenu class="h-3 w-3" />
             <span v-if="!isNarrow">Liste</span>
           </Link>
           <Link
             :href="route('categories.index')"
             class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs transition-colors"
-            :class="!isListView ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'"
+            :class="
+              !isListView
+                ? 'bg-accent text-accent-foreground'
+                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+            "
             title="Kategori görünümü"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-            </svg>
+            <IconFolder class="h-3 w-3" />
             <span v-if="!isNarrow">Kategori</span>
           </Link>
         </div>
@@ -36,20 +40,16 @@
             class="inline-flex h-6 w-6 items-center justify-center rounded text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
             title="Filtreyi temizle"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <IconX class="h-3 w-3" />
           </button>
-          <div class="relative write-filter-dropdown-container">
+          <div class="write-filter-dropdown-container relative">
             <button
               @click.stop="showWriteFilterDropdown = !showWriteFilterDropdown"
               class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
               :class="{ 'bg-accent text-accent-foreground': showWriteFilterDropdown }"
               title="Filtrele"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-6.414 6.414A2 2 0 0013 14.586V19a1 1 0 01-1.447.894l-2-1A1 1 0 019 18v-3.414a2 2 0 00-.293-1.172L2.293 6.707A1 1 0 012 6V4z" />
-              </svg>
+              <IconFilter class="h-3 w-3" />
               <span class="text-xs">{{ getFilterLabel(writeFilter) }}</span>
             </button>
             <div
@@ -91,20 +91,35 @@
         </div>
       </div>
     </div>
-    <SubSidebarScreen ref="scrollableRef" class="flex-1 min-h-0 sidebar-content-embedded" :infoClass="'flex flex-col h-full min-h-0'">
-      <WriteList ref="writeListRef" :writes="writes" :route="route" :isCollapsed="isNarrow" class="flex-1 min-h-0" />
+    <SubSidebarScreen ref="scrollableRef" class="sidebar-content-embedded min-h-0 flex-1" :infoClass="'flex-1 min-h-0'">
+      <WriteList ref="writeListRef" :writes="writes" :route="route" :isCollapsed="isNarrow" />
     </SubSidebarScreen>
   </CheckSubsidebar>
 </template>
 
 <script setup>
-import { ref, watch, inject, onMounted, computed, onUnmounted } from 'vue';
+import {
+  ref,
+  watch,
+  inject,
+  onMounted,
+  onBeforeUnmount,
+  computed,
+  onUnmounted,
+  onActivated,
+  onDeactivated,
+  nextTick,
+} from 'vue';
 import { usePage, Link } from '@inertiajs/vue3';
 import WriteList from '@/Pages/WritesCategories/_composables/WriteList.vue';
 import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
 import SubSidebarScreen from '@/Components/CekapUI/Slots/SubSidebarScreen.vue';
 import { useSidebar } from '../_utils/useSidebar';
 import { useStore } from 'vuex';
+import IconMenu from '../_components/icons/IconMenu.vue';
+import IconFolder from '../_components/icons/IconFolder.vue';
+import IconX from '../_components/icons/IconX.vue';
+import IconFilter from '../_components/icons/IconFilter.vue';
 
 // Component name definition for dev tools
 defineOptions({
@@ -127,9 +142,12 @@ const isListView = computed(() => {
   return url.startsWith('/writes') && !url.startsWith('/categories');
 });
 
-// Write filter state
+// Write filter state from store
 const showWriteFilterDropdown = ref(false);
-const writeFilter = ref('all');
+const writeFilter = computed({
+  get: () => store.getters['Writes/filter'],
+  set: (val) => store.dispatch('Writes/setFilter', val),
+});
 
 // Get filter label
 const getFilterLabel = (filter) => {
@@ -144,8 +162,7 @@ const getFilterLabel = (filter) => {
 
 // Set write filter
 const setWriteFilter = (filter) => {
-  writeFilter.value = filter;
-  localStorage.setItem('writeListFilter', filter);
+  store.dispatch('Writes/setFilter', filter);
   showWriteFilterDropdown.value = false;
   window.dispatchEvent(new CustomEvent('writeFilterChanged', { detail: filter }));
 };
@@ -171,43 +188,83 @@ watch(isNarrow, (newValue) => {
 
 // Click outside handler
 let clickOutsideHandler = null;
+let scrollHandler = null;
 
 /**
- * Handle scroll events and save position to localStorage
+ * Get scroll element - SubSidebarScreen exposes containerRef via $el
  */
-const handleScroll = (e) => {
-  const scrollTop = e.target.scrollTop;
-  localStorage.setItem('writeSidebarScroll', scrollTop.toString());
+const getScrollElement = () => {
+  // Try to get the exposed $el ref first
+  if (scrollableRef.value?.$el?.value) {
+    return scrollableRef.value.$el.value;
+  }
+  // Fallback to component's root element
+  if (scrollableRef.value?.$el) {
+    return scrollableRef.value.$el;
+  }
+  return scrollableRef.value;
 };
 
 /**
- * Initialize component and restore scroll position
+ * Save scroll position to store
+ */
+const saveScrollPosition = () => {
+  const scrollElement = getScrollElement();
+  if (scrollElement) {
+    const scrollTop = scrollElement.scrollTop || 0;
+    store.dispatch('Writes/setScrollPosition', scrollTop);
+  }
+};
+
+/**
+ * Restore scroll position from store
+ */
+const restoreScrollPosition = () => {
+  nextTick(() => {
+    const scrollElement = getScrollElement();
+    if (scrollElement) {
+      const savedPosition = store.getters['Writes/scrollPosition'];
+      if (savedPosition > 0) {
+        scrollElement.scrollTop = savedPosition;
+      }
+    }
+  });
+};
+
+/**
+ * Setup scroll listener
+ */
+const setupScrollListener = () => {
+  const scrollElement = getScrollElement();
+  if (scrollElement && !scrollHandler) {
+    scrollHandler = () => saveScrollPosition();
+    scrollElement.addEventListener('scroll', scrollHandler, { passive: true });
+  }
+};
+
+/**
+ * Remove scroll listener
+ */
+const removeScrollListener = () => {
+  const scrollElement = getScrollElement();
+  if (scrollElement && scrollHandler) {
+    scrollElement.removeEventListener('scroll', scrollHandler);
+    scrollHandler = null;
+  }
+};
+
+/**
+ * Initialize component
  */
 onMounted(() => {
-  // Load filter from localStorage
-  const savedFilter = localStorage.getItem('writeListFilter');
-  if (savedFilter) {
-    writeFilter.value = savedFilter;
-  }
-
   // Sync with store state
   isNarrow.value = store.getters['Writes/isCollapsed'];
 
   // Setup scroll handling
-  if (scrollableRef.value) {
-    // Try both direct element and Vue component element
-    const element = scrollableRef.value.$el || scrollableRef.value;
-
-    if (element && element.addEventListener) {
-      element.addEventListener('scroll', handleScroll);
-
-      // Restore saved scroll position
-      const savedScroll = localStorage.getItem('writeSidebarScroll');
-      if (savedScroll) {
-        element.scrollTop = parseInt(savedScroll, 10);
-      }
-    }
-  }
+  nextTick(() => {
+    setupScrollListener();
+    restoreScrollPosition();
+  });
 
   // Close dropdown when clicking outside
   clickOutsideHandler = (event) => {
@@ -218,6 +275,29 @@ onMounted(() => {
   document.addEventListener('click', clickOutsideHandler);
 });
 
+/**
+ * KeepAlive activated - restore scroll position
+ */
+onActivated(() => {
+  nextTick(() => {
+    setupScrollListener();
+    restoreScrollPosition();
+  });
+});
+
+/**
+ * KeepAlive deactivated - save scroll position
+ */
+onDeactivated(() => {
+  saveScrollPosition();
+  removeScrollListener();
+});
+
+onBeforeUnmount(() => {
+  saveScrollPosition();
+  removeScrollListener();
+});
+
 onUnmounted(() => {
   if (clickOutsideHandler) {
     document.removeEventListener('click', clickOutsideHandler);
@@ -226,6 +306,11 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* Ensure header background is not affected by parent bg-muted */
+.shrink-0.border-b {
+  background: hsl(var(--background)) !important;
+}
+
 /* Embedded sidebar content design - subtle recessed effect */
 :deep(.sidebar-content-embedded) {
   background: hsl(var(--muted) / 0.7) !important;

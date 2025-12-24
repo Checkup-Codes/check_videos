@@ -1,12 +1,12 @@
 <template>
   <CheckSubsidebar :isNarrow="isNarrow">
-    <!-- Collapse/Expand Controls - Only for logged in users -->
-    <div v-if="isLoggedIn" class="shrink-0 border-b border-border bg-background/95 p-2">
+    <!-- View Toggle - Always visible -->
+    <div class="relative z-10 shrink-0 border-b border-border bg-background p-2">
       <div class="flex items-center justify-between gap-2">
         <!-- View Toggle (Left) -->
         <div class="flex items-center gap-1">
           <Link
-            href="/tests"
+            :href="route('tests.index')"
             class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs transition-colors"
             :class="
               isListView
@@ -15,20 +15,11 @@
             "
             title="Liste görünümü"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-3 w-3"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            <IconMenu class="h-3 w-3" />
             <span v-if="!isNarrow">Liste</span>
           </Link>
           <Link
-            href="/test-categories"
+            :href="route('test-categories.index')"
             class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs transition-colors"
             :class="
               !isListView
@@ -37,52 +28,28 @@
             "
             title="Kategori görünümü"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-3 w-3"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-              />
-            </svg>
+            <IconFolder class="h-3 w-3" />
             <span v-if="!isNarrow">Kategori</span>
           </Link>
         </div>
-        <!-- Collapse/Expand Button (Right) -->
-        <div class="flex items-center gap-1">
+        <!-- Collapse/Expand Button (Right) - Only for logged in users -->
+        <div v-if="isLoggedIn" class="flex items-center gap-1">
           <button
             @click="toggleAllCategories"
             class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
             :class="{ 'bg-accent text-accent-foreground': areAllCategoriesExpanded }"
             :title="areAllCategoriesExpanded ? 'Tümünü Daralt' : 'Tümünü Genişlet'"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
+            <IconChevronDown
               class="h-3 w-3 transition-transform duration-200"
               :class="{ 'rotate-180': areAllCategoriesExpanded }"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
+            />
             <span class="text-xs">{{ areAllCategoriesExpanded ? 'Daralt' : 'Genişlet' }}</span>
           </button>
         </div>
       </div>
     </div>
-    <SubSidebarScreen
-      ref="scrollableRef"
-      class="sidebar-content-embedded min-h-0 flex-1"
-      :infoClass="'flex-1 min-h-0 overflow-y-auto overscroll-none'"
-    >
+    <SubSidebarScreen ref="scrollableRef" class="sidebar-content-embedded min-h-0 flex-1" :infoClass="'flex-1 min-h-0'">
       <CategoryTree
         v-if="showCategories"
         ref="categoryTreeRef"
@@ -95,13 +62,16 @@
 </template>
 
 <script setup>
-import { ref, watch, computed, onMounted, inject } from 'vue';
+import { ref, watch, computed, onMounted, onBeforeUnmount, onActivated, onDeactivated, inject, nextTick } from 'vue';
 import { usePage, Link } from '@inertiajs/vue3';
 import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
 import SubSidebarScreen from '@/Components/CekapUI/Slots/SubSidebarScreen.vue';
 import CategoryTree from '@/Pages/TestCategories/_composables/CategoryTree.vue';
 import { useSidebar } from '../_utils/useSidebar';
 import { useStore } from 'vuex';
+import IconMenu from '../_components/icons/IconMenu.vue';
+import IconFolder from '../_components/icons/IconFolder.vue';
+import IconChevronDown from '../_components/icons/IconChevronDown.vue';
 
 defineOptions({
   name: 'SidebarLayoutCategory',
@@ -117,16 +87,20 @@ const isLoggedIn = computed(() => {
 });
 
 // Check if we're on list view (tests) or category view
+// For SidebarLayoutCategory component, we're always in category view
+// So isListView should always be false to keep the category button active
 const isListView = computed(() => {
-  const url = page.url;
-  return url.startsWith('/tests') && !url.startsWith('/test-categories');
+  // This component is only used for category view, so always return false
+  // This ensures consistent styling across /test-categories and /test-categories/* pages
+  return false;
 });
 
-// Categories from inject or props
+// Categories from inject or props - handle both computed ref and plain array
 const injectedCategories = inject('categories', []);
 const categories = computed(() => {
-  if (injectedCategories && Array.isArray(injectedCategories) && injectedCategories.length > 0) {
-    return injectedCategories;
+  const categoriesValue = injectedCategories?.value ?? injectedCategories;
+  if (categoriesValue && Array.isArray(categoriesValue) && categoriesValue.length > 0) {
+    return categoriesValue;
   }
   if (page.props.categories && Array.isArray(page.props.categories) && page.props.categories.length > 0) {
     return page.props.categories;
@@ -134,7 +108,7 @@ const categories = computed(() => {
   return [];
 });
 
-// Diğer local state
+// Local state
 const areAllCategoriesExpanded = computed(() => store.getters['CategorySidebar/collapsedSet'].size === 0);
 const getLinkClasses = () => '';
 
@@ -154,12 +128,10 @@ const getAllCategoryIds = (categories) => {
   if (!categories || !Array.isArray(categories) || categories.length === 0) {
     return [];
   }
-
   let ids = [];
   categories.forEach((category) => {
     if (category && category.id) {
       ids.push(category.id);
-      // Recursively get children IDs
       if (category.children && Array.isArray(category.children) && category.children.length > 0) {
         ids = ids.concat(getAllCategoryIds(category.children));
       }
@@ -171,45 +143,90 @@ const getAllCategoryIds = (categories) => {
 // Toggle all categories expand/collapse
 const toggleAllCategories = () => {
   const cats = categories.value;
-  if (!cats || cats.length === 0) {
-    console.warn('Categories not available for toggle');
-    return;
-  }
+  if (!cats || cats.length === 0) return;
 
   if (areAllCategoriesExpanded.value) {
-    // If expanded, collapse all
     const allIds = getAllCategoryIds(cats);
     if (allIds.length > 0) {
       store.dispatch('CategorySidebar/collapseAll', allIds);
     }
   } else {
-    // If collapsed, expand all
     store.dispatch('CategorySidebar/expandAll');
   }
 };
 
-// On mount, sync with store
-onMounted(() => {
-  isNarrow.value = store.getters['Writes/isCollapsed'];
-});
+// Scroll handling with Vuex store
+let scrollHandler = null;
 
-const handleScroll = (e) => {
-  const scrollTop = e.target.scrollTop;
-  localStorage.setItem('testCategorySidebarScroll', scrollTop);
+const getScrollElement = () => {
+  if (scrollableRef.value?.$el?.value) {
+    return scrollableRef.value.$el.value;
+  }
+  if (scrollableRef.value?.$el) {
+    return scrollableRef.value.$el;
+  }
+  return scrollableRef.value;
+};
+
+const saveScrollPosition = () => {
+  const scrollElement = getScrollElement();
+  if (scrollElement) {
+    const scrollTop = scrollElement.scrollTop || 0;
+    store.dispatch('CategorySidebar/setScrollPosition', scrollTop);
+  }
+};
+
+const restoreScrollPosition = () => {
+  nextTick(() => {
+    const scrollElement = getScrollElement();
+    if (scrollElement) {
+      const savedPosition = store.getters['CategorySidebar/scrollPosition'];
+      if (savedPosition > 0) {
+        scrollElement.scrollTop = savedPosition;
+      }
+    }
+  });
+};
+
+const setupScrollListener = () => {
+  const scrollElement = getScrollElement();
+  if (scrollElement && !scrollHandler) {
+    scrollHandler = () => saveScrollPosition();
+    scrollElement.addEventListener('scroll', scrollHandler, { passive: true });
+  }
+};
+
+const removeScrollListener = () => {
+  const scrollElement = getScrollElement();
+  if (scrollElement && scrollHandler) {
+    scrollElement.removeEventListener('scroll', scrollHandler);
+    scrollHandler = null;
+  }
 };
 
 onMounted(() => {
-  if (scrollableRef.value) {
-    scrollableRef.value.addEventListener && scrollableRef.value.addEventListener('scroll', handleScroll);
-    if (scrollableRef.value.$el) {
-      scrollableRef.value.$el.addEventListener('scroll', handleScroll);
-      // Scroll pozisyonunu geri yükle
-      const savedScroll = localStorage.getItem('testCategorySidebarScroll');
-      if (savedScroll) {
-        scrollableRef.value.$el.scrollTop = parseInt(savedScroll, 10);
-      }
-    }
-  }
+  isNarrow.value = store.getters['Writes/isCollapsed'];
+  nextTick(() => {
+    setupScrollListener();
+    restoreScrollPosition();
+  });
+});
+
+onActivated(() => {
+  nextTick(() => {
+    setupScrollListener();
+    restoreScrollPosition();
+  });
+});
+
+onDeactivated(() => {
+  saveScrollPosition();
+  removeScrollListener();
+});
+
+onBeforeUnmount(() => {
+  saveScrollPosition();
+  removeScrollListener();
 });
 </script>
 
@@ -218,6 +235,12 @@ onMounted(() => {
   border-color: hsl(var(--border)) !important;
 }
 
+/* Ensure header background is not affected by parent bg-muted */
+.shrink-0.border-b {
+  background: hsl(var(--background)) !important;
+}
+
+/* Embedded sidebar content design - subtle recessed effect */
 :deep(.sidebar-content-embedded) {
   background: hsl(var(--muted) / 0.7) !important;
   position: relative;
@@ -234,4 +257,5 @@ onMounted(() => {
   pointer-events: none;
 }
 </style>
+
 
