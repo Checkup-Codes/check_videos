@@ -23,6 +23,7 @@ use App\Http\Controllers\SocialMediaController;
 use App\Http\Controllers\Tests\TestsController;
 use App\Http\Controllers\Tests\TestCategoriesController;
 use App\Http\Controllers\JourneyController;
+use App\Http\Controllers\WorkspaceController;
 use App\Http\Middleware\CheckWriteAccess;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -125,6 +126,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/journey/{id}', [JourneyController::class, 'update'])->name('journey.update');
     Route::delete('/journey/{id}', [JourneyController::class, 'destroy'])->name('journey.destroy');
 
+    // Workspace CRUD (Admin only)
+    Route::get('/workspace/create', [WorkspaceController::class, 'create'])->name('workspace.create');
+    Route::post('/workspace', [WorkspaceController::class, 'store'])->name('workspace.store');
+    Route::get('/workspace/{id}/edit', [WorkspaceController::class, 'edit'])->name('workspace.edit');
+    Route::put('/workspace/{id}', [WorkspaceController::class, 'update'])->name('workspace.update');
+    Route::delete('/workspace/{id}', [WorkspaceController::class, 'destroy'])->name('workspace.destroy');
+
     // SEO Management
     Route::get('/seo', [SeoController::class, 'edit'])->name('seo.edit');
     Route::put('/seo', [SeoController::class, 'update'])->name('seo.update');
@@ -137,6 +145,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Journey Show (Public - must be after /journey/create to avoid route conflict)
 Route::get('/journey/{id}', [JourneyController::class, 'show'])->name('journey.show');
+
+// Workspace Routes (Public index, show - must be after /workspace/create to avoid route conflict)
+Route::get('/workspace', [WorkspaceController::class, 'index'])->name('workspace.index');
+Route::get('/workspace/{id}', [WorkspaceController::class, 'show'])->name('workspace.show');
 
 // Rendition Routes
 Route::group(['prefix' => 'rendition', 'as' => 'rendition.'], function () {

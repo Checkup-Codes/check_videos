@@ -1,7 +1,6 @@
 <template>
   <LayoutJourney>
     <template #screen>
-      <CheckScreen>
         <div class="mx-auto max-w-2xl py-8">
           <!-- Header -->
           <div class="mb-8">
@@ -142,7 +141,6 @@
             </div>
           </form>
         </div>
-      </CheckScreen>
     </template>
   </LayoutJourney>
 </template>
@@ -151,7 +149,6 @@
 import { ref } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import LayoutJourney from '@/Pages/Journey/_layouts/LayoutJourney.vue';
-import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 
 const props = defineProps({
   entry: {

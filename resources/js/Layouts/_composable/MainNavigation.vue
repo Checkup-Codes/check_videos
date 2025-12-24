@@ -2,6 +2,14 @@
   <nav class="w-full space-y-1 bg-background px-2 py-1">
     <NavItem href="/" icon="home" label="Ana Sayfa" :is-compact="isCompact" />
     <NavItem href="/writes" icon="fa-solid fa-pencil" label="Yazılar" :is-compact="isCompact" />
+    <NavItem href="/journey" icon="fa-solid fa-road" label="Yolculuk" :is-compact="isCompact" />
+    <NavItem
+      v-if="isLoggedIn || workspaceCount > 0"
+      href="/workspace"
+      icon="fa-solid fa-briefcase"
+      label="Çalışma Alanım"
+      :is-compact="isCompact"
+    />
     <NavItem
       v-if="isLoggedIn"
       href="/test-categories"
@@ -34,6 +42,7 @@ import { computed } from 'vue';
 
 const page = usePage();
 const isLoggedIn = computed(() => !!(page.props.auth && page.props.auth.user));
+const workspaceCount = computed(() => page.props.workspaceCount || 0);
 
 defineProps({
   isCompact: {

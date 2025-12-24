@@ -24,18 +24,18 @@ class JourneyController extends Controller
         $isAdmin = $user !== null;
 
         // Get entries - if admin, show all, otherwise only published
-        // Sort by entry_date ascending (oldest first) - timeline goes from top (oldest) to bottom (newest)
+        // Sort by entry_date descending (newest first) - timeline goes from top (newest) to bottom (oldest)
         $entries = $isAdmin 
-            ? Journey::orderBy('entry_date', 'asc')->get() 
-            : Journey::published()->orderBy('entry_date', 'asc')->get();
+            ? Journey::orderBy('entry_date', 'desc')->get() 
+            : Journey::published()->orderBy('entry_date', 'desc')->get();
 
-        // Group by year for sidebar (entries are already sorted by entry_date asc)
-        // After groupBy, ensure each group's entries remain sorted by entry_date asc
+        // Group by year (entries are already sorted by entry_date desc)
+        // After groupBy, ensure each group's entries remain sorted by entry_date desc
         $entriesByYear = $entries->groupBy(function ($item) {
             return $item->entry_date->format('Y');
         })->map(function ($group) {
-            // Sort each group by entry_date ascending (oldest first, newest at bottom)
-            return $group->sortBy('entry_date')->values();
+            // Sort each group by entry_date descending (newest first, oldest at bottom)
+            return $group->sortByDesc('entry_date')->values();
         });
 
         return Inertia::render('Journey/IndexJourney', [
@@ -95,18 +95,18 @@ class JourneyController extends Controller
         $user = Auth::user();
         $isAdmin = $user !== null;
 
-        // Get all entries for sidebar
-        // Sort by entry_date ascending (oldest first) - timeline goes from top (oldest) to bottom (newest)
+        // Get all entries
+        // Sort by entry_date descending (newest first) - timeline goes from top (newest) to bottom (oldest)
         $entries = $isAdmin 
-            ? Journey::orderBy('entry_date', 'asc')->get() 
-            : Journey::published()->orderBy('entry_date', 'asc')->get();
+            ? Journey::orderBy('entry_date', 'desc')->get() 
+            : Journey::published()->orderBy('entry_date', 'desc')->get();
 
-        // Group by year and ensure each group's entries remain sorted by entry_date asc
+        // Group by year and ensure each group's entries remain sorted by entry_date desc
         $entriesByYear = $entries->groupBy(function ($item) {
             return $item->entry_date->format('Y');
         })->map(function ($group) {
-            // Sort each group by entry_date ascending (oldest first, newest at bottom)
-            return $group->sortBy('entry_date')->values();
+            // Sort each group by entry_date descending (newest first, oldest at bottom)
+            return $group->sortByDesc('entry_date')->values();
         });
 
         return Inertia::render('Journey/ShowJourney', [
@@ -124,14 +124,14 @@ class JourneyController extends Controller
     {
         $entry = Journey::findOrFail($id);
 
-        // Sort by entry_date ascending (oldest first) - timeline goes from top (oldest) to bottom (newest)
-        $entries = Journey::orderBy('entry_date', 'asc')->get();
-        // Group by year and ensure each group's entries remain sorted by entry_date asc
+        // Sort by entry_date descending (newest first) - timeline goes from top (newest) to bottom (oldest)
+        $entries = Journey::orderBy('entry_date', 'desc')->get();
+        // Group by year and ensure each group's entries remain sorted by entry_date desc
         $entriesByYear = $entries->groupBy(function ($item) {
             return $item->entry_date->format('Y');
         })->map(function ($group) {
-            // Sort each group by entry_date ascending (oldest first, newest at bottom)
-            return $group->sortBy('entry_date')->values();
+            // Sort each group by entry_date descending (newest first, oldest at bottom)
+            return $group->sortByDesc('entry_date')->values();
         });
 
         return Inertia::render('Journey/EditJourney', [

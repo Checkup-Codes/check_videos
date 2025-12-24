@@ -1,7 +1,6 @@
 <template>
   <LayoutJourney>
     <template #screen>
-      <CheckScreen>
         <div class="mx-auto max-w-3xl py-8">
           <!-- Back Button -->
           <div class="mb-6">
@@ -88,7 +87,6 @@
             <div v-else></div>
           </div>
         </div>
-      </CheckScreen>
     </template>
   </LayoutJourney>
 </template>
@@ -97,7 +95,6 @@
 import { computed } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import LayoutJourney from '@/Pages/Journey/_layouts/LayoutJourney.vue';
-import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 
 const props = defineProps({
   entry: {
@@ -115,16 +112,17 @@ const currentIndex = computed(() => {
   return props.entries.findIndex(e => e.id === props.entry.id);
 });
 
+// Since entries are now sorted descending (newest first), prevEntry is the next index (newer) and nextEntry is the previous index (older)
 const prevEntry = computed(() => {
-  if (currentIndex.value > 0) {
-    return props.entries[currentIndex.value - 1];
+  if (currentIndex.value < props.entries.length - 1) {
+    return props.entries[currentIndex.value + 1]; // Next in array = newer entry
   }
   return null;
 });
 
 const nextEntry = computed(() => {
-  if (currentIndex.value < props.entries.length - 1) {
-    return props.entries[currentIndex.value + 1];
+  if (currentIndex.value > 0) {
+    return props.entries[currentIndex.value - 1]; // Previous in array = older entry
   }
   return null;
 });

@@ -17,7 +17,19 @@ class AppServiceProvider extends ServiceProvider
         $host = request()->getHost();
         $host = preg_replace('/^www\./', '', $host);
 
-        // Configure dynamic storage path based on domain
+        // Check if we're on localhost - use normal storage for localhost, multi-tenancy for production
+        $isLocalhost = strpos($host, 'localhost') === 0 || 
+                       strpos($host, '127.0.0.1') === 0 ||
+                       $host === 'localhost' ||
+                       $host === '127.0.0.1';
+
+        if ($isLocalhost) {
+            // Localhost: use normal storage paths (storage/app/public)
+            // Don't override - use default Laravel storage paths
+            return;
+        }
+
+        // Production: Configure dynamic storage path based on domain
         $storagePath = storage_path('multi/' . $host);
         $publicStoragePath = $storagePath . '/public';
 

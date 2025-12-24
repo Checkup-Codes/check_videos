@@ -20,6 +20,14 @@
           label="Yolculuk"
           :is-active="isActiveRoute('/journey')"
         />
+        <!-- Workspace - visible if logged in OR has workspaces -->
+        <TabNavItem
+          v-if="isLoggedIn || workspaceCount > 0"
+          href="/workspace"
+          icon="fa-solid fa-briefcase"
+          label="Çalışma Alanım"
+          :is-active="isActiveRoute('/workspace')"
+        />
 
         <!-- Conditional items for logged in users -->
         <template v-if="isLoggedIn">
@@ -80,6 +88,54 @@
             </Link>
             <Button
               @click="deleteLanguagePack(pack.id)"
+              variant="outline"
+              size="sm"
+              class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="mr-1.5 h-3.5 w-3.5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                />
+              </svg>
+              Sil
+            </Button>
+          </div>
+        </template>
+
+        <!-- Workspace Show Page Actions -->
+        <template v-if="isWorkspaceShowPage && !isWorkspaceEditPage && isLoggedIn && workspace">
+          <div class="flex items-center gap-2">
+            <Link
+              :href="`/workspace/${workspace.id}/edit`"
+              class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="h-3.5 w-3.5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                />
+              </svg>
+              Düzenle
+            </Link>
+            <Button
+              @click="deleteWorkspace(workspace.id)"
               variant="outline"
               size="sm"
               class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
@@ -317,6 +373,20 @@
                     Yeni Yolculuk
                   </Link>
                 </div>
+
+                <!-- Çalışma Alanım (Tek başına) -->
+                <div class="border-t border-border pt-1.5">
+                  <Link
+                    href="/workspace/create"
+                    class="inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                    @click="showCreateDropdown = false"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    Yeni Çalışma Alanı
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -463,6 +533,11 @@ const isLoggedIn = computed(() => {
   return !!(page.props.auth && page.props.auth.user);
 });
 
+// Workspace count for visibility check
+const workspaceCount = computed(() => {
+  return page.props.workspaceCount || 0;
+});
+
 // Check if current route matches the given path
 const isActiveRoute = (path) => {
   const currentUrl = page.url;
@@ -578,6 +653,16 @@ const isTestCategoryCreatePage = computed(() => {
 const isTestCategoryEditPage = computed(() => {
   const url = page.url;
   return url.startsWith('/test-categories/') && url.includes('/edit');
+});
+
+const isWorkspaceShowPage = computed(() => {
+  const url = page.url;
+  return url.startsWith('/workspace/') && url !== '/workspace' && url !== '/workspace/create' && !url.includes('/edit');
+});
+
+const isWorkspaceEditPage = computed(() => {
+  const url = page.url;
+  return url.startsWith('/workspace/') && url.includes('/edit');
 });
 
 // Handle form submit from sidebar button
@@ -722,6 +807,21 @@ const deleteLanguagePack = async (id) => {
     });
   } catch (error) {
     console.error('Error deleting language pack:', error);
+  }
+};
+
+const deleteWorkspace = async (id) => {
+  if (!confirm('Bu çalışma alanını silmek istediğinizden emin misiniz? Çalışma alanına ait tüm ürünler de silinecektir. Bu işlem geri alınamaz.')) {
+    return;
+  }
+  try {
+    await router.delete(`/workspace/${id}`, {
+      onSuccess: () => {
+        router.visit(route('workspace.index'));
+      },
+    });
+  } catch (error) {
+    console.error('Error deleting workspace:', error);
   }
 };
 

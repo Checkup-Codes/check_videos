@@ -493,6 +493,13 @@
                 <NavItem href="/writes" icon="fa-solid fa-pencil" label="Yazılar" />
                 <!-- Journey - visible to everyone -->
                 <NavItem href="/journey" icon="fa-solid fa-road" label="Yolculuk" />
+                <!-- Workspace - visible if logged in OR has workspaces -->
+                <NavItem
+                  v-if="isLoggedIn || workspaceCount > 0"
+                  href="/workspace"
+                  icon="fa-solid fa-briefcase"
+                  label="Çalışma Alanım"
+                />
                 <!-- Admin Navigation for Logged In Users -->
                 <template v-if="isLoggedIn">
                   <NavItem href="/test-categories" icon="fa-solid fa-clipboard-question" label="Testler" />
@@ -729,12 +736,26 @@
                         <span>Yeni Yolculuk</span>
                       </Link>
                     </div>
+
+                    <!-- Çalışma Alanım (Tek başına) -->
+                    <div class="border-t border-border pt-2">
+                      <Link
+                        href="/workspace/create"
+                        class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                        @click="closeMenu"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        <span>Yeni Çalışma Alanı</span>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </template>
 
               <!-- Page Actions for Mobile -->
-              <div v-if="isLoggedIn && (isWriteShowPage || isWriteEditPage || isCategoryShowPage || isCategoryEditPage || isWordShowPage || isLanguagePackShowPage || isVersionShowPage || isTestCategoryShowPage || isTestCategoryEditPage || isTestShowPage || isTestEditPage || isJourneyShowPage || isJourneyEditPage || isServiceShowPage || isServiceEditPage)" class="border-t border-border pt-3">
+              <div v-if="isLoggedIn && (isWriteShowPage || isWriteEditPage || isCategoryShowPage || isCategoryEditPage || isWordShowPage || isLanguagePackShowPage || isVersionShowPage || isTestCategoryShowPage || isTestCategoryEditPage || isTestShowPage || isTestEditPage || isJourneyShowPage || isJourneyEditPage || isServiceShowPage || isServiceEditPage || isWorkspaceShowPage || isWorkspaceEditPage)" class="border-t border-border pt-3">
                 <PageActions variant="mobile" :on-link-click="closeMenu" />
               </div>
 
@@ -1075,6 +1096,11 @@ const isLoggedIn = computed(() => {
   return !!(page.props.auth && page.props.auth.user);
 });
 
+// Workspace count for visibility check
+const workspaceCount = computed(() => {
+  return page.props.workspaceCount || 0;
+});
+
 // Check if current route matches the given path
 const isActiveRoute = (path) => {
   const currentUrl = page.url;
@@ -1193,6 +1219,21 @@ const isServiceShowPage = computed(() => {
 const isServiceEditPage = computed(() => {
   const url = page.url;
   return url.startsWith('/services/') && url.includes('/edit');
+});
+
+const isWorkspaceShowPage = computed(() => {
+  const url = page.url;
+  return (
+    url.startsWith('/workspace/') &&
+    url !== '/workspace' &&
+    url !== '/workspace/create' &&
+    !url.includes('/edit')
+  );
+});
+
+const isWorkspaceEditPage = computed(() => {
+  const url = page.url;
+  return url.startsWith('/workspace/') && url.includes('/edit');
 });
 
 // Check if we're on a language pack show page (not word edit page)
