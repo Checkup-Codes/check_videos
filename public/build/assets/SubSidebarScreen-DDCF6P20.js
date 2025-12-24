@@ -1,1 +1,0 @@
-import{c as a,r as o,n as s,o as l}from"./ssr-B00CJT2V.js";const t={__name:"SubSidebarScreen",props:{infoClass:{type:String,default:"h-[calc(100vh-3rem)] lg:h-[calc(100vh-5.5rem)] overflow-y-auto overscroll-none"}},setup(e){return(r,n)=>(l(),a("div",{class:s(e.infoClass)},[o(r.$slots,"default")],2))}};export{t as _};

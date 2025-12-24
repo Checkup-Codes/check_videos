@@ -1,1 +1,0 @@
-import{Q as l,e as n,p as r}from"./ssr-B00CJT2V.js";function u(){const{props:t}=l(),e=n(!0),s=r(()=>{var o;return((o=t.screen)==null?void 0:o.isMobileSidebar)||!1}),a=()=>{e.value=!e.value},i=r(()=>s.value?"":"hidden lg:block");return{isCollapsed:e,isMobile:s,toggleSidebar:a,sidebarStyle:i}}export{u};

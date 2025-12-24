@@ -1,0 +1,1 @@
+import{Q as t,p as o,j as r,w as a,b as s,o as c}from"./ssr-DE0PqSHa.js";import{_}from"./CheckScreen-DRqaTQfr.js";import{_ as p}from"./IntroScreen-4b3JmAZQ.js";const d={__name:"Screen",setup(m){const{props:e}=t();return o(()=>e.projects||[]),(n,f)=>(c(),r(_,null,{default:a(()=>[s(p,{title:"Projeler"})]),_:1}))}};export{d as default};
