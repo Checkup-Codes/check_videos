@@ -1,7 +1,7 @@
 <template>
   <LayoutBookmarks>
     <template #screen>
-      <Screen :categories="categories" :allBookmarks="allBookmarks" />
+      <Screen :categories="categories" />
     </template>
   </LayoutBookmarks>
 </template>
@@ -10,9 +10,8 @@
 import { computed } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import LayoutBookmarks from '@/Pages/Bookmarks/_layouts/LayoutBookmarks.vue';
-import Screen from '@/Pages/Bookmarks/Index/Screen.vue';
+import Screen from '@/Pages/Bookmarks/Create/Screen.vue';
 
 const page = usePage();
 const categories = computed(() => page.props.categories || []);
-const allBookmarks = computed(() => page.props.allBookmarks || []);
 </script>

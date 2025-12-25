@@ -12,18 +12,19 @@
     />
     <NavItem
       v-if="isLoggedIn"
+      href="/bookmarks"
+      icon="fa-solid fa-bookmark"
+      label="Yer İmleri"
+      :is-compact="isCompact"
+    />
+    <NavItem
+      v-if="isLoggedIn"
       href="/test-categories"
       icon="fa-solid fa-clipboard-question"
       label="Testler"
       :is-compact="isCompact"
     />
-    <NavItem
-      v-if="isLoggedIn"
-      href="/services"
-      icon="fa-solid fa-bolt"
-      label="Servisler"
-      :is-compact="isCompact"
-    />
+    <NavItem v-if="isLoggedIn" href="/services" icon="fa-solid fa-bolt" label="Servisler" :is-compact="isCompact" />
     <NavItem
       v-if="isLoggedIn"
       href="/rendition/words"

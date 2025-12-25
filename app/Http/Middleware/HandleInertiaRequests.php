@@ -41,6 +41,7 @@ class HandleInertiaRequests extends Middleware
                 'name' => config('app.name'),
             ],
             'workspaceCount' => fn() => \App\Models\Workspace::published()->count(),
+            'bookmarkCount' => fn() => \App\Models\Bookmark::count(),
         ];
     }
 }

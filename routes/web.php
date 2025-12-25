@@ -24,6 +24,8 @@ use App\Http\Controllers\Tests\TestsController;
 use App\Http\Controllers\Tests\TestCategoriesController;
 use App\Http\Controllers\JourneyController;
 use App\Http\Controllers\WorkspaceController;
+use App\Http\Controllers\BookmarkController;
+use App\Http\Controllers\BookmarkCategoryController;
 use App\Http\Middleware\CheckWriteAccess;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -114,7 +116,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/project-service-todos/{id}', [ProjectServiceTodoController::class, 'destroy'])->name('project-service-todos.destroy');
 
     // Other Resources
-    Route::resource('/bookmarks', BookmarksController::class);
     Route::resource('/lessons', LessonsController::class);
     Route::resource('/software-products', SoftwareProductsController::class);
     Route::resource('/versions', VersionsController::class);
@@ -133,6 +134,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/workspace/{id}', [WorkspaceController::class, 'update'])->name('workspace.update');
     Route::delete('/workspace/{id}', [WorkspaceController::class, 'destroy'])->name('workspace.destroy');
 
+    // Bookmarks CRUD (Create/Edit/Delete requires auth, index is public)
+    Route::get('/bookmarks/create', [BookmarkController::class, 'create'])->name('bookmarks.create');
+    Route::post('/bookmarks', [BookmarkController::class, 'store'])->name('bookmarks.store');
+    Route::get('/bookmarks/{id}/edit', [BookmarkController::class, 'edit'])->name('bookmarks.edit');
+    Route::put('/bookmarks/{id}', [BookmarkController::class, 'update'])->name('bookmarks.update');
+    Route::delete('/bookmarks/{id}', [BookmarkController::class, 'destroy'])->name('bookmarks.destroy');
+
+    // Bookmark Categories CRUD (User only)
+    Route::get('/bookmark-categories/create', [BookmarkCategoryController::class, 'create'])->name('bookmark-categories.create');
+    Route::post('/bookmark-categories', [BookmarkCategoryController::class, 'store'])->name('bookmark-categories.store');
+    Route::put('/bookmark-categories/{id}', [BookmarkCategoryController::class, 'update'])->name('bookmark-categories.update');
+    Route::delete('/bookmark-categories/{id}', [BookmarkCategoryController::class, 'destroy'])->name('bookmark-categories.destroy');
+
     // SEO Management
     Route::get('/seo', [SeoController::class, 'edit'])->name('seo.edit');
     Route::put('/seo', [SeoController::class, 'update'])->name('seo.update');
@@ -149,6 +163,10 @@ Route::get('/journey/{id}', [JourneyController::class, 'show'])->name('journey.s
 // Workspace Routes (Public index, show - must be after /workspace/create to avoid route conflict)
 Route::get('/workspace', [WorkspaceController::class, 'index'])->name('workspace.index');
 Route::get('/workspace/{id}', [WorkspaceController::class, 'show'])->name('workspace.show');
+
+// Bookmarks Routes (Public - must be after /bookmarks/create to avoid route conflict)
+Route::get('/bookmarks', [BookmarkController::class, 'index'])->name('bookmarks.index');
+Route::get('/bookmarks/{id}', [BookmarkController::class, 'show'])->name('bookmarks.show');
 
 // Rendition Routes
 Route::group(['prefix' => 'rendition', 'as' => 'rendition.'], function () {
