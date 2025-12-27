@@ -24,6 +24,15 @@ const emit = defineEmits(['update:modelValue']);
 const editorContainer = ref(null);
 let quill = null;
 
+// Resim ekleme metodu - dışarıdan çağrılabilir
+const insertImage = (imageUrl, altText = '') => {
+  if (!quill) return;
+  
+  const range = quill.getSelection(true);
+  quill.insertEmbed(range.index, 'image', imageUrl);
+  quill.setSelection(range.index + 1);
+};
+
 onMounted(async () => {
   await nextTick();
 
@@ -90,5 +99,10 @@ onUnmounted(() => {
   if (quill) {
     quill = null;
   }
+});
+
+// Dışarıya metodları aç
+defineExpose({
+  insertImage,
 });
 </script>

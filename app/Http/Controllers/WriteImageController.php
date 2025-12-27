@@ -9,6 +9,25 @@ use Illuminate\Support\Facades\Log;
 
 class WriteImageController extends Controller
 {
+    public function index(Request $request)
+    {
+        $query = WriteImage::query();
+
+        if ($request->has('category')) {
+            $query->where('category', $request->category);
+        }
+
+        if ($request->has('related_id') && $request->related_id) {
+            $query->where('related_id', $request->related_id);
+        }
+
+        $images = $query->orderBy('created_at', 'desc')->get();
+
+        return response()->json([
+            'images' => $images
+        ]);
+    }
+
     public function store(Request $request)
     {
         try {

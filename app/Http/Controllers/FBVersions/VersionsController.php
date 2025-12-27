@@ -22,7 +22,7 @@ class VersionsController extends Controller
         $versions = $this->getAllVersionsWithDetails();
 
         return inertia('FBVersions/Versions/IndexVersion', [
-            'screen'     => $this->getScreenData(true),
+            'screen'     => $this->getScreenData('Versiyonlar', true),
             'versions' => $versions
         ]);
     }
@@ -35,7 +35,7 @@ class VersionsController extends Controller
         return inertia('FBVersions/Versions/ShowVersion', [
             'versions' => $versions,
             'version' => $version,
-            'screen' => $this->getScreenData(false),
+            'screen' => $this->getScreenData('v' . $version->version),
         ]);
     }
 
@@ -47,7 +47,7 @@ class VersionsController extends Controller
         return inertia('FBVersions/Versions/EditVersion', [
             'versions' => $versions,
             'version' => $version,
-            'screen' => $this->getScreenData(false),
+            'screen' => $this->getScreenData('v' . $version->version . ' - Düzenle'),
         ]);
     }
 
@@ -57,7 +57,7 @@ class VersionsController extends Controller
 
         return inertia('FBVersions/Versions/CreateVersion', [
             'versions' => $versions,
-            'screen' => $this->getScreenData(false),
+            'screen' => $this->getScreenData('Yeni Versiyon'),
         ]);
     }
 
@@ -178,23 +178,19 @@ class VersionsController extends Controller
 
     /**
      * Get screen data for versions pages
+     * Uses SeoService for centralized data management
      * 
+     * @param string|null $pageTitle
      * @param bool $isMobile
      * @return array
      */
-    private function getScreenData(bool $isMobile = false): array
+    private function getScreenData(?string $pageTitle = null, bool $isMobile = false): array
     {
-        $seo = \App\Models\Seo::first();
-        $logo = \App\Models\WritesCategories\WriteImage::where('category', 'logo')->first();
-
-        return [
-            'isMobileSidebar' => $isMobile,
-            'name' => 'versions',
-            'seo' => [
-                'title' => $seo->title ?? 'Seo Title',
-                'description' => $seo->description ?? 'Seo Description',
-                'logo' => $logo->image_path ?? '/images/checkup_codes_logo.png',
-            ],
-        ];
+        return app(\App\Services\SeoService::class)->getScreenSeo(
+            'versions',
+            $pageTitle,
+            null,
+            $isMobile
+        );
     }
 }

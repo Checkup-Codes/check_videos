@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Traits\HasScreenData;
 use App\Models\Journey;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,10 +11,7 @@ use Inertia\Inertia;
 
 class JourneyController extends Controller
 {
-    protected $screen = [
-        'name' => 'journey',
-        'isMobileSidebar' => false,
-    ];
+    use HasScreenData;
 
     /**
      * Display the timeline view.
@@ -41,7 +39,7 @@ class JourneyController extends Controller
         return Inertia::render('Journey/IndexJourney', [
             'entries' => $entries,
             'entriesByYear' => $entriesByYear,
-            'screen' => array_merge($this->screen, ['isMobileSidebar' => true]),
+            'screen' => $this->getScreenData('journey', 'Yolculuk', null, true),
         ]);
     }
 
@@ -51,7 +49,7 @@ class JourneyController extends Controller
     public function create()
     {
         return Inertia::render('Journey/CreateJourney', [
-            'screen' => $this->screen,
+            'screen' => $this->getScreenData('journey', 'Yeni Kayıt Oluştur'),
         ]);
     }
 
@@ -113,7 +111,7 @@ class JourneyController extends Controller
             'entry' => $entry,
             'entries' => $entries,
             'entriesByYear' => $entriesByYear,
-            'screen' => $this->screen,
+            'screen' => $this->getScreenData('journey', $entry->title),
         ]);
     }
 
@@ -138,7 +136,7 @@ class JourneyController extends Controller
             'entry' => $entry,
             'entries' => $entries,
             'entriesByYear' => $entriesByYear,
-            'screen' => $this->screen,
+            'screen' => $this->getScreenData('journey', $entry->title . ' - Düzenle'),
         ]);
     }
 

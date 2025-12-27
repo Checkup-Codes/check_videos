@@ -52,8 +52,13 @@ const updateWindowWidth = () => {
 // Get screen name from props - make it reactive
 const screenName = computed(() => page.props.screen?.name || '');
 
+// Browser tab title - screen.seo.title kullan (PageTitle | SiteName formatında)
 const titleName = computed(() => {
-  return (screenName.value ? screenName.value.charAt(0).toUpperCase() + screenName.value.slice(1) + ' - ' : '') + 'Rendition';
+  return (
+    page.props?.screen?.seo?.title ||
+    page.props?.app?.seo?.title ||
+    'Kelimeler'
+  );
 });
 
 const flashSuccess = ref(page.props.flash?.success);

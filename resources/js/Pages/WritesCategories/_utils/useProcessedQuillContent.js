@@ -9,6 +9,245 @@ import '@/Shared/Css/quill-styles.css';
 const contentCache = new Map();
 const cacheSize = 50; // Maximum number of cached items
 
+// Slider counter for unique IDs
+let sliderCounter = 0;
+
+/**
+ * Check if an element is an image wrapper
+ */
+function isImageElement(element) {
+  if (!element || element.nodeType !== Node.ELEMENT_NODE) return false;
+  
+  // Check if it's an img-skeleton-wrapper
+  if (element.classList && element.classList.contains('img-skeleton-wrapper')) return true;
+  
+  // Check if it's a paragraph containing only an image
+  if (element.tagName === 'P') {
+    const children = element.children;
+    if (children.length === 1 && children[0].tagName === 'IMG') return true;
+    // Check for img inside div wrapper
+    if (children.length === 1 && children[0].classList && children[0].classList.contains('img-skeleton-wrapper')) return true;
+  }
+  
+  // Check if it's a div containing only an image
+  if (element.tagName === 'DIV' && !element.classList.contains('image-slider-container')) {
+    const img = element.querySelector('img');
+    const textContent = element.textContent.trim();
+    if (img && textContent === '') return true;
+  }
+  
+  return false;
+}
+
+/**
+ * Get image src from an element
+ */
+function getImageFromElement(element) {
+  const img = element.querySelector('img');
+  return img;
+}
+
+/**
+ * Process consecutive images into sliders
+ * Finds image elements that are adjacent and groups them into a slider
+ * Does NOT remove other content - only groups consecutive images
+ */
+function processConsecutiveImagesIntoSliders(doc) {
+  const body = doc.body;
+  const children = Array.from(body.childNodes);
+  
+  let i = 0;
+  while (i < children.length) {
+    const child = children[i];
+    
+    // Skip non-element nodes (text, comments, etc.)
+    if (child.nodeType !== Node.ELEMENT_NODE) {
+      i++;
+      continue;
+    }
+    
+    // Check if this is an image element
+    if (isImageElement(child)) {
+      // Find consecutive image elements
+      const consecutiveImages = [child];
+      let j = i + 1;
+      
+      while (j < children.length) {
+        const nextChild = children[j];
+        
+        // Skip whitespace text nodes
+        if (nextChild.nodeType === Node.TEXT_NODE && nextChild.textContent.trim() === '') {
+          j++;
+          continue;
+        }
+        
+        // Check if next element is also an image
+        if (nextChild.nodeType === Node.ELEMENT_NODE && isImageElement(nextChild)) {
+          consecutiveImages.push(nextChild);
+          j++;
+        } else {
+          break;
+        }
+      }
+      
+      // If we have 2+ consecutive images, create a slider
+      if (consecutiveImages.length >= 2) {
+        const slider = createSlider(doc, consecutiveImages);
+        
+        // Insert slider before the first image
+        body.insertBefore(slider, consecutiveImages[0]);
+        
+        // Remove the original image elements
+        consecutiveImages.forEach(imgEl => {
+          if (imgEl.parentNode === body) {
+            body.removeChild(imgEl);
+          }
+        });
+        
+        // Update children array and continue from current position
+        children.splice(i, consecutiveImages.length, slider);
+      }
+    }
+    
+    i++;
+  }
+}
+
+/**
+ * Create a slider element from a group of image elements
+ */
+function createSlider(doc, imageElements) {
+  const sliderId = `image-slider-${sliderCounter++}`;
+  
+  // Create slider container
+  const sliderContainer = doc.createElement('div');
+  sliderContainer.className = 'image-slider-container';
+  sliderContainer.id = sliderId;
+  
+  // Create slides wrapper
+  const slidesWrapper = doc.createElement('div');
+  slidesWrapper.className = 'image-slider-slides';
+  
+  // Add images to slides
+  imageElements.forEach((imgWrapper, index) => {
+    const slide = doc.createElement('div');
+    slide.className = 'image-slider-slide';
+    slide.setAttribute('data-index', index.toString());
+    if (index === 0) slide.classList.add('active');
+    
+    // Get the image from the wrapper
+    const img = getImageFromElement(imgWrapper);
+    if (img) {
+      const slideImg = img.cloneNode(true);
+      // Reset styles for slider
+      slideImg.style.opacity = '1';
+      slideImg.style.width = 'auto';
+      slideImg.style.maxWidth = '100%';
+      slideImg.style.height = 'auto';
+      slideImg.style.maxHeight = '500px';
+      slideImg.style.objectFit = 'contain';
+      slideImg.style.margin = '0 auto';
+      slideImg.style.display = 'block';
+      slideImg.removeAttribute('onload');
+      slideImg.removeAttribute('onerror');
+      slide.appendChild(slideImg);
+    }
+    
+    slidesWrapper.appendChild(slide);
+  });
+  
+  sliderContainer.appendChild(slidesWrapper);
+  
+  // Create navigation arrows
+  const prevBtn = doc.createElement('button');
+  prevBtn.className = 'image-slider-btn image-slider-prev';
+  prevBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>`;
+  prevBtn.setAttribute('onclick', `window.imageSliderNav('${sliderId}', -1)`);
+  prevBtn.setAttribute('type', 'button');
+  
+  const nextBtn = doc.createElement('button');
+  nextBtn.className = 'image-slider-btn image-slider-next';
+  nextBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>`;
+  nextBtn.setAttribute('onclick', `window.imageSliderNav('${sliderId}', 1)`);
+  nextBtn.setAttribute('type', 'button');
+  
+  sliderContainer.appendChild(prevBtn);
+  sliderContainer.appendChild(nextBtn);
+  
+  // Create dots indicator
+  const dotsContainer = doc.createElement('div');
+  dotsContainer.className = 'image-slider-dots';
+  
+  imageElements.forEach((_, index) => {
+    const dot = doc.createElement('button');
+    dot.className = 'image-slider-dot';
+    dot.setAttribute('type', 'button');
+    if (index === 0) dot.classList.add('active');
+    dot.setAttribute('onclick', `window.imageSliderGoTo('${sliderId}', ${index})`);
+    dotsContainer.appendChild(dot);
+  });
+  
+  sliderContainer.appendChild(dotsContainer);
+  
+  // Counter
+  const counter = doc.createElement('div');
+  counter.className = 'image-slider-counter';
+  counter.innerHTML = `<span class="current">1</span> / <span class="total">${imageElements.length}</span>`;
+  sliderContainer.appendChild(counter);
+  
+  return sliderContainer;
+}
+
+// Global slider navigation functions
+if (typeof window !== 'undefined') {
+  window.imageSliderNav = function(sliderId, direction) {
+    const container = document.getElementById(sliderId);
+    if (!container) return;
+    
+    const slides = container.querySelectorAll('.image-slider-slide');
+    const dots = container.querySelectorAll('.image-slider-dot');
+    const counter = container.querySelector('.image-slider-counter .current');
+    
+    let currentIndex = 0;
+    slides.forEach((slide, index) => {
+      if (slide.classList.contains('active')) currentIndex = index;
+    });
+    
+    let newIndex = currentIndex + direction;
+    if (newIndex < 0) newIndex = slides.length - 1;
+    if (newIndex >= slides.length) newIndex = 0;
+    
+    slides.forEach((slide, index) => {
+      slide.classList.toggle('active', index === newIndex);
+    });
+    
+    dots.forEach((dot, index) => {
+      dot.classList.toggle('active', index === newIndex);
+    });
+    
+    if (counter) counter.textContent = (newIndex + 1).toString();
+  };
+  
+  window.imageSliderGoTo = function(sliderId, index) {
+    const container = document.getElementById(sliderId);
+    if (!container) return;
+    
+    const slides = container.querySelectorAll('.image-slider-slide');
+    const dots = container.querySelectorAll('.image-slider-dot');
+    const counter = container.querySelector('.image-slider-counter .current');
+    
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('active', i === index);
+    });
+    
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === index);
+    });
+    
+    if (counter) counter.textContent = (index + 1).toString();
+  };
+}
+
 /**
  * useProcessedQuillContent
  * @param {Ref} contentRef - The ref to the content container (for post-processing, e.g. links)
@@ -182,6 +421,9 @@ export function useProcessedQuillContent(contentRef, contentString) {
           }
         }
       });
+
+      // Process consecutive images into sliders
+      processConsecutiveImagesIntoSliders(doc);
 
       // Handle Quill list items for correct display
       const listItems = doc.querySelectorAll('li');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Projects;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Traits\HasScreenData;
 use App\Models\Projects\Project;
 use App\Models\Projects\Service;
 use App\Models\Projects\Customer;
@@ -14,15 +15,7 @@ use Illuminate\Support\Str;
 
 class ProjectsController extends Controller
 {
-    private $screen;
-
-    public function __construct()
-    {
-        $this->screen = [
-            'isMobileSidebar' => false,
-            'name' => 'projects'
-        ];
-    }
+    use HasScreenData;
 
     public function index()
     {
@@ -31,7 +24,7 @@ class ProjectsController extends Controller
         $customers = Customer::all();
         
         return Inertia::render('Projects/Project/IndexProject', [
-            'screen' => array_merge($this->screen, ['isMobileSidebar' => true]),
+            'screen' => $this->getScreenData('projects', 'Projeler', null, true),
             'projects' => $projects,
             'services' => $services,
             'customers' => $customers,
@@ -48,7 +41,7 @@ class ProjectsController extends Controller
         $projects = Project::with(['customer'])->get();
 
         return Inertia::render('Projects/Project/CreateProject', [
-            'screen' => array_merge($this->screen, ['isMobileSidebar' => false]),
+            'screen' => $this->getScreenData('projects', 'Yeni Proje'),
             'services' => $services,
             'customers' => $customers,
             'categories' => $categories,
@@ -126,7 +119,7 @@ class ProjectsController extends Controller
         $customers = Customer::all();
 
         return Inertia::render('Projects/Project/ShowProject', [
-            'screen' => $this->screen,
+            'screen' => $this->getScreenData('projects', $project->project_name),
             'project' => $project,
             'services' => $services,
             'projects' => $projects,
@@ -156,7 +149,7 @@ class ProjectsController extends Controller
         $projects = Project::with(['customer'])->get();
 
         return Inertia::render('Projects/Project/EditProject', [
-            'screen' => $this->screen,
+            'screen' => $this->getScreenData('projects', $project->project_name . ' - Düzenle'),
             'project' => $project,
             'services' => $services,
             'customers' => $customers,

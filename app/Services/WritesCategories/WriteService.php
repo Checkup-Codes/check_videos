@@ -8,8 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Services\WritesCategories\CategoryService;
-use App\Models\Seo;
-use App\Models\WritesCategories\WriteImage;
 use Illuminate\Support\Facades\Cache;
 
 class WriteService
@@ -315,18 +313,23 @@ class WriteService
         // Check if there's already a version 1 draw
         $existingDraw = $write->writeDraws()->where('version', 1)->first();
         
+        $drawData = [
+            'elements' => $data['elements'],
+        ];
+        
+        // Excalidraw'daki resimler files objesinde saklanır
+        if (isset($data['files'])) {
+            $drawData['files'] = $data['files'];
+        }
+        
         if ($existingDraw) {
             // Update the existing version 1 draw
-            $existingDraw->update([
-                'elements' => $data['elements'],
-            ]);
+            $existingDraw->update($drawData);
             $writeDraw = $existingDraw;
         } else {
             // Create new version 1 draw if none exists
-            $writeDraw = $write->writeDraws()->create([
-                'elements' => $data['elements'],
-                'version'  => 1,
-            ]);
+            $drawData['version'] = 1;
+            $writeDraw = $write->writeDraws()->create($drawData);
         }
         
         return [
@@ -350,19 +353,13 @@ class WriteService
         ];
     }
 
-    public function getScreenData(bool $isMobile = false): array
+    public function getScreenData(?string $pageTitle = null, bool $isMobile = false): array
     {
-        $seo = Seo::first();
-        $logo = WriteImage::where('category', 'logo')->first();
-
-        return [
-            'isMobileSidebar' => $isMobile,
-            'name' => 'writes',
-            'seo' => [
-                'title' => $seo->title ?? 'Seo Title',
-                'description' => $seo->description ?? 'Seo Description',
-                'logo' => $logo->image_path ?? '/images/checkup_codes_logo.png',
-            ],
-        ];
+        return app(\App\Services\SeoService::class)->getScreenSeo(
+            'writes',
+            $pageTitle,
+            null,
+            $isMobile
+        );
     }
 }

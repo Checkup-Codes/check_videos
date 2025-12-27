@@ -1,138 +1,134 @@
 <template>
   <LayoutJourney>
     <template #screen>
-        <div class="mx-auto max-w-2xl py-8">
-          <!-- Header -->
-          <div class="mb-8">
-            <Link
-              href="/journey"
-              class="mb-4 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-              </svg>
-              Geri
-            </Link>
-            <h1 class="text-3xl font-bold tracking-tight text-foreground">Yeni Kayıt</h1>
-            <p class="mt-2 text-muted-foreground">Yolculuğunuza yeni bir an ekleyin.</p>
+      <div class="mx-auto max-w-2xl px-4 py-6 sm:px-6">
+        <form @submit.prevent="submit" class="space-y-5">
+          <!-- Title -->
+          <div>
+            <label class="mb-1.5 block text-sm font-medium text-foreground">
+              Başlık <span class="text-destructive">*</span>
+            </label>
+            <input
+              v-model="form.title"
+              type="text"
+              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              :class="{ 'border-destructive': form.errors.title }"
+              placeholder="Bu günün başlığı..."
+              required
+            />
+            <p v-if="form.errors.title" class="mt-1 text-xs text-destructive">{{ form.errors.title }}</p>
           </div>
 
-          <!-- Form -->
-          <form @submit.prevent="submit" class="space-y-6">
-            <!-- Date -->
-            <div>
-              <label for="entry_date" class="mb-2 block text-sm font-medium text-foreground">
-                Tarih <span class="text-destructive">*</span>
-              </label>
+          <!-- Date -->
+          <div>
+            <label class="mb-1.5 block text-sm font-medium text-foreground">
+              Tarih <span class="text-destructive">*</span>
+            </label>
+            <input
+              v-model="form.entry_date"
+              type="date"
+              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              :class="{ 'border-destructive': form.errors.entry_date }"
+              required
+            />
+            <p v-if="form.errors.entry_date" class="mt-1 text-xs text-destructive">{{ form.errors.entry_date }}</p>
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label class="mb-1.5 block text-sm font-medium text-foreground">Açıklama</label>
+            <textarea
+              v-model="form.description"
+              rows="5"
+              class="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              :class="{ 'border-destructive': form.errors.description }"
+              placeholder="Bu gün hakkında notlarınız..."
+            ></textarea>
+            <p v-if="form.errors.description" class="mt-1 text-xs text-destructive">{{ form.errors.description }}</p>
+          </div>
+
+          <!-- Image -->
+          <div>
+            <label class="mb-1.5 block text-sm font-medium text-foreground">Görsel</label>
+            <div 
+              class="relative flex min-h-[140px] cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-input bg-muted/30 transition-colors hover:border-primary/50 hover:bg-muted/50"
+              @click="$refs.imageInput.click()"
+              @dragover.prevent
+              @drop.prevent="handleDrop"
+            >
               <input
-                id="entry_date"
-                v-model="form.entry_date"
-                type="date"
-                class="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                required
+                ref="imageInput"
+                type="file"
+                accept="image/*"
+                @change="handleImageChange"
+                class="hidden"
               />
-              <p v-if="form.errors.entry_date" class="mt-1 text-sm text-destructive">{{ form.errors.entry_date }}</p>
-            </div>
-
-            <!-- Title -->
-            <div>
-              <label for="title" class="mb-2 block text-sm font-medium text-foreground">
-                Başlık <span class="text-destructive">*</span>
-              </label>
-              <input
-                id="title"
-                v-model="form.title"
-                type="text"
-                class="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                placeholder="Bu günün başlığı..."
-                required
-              />
-              <p v-if="form.errors.title" class="mt-1 text-sm text-destructive">{{ form.errors.title }}</p>
-            </div>
-
-            <!-- Description -->
-            <div>
-              <label for="description" class="mb-2 block text-sm font-medium text-foreground">
-                Açıklama
-              </label>
-              <textarea
-                id="description"
-                v-model="form.description"
-                rows="6"
-                class="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                placeholder="Bu gün hakkında notlarınız..."
-              ></textarea>
-              <p v-if="form.errors.description" class="mt-1 text-sm text-destructive">{{ form.errors.description }}</p>
-            </div>
-
-            <!-- Image -->
-            <div>
-              <label for="image" class="mb-2 block text-sm font-medium text-foreground">
-                Görsel
-              </label>
-              <div class="relative">
-                <input
-                  id="image"
-                  type="file"
-                  accept="image/*"
-                  @change="handleImageChange"
-                  class="w-full cursor-pointer rounded-lg border border-input bg-background px-4 py-2.5 text-foreground file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-4 file:py-1 file:text-sm file:font-medium file:text-primary-foreground hover:file:bg-primary/90"
-                />
-              </div>
-              <!-- Image Preview -->
-              <div v-if="imagePreview" class="mt-3 overflow-hidden rounded-lg border border-border">
-                <img :src="imagePreview" alt="Preview" class="h-48 w-full object-cover" />
-              </div>
-              <p v-if="form.errors.image" class="mt-1 text-sm text-destructive">{{ form.errors.image }}</p>
-            </div>
-
-            <!-- Status -->
-            <div>
-              <label class="mb-2 block text-sm font-medium text-foreground">Durum</label>
-              <div class="flex gap-4">
-                <label class="flex cursor-pointer items-center gap-2">
-                  <input
-                    type="radio"
-                    v-model="form.status"
-                    value="published"
-                    class="h-4 w-4 border-input text-primary focus:ring-primary"
-                  />
-                  <span class="text-sm text-foreground">Yayınla</span>
-                </label>
-                <label class="flex cursor-pointer items-center gap-2">
-                  <input
-                    type="radio"
-                    v-model="form.status"
-                    value="draft"
-                    class="h-4 w-4 border-input text-primary focus:ring-primary"
-                  />
-                  <span class="text-sm text-foreground">Taslak</span>
-                </label>
-              </div>
-            </div>
-
-            <!-- Submit -->
-            <div class="flex items-center gap-3 pt-4">
-              <button
-                type="submit"
-                :disabled="form.processing"
-                class="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <svg v-if="form.processing" class="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <div v-if="!imagePreview" class="text-center p-4">
+                <svg class="mx-auto h-10 w-10 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                {{ form.processing ? 'Kaydediliyor...' : 'Kaydet' }}
-              </button>
-              <Link
-                href="/journey"
-                class="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-6 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-              >
-                İptal
-              </Link>
+                <p class="mt-2 text-sm text-muted-foreground">Tıklayın veya sürükleyin</p>
+              </div>
+              <img v-else :src="imagePreview" alt="Preview" class="h-full max-h-[200px] w-full rounded-md object-cover" />
             </div>
-          </form>
-        </div>
+            <button
+              v-if="imagePreview"
+              type="button"
+              @click="clearImage"
+              class="mt-2 text-xs text-destructive hover:underline"
+            >
+              Görseli Kaldır
+            </button>
+            <p v-if="form.errors.image" class="mt-1 text-xs text-destructive">{{ form.errors.image }}</p>
+          </div>
+
+          <!-- Status -->
+          <div>
+            <label class="mb-1.5 block text-sm font-medium text-foreground">Durum</label>
+            <div class="flex gap-4">
+              <label class="flex cursor-pointer items-center gap-2">
+                <input
+                  type="radio"
+                  v-model="form.status"
+                  value="published"
+                  class="h-4 w-4 border-input text-primary focus:ring-primary"
+                />
+                <span class="text-sm text-foreground">Yayınla</span>
+              </label>
+              <label class="flex cursor-pointer items-center gap-2">
+                <input
+                  type="radio"
+                  v-model="form.status"
+                  value="draft"
+                  class="h-4 w-4 border-input text-primary focus:ring-primary"
+                />
+                <span class="text-sm text-foreground">Taslak</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center justify-end gap-3 pt-2">
+            <Link
+              href="/journey"
+              class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground"
+            >
+              İptal
+            </Link>
+            <button
+              type="submit"
+              :disabled="form.processing"
+              class="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
+            >
+              <svg v-if="form.processing" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              {{ form.processing ? 'Kaydediliyor...' : 'Kaydet' }}
+            </button>
+          </div>
+        </form>
+      </div>
     </template>
   </LayoutJourney>
 </template>
@@ -142,7 +138,6 @@ import { ref } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import LayoutJourney from '@/Pages/Journey/_layouts/LayoutJourney.vue';
 
-// Get today's date in YYYY-MM-DD format
 const today = new Date().toISOString().split('T')[0];
 
 const form = useForm({
@@ -163,10 +158,22 @@ const handleImageChange = (event) => {
   }
 };
 
+const handleDrop = (event) => {
+  const file = event.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    form.image = file;
+    imagePreview.value = URL.createObjectURL(file);
+  }
+};
+
+const clearImage = () => {
+  form.image = null;
+  imagePreview.value = null;
+};
+
 const submit = () => {
   form.post('/journey', {
     forceFormData: true,
   });
 };
 </script>
-

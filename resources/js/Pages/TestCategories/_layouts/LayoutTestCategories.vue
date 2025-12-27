@@ -1,4 +1,5 @@
 <template>
+  <Head :title="browserTitle" />
   <FlashMessage :message="flashMessage" @close="handleFlashClose" />
   <CheckLayout
     :isCollapsed="!shouldHideSidebarContent"
@@ -24,7 +25,7 @@
 
 <script setup>
 import { computed, ref, provide, watch, onMounted, onBeforeUnmount } from 'vue';
-import { usePage } from '@inertiajs/vue3';
+import { usePage, Head } from '@inertiajs/vue3';
 import CheckLayout from '@/Components/CekapUI/Slots/CheckLayout.vue';
 import SidebarLayoutTest from './SidebarLayoutTest.vue';
 import SidebarLayoutCategory from './SidebarLayoutCategory.vue';
@@ -48,6 +49,15 @@ const handleFlashClose = () => {
 // Get screen name from props - make it reactive
 const page = usePage();
 const screenName = computed(() => page.props.screen?.name || 'tests');
+
+// Browser tab title - screen.seo.title kullan (PageTitle | SiteName formatında)
+const browserTitle = computed(() => {
+  return (
+    page.props?.screen?.seo?.title ||
+    page.props?.app?.seo?.title ||
+    'Testler'
+  );
+});
 
 const sidebarComponents = {
   tests: SidebarLayoutTest,

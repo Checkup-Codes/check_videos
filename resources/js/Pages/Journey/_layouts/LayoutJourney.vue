@@ -1,5 +1,5 @@
 <template>
-  <Head :title="titleName" />
+  <Head :title="browserTitle" />
   <FlashMessage :message="flashSuccess" />
   <CheckScreen>
       <slot name="screen"></slot>
@@ -21,8 +21,14 @@ const page = usePage();
 // Flash message
 const flashSuccess = computed(() => page.props.flash?.message);
 
-// Title
-const titleName = computed(() => 'Yolculuk');
+// Browser tab title - screen.seo.title kullan (PageTitle | SiteName formatında)
+const browserTitle = computed(() => {
+  return (
+    page.props?.screen?.seo?.title ||
+    page.props?.app?.seo?.title ||
+    'Yolculuk'
+  );
+});
 </script>
 
 

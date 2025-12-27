@@ -55,23 +55,19 @@ class MediaController extends Controller
 
     /**
      * Get screen data for media pages
+     * Uses SeoService for centralized data management
      * 
+     * @param string|null $pageTitle
      * @param bool $isMobile
      * @return array
      */
-    private function getScreenData(bool $isMobile = false): array
+    private function getScreenData(?string $pageTitle = null, bool $isMobile = false): array
     {
-        $seo = \App\Models\Seo::first();
-        $logo = \App\Models\WritesCategories\WriteImage::where('category', 'logo')->first();
-
-        return [
-            'isMobileSidebar' => $isMobile,
-            'name' => 'media',
-            'seo' => [
-                'title' => $seo->title ?? 'Seo Title',
-                'description' => $seo->description ?? 'Seo Description',
-                'logo' => $logo->image_path ?? '/images/checkup_codes_logo.png',
-            ],
-        ];
+        return app(\App\Services\SeoService::class)->getScreenSeo(
+            'media',
+            $pageTitle ?? 'Medya',
+            null,
+            $isMobile
+        );
     }
 }

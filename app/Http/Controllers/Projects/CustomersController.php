@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Projects;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Traits\HasScreenData;
 use App\Models\Projects\Customer;
 use App\Models\Projects\Project;
 use App\Models\Projects\Service;
@@ -11,15 +12,7 @@ use Inertia\Inertia;
 
 class CustomersController extends Controller
 {
-    private $screen;
-
-    public function __construct()
-    {
-        $this->screen = [
-            'isMobileSidebar' => false,
-            'name' => 'projects'
-        ];
-    }
+    use HasScreenData;
 
     public function index()
     {
@@ -28,7 +21,7 @@ class CustomersController extends Controller
         $services = Service::all();
 
         return Inertia::render('Projects/Customers/IndexCustomer', [
-            'screen' => array_merge($this->screen, ['isMobileSidebar' => true]),
+            'screen' => $this->getScreenData('projects', 'Müşteriler', null, true),
             'customers' => $customers,
             'projects' => $projects,
             'services' => $services,
@@ -43,7 +36,7 @@ class CustomersController extends Controller
         $customers = Customer::select('id', 'first_name', 'last_name', 'email', 'created_at')->get();
 
         return Inertia::render('Projects/Customers/CreateCustomer', [
-            'screen' => $this->screen,
+            'screen' => $this->getScreenData('projects', 'Yeni Müşteri'),
             'services' => $services,
             'projects' => $projects,
             'customers' => $customers,
@@ -79,7 +72,7 @@ class CustomersController extends Controller
         $customers = Customer::select('id', 'first_name', 'last_name', 'email', 'created_at')->get();
 
         return Inertia::render('Projects/Customers/ShowCustomer', [
-            'screen' => $this->screen,
+            'screen' => $this->getScreenData('projects', $customer->first_name . ' ' . $customer->last_name),
             'customer' => $customer,
             'services' => $services,
             'projects' => $projects,
@@ -97,7 +90,7 @@ class CustomersController extends Controller
         $customers = Customer::select('id', 'first_name', 'last_name', 'email', 'created_at')->get();
 
         return Inertia::render('Projects/Customers/EditCustomer', [
-            'screen' => $this->screen,
+            'screen' => $this->getScreenData('projects', $customer->first_name . ' ' . $customer->last_name . ' - Düzenle'),
             'customer' => $customer,
             'services' => $services,
             'projects' => $projects,

@@ -35,7 +35,7 @@ class CategoriesController extends Controller
 
         return inertia('WritesCategories/Categories/IndexCategory', [
             'categories' => $categoriesResult['data'],
-            'screen'     => $this->categoryService->getScreenData(isMobile: true),
+            'screen'     => $this->categoryService->getScreenData('Kategoriler', true),
             'writes'     => $writesResult['data'],
             'isAdmin'    => $isAdmin
         ]);
@@ -69,7 +69,7 @@ class CategoriesController extends Controller
             'categories' => $categoriesResult['data'],
             'category' => $category,
             'writes' => $writesResult['data'],
-            'screen'     => $this->categoryService->getScreenData(isMobile: false),
+            'screen'     => $this->categoryService->getScreenData($category->name),
             'isAdmin' => $isAdmin
         ]);
     }
@@ -87,7 +87,7 @@ class CategoriesController extends Controller
 
         return inertia('WritesCategories/Categories/CreateCategory', [
             'categories' => $categoriesResult['data'],
-            'screen'     => $this->categoryService->getScreenData(isMobile: true),
+            'screen'     => $this->categoryService->getScreenData('Yeni Kategori', true),
             'isAdmin' => $isAdmin
         ]);
     }
@@ -107,7 +107,7 @@ class CategoriesController extends Controller
         return inertia('WritesCategories/Categories/EditCategory', [
             'categories' => $categoriesResult['data'],
             'category' => $category->load('parent'),
-            'screen'     => $this->categoryService->getScreenData(isMobile: true),
+            'screen'     => $this->categoryService->getScreenData($category->name . ' - Düzenle', true),
             'isAdmin' => $isAdmin
         ]);
     }
@@ -209,7 +209,7 @@ class CategoriesController extends Controller
             'category' => $category,
             'writes' => $writesResult['data'],
             'write' => $writeResult['data'],
-            'screen'     => $this->categoryService->getScreenData(isMobile: false),
+            'screen'     => $this->categoryService->getScreenData($writeResult['data']->title),
             'isAdmin' => $isAdmin
         ]);
     }

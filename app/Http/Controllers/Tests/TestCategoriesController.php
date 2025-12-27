@@ -31,7 +31,7 @@ class TestCategoriesController extends Controller
 
         return inertia('TestCategories/Categories/IndexCategory', [
             'categories' => $categoriesResult['data'],
-            'screen'     => $this->categoryService->getScreenData(isMobile: true),
+            'screen'     => $this->categoryService->getScreenData('Test Kategorileri', true),
             'tests'     => $testsResult['data'],
             'isAdmin'    => $isAdmin
         ]);
@@ -57,7 +57,7 @@ class TestCategoriesController extends Controller
             'categories' => $categoriesResult['data'],
             'category' => $category,
             'tests' => $testsResult['data'],
-            'screen'     => $this->categoryService->getScreenData(isMobile: false),
+            'screen'     => $this->categoryService->getScreenData($category->name),
             'isAdmin' => $isAdmin
         ]);
     }
@@ -69,7 +69,7 @@ class TestCategoriesController extends Controller
 
         return inertia('TestCategories/Categories/CreateCategory', [
             'categories' => $categoriesResult['data'],
-            'screen'     => $this->categoryService->getScreenData(isMobile: true),
+            'screen'     => $this->categoryService->getScreenData('Yeni Test Kategorisi', true),
             'isAdmin' => $isAdmin
         ]);
     }
@@ -97,7 +97,7 @@ class TestCategoriesController extends Controller
                     'slug' => $category->parent->slug,
                 ] : null,
             ],
-            'screen'     => $this->categoryService->getScreenData(isMobile: true),
+            'screen'     => $this->categoryService->getScreenData($category->name . ' - Düzenle', true),
             'isAdmin' => $isAdmin
         ]);
     }

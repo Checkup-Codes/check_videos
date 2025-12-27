@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Projects;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Traits\HasScreenData;
 use App\Models\Projects\Service;
 use App\Models\Projects\Project;
 use App\Models\Projects\Customer;
@@ -11,16 +12,7 @@ use Inertia\Inertia;
 
 class ServicesController extends Controller
 {
-    private $screen;
-
-    public function __construct()
-    {
-        $this->screen = [
-            'isMobileSidebar' => false,
-            'name' => 'proj_services'
-        ];
-    }
-
+    use HasScreenData;
 
     public function index()
     {
@@ -29,7 +21,7 @@ class ServicesController extends Controller
         $customers = Customer::all();
 
         return Inertia::render('Projects/Services/IndexService', [
-            'screen' => array_merge($this->screen, ['isMobileSidebar' => true]),
+            'screen' => $this->getScreenData('proj_services', 'Servisler', null, true),
             'services' => $services,
             'projects' => $projects,
             'customers' => $customers,
@@ -50,7 +42,7 @@ class ServicesController extends Controller
 
         return Inertia::render('Projects/Services/ShowService', [
             'service' => $service,
-            'screen' => array_merge($this->screen, ['isMobileSidebar' => false]),
+            'screen' => $this->getScreenData('proj_services', $service->name),
             'services' => $services,
             'projects' => $projects,
             'customers' => $customers,
@@ -68,7 +60,7 @@ class ServicesController extends Controller
         $customers = Customer::all();
 
         return Inertia::render('Projects/Services/CreateService', [
-            'screen' => array_merge($this->screen, ['isMobileSidebar' => false]),
+            'screen' => $this->getScreenData('proj_services', 'Yeni Servis'),
             'services' => $services,
             'projects' => $projects,
             'customers' => $customers,
@@ -121,7 +113,7 @@ class ServicesController extends Controller
         $customers = Customer::all();
 
         return Inertia::render('Projects/Services/EditService', [
-            'screen' => array_merge($this->screen, ['isMobileSidebar' => false]),
+            'screen' => $this->getScreenData('proj_services', $service->name . ' - Düzenle'),
             'service' => $service,
             'services' => $services,
             'projects' => $projects,

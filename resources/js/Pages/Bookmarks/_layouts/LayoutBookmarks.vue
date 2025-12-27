@@ -49,10 +49,13 @@ const screenName = computed(() => page.props.screen?.name || 'bookmarks');
 // Flash message
 const flashSuccess = computed(() => page.props.flash?.message);
 
-// Title
+// Browser tab title - screen.seo.title kullan (PageTitle | SiteName formatında)
 const titleName = computed(() => {
-  const name = screenName.value;
-  return name ? name.charAt(0).toUpperCase() + name.slice(1) + ' - Yer İmleri' : 'Yer İmleri';
+  return (
+    page.props?.screen?.seo?.title ||
+    page.props?.app?.seo?.title ||
+    'Yer İmleri'
+  );
 });
 
 // Real mobile detection based on window width (client-side only)

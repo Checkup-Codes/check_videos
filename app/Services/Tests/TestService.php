@@ -12,8 +12,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Services\Tests\TestCategoryService;
-use App\Models\Seo;
-use App\Models\WritesCategories\WriteImage;
 use Illuminate\Support\Facades\Cache;
 
 class TestService
@@ -357,20 +355,14 @@ class TestService
         ];
     }
 
-    public function getScreenData(bool $isMobile = false): array
+    public function getScreenData(?string $pageTitle = null, bool $isMobile = false): array
     {
-        $seo = Seo::first();
-        $logo = WriteImage::where('category', 'logo')->first();
-
-        return [
-            'isMobileSidebar' => $isMobile,
-            'name' => 'tests',
-            'seo' => [
-                'title' => $seo->title ?? 'Seo Title',
-                'description' => $seo->description ?? 'Seo Description',
-                'logo' => $logo->image_path ?? '/images/checkup_codes_logo.png',
-            ],
-        ];
+        return app(\App\Services\SeoService::class)->getScreenSeo(
+            'tests',
+            $pageTitle,
+            null,
+            $isMobile
+        );
     }
 }
 

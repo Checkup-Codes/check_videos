@@ -577,12 +577,11 @@ onMounted(() => {
   };
   window.addEventListener('resize', resizeHandler);
 
-  // Handle browser beforeunload event for unsaved changes
+  // Handle browser beforeunload event - otomatik kaydet
   beforeUnloadHandler = (e) => {
     if (showDraw.value && excalidrawRef.value && excalidrawRef.value.hasUnsavedChanges) {
-      e.preventDefault();
-      e.returnValue = 'Kaydedilmemiş değişiklikler var. Sayfadan ayrılmak istediğinizden emin misiniz?';
-      return e.returnValue;
+      // Senkron olarak kaydetmeyi dene (beforeunload async desteklemiyor)
+      excalidrawRef.value.saveIfNeeded();
     }
   };
   window.addEventListener('beforeunload', beforeUnloadHandler);
@@ -664,13 +663,10 @@ onUnmounted(() => {
   }
 });
 
-router.on('before', (event) => {
-  // Check for unsaved changes in Excalidraw
+router.on('before', async (event) => {
+  // Otomatik kaydet - sayfa değiştirilirken
   if (showDraw.value && excalidrawRef.value && excalidrawRef.value.hasUnsavedChanges) {
-    if (!confirm('Kaydedilmemiş değişiklikler var. Sayfadan ayrılmak istediğinizden emin misiniz?')) {
-      event.preventDefault();
-      return;
-    }
+    await excalidrawRef.value.saveIfNeeded();
   }
 
   const writeListElement = document.querySelector('.write-list-container');
@@ -756,12 +752,10 @@ const generateTableOfContents = () => {
   showTableOfContents.value = toc.length > 0;
 };
 
-const toggleContent = () => {
-  // Check for unsaved changes before switching to text view
+const toggleContent = async () => {
+  // Otomatik kaydet - draw modundan çıkarken
   if (showDraw.value && excalidrawRef.value && excalidrawRef.value.hasUnsavedChanges) {
-    if (!confirm('Kaydedilmemiş değişiklikler var. Metne dönmek istediğinizden emin misiniz?')) {
-      return;
-    }
+    await excalidrawRef.value.saveIfNeeded();
   }
 
   showDraw.value = !showDraw.value;

@@ -32,7 +32,7 @@ class WritesController extends Controller
 
         return inertia('WritesCategories/Writes/IndexWrite', [
             'writes'     => $writesResult['data'],
-            'screen'     => $this->writeService->getScreenData(isMobile: true),
+            'screen'     => $this->writeService->getScreenData('Yazılar', true),
             'isAdmin'    => $isAdmin
         ]);
     }
@@ -51,7 +51,7 @@ class WritesController extends Controller
         return inertia('WritesCategories/Writes/CreateWrite', [
             'writes'     => $writesResult['data'],
             'categories' => $categoriesResult['data'],
-            'screen'     => $this->writeService->getScreenData(false),
+            'screen'     => $this->writeService->getScreenData('Yeni Yazı'),
             'isAdmin'    => $isAdmin
         ]);
     }
@@ -75,7 +75,7 @@ class WritesController extends Controller
             'writes'     => $writesResult['data'],
             'write'      => $writeResult['data'],
             'categories' => $categoriesResult['data'],
-            'screen'     => $this->writeService->getScreenData(false),
+            'screen'     => $this->writeService->getScreenData($writeResult['data']->title),
             'showDraw'   => filter_var(request()->query('showDraw', false), FILTER_VALIDATE_BOOLEAN),
             'isAdmin'    => $isAdmin
         ]);
@@ -97,7 +97,7 @@ class WritesController extends Controller
             'writes'     => $writesResult['data'],
             'write'      => $write,
             'categories' => $categoriesResult['data'],
-            'screen'     => $this->writeService->getScreenData(false),
+            'screen'     => $this->writeService->getScreenData($write->title . ' - Düzenle'),
             'isAdmin'    => $isAdmin
         ]);
     }
@@ -201,7 +201,8 @@ class WritesController extends Controller
         $write = Write::where('id', $writeId)->firstOrFail();
 
         $result = $this->writeService->addDraw($write, [
-            'elements' => $request->input('elements')
+            'elements' => $request->input('elements'),
+            'files' => $request->input('files'),
         ]);
 
         return response()->json([

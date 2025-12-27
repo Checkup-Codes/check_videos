@@ -16,6 +16,7 @@ class WriteDraw extends Model
     protected $fillable = [
         'write_id',
         'elements',
+        'files',
         'version',
     ];
 

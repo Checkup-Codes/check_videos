@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\WritesCategories\WriteImage;
-use App\Models\Seo;
-
 class IndexController extends Controller
 {
     private array $screenDefault;
 
     public function __construct()
     {
-        $this->screenDefault = $this->getScreenData(false);
+        $this->screenDefault = $this->getScreenData();
     }
 
     public function index()
@@ -42,23 +39,19 @@ class IndexController extends Controller
 
     /**
      * Get screen data for index page
+     * Uses SeoService for centralized data management
      * 
+     * @param string|null $pageTitle
      * @param bool $isMobile
      * @return array
      */
-    private function getScreenData(bool $isMobile = false): array
+    private function getScreenData(?string $pageTitle = null, bool $isMobile = false): array
     {
-        $seo = Seo::first();
-        $logo = WriteImage::where('category', 'logo')->first();
-
-        return [
-            'isMobileSidebar' => $isMobile,
-            'name' => 'index',
-            'seo' => [
-                'title' => $seo->title ?? 'Seo Title',
-                'description' => $seo->description ?? 'Seo Description',
-                'logo' => $logo->image_path ?? '/images/checkup_codes_logo.png',
-            ],
-        ];
+        return app(\App\Services\SeoService::class)->getScreenSeo(
+            'index',
+            $pageTitle,
+            null,
+            $isMobile
+        );
     }
 }

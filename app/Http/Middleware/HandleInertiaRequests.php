@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use App\Services\SeoService;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -37,11 +38,29 @@ class HandleInertiaRequests extends Middleware
             'flash' => [
                 'success' => fn() => $request->session()->get('success'),
             ],
-            'app' => [
-                'name' => config('app.name'),
-            ],
+            'app' => fn() => $this->getAppData(),
             'workspaceCount' => fn() => \App\Models\Workspace::published()->count(),
             'bookmarkCount' => fn() => \App\Models\Bookmark::count(),
+        ];
+    }
+
+    /**
+     * Get global app data including SEO and logo
+     * Uses SeoService for centralized data management
+     */
+    private function getAppData(): array
+    {
+        $seoService = app(SeoService::class);
+        $globalSeo = $seoService->getGlobalSeo();
+
+        return [
+            'name' => config('app.name'),
+            'seo' => [
+                'title' => $globalSeo['siteName'],
+                'siteName' => $globalSeo['siteName'],
+                'description' => $globalSeo['siteDescription'],
+                'logo' => $globalSeo['logo'],
+            ],
         ];
     }
 }

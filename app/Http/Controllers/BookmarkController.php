@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Traits\HasScreenData;
 use App\Models\Bookmark;
 use App\Models\BookmarkCategory;
 use Illuminate\Http\Request;
@@ -10,10 +11,7 @@ use Inertia\Inertia;
 
 class BookmarkController extends Controller
 {
-    protected $screen = [
-        'name' => 'bookmarks',
-        'isMobileSidebar' => false,
-    ];
+    use HasScreenData;
 
     /**
      * Display the bookmarks view.
@@ -88,7 +86,7 @@ class BookmarkController extends Controller
         return Inertia::render('Bookmarks/IndexBookmarks', [
             'categories' => $categories,
             'allBookmarks' => $allBookmarks,
-            'screen' => $this->screen,
+            'screen' => $this->getScreenData('bookmarks', 'Yer İmleri', null, true),
         ]);
     }
 
@@ -109,7 +107,7 @@ class BookmarkController extends Controller
 
         return Inertia::render('Bookmarks/CreateBookmark', [
             'categories' => $categories,
-            'screen' => $this->screen,
+            'screen' => $this->getScreenData('bookmarks', 'Yeni Yer İmi'),
         ]);
     }
 
@@ -192,7 +190,7 @@ class BookmarkController extends Controller
         return Inertia::render('Bookmarks/ShowBookmark', [
             'bookmark' => $bookmark,
             'categories' => $categories,
-            'screen' => $this->screen,
+            'screen' => $this->getScreenData('bookmarks', $bookmark->name),
         ]);
     }
 
@@ -221,7 +219,7 @@ class BookmarkController extends Controller
         return Inertia::render('Bookmarks/EditBookmark', [
             'bookmark' => $bookmark,
             'categories' => $categories,
-            'screen' => $this->screen,
+            'screen' => $this->getScreenData('bookmarks', $bookmark->name . ' - Düzenle'),
         ]);
     }
 

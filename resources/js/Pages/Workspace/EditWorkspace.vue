@@ -1,4 +1,5 @@
 <template>
+  <Head :title="browserTitle" />
   <CheckScreen>
     <div class="mx-auto max-w-4xl py-8">
       <!-- Header -->
@@ -199,9 +200,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { Link, useForm } from '@inertiajs/vue3';
+import { ref, onMounted, computed } from 'vue';
+import { Link, useForm, usePage, Head } from '@inertiajs/vue3';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+
+const page = usePage();
+
+// Browser tab title
+const browserTitle = computed(() => {
+  return (
+    page.props?.screen?.seo?.title ||
+    page.props?.app?.seo?.title ||
+    'Çalışma Alanı Düzenle'
+  );
+});
 
 const props = defineProps({
   workspace: {

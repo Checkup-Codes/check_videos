@@ -126,7 +126,7 @@ class WordController extends Controller
                     'status' => $status,
                 ],
                 'languagePacks' => $languagePacks,
-                'screen' => $this->getScreenData(true)
+                'screen' => $this->getScreenData('Kelimeler', true)
             ]);
         } catch (\Exception $e) {
             // Log the error for debugging
@@ -220,7 +220,7 @@ class WordController extends Controller
                     'slug' => $languagePack->slug,
                     'language' => $languagePack->language,
                 ],
-                'screen' => $this->getScreenData(false)
+                'screen' => $this->getScreenData($languagePack->name)
             ]);
         } catch (\Exception $e) {
             Log::error('Error in WordController@show: ' . $e->getMessage());
@@ -230,7 +230,7 @@ class WordController extends Controller
                 'words' => [],
                 'languagePacks' => [],
                 'pack' => null,
-                'screen' => $this->getScreenData(false),
+                'screen' => $this->getScreenData('Kelimeler'),
                 'error' => 'Verileri yüklerken bir hata oluştu: ' . $e->getMessage()
             ]);
         }
@@ -255,7 +255,7 @@ class WordController extends Controller
 
         return Inertia::render('Rendition/Words/CreateWord', [
             'languagePacks' => $languagePacks,
-            'screen' => $this->getScreenData(false)
+            'screen' => $this->getScreenData('Yeni Kelime')
         ]);
     }
 
@@ -390,7 +390,7 @@ class WordController extends Controller
         return Inertia::render('Rendition/Words/EditWord', [
             'word' => $word,
             'languagePacks' => $languagePacks,
-            'screen' => $this->getScreenData(true)
+            'screen' => $this->getScreenData($word->word . ' - Düzenle', true)
         ]);
     }
 
@@ -714,23 +714,19 @@ class WordController extends Controller
 
     /**
      * Get screen data for rendition words pages
+     * Uses SeoService for centralized data management
      * 
+     * @param string|null $pageTitle
      * @param bool $isMobile
      * @return array
      */
-    private function getScreenData(bool $isMobile = false): array
+    private function getScreenData(?string $pageTitle = null, bool $isMobile = false): array
     {
-        $seo = \App\Models\Seo::first();
-        $logo = \App\Models\WritesCategories\WriteImage::where('category', 'logo')->first();
-
-        return [
-            'isMobileSidebar' => $isMobile,
-            'name' => 'words',
-            'seo' => [
-                'title' => $seo->title ?? 'Seo Title',
-                'description' => $seo->description ?? 'Seo Description',
-                'logo' => $logo->image_path ?? '/images/checkup_codes_logo.png',
-            ],
-        ];
+        return app(\App\Services\SeoService::class)->getScreenSeo(
+            'words',
+            $pageTitle,
+            null,
+            $isMobile
+        );
     }
 }

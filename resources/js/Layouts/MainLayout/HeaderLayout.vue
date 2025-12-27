@@ -20,7 +20,7 @@
         <div
           class="flex h-7 w-7 items-center justify-center overflow-hidden rounded-md bg-primary/10 ring-1 ring-primary/20"
         >
-          <template v-if="logoPath && !isLoading">
+          <template v-if="logoPath && !logoError">
             <img :src="logoPath" :alt="logoAlt" class="h-full w-full object-cover" @error="handleImageError" />
           </template>
           <span v-else class="text-xs font-semibold text-primary">{{ seoTitle.charAt(0).toUpperCase() }}</span>
@@ -56,7 +56,7 @@
           <div
             class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-md bg-primary/10 ring-1 ring-primary/20"
           >
-            <template v-if="logoPath && !isLoading">
+            <template v-if="logoPath && !logoError">
               <img :src="logoPath" :alt="logoAlt" class="h-full w-full object-cover" @error="handleImageError" />
             </template>
             <span v-else class="text-sm font-semibold text-primary">{{ seoTitle.charAt(0).toUpperCase() }}</span>
@@ -1244,12 +1244,26 @@ const props = defineProps({
   },
 });
 
+const page = usePage();
+
+// Header'da gösterilecek site adı (sadece siteName, pageTitle değil)
 const seoTitle = computed(() => {
+  // Priority: screen.seo.siteName > app.seo.siteName > app.seo.title > app.name > fallback
+  return (
+    page.props?.screen?.seo?.siteName ||
+    page.props?.app?.seo?.siteName ||
+    page.props?.app?.seo?.title ||
+    page.props?.app?.name ||
+    'Check-up Codes'
+  );
+});
+
+// Browser tab title (PageTitle | SiteName formatında)
+const browserTitle = computed(() => {
   return (
     page.props?.screen?.seo?.title ||
-    page.props?.seo?.title ||
     page.props?.app?.seo?.title ||
-    page.props?.app?.description ||
+    page.props?.app?.name ||
     'Check-up Codes'
   );
 });
@@ -1257,11 +1271,10 @@ const seoTitle = computed(() => {
 const isMenuOpen = ref(false);
 const showProfileDropdown = ref(false);
 const showMobileCreateDropdown = ref(false);
-const page = usePage();
 const store = useStore();
 const imagePath = ref('');
 const auth = ref(null);
-const appName = computed(() => usePage().props.app.name);
+const appName = computed(() => page.props?.app?.name || 'Check-up Codes');
 const title = ref('');
 
 // Language dropdown
@@ -1281,15 +1294,14 @@ const searchInputRef = ref(null);
 // Theme management
 const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
 
-// Logo path logic
-const logoPath = ref(
-  page.props?.screen?.seo?.logo || page.props?.seo?.logo || page.props?.app?.seo?.logo || page.props?.app?.logo || null
-);
+// Logo path logic - priority: screen.seo.logo > app.seo.logo > fallback
+const logoPath = computed(() => {
+  return page.props?.screen?.seo?.logo || page.props?.app?.seo?.logo || null;
+});
 
 const logoAlt = computed(() => {
   return (
     page.props?.screen?.seo?.logo_alt ||
-    page.props?.seo?.logo_alt ||
     page.props?.app?.seo?.logo_alt ||
     seoTitle.value ||
     'Logo'
@@ -1297,10 +1309,11 @@ const logoAlt = computed(() => {
 });
 
 const isLoading = ref(false);
+const logoError = ref(false);
 
 const handleImageError = () => {
-  // Logo yüklenemediğinde logoPath'i null yap
-  logoPath.value = null;
+  // Logo yüklenemediğinde hata flag'ini set et
+  logoError.value = true;
 };
 
 // Dark/Light mode logic

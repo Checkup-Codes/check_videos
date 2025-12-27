@@ -24,10 +24,14 @@ import SidebarLayout from './MainLayout/SidebarLayout.vue';
 
 const page = usePage();
 
+// Browser tab title - screen.seo.title kullan (PageTitle | SiteName formatında)
 const title = computed(() => {
-  const pageTitle = page.props.title;
-  const appName = page.props.app.name;
-  return pageTitle ? `${pageTitle} - ${appName}` : appName;
+  return (
+    page.props?.screen?.seo?.title ||
+    page.props?.app?.seo?.title ||
+    page.props?.app?.name ||
+    'Check-up Codes'
+  );
 });
 
 const showSidebar = ref(false);

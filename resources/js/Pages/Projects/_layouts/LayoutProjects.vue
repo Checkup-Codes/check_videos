@@ -49,8 +49,13 @@ const handleFlashClose = () => {
 const page = usePage();
 const screenName = computed(() => page.props.screen?.name || '');
 
+// Browser tab title - screen.seo.title kullan (PageTitle | SiteName formatında)
 const titleName = computed(() => {
-  return (screenName.value ? screenName.value.charAt(0).toUpperCase() + screenName.value.slice(1) + ' - ' : '') + 'Projeler';
+  return (
+    page.props?.screen?.seo?.title ||
+    page.props?.app?.seo?.title ||
+    'Projeler'
+  );
 });
 
 // Real mobile detection based on window width (client-side only)

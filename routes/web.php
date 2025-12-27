@@ -150,6 +150,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // SEO Management
     Route::get('/seo', [SeoController::class, 'edit'])->name('seo.edit');
     Route::put('/seo', [SeoController::class, 'update'])->name('seo.update');
+    Route::post('/seo/favicon', [SeoController::class, 'uploadFavicon'])->name('seo.upload-favicon');
+    Route::post('/seo/og-image', [SeoController::class, 'uploadOgImage'])->name('seo.upload-og-image');
+    Route::post('/seo/apple-touch-icon', [SeoController::class, 'uploadAppleTouchIcon'])->name('seo.upload-apple-touch-icon');
 
     // Theme Management
     Route::get('/theme-management', function () {
@@ -190,6 +193,7 @@ Route::get('/api/social-media', [SocialMediaController::class, 'getAll'])->name(
 Route::get('/api/logo', [MediaController::class, 'getLogo'])->name('api.logo');
 Route::get('/api/categories/{category}/writes', [CategoriesController::class, 'getWrites'])->name('api.categories.writes');
 Route::get('/api/search', [WritesController::class, 'search'])->name('api.search');
+Route::get('/api/write-images', [WriteImageController::class, 'index'])->name('api.write-images.index');
 
 // SEO Routes
 Route::get('/robots.txt', [App\Http\Controllers\RobotsController::class, 'generate']);

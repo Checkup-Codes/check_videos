@@ -3,119 +3,230 @@
 namespace App\Services;
 
 use App\Models\Seo;
+use App\Models\WritesCategories\WriteImage;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
 
+/**
+ * SeoService - Merkezi SEO veri yönetimi
+ * 
+ * Tüm SEO verilerini tek bir yerden yönetir.
+ * Request-scope cache ile aynı request'te tekrar sorgu atmaz.
+ * Multi-tenancy desteği için tenant context eklenebilir.
+ */
 class SeoService
 {
-    private const CACHE_PREFIX = 'seo_';
-    private const CACHE_TTL = 3600; // 1 hour
+    private static ?array $cachedData = null;
+    
+    // Cache TTL (saniye) - production'da artırılabilir
+    private const CACHE_TTL = 300; // 5 dakika
 
-    public function getSeoData(string $route, array $parameters = []): array
+    /**
+     * Global SEO verilerini getir (site geneli)
+     * Request içinde cache'lenir, tekrar sorgu atmaz
+     */
+    public function getGlobalSeo(): array
     {
-        $cacheKey = self::CACHE_PREFIX . md5($route . json_encode($parameters));
+        if (self::$cachedData !== null) {
+            return self::$cachedData;
+        }
 
-        return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($route, $parameters) {
-            $seo = Seo::where('route', $route)->first();
-
-            if (!$seo) {
-                return [];
-            }
+        // Laravel cache ile DB sorgularını minimize et
+        self::$cachedData = Cache::remember($this->getCacheKey(), self::CACHE_TTL, function () {
+            $seo = Seo::first();
+            $logo = WriteImage::where('category', 'logo')->first();
 
             return [
-                'title' => $this->replacePlaceholders($seo->title, $parameters),
-                'description' => $this->replacePlaceholders($seo->description, $parameters),
-                'keywords' => $seo->keywords,
-                'og_title' => $this->replacePlaceholders($seo->og_title ?? $seo->title, $parameters),
-                'og_description' => $this->replacePlaceholders($seo->og_description ?? $seo->description, $parameters),
-                'og_image' => $seo->og_image,
-                'canonical_url' => $this->replacePlaceholders($seo->canonical_url ?? url()->current(), $parameters),
+                // Site Identity
+                'siteName' => $seo->site_name ?? $seo->title ?? config('app.name', 'Check-up Codes'),
+                'tagline' => $seo->tagline ?? '',
+                'siteDescription' => $seo->description ?? '',
+                'keywords' => $seo->keywords ?? '',
+                'author' => $seo->author ?? '',
+                'language' => $seo->language ?? 'tr',
+                'locale' => $seo->locale ?? 'tr_TR',
+                
+                // Images
+                'logo' => $logo->image_path ?? '/images/checkup_codes_logo.png',
+                'favicon' => $seo->favicon ?? '/favicon.ico',
+                'appleTouchIcon' => $seo->apple_touch_icon ?? null,
+                'ogImage' => $seo->og_image ?? null,
+                'themeColor' => $seo->theme_color ?? '#000000',
+                
+                // Open Graph
+                'ogTitle' => $seo->og_title ?? $seo->site_name ?? config('app.name'),
+                'ogDescription' => $seo->og_description ?? $seo->description ?? '',
+                
+                // Twitter
+                'twitterCard' => $seo->twitter_card ?? 'summary_large_image',
+                'twitterSite' => $seo->twitter_site ?? null,
+                'twitterCreator' => $seo->twitter_creator ?? null,
+                
+                // Technical
+                'canonicalUrl' => $seo->canonical_url ?? null,
                 'robots' => $seo->robots ?? 'index, follow',
-                'schema_org' => $seo->schema_org ?? null,
+                'schemaOrg' => $seo->schema_org ?? null,
+                
+                // Verification & Analytics
+                'googleVerification' => $seo->google_verification ?? null,
+                'bingVerification' => $seo->bing_verification ?? null,
+                'yandexVerification' => $seo->yandex_verification ?? null,
+                'googleAnalyticsId' => $seo->google_analytics_id ?? null,
+                'googleTagManagerId' => $seo->google_tag_manager_id ?? null,
             ];
         });
+
+        return self::$cachedData;
     }
 
-    public function createOrUpdateSeo(string $route, array $data): Seo
+    /**
+     * Sayfa bazlı SEO verisi oluştur
+     * 
+     * @param string $screenName Sayfa adı (route/screen identifier)
+     * @param string|null $pageTitle Sayfa başlığı (browser tab için, opsiyonel)
+     * @param string|null $pageDescription Sayfa açıklaması (opsiyonel)
+     * @param bool $isMobileSidebar Mobil sidebar gösterilsin mi
+     */
+    public function getScreenSeo(
+        string $screenName,
+        ?string $pageTitle = null,
+        ?string $pageDescription = null,
+        bool $isMobileSidebar = false
+    ): array {
+        $global = $this->getGlobalSeo();
+
+        return [
+            'name' => $screenName,
+            'isMobileSidebar' => $isMobileSidebar,
+            'seo' => [
+                // Browser tab title: "PageTitle | SiteName" veya sadece "SiteName"
+                'title' => $pageTitle 
+                    ? "{$pageTitle} | {$global['siteName']}" 
+                    : $global['siteName'],
+                'pageTitle' => $pageTitle, // Sadece sayfa başlığı (opsiyonel)
+                'siteName' => $global['siteName'], // Header'da gösterilecek site adı
+                'tagline' => $global['tagline'],
+                'description' => $pageDescription ?? $global['siteDescription'],
+                'keywords' => $global['keywords'],
+                'author' => $global['author'],
+                'language' => $global['language'],
+                'locale' => $global['locale'],
+                
+                // Images
+                'logo' => $global['logo'],
+                'favicon' => $global['favicon'],
+                'appleTouchIcon' => $global['appleTouchIcon'],
+                'ogImage' => $global['ogImage'],
+                'themeColor' => $global['themeColor'],
+                
+                // Open Graph
+                'ogTitle' => $pageTitle ?? $global['ogTitle'],
+                'ogDescription' => $pageDescription ?? $global['ogDescription'],
+                
+                // Twitter
+                'twitterCard' => $global['twitterCard'],
+                'twitterSite' => $global['twitterSite'],
+                'twitterCreator' => $global['twitterCreator'],
+                
+                // Technical
+                'robots' => $global['robots'],
+                
+                // Analytics
+                'googleAnalyticsId' => $global['googleAnalyticsId'],
+                'googleTagManagerId' => $global['googleTagManagerId'],
+            ],
+        ];
+    }
+
+    /**
+     * Tam SEO meta verilerini al (blade template için)
+     */
+    public function getFullMeta(?string $pageTitle = null, ?string $pageDescription = null): array
     {
-        if ($route !== 'home') {
-            throw new \Exception('Sadece home route\'u için SEO verisi düzenlenebilir.');
-        }
+        $global = $this->getGlobalSeo();
+        
+        $title = $pageTitle 
+            ? "{$pageTitle} | {$global['siteName']}" 
+            : $global['siteName'];
 
-        $seo = Seo::updateOrCreate(
-            ['route' => $route],
-            [
-                'title' => $data['title'],
-                'description' => $data['description'],
-                'keywords' => $data['keywords'] ?? null,
-                'og_title' => $data['og_title'] ?? null,
-                'og_description' => $data['og_description'] ?? null,
-                'og_image' => $data['og_image'] ?? null,
-                'canonical_url' => $data['canonical_url'] ?? null,
-                'robots' => $data['robots'] ?? 'index, follow',
-                'schema_org' => $data['schema_org'] ?? null,
-            ]
-        );
-
-        $this->clearCache();
-        return $seo;
+        return [
+            'title' => $title,
+            'description' => $pageDescription ?? $global['siteDescription'],
+            'keywords' => $global['keywords'],
+            'author' => $global['author'],
+            'robots' => $global['robots'],
+            'language' => $global['language'],
+            'locale' => $global['locale'],
+            
+            // Open Graph
+            'og' => [
+                'title' => $pageTitle ?? $global['ogTitle'],
+                'description' => $pageDescription ?? $global['ogDescription'],
+                'image' => $global['ogImage'],
+                'type' => 'website',
+                'locale' => $global['locale'],
+                'site_name' => $global['siteName'],
+            ],
+            
+            // Twitter
+            'twitter' => [
+                'card' => $global['twitterCard'],
+                'site' => $global['twitterSite'],
+                'creator' => $global['twitterCreator'],
+                'title' => $pageTitle ?? $global['ogTitle'],
+                'description' => $pageDescription ?? $global['ogDescription'],
+                'image' => $global['ogImage'],
+            ],
+            
+            // Icons
+            'favicon' => $global['favicon'],
+            'appleTouchIcon' => $global['appleTouchIcon'],
+            'themeColor' => $global['themeColor'],
+            
+            // Verification
+            'verification' => [
+                'google' => $global['googleVerification'],
+                'bing' => $global['bingVerification'],
+                'yandex' => $global['yandexVerification'],
+            ],
+            
+            // Analytics
+            'analytics' => [
+                'googleAnalyticsId' => $global['googleAnalyticsId'],
+                'googleTagManagerId' => $global['googleTagManagerId'],
+            ],
+            
+            // Schema.org
+            'schemaOrg' => $global['schemaOrg'],
+        ];
     }
 
-    public function deleteSeo(string $route): bool
+    /**
+     * Cache key oluştur
+     * Multi-tenancy için tenant_id eklenebilir
+     */
+    private function getCacheKey(): string
     {
-        if ($route === 'home') {
-            throw new \Exception('Home route\'u silinemez.');
-        }
-
-        $deleted = Seo::where('route', $route)->delete();
-        if ($deleted) {
-            $this->clearCache();
-        }
-        return $deleted;
+        // TODO: Multi-tenancy için tenant context ekle
+        // $tenantId = app('tenant')->id ?? 'default';
+        // return "seo_data_{$tenantId}";
+        
+        return 'seo_data_global';
     }
 
-    public function getAllSeoData(): array
-    {
-        return Cache::remember(self::CACHE_PREFIX . 'all', self::CACHE_TTL, function () {
-            return Seo::all()->map(function ($seo) {
-                return [
-                    'id' => $seo->id,
-                    'route' => $seo->route,
-                    'title' => $seo->title,
-                    'description' => $seo->description,
-                    'keywords' => $seo->keywords,
-                    'og_title' => $seo->og_title,
-                    'og_description' => $seo->og_description,
-                    'og_image' => $seo->og_image,
-                    'canonical_url' => $seo->canonical_url,
-                    'robots' => $seo->robots,
-                    'schema_org' => $seo->schema_org,
-                    'created_at' => $seo->created_at,
-                    'updated_at' => $seo->updated_at,
-                ];
-            })->toArray();
-        });
-    }
-
-    private function replacePlaceholders(string $text, array $parameters): string
-    {
-        foreach ($parameters as $key => $value) {
-            $text = str_replace('{' . $key . '}', $value, $text);
-        }
-        return $text;
-    }
-
+    /**
+     * Cache'i temizle (SEO güncellendiğinde çağrılmalı)
+     */
     public function clearCache(): void
     {
-        // Tüm SEO cache'lerini temizle
-        Cache::forget(self::CACHE_PREFIX . 'all');
+        Cache::forget($this->getCacheKey());
+        self::$cachedData = null;
+    }
 
-        // Home route için cache'i temizle
-        Cache::forget(self::CACHE_PREFIX . md5('home'));
-
-        // Diğer potansiyel cache'leri temizle
-        foreach (Cache::get(self::CACHE_PREFIX . 'keys', []) as $key) {
-            Cache::forget($key);
-        }
+    /**
+     * Request-scope cache'i temizle (test için)
+     */
+    public static function resetRequestCache(): void
+    {
+        self::$cachedData = null;
     }
 }

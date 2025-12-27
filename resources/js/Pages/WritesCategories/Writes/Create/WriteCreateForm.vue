@@ -72,11 +72,21 @@
 
           <div class="md:col-span-2" ref="contentRef">
             <RichTextEditor
+              ref="richTextEditorRef"
               v-model="form.content"
               label="İçerik"
               :error="errors.content || form.errors.content"
               placeholder="İçeriği buraya yazın..."
               height="400px"
+            />
+          </div>
+
+          <!-- Resim Yükleme Paneli -->
+          <div class="md:col-span-2">
+            <WriteImageUploader
+              :write-id="null"
+              category="writes"
+              @insert-image="handleInsertImage"
             />
           </div>
 
@@ -237,6 +247,16 @@
           </div>
         </div>
 
+        <!-- Base64 Uyarısı -->
+        <div v-if="hasBase64Images" class="rounded-md border border-destructive bg-destructive/10 p-3">
+          <div class="flex items-center gap-2 text-sm text-destructive">
+            <svg class="h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span>İçerikte base64 formatında resim var. Lütfen resimleri yukarıdaki "Resim Yükle" panelinden yükleyin ve editöre ekleyin.</span>
+          </div>
+        </div>
+
         <div class="flex justify-end gap-2 pt-2">
           <button
             type="button"
@@ -249,7 +269,7 @@
           <button
             type="submit"
             class="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-            :disabled="form.processing || !form.title || !form.slug || !form.content || !form.category_id"
+            :disabled="form.processing || !form.title || !form.slug || !form.content || !form.category_id || hasBase64Images"
           >
             <svg
               v-if="form.processing"
@@ -276,6 +296,7 @@
 import { ref, onMounted, watch, onUnmounted, computed, nextTick } from 'vue';
 import { useForm, usePage, router } from '@inertiajs/vue3';
 import RichTextEditor from '@/Pages/WritesCategories/_components/RichTextEditor.vue';
+import WriteImageUploader from '@/Components/WriteImageUploader.vue';
 
 // Field refs for scroll to error
 const titleRef = ref(null);
@@ -285,6 +306,21 @@ const summaryRef = ref(null);
 const contentRef = ref(null);
 const statusRef = ref(null);
 const categoryRef = ref(null);
+const richTextEditorRef = ref(null);
+
+// Base64 resim kontrolü
+const hasBase64Images = computed(() => {
+  if (!form.content) return false;
+  // data:image ile başlayan base64 resimleri kontrol et
+  return /data:image\/[^;]+;base64,/.test(form.content);
+});
+
+// Resim ekleme handler
+const handleInsertImage = (image) => {
+  if (richTextEditorRef.value) {
+    richTextEditorRef.value.insertImage(image.full_url, image.alt_text);
+  }
+};
 
 defineOptions({
   name: 'WriteCreateForm',

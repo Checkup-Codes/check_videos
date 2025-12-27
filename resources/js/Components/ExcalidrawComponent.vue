@@ -46,10 +46,12 @@ import axios from 'axios';
 
 const { props } = usePage();
 const elementsRef = ref([]);
+const filesRef = ref({}); // Excalidraw resimleri için
 const flashMessage = ref('');
 const writeDraws = ref(props.write.write_draws);
 const excalidrawInstance = ref(null);
 const savedElements = ref(null);
+const savedFiles = ref(null);
 const isSaving = ref(false);
 
 // Theme detection
@@ -92,17 +94,34 @@ const loadInitialVersion = () => {
 
         const initialElements =
           writeDraws.value.length > 0 ? JSON.parse(writeDraws.value[0].elements) : [];
+        
+        // Kaydedilmiş resimleri yükle
+        let initialFiles = {};
+        if (writeDraws.value.length > 0 && writeDraws.value[0].files) {
+          try {
+            initialFiles = JSON.parse(writeDraws.value[0].files);
+          } catch (e) {
+            console.warn('Files parse error:', e);
+          }
+        }
 
         savedElements.value = JSON.stringify(initialElements);
+        savedFiles.value = JSON.stringify(initialFiles);
+        filesRef.value = initialFiles;
 
         const initialData = {
           elements: initialElements,
+          files: initialFiles,
           scrollToContent: true,
           theme: isDarkTheme.value ? 'dark' : 'light',
         };
 
-        const handleChange = (elements) => {
+        const handleChange = (elements, appState, files) => {
           elementsRef.value = elements;
+          // Excalidraw files objesini güncelle
+          if (files) {
+            filesRef.value = files;
+          }
         };
 
         const excalidrawElement = React.createElement(Excalidraw, {
@@ -125,23 +144,67 @@ const loadInitialVersion = () => {
 const hasUnsavedChanges = computed(() => {
   if (!savedElements.value) return false;
   const currentElements = JSON.stringify(elementsRef.value);
-  return currentElements !== savedElements.value;
+  const currentFiles = JSON.stringify(filesRef.value);
+  return currentElements !== savedElements.value || currentFiles !== savedFiles.value;
 });
+
+// Otomatik kaydetme - Promise döndürür
+const saveIfNeeded = async () => {
+  if (!hasUnsavedChanges.value || isSaving.value) {
+    return Promise.resolve(true);
+  }
+  
+  const latestElements = elementsRef.value.length > 0 ? elementsRef.value : [];
+  const elementsJson = JSON.stringify(latestElements);
+  const filesJson = JSON.stringify(filesRef.value || {});
+  isSaving.value = true;
+
+  try {
+    const response = await axios.post(`/writes/${props.write.id}/draw`, {
+      elements: elementsJson,
+      files: filesJson,
+      version: 1,
+    });
+    
+    // Update saved elements and files
+    savedElements.value = elementsJson;
+    savedFiles.value = filesJson;
+    
+    // Update the first draw version or create it if it doesn't exist
+    if (writeDraws.value.length > 0) {
+      writeDraws.value[0] = response.data;
+    } else {
+      writeDraws.value.push(response.data);
+    }
+    
+    setFlashMessage('Otomatik kaydedildi!');
+    return true;
+  } catch (error) {
+    console.error('Auto-save failed:', error);
+    setFlashMessage('Otomatik kaydetme başarısız oldu.');
+    return false;
+  } finally {
+    isSaving.value = false;
+  }
+};
 
 const saveDrawToServer = () => {
   const latestElements = elementsRef.value.length > 0 ? elementsRef.value : [];
-  const jsonString = JSON.stringify(latestElements);
+  const elementsJson = JSON.stringify(latestElements);
+  const filesJson = JSON.stringify(filesRef.value || {});
   isSaving.value = true;
 
   axios
     .post(`/writes/${props.write.id}/draw`, {
-      elements: jsonString,
+      elements: elementsJson,
+      files: filesJson,
       version: 1,
     })
     .then((response) => {
       setFlashMessage('Canvas durumu başarıyla kaydedildi!');
-      // Update saved elements
-      savedElements.value = jsonString;
+      // Update saved elements and files
+      savedElements.value = elementsJson;
+      savedFiles.value = filesJson;
       // Update the first draw version or create it if it doesn't exist
       if (writeDraws.value.length > 0) {
         writeDraws.value[0] = response.data;
@@ -157,9 +220,10 @@ const saveDrawToServer = () => {
     });
 };
 
-// Expose hasUnsavedChanges to parent component
+// Expose methods to parent component
 defineExpose({
   hasUnsavedChanges,
+  saveIfNeeded,
 });
 
 const setFlashMessage = (message) => {

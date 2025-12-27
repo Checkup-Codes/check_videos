@@ -27,7 +27,7 @@ class TestsController extends Controller
 
         return inertia('TestCategories/Tests/IndexTest', [
             'tests'     => $testsResult['data'],
-            'screen'     => $this->testService->getScreenData(isMobile: true),
+            'screen'     => $this->testService->getScreenData('Testler', true),
             'isAdmin'    => $isAdmin
         ]);
     }
@@ -41,7 +41,7 @@ class TestsController extends Controller
         return inertia('TestCategories/Tests/CreateTest', [
             'tests'     => $testsResult['data'],
             'categories' => $categoriesResult['data'],
-            'screen'     => $this->testService->getScreenData(false),
+            'screen'     => $this->testService->getScreenData('Yeni Test'),
             'isAdmin'    => $isAdmin
         ]);
     }
@@ -57,7 +57,7 @@ class TestsController extends Controller
             'tests'     => $testsResult['data'],
             'test'      => $testResult['data'],
             'categories' => $categoriesResult['data'],
-            'screen'     => $this->testService->getScreenData(false),
+            'screen'     => $this->testService->getScreenData($testResult['data']->title),
             'isAdmin'    => $isAdmin
         ]);
     }
@@ -72,7 +72,7 @@ class TestsController extends Controller
             'tests'     => $testsResult['data'],
             'test'      => $test->load(['questions.options']),
             'categories' => $categoriesResult['data'],
-            'screen'     => $this->testService->getScreenData(false),
+            'screen'     => $this->testService->getScreenData($test->title . ' - Düzenle'),
             'isAdmin'    => $isAdmin
         ]);
     }
@@ -168,7 +168,7 @@ class TestsController extends Controller
 
         return inertia('TestCategories/Tests/TakeTest', [
             'test'      => $testResult['data'],
-            'screen'     => $this->testService->getScreenData(false),
+            'screen'     => $this->testService->getScreenData($testResult['data']->title . ' - Test'),
             'isAdmin'    => $isAdmin
         ]);
     }
@@ -205,7 +205,7 @@ class TestsController extends Controller
         // For guests, show result page with shareable message
         return inertia('TestCategories/Tests/TestResult', [
             'result' => $result['data'],
-            'screen' => $this->testService->getScreenData(false),
+            'screen' => $this->testService->getScreenData('Test Sonucu'),
             'isAdmin' => $isLoggedIn,
             'isGuest' => true,
         ]);
@@ -218,7 +218,7 @@ class TestsController extends Controller
 
         return inertia('TestCategories/Tests/TestResult', [
             'result'     => $result['data'],
-            'screen'     => $this->testService->getScreenData(false),
+            'screen'     => $this->testService->getScreenData('Test Sonucu'),
             'isAdmin'    => $isAdmin
         ]);
     }

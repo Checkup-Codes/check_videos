@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Traits\HasScreenData;
 use App\Models\Workspace;
 use App\Models\WorkspaceProduct;
 use Illuminate\Http\Request;
@@ -11,10 +12,7 @@ use Inertia\Inertia;
 
 class WorkspaceController extends Controller
 {
-    protected $screen = [
-        'name' => 'workspace',
-        'isMobileSidebar' => false,
-    ];
+    use HasScreenData;
 
     /**
      * Display the workspace view.
@@ -31,7 +29,7 @@ class WorkspaceController extends Controller
 
         return Inertia::render('Workspace/IndexWorkspace', [
             'workspaces' => $workspaces,
-            'screen' => $this->screen,
+            'screen' => $this->getScreenData('workspace', 'Çalışma Alanım', null, true),
         ]);
     }
 
@@ -41,7 +39,7 @@ class WorkspaceController extends Controller
     public function create()
     {
         return Inertia::render('Workspace/CreateWorkspace', [
-            'screen' => $this->screen,
+            'screen' => $this->getScreenData('workspace', 'Yeni Çalışma Alanı'),
         ]);
     }
 
@@ -110,7 +108,7 @@ class WorkspaceController extends Controller
 
         return Inertia::render('Workspace/ShowWorkspace', [
             'workspace' => $workspace,
-            'screen' => $this->screen,
+            'screen' => $this->getScreenData('workspace', 'Çalışma Alanı Detay'),
         ]);
     }
 
@@ -123,7 +121,7 @@ class WorkspaceController extends Controller
 
         return Inertia::render('Workspace/EditWorkspace', [
             'workspace' => $workspace,
-            'screen' => $this->screen,
+            'screen' => $this->getScreenData('workspace', 'Çalışma Alanı Düzenle'),
         ]);
     }
 
