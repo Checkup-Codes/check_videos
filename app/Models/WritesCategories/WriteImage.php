@@ -59,7 +59,9 @@ class WriteImage extends Model
 
     public function write()
     {
-        return $this->belongsTo(Write::class, 'related_id')->where('category', self::CATEGORY_WRITES);
+        // İlişki sadece category='writes' olan kayıtlar için geçerli
+        // Bu koşul WriteImage tablosunda kontrol edilmeli, Write tablosunda değil
+        return $this->belongsTo(Write::class, 'related_id');
     }
 
     public function getFullUrlAttribute()
