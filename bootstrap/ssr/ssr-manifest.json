@@ -112,7 +112,7 @@
   "resources/js/Layouts/MainLayout/HeaderLayout.vue": [],
   "resources/js/Layouts/MainLayout/HeaderLayout.vue?vue&type=style&index=0&scoped=86125225&lang.css": [],
   "resources/js/Layouts/MainLayout/SidebarLayout.vue": [],
-  "resources/js/Layouts/MainLayout/SidebarLayout.vue?vue&type=style&index=0&scoped=c2d0a2c5&lang.css": [],
+  "resources/js/Layouts/MainLayout/SidebarLayout.vue?vue&type=style&index=0&scoped=664260c3&lang.css": [],
   "resources/js/Layouts/_components/NavItem.vue": [],
   "resources/js/Layouts/_components/NavItem.vue?vue&type=style&index=0&scoped=408a9067&lang.css": [],
   "resources/js/Layouts/_components/SocialLink.vue": [],
@@ -322,21 +322,16 @@
     "/build/assets/Index-hQX7iAlV.css"
   ],
   "resources/js/Pages/Journey/CreateJourney.vue": [
-    "/build/assets/CreateJourney-BfB3MUgH.js"
+    "/build/assets/CreateJourney-DfhMly8m.js"
   ],
   "resources/js/Pages/Journey/EditJourney.vue": [
-    "/build/assets/EditJourney-CBzsE3F8.js"
+    "/build/assets/EditJourney-ClSiAHdy.js"
   ],
   "resources/js/Pages/Journey/IndexJourney.vue": [
-    "/build/assets/IndexJourney-D10SODD7.js",
-    "/build/assets/IndexJourney-CnEbn99z.css"
-  ],
-  "resources/js/Pages/Journey/IndexJourney.vue?vue&type=style&index=0&scoped=6461b4ef&lang.css": [
-    "/build/assets/IndexJourney-D10SODD7.js",
-    "/build/assets/IndexJourney-CnEbn99z.css"
+    "/build/assets/IndexJourney-CTCjtIey.js"
   ],
   "resources/js/Pages/Journey/ShowJourney.vue": [
-    "/build/assets/ShowJourney-BHUidtqS.js"
+    "/build/assets/ShowJourney-sp0kLZa1.js"
   ],
   "resources/js/Pages/Journey/_components/JourneyTimeline.vue": [
     "/build/assets/JourneyTimeline-Da0328av.js",
@@ -347,7 +342,7 @@
     "/build/assets/JourneyTimeline-BOcJ5rMM.css"
   ],
   "resources/js/Pages/Journey/_layouts/LayoutJourney.vue": [
-    "/build/assets/LayoutJourney-CJ7QJRBs.js"
+    "/build/assets/LayoutJourney-DCMuX6bW.js"
   ],
   "resources/js/Pages/Journey/_layouts/SidebarLayoutJourney.vue": [
     "/build/assets/SidebarLayoutJourney-C_y6Q3RS.js",
@@ -393,10 +388,10 @@
     "/build/assets/SidebarLayoutLesson-3ph7vEE9.js"
   ],
   "resources/js/Pages/Media/Index.vue": [
-    "/build/assets/Index-OPV2Ro6n.js"
+    "/build/assets/Index-C2jo0wfE.js"
   ],
   "resources/js/Pages/Media/Index.vue?vue&type=script&setup=true&lang.ts": [
-    "/build/assets/Index-OPV2Ro6n.js"
+    "/build/assets/Index-C2jo0wfE.js"
   ],
   "resources/js/Pages/Profile/Edit.vue": [
     "/build/assets/Edit-DfcbY7Kz.js"
@@ -572,16 +567,16 @@
     "/build/assets/Screen-CbRE3i8d.js"
   ],
   "resources/js/Pages/Rendition/Words/Create/Screen.vue": [
-    "/build/assets/Screen-bZtiAuB8.js"
+    "/build/assets/Screen-E3oUvXG3.js"
   ],
   "resources/js/Pages/Rendition/Words/CreateWord.vue": [
-    "/build/assets/CreateWord-DEeR0c_i.js"
+    "/build/assets/CreateWord-CABFFDRC.js"
   ],
   "resources/js/Pages/Rendition/Words/Edit/Screen.vue": [
-    "/build/assets/Screen-C3F1PZjQ.js"
+    "/build/assets/Screen-BdQloBw4.js"
   ],
   "resources/js/Pages/Rendition/Words/EditWord.vue": [
-    "/build/assets/EditWord-f9rxbb-E.js"
+    "/build/assets/EditWord-D9JxtrwS.js"
   ],
   "resources/js/Pages/Rendition/Words/Index/Screen.vue": [
     "/build/assets/Screen-DL_ttfec.js"
@@ -834,18 +829,18 @@
     "/build/assets/Welcome-bSatZHEn.js"
   ],
   "resources/js/Pages/Workspace/CreateWorkspace.vue": [
-    "/build/assets/CreateWorkspace-BjhyVNka.js"
+    "/build/assets/CreateWorkspace-GX7LMX8I.js"
   ],
   "resources/js/Pages/Workspace/EditWorkspace.vue": [
-    "/build/assets/EditWorkspace-f2EwcqZg.js"
+    "/build/assets/EditWorkspace-CldLLAw6.js"
   ],
   "resources/js/Pages/Workspace/IndexWorkspace.vue": [
-    "/build/assets/IndexWorkspace-Buv164-N.js",
-    "/build/assets/IndexWorkspace-qsQiqLDI.css"
+    "/build/assets/IndexWorkspace-DQ_tIa4s.js",
+    "/build/assets/IndexWorkspace-Dwdnd75w.css"
   ],
-  "resources/js/Pages/Workspace/IndexWorkspace.vue?vue&type=style&index=0&scoped=557e7ba3&lang.css": [
-    "/build/assets/IndexWorkspace-Buv164-N.js",
-    "/build/assets/IndexWorkspace-qsQiqLDI.css"
+  "resources/js/Pages/Workspace/IndexWorkspace.vue?vue&type=style&index=0&scoped=3f88ab27&lang.css": [
+    "/build/assets/IndexWorkspace-DQ_tIa4s.js",
+    "/build/assets/IndexWorkspace-Dwdnd75w.css"
   ],
   "resources/js/Pages/Workspace/ShowWorkspace.vue": [
     "/build/assets/ShowWorkspace-DKEPOK-f.js"
