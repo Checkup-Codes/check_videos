@@ -1,154 +1,274 @@
 <template>
   <LayoutJourney>
     <template #screen>
-      <div class="journey-page h-full overflow-hidden bg-background">
-        <!-- Main Container - Calculated height for header/sidebar -->
-        <div class="flex h-full flex-col">
-          <!-- Timeline Container -->
-          <div class="flex-1 flex items-center overflow-hidden">
-            <!-- Horizontal Scroll Container -->
-            <div 
-              ref="scrollContainer"
-              class="w-full overflow-x-auto overflow-y-hidden hide-scrollbar px-4 sm:px-6"
-              @scroll="handleScroll"
-            >
-              <div class="inline-flex items-start gap-3 py-4 sm:gap-4">
-                <!-- Cards -->
-                <div
-                  v-for="(entry, index) in entries"
-                  :key="entry.id"
-                  :ref="el => cardRefs[index] = el"
-                  :data-year="getYear(entry.entry_date)"
-                  class="card-item flex-shrink-0 flex flex-col"
-                  @mouseenter="hoveredIndex = index"
-                  @mouseleave="hoveredIndex = null"
-                >
-                  <!-- Date Above Card -->
-                  <div class="mb-2 text-xs font-medium text-muted-foreground">
-                    {{ formatDate(entry.entry_date) }}
-                  </div>
+      <div class="min-h-screen bg-background">
 
-                  <Link
-                    :href="`/journey/${entry.id}`"
-                    class="group relative block overflow-hidden rounded-xl card-height"
-                    :class="cardWidthClass"
-                  >
-                    <!-- Image -->
-                    <div class="absolute inset-0 bg-muted">
+        <!-- Timeline -->
+        <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+          <h1 class="xl:-translate-x-[80px] mb-5 text-2xl font-bold text-foreground sm:text-3xl">Yolculuk</h1>
+
+          <div 
+            v-if="filteredEntries.length > 0" 
+            class="relative transition-all duration-300"
+            :class="{ 'xl:-translate-x-[80px]': showYearFilter && isYearFilterOpen }"
+          >
+            <!-- Timeline Line -->
+            <div class="absolute bottom-0 left-3 top-0 w-0.5 bg-gradient-to-b from-primary/50 via-border to-border sm:left-4"></div>
+
+            <!-- Entries -->
+            <div class="space-y-6">
+              <div
+                v-for="(entry, index) in filteredEntries"
+                :key="entry.id"
+                class="timeline-entry relative pl-10 sm:pl-12"
+              >
+                <!-- Dot with pulse effect for first item -->
+                <div 
+                  class="absolute left-1 top-4 flex h-5 w-5 items-center justify-center sm:left-2 sm:h-5 sm:w-5"
+                >
+                  <div 
+                    v-if="index === 0" 
+                    class="absolute h-5 w-5 animate-ping rounded-full bg-primary/30"
+                  ></div>
+                  <div 
+                    class="relative h-3 w-3 rounded-full border-2 border-primary bg-background sm:h-3 sm:w-3"
+                    :class="{ 'bg-primary': index === 0 }"
+                  ></div>
+                </div>
+
+                <!-- Card -->
+                <Link
+                  :href="`/journey/${entry.id}`"
+                  class="group block overflow-hidden rounded-xl bg-card ring-1 ring-border/50 transition-all duration-200 hover:ring-primary/40 hover:shadow-lg"
+                >
+                  <!-- With Image -->
+                  <div v-if="entry.image" class="relative">
+                    <!-- Image Container -->
+                    <div class="aspect-[21/9] w-full overflow-hidden sm:aspect-[3/1]">
                       <img 
-                        v-if="entry.image"
                         :src="`/storage/${entry.image}`" 
                         :alt="entry.title"
                         class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
-                      <div v-else class="h-full w-full bg-gradient-to-br from-primary/30 to-primary/5"></div>
+                      <!-- Gradient Overlay -->
+                      <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
                     </div>
-
-                    <!-- Gradient Overlay -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
-
-                    <!-- Content - Bottom -->
-                    <div class="absolute inset-x-0 bottom-0 p-3 sm:p-4">
-                      <h3 class="text-sm font-bold text-white line-clamp-2 sm:text-base">
+                    <!-- Content on Image -->
+                    <div class="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
+                      <div class="flex items-center gap-2 text-xs text-white/80 sm:text-sm">
+                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span>{{ formatDate(entry.entry_date) }}</span>
+                        <span v-if="entry.status === 'draft'" class="rounded bg-yellow-500/90 px-1.5 py-0.5 text-xs font-medium text-yellow-900">
+                          Taslak
+                        </span>
+                      </div>
+                      <h3 class="mt-1 text-lg font-semibold text-white sm:text-xl">
                         {{ entry.title }}
                       </h3>
                     </div>
-
-                    <!-- Draft Badge -->
-                    <div v-if="entry.status === 'draft'" class="absolute right-2 top-2 z-10">
-                      <span class="rounded-full bg-yellow-500/90 px-2 py-0.5 text-xs font-semibold text-yellow-950">
-                        Taslak
-                      </span>
-                    </div>
-
-                    <!-- Hover Border -->
-                    <div class="absolute inset-0 rounded-xl border-2 border-white/0 transition-colors group-hover:border-primary/50"></div>
-                  </Link>
-
-                  <!-- Hover Description - Below Card -->
-                  <div class="mt-2 h-5 overflow-hidden" :class="cardWidthClass">
-                    <p 
-                      class="text-xs text-muted-foreground transition-all duration-300"
-                      :class="hoveredIndex === index ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'"
-                    >
-                      {{ truncateText(entry.description, 50) }}
-                    </p>
                   </div>
-                </div>
 
-                <!-- End Spacer -->
-                <div class="w-4 flex-shrink-0 sm:w-6"></div>
+                  <!-- Without Image -->
+                  <div v-else class="p-4 sm:p-5">
+                    <div class="flex items-start justify-between gap-4">
+                      <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-2 text-xs text-muted-foreground sm:text-sm">
+                          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          <span>{{ formatDate(entry.entry_date) }}</span>
+                          <span v-if="entry.status === 'draft'" class="rounded bg-yellow-500/20 px-1.5 py-0.5 text-xs font-medium text-yellow-600 dark:text-yellow-400">
+                            Taslak
+                          </span>
+                        </div>
+                        <h3 class="mt-2 text-base font-semibold text-foreground group-hover:text-primary sm:text-lg">
+                          {{ entry.title }}
+                        </h3>
+                      </div>
+                      <div class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-muted/50 transition-colors group-hover:bg-primary/10">
+                        <svg class="h-4 w-4 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
               </div>
+            </div>
+
+            <!-- End Marker -->
+            <div class="relative mt-6 pl-10 sm:pl-12">
+              <div class="absolute left-1 top-0 flex h-5 w-5 items-center justify-center sm:left-2">
+                <div class="h-2 w-2 rounded-full bg-border"></div>
+              </div>
+              <p class="text-xs text-muted-foreground">Yolculuğun başlangıcı</p>
             </div>
           </div>
 
-          <!-- Bottom Timeline Bar -->
-          <div class="flex-shrink-0 border-t border-border bg-background/95 backdrop-blur-sm">
-            <div class="px-4 py-2 sm:px-6 sm:py-3">
-              <!-- Progress Bar -->
-              <div class="mb-2 h-1 overflow-hidden rounded-full bg-muted">
-                <div 
-                  class="h-full rounded-full bg-primary transition-all duration-300"
-                  :style="{ width: `${scrollProgress}%` }"
-                ></div>
-              </div>
-
-              <!-- Year Pills -->
-              <div class="flex items-center justify-center gap-2 overflow-x-auto hide-scrollbar">
-                <button
-                  v-for="year in years"
-                  :key="year"
-                  @click="scrollToYear(year)"
-                  class="flex-shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-all"
-                  :class="currentYear === year 
-                    ? 'bg-primary text-primary-foreground' 
-                    : 'bg-muted text-muted-foreground hover:bg-muted/80'"
-                >
-                  {{ year }}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Navigation Arrows -->
-        <button
-          v-if="entries.length > 0"
-          @click="scroll(-1)"
-          class="absolute left-2 top-1/2 z-20 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-background/80 text-foreground shadow-lg backdrop-blur-sm transition-all hover:bg-background hover:scale-110 sm:left-4 sm:h-10 sm:w-10"
-        >
-          <svg class="h-4 w-4 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <button
-          v-if="entries.length > 0"
-          @click="scroll(1)"
-          class="absolute right-2 top-1/2 z-20 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-background/80 text-foreground shadow-lg backdrop-blur-sm transition-all hover:bg-background hover:scale-110 sm:right-4 sm:h-10 sm:w-10"
-        >
-          <svg class="h-4 w-4 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-
-        <!-- Empty State -->
-        <div v-if="entries.length === 0" class="absolute inset-0 flex items-center justify-center">
-          <div class="text-center">
-            <div class="mx-auto mb-4 h-16 w-16 rounded-full bg-muted flex items-center justify-center">
+          <!-- Empty State -->
+          <div v-else class="py-16 text-center">
+            <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
               <svg class="h-8 w-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <p class="text-muted-foreground">Henüz kayıt yok</p>
+            <p class="text-muted-foreground">
+              {{ selectedYear ? `${selectedYear} yılında kayıt bulunamadı` : 'Henüz kayıt yok' }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div v-if="entries.length > 0" class="border-t border-border bg-muted/30">
+          <div class="mx-auto max-w-4xl px-4 py-5 sm:px-6">
+            <div class="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm">
+              <div class="flex items-center gap-2">
+                <div class="h-2 w-2 rounded-full bg-primary"></div>
+                <span class="text-muted-foreground"><strong class="text-foreground">{{ entries.length }}</strong> kayıt</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="h-2 w-2 rounded-full bg-primary/60"></div>
+                <span class="text-muted-foreground"><strong class="text-foreground">{{ years.length }}</strong> yıl</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="h-2 w-2 rounded-full bg-primary/30"></div>
+                <span class="text-muted-foreground">{{ oldestYear }} - {{ newestYear }}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- Year Filter Toggle Button - Mobile -->
+      <button
+        v-if="showYearFilter"
+        @click="toggleYearFilter"
+        class="fixed right-4 top-1/2 z-50 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:scale-105 xl:hidden"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+        </svg>
+      </button>
+
+      <!-- Year Filter Panel - Mobile -->
+      <div
+        v-if="showYearFilter"
+        class="fixed right-0 top-12 z-40 h-[calc(100vh-3rem)] w-72 transform border-l border-border bg-popover shadow-2xl transition-transform duration-300 lg:h-[calc(100vh-5.5rem)] xl:hidden"
+        :class="{ 'translate-x-full': !isYearFilterOpen }"
+      >
+        <div class="flex h-full flex-col">
+          <div class="flex items-center justify-between border-b border-border p-4">
+            <h3 class="text-lg font-semibold text-foreground">Yıllar</h3>
+            <button
+              @click="toggleYearFilter"
+              class="inline-flex h-8 w-8 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <div class="flex-1 overflow-y-auto p-4">
+            <nav class="space-y-1">
+              <button
+                @click="selectYear(null)"
+                class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm transition-colors"
+                :class="selectedYear === null 
+                  ? 'bg-primary text-primary-foreground font-medium' 
+                  : 'text-muted-foreground hover:bg-accent hover:text-foreground'"
+              >
+                <span>Tümü</span>
+                <span class="text-xs opacity-70">{{ entries.length }}</span>
+              </button>
+              <button
+                v-for="year in years"
+                :key="year"
+                @click="selectYear(year)"
+                class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm transition-colors"
+                :class="selectedYear === year 
+                  ? 'bg-primary text-primary-foreground font-medium' 
+                  : 'text-muted-foreground hover:bg-accent hover:text-foreground'"
+              >
+                <span>{{ year }}</span>
+                <span class="text-xs opacity-70">{{ getYearCount(year) }}</span>
+              </button>
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      <!-- Year Filter Toggle Button - Desktop -->
+      <button
+        v-if="showYearFilter"
+        @click="toggleYearFilter"
+        class="fixed right-4 top-28 z-50 hidden h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:scale-105 xl:flex"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+        </svg>
+      </button>
+
+      <!-- Year Filter Panel - Desktop -->
+      <div
+        v-if="showYearFilter"
+        class="fixed right-4 top-28 z-30 hidden w-48 transition-all duration-300 ease-in-out xl:block"
+        :class="isYearFilterOpen ? 'translate-x-0 opacity-100' : 'pointer-events-none translate-x-full opacity-0'"
+      >
+        <div class="rounded-xl border border-border bg-popover/95 shadow-xl backdrop-blur-sm">
+          <div class="flex items-center justify-between border-b border-border px-4 py-3">
+            <h3 class="text-sm font-semibold text-foreground">Yıllar</h3>
+            <button
+              @click="toggleYearFilter"
+              class="inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <div class="overflow-y-auto p-2" style="max-height: calc(100vh - 200px)">
+            <nav class="space-y-0.5">
+              <button
+                @click="selectYear(null)"
+                class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs transition-colors"
+                :class="selectedYear === null 
+                  ? 'bg-primary text-primary-foreground font-medium' 
+                  : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'"
+              >
+                <span>Tümü</span>
+                <span class="opacity-70">{{ entries.length }}</span>
+              </button>
+              <button
+                v-for="year in years"
+                :key="year"
+                @click="selectYear(year)"
+                class="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs transition-colors"
+                :class="selectedYear === year 
+                  ? 'bg-primary text-primary-foreground font-medium' 
+                  : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'"
+              >
+                <span>{{ year }}</span>
+                <span class="opacity-70">{{ getYearCount(year) }}</span>
+              </button>
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      <!-- Backdrop for mobile -->
+      <div
+        v-if="showYearFilter && isYearFilterOpen"
+        @click="toggleYearFilter"
+        class="fixed inset-0 z-30 bg-black/20 backdrop-blur-sm xl:hidden"
+      ></div>
     </template>
   </LayoutJourney>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import LayoutJourney from '@/Pages/Journey/_layouts/LayoutJourney.vue';
 
@@ -163,90 +283,25 @@ const props = defineProps({
   },
 });
 
-const scrollContainer = ref(null);
-const cardRefs = ref({});
-const currentYear = ref('');
-const scrollProgress = ref(0);
-const hoveredIndex = ref(null);
+const selectedYear = ref(null);
+const isYearFilterOpen = ref(false);
+const isLargeScreen = ref(false);
 
-// Responsive card width class
-const cardWidthClass = computed(() => {
-  return 'w-[240px] sm:w-[220px] lg:w-[260px]';
-});
-
-// Get years sorted descending (newest first)
 const years = computed(() => {
   return Object.keys(props.entriesByYear || {}).sort((a, b) => Number(b) - Number(a));
 });
 
-// Set initial year and scroll to start (newest entries on left)
-onMounted(() => {
-  if (years.value.length > 0) {
-    currentYear.value = years.value[0]; // En yeni yıl (en solda)
-  }
-  
-  // Scroll to start (newest entries - left side)
-  nextTick(() => {
-    if (scrollContainer.value) {
-      scrollContainer.value.scrollLeft = 0;
-    }
-  });
-  
-  // Keyboard navigation
-  window.addEventListener('keydown', handleKeydown);
+const showYearFilter = computed(() => years.value.length > 1);
+
+const filteredEntries = computed(() => {
+  if (!selectedYear.value) return props.entries;
+  return props.entries.filter(entry => formatYear(entry.entry_date) === selectedYear.value);
 });
 
-onUnmounted(() => {
-  window.removeEventListener('keydown', handleKeydown);
-});
+const oldestYear = computed(() => years.value.length > 0 ? years.value[years.value.length - 1] : '-');
+const newestYear = computed(() => years.value.length > 0 ? years.value[0] : '-');
 
-const handleKeydown = (e) => {
-  if (e.key === 'ArrowLeft') scroll(-1);
-  if (e.key === 'ArrowRight') scroll(1);
-};
-
-// Scroll navigation
-const scroll = (direction) => {
-  if (!scrollContainer.value) return;
-  const cardWidth = window.innerWidth < 640 ? 256 : window.innerWidth < 1024 ? 236 : 276;
-  scrollContainer.value.scrollBy({ left: direction * cardWidth, behavior: 'smooth' });
-};
-
-// Scroll to specific year
-const scrollToYear = (year) => {
-  const index = props.entries.findIndex(e => getYear(e.entry_date) === year);
-  if (index !== -1 && cardRefs.value[index]) {
-    cardRefs.value[index].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-  }
-};
-
-// Handle scroll to update current year and progress
-const handleScroll = () => {
-  if (!scrollContainer.value) return;
-  
-  const { scrollLeft, scrollWidth, clientWidth } = scrollContainer.value;
-  scrollProgress.value = scrollWidth > clientWidth ? (scrollLeft / (scrollWidth - clientWidth)) * 100 : 0;
-  
-  // Find visible card to determine current year
-  const containerRect = scrollContainer.value.getBoundingClientRect();
-  const centerX = containerRect.left + containerRect.width / 2;
-  
-  for (const [index, el] of Object.entries(cardRefs.value)) {
-    if (el) {
-      const rect = el.getBoundingClientRect();
-      if (rect.left <= centerX && rect.right >= centerX) {
-        const entry = props.entries[index];
-        if (entry) {
-          currentYear.value = getYear(entry.entry_date);
-        }
-        break;
-      }
-    }
-  }
-};
-
-// Date helpers
-const getYear = (dateString) => {
+const formatYear = (dateString) => {
   if (!dateString) return '';
   return new Date(dateString).getFullYear().toString();
 };
@@ -260,43 +315,44 @@ const formatDate = (dateString) => {
   });
 };
 
-const truncateText = (text, length) => {
-  if (!text) return '';
-  return text.length > length ? text.substring(0, length) + '...' : text;
+const getYearCount = (year) => {
+  return props.entriesByYear[year]?.length || 0;
 };
+
+const toggleYearFilter = () => {
+  isYearFilterOpen.value = !isYearFilterOpen.value;
+};
+
+const selectYear = (year) => {
+  selectedYear.value = year;
+  if (window.innerWidth < 1280) {
+    isYearFilterOpen.value = false;
+  }
+};
+
+const initializeYearFilterState = () => {
+  const isLarge = window.innerWidth >= 1280;
+  isLargeScreen.value = isLarge;
+  if (isLarge && showYearFilter.value) {
+    isYearFilterOpen.value = true;
+  } else if (!isLarge) {
+    isYearFilterOpen.value = false;
+  }
+};
+
+let resizeHandler = null;
+
+onMounted(() => {
+  initializeYearFilterState();
+  resizeHandler = () => {
+    initializeYearFilterState();
+  };
+  window.addEventListener('resize', resizeHandler);
+});
+
+onUnmounted(() => {
+  if (resizeHandler) {
+    window.removeEventListener('resize', resizeHandler);
+  }
+});
 </script>
-
-<style scoped>
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-}
-
-/* Card height - responsive */
-.card-height {
-  height: calc(100vh - 220px); /* Mobile: header(48px) + bottom bar(~60px) + padding + date */
-}
-
-@media (min-width: 640px) {
-  .card-height {
-    height: calc(100vh - 240px); /* Tablet */
-  }
-}
-
-@media (min-width: 1024px) {
-  .card-height {
-    height: calc(100vh - 260px); /* Desktop: header(48px) + sidebar(36px) + bottom bar + padding */
-  }
-}
-</style>

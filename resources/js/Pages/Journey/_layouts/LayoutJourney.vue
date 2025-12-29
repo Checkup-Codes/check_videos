@@ -1,14 +1,14 @@
 <template>
   <Head :title="browserTitle" />
   <FlashMessage :message="flashSuccess" />
-  <CheckScreen>
-      <slot name="screen"></slot>
-  </CheckScreen>
+  <!-- Full width layout for Journey pages with contained scroll -->
+  <div class="h-[calc(100vh-3rem)] overflow-y-auto overscroll-none lg:h-[calc(100vh-5.5rem)]">
+    <slot name="screen"></slot>
+  </div>
 </template>
 
 <script setup>
 import FlashMessage from '@/Components/CekapUI/Notifications/FlashMessage.vue';
-import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 import { usePage, Head } from '@inertiajs/vue3';
 import { computed } from 'vue';
 

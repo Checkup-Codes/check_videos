@@ -18,7 +18,8 @@ const store = useStore();
 const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
 
 const props = defineProps({
-  languagePacks: Array,
+  languagePacks: { type: Array, default: () => [] },
+  incompleteWords: { type: Array, default: () => [] },
   screen: Object,
   error: {
     type: String,

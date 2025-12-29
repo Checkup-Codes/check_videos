@@ -37,6 +37,7 @@ class Word extends Model
         'word',
         'type',
         'language',
+        'is_complete',
         'learning_status',
         'flag',
         'difficulty_level',
@@ -47,12 +48,29 @@ class Word extends Model
 
     protected $casts = [
         'flag' => 'boolean',
+        'is_complete' => 'boolean',
         'last_review_date' => 'datetime',
         'learning_status' => 'integer',
         'difficulty_level' => 'integer',
         'incorrect_count' => 'integer',
         'review_count' => 'integer',
     ];
+
+    /**
+     * Scope: Sadece tamamlanmış kelimeler
+     */
+    public function scopeComplete($query)
+    {
+        return $query->where('is_complete', true);
+    }
+
+    /**
+     * Scope: Sadece yarım kalan kelimeler
+     */
+    public function scopeIncomplete($query)
+    {
+        return $query->where('is_complete', false);
+    }
 
     public function exampleSentences()
     {

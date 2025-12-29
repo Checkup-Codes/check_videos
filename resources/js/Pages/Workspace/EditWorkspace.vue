@@ -1,226 +1,258 @@
 <template>
   <Head :title="browserTitle" />
   <CheckScreen>
-    <div class="mx-auto max-w-4xl py-8">
+    <div class="space-y-6 py-6">
       <!-- Header -->
-      <div class="mb-8">
-        <Link
-          :href="`/workspace/${workspace.id}`"
-          class="mb-4 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-          </svg>
-          Geri
-        </Link>
-        <h1 class="text-3xl font-bold tracking-tight text-foreground">Çalışma Alanını Düzenle</h1>
-        <p class="mt-2 text-muted-foreground">Çalışma alanınızı ve ürünlerinizi güncelleyin.</p>
+      <div>
+        <h1 class="text-2xl font-bold text-foreground">Çalışma Alanını Düzenle</h1>
+        <p class="mt-1 text-sm text-muted-foreground">Çalışma alanınızı ve ürünlerinizi güncelleyin</p>
       </div>
 
-      <!-- Form -->
       <form @submit.prevent="submit" class="space-y-6">
-        <!-- Current Images -->
-        <div v-if="workspace.images && workspace.images.length > 0 && imagePreviews.length === 0">
-          <label class="mb-2 block text-sm font-medium text-foreground">Mevcut Resimler</label>
-          <div class="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
-            <div v-for="(image, index) in workspace.images" :key="index" class="relative group">
-              <img :src="`/storage/${image}`" alt="Current" class="h-32 w-full rounded-lg border border-border object-cover" />
+        <!-- Images Section -->
+        <div class="rounded-xl bg-card p-6 ring-1 ring-border/50">
+          <h2 class="mb-4 text-lg font-semibold text-foreground">Görseller</h2>
+          
+          <div class="space-y-4">
+            <!-- Current Images -->
+            <div v-if="currentImages.length > 0 && imagePreviews.length === 0">
+              <p class="mb-2 text-sm text-muted-foreground">Mevcut Görseller</p>
+              <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                <div v-for="(image, index) in currentImages" :key="index" class="aspect-video overflow-hidden rounded-lg ring-1 ring-border">
+                  <img :src="`/storage/${image}`" alt="Current" class="h-full w-full object-cover" />
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <!-- Images -->
-        <div>
-          <label for="images" class="mb-2 block text-sm font-medium text-foreground">
-            {{ workspace.images && workspace.images.length > 0 ? 'Resimleri Değiştir' : 'Resimler Ekle' }}
-          </label>
-          <div class="relative">
-            <input
-              id="images"
-              type="file"
-              accept="image/*"
-              multiple
-              @change="handleImagesChange"
-              class="w-full cursor-pointer rounded-lg border border-input bg-background px-4 py-2.5 text-foreground file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-4 file:py-1 file:text-sm file:font-medium file:text-primary-foreground hover:file:bg-primary/90"
-            />
-          </div>
-          <!-- Images Preview -->
-          <div v-if="imagePreviews.length > 0" class="mt-3 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
-            <div v-for="(preview, index) in imagePreviews" :key="index" class="relative group">
-              <img :src="preview" alt="Preview" class="h-32 w-full rounded-lg border border-border object-cover" />
-              <button
-                type="button"
-                @click="removeImage(index)"
-                class="absolute right-2 top-2 rounded-full bg-destructive p-1.5 text-white opacity-0 transition-opacity group-hover:opacity-100"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+            <!-- Upload Area -->
+            <label class="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-border px-6 py-8 transition-colors hover:border-primary">
+              <svg class="mb-2 h-10 w-10 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span class="text-sm font-medium text-foreground">{{ currentImages.length > 0 ? 'Resimleri Değiştir' : 'Resim Yükle' }}</span>
+              <span class="mt-1 text-xs text-muted-foreground">PNG, JPG, WEBP - max 5MB</span>
+              <input type="file" accept="image/*" multiple class="hidden" @change="handleImagesChange" />
+            </label>
+
+            <!-- New Image Previews -->
+            <div v-if="imagePreviews.length > 0" class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+              <div v-for="(preview, index) in imagePreviews" :key="index" class="group relative aspect-video overflow-hidden rounded-lg ring-1 ring-border">
+                <img :src="preview" alt="Preview" class="h-full w-full object-cover" />
+                <button
+                  type="button"
+                  @click="removeImage(index)"
+                  class="absolute right-2 top-2 rounded-full bg-destructive p-1.5 text-destructive-foreground opacity-0 transition-opacity group-hover:opacity-100"
+                >
+                  <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
-          <p v-if="form.errors.images" class="mt-1 text-sm text-destructive">{{ form.errors.images }}</p>
         </div>
 
         <!-- Status -->
-        <div>
-          <label class="mb-2 block text-sm font-medium text-foreground">Durum</label>
+        <div class="rounded-xl bg-card p-6 ring-1 ring-border/50">
+          <h2 class="mb-4 text-lg font-semibold text-foreground">Durum</h2>
           <div class="flex gap-4">
             <label class="flex cursor-pointer items-center gap-2">
-              <input
-                type="radio"
-                v-model="form.status"
-                value="published"
-                class="h-4 w-4 border-input text-primary focus:ring-primary"
-              />
+              <input type="radio" v-model="form.status" value="published" class="h-4 w-4 border-input text-primary focus:ring-primary" />
               <span class="text-sm text-foreground">Yayınla</span>
             </label>
             <label class="flex cursor-pointer items-center gap-2">
-              <input
-                type="radio"
-                v-model="form.status"
-                value="draft"
-                class="h-4 w-4 border-input text-primary focus:ring-primary"
-              />
+              <input type="radio" v-model="form.status" value="draft" class="h-4 w-4 border-input text-primary focus:ring-primary" />
               <span class="text-sm text-foreground">Taslak</span>
             </label>
           </div>
         </div>
 
         <!-- Products Section -->
-        <div class="rounded-lg border border-border bg-card p-6">
+        <div class="rounded-xl bg-card p-6 ring-1 ring-border/50">
           <div class="mb-4 flex items-center justify-between">
             <h2 class="text-lg font-semibold text-foreground">Ürünler</h2>
             <button
               type="button"
-              @click="addProduct"
+              @click="openProductModal()"
               class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
               </svg>
               Ürün Ekle
             </button>
           </div>
 
-          <div v-if="form.products.length === 0" class="py-8 text-center text-sm text-muted-foreground">
-            Henüz ürün eklenmedi.
+          <div v-if="form.products.length === 0" class="rounded-lg border border-dashed border-border py-8 text-center">
+            <p class="text-sm text-muted-foreground">Henüz ürün eklenmedi</p>
           </div>
 
-          <div v-else class="space-y-4">
+          <div v-else class="space-y-3">
             <div
               v-for="(product, index) in form.products"
               :key="index"
-              class="rounded-lg border border-border bg-background p-4"
+              class="flex items-center justify-between rounded-lg border border-border bg-background p-4"
+              :class="{ 'border-destructive': hasProductError(index) }"
             >
-              <div class="mb-4 flex items-center justify-between">
-                <h3 class="text-sm font-medium text-foreground">Ürün {{ index + 1 }}</h3>
-                <button
-                  type="button"
-                  @click="removeProduct(index)"
-                  class="rounded-lg p-1.5 text-destructive transition-colors hover:bg-destructive/10"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              <div class="min-w-0 flex-1">
+                <h3 class="font-medium text-foreground">{{ product.name }}</h3>
+                <p v-if="product.features" class="mt-1 truncate text-sm text-muted-foreground">{{ product.features }}</p>
+                <a v-if="product.link" :href="product.link" target="_blank" class="mt-1 inline-flex items-center gap-1 text-xs text-primary hover:underline">
+                  <span>Link</span>
+                  <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+                <!-- Validation Errors -->
+                <div v-if="hasProductError(index)" class="mt-2 text-xs text-destructive">
+                  <p v-if="product.name.length > 255">İsim 255 karakteri aşamaz ({{ product.name.length }}/255)</p>
+                  <p v-if="product.link && !isValidUrl(product.link)">Geçersiz URL formatı</p>
+                  <p v-if="product.link && product.link.length > 500">Link 500 karakteri aşamaz ({{ product.link.length }}/500)</p>
+                </div>
+              </div>
+              <div class="ml-4 flex items-center gap-2">
+                <button type="button" @click="openProductModal(index)" class="rounded-lg p-2 text-muted-foreground hover:bg-accent hover:text-foreground">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+                <button type="button" @click="confirmRemoveProduct(index)" class="rounded-lg p-2 text-destructive hover:bg-destructive/10">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                 </button>
               </div>
-
-              <div class="space-y-4">
-                <!-- Name -->
-                <div>
-                  <label :for="`product-name-${index}`" class="mb-1 block text-xs font-medium text-foreground">
-                    İsim <span class="text-destructive">*</span>
-                  </label>
-                  <input
-                    :id="`product-name-${index}`"
-                    v-model="product.name"
-                    type="text"
-                    class="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                    placeholder="Ürün adı"
-                    required
-                  />
-                </div>
-
-                <!-- Features -->
-                <div>
-                  <label :for="`product-features-${index}`" class="mb-1 block text-xs font-medium text-foreground">
-                    Özellikler
-                  </label>
-                  <textarea
-                    :id="`product-features-${index}`"
-                    v-model="product.features"
-                    rows="3"
-                    class="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                    placeholder="Ürün özelliklerini buraya yazın..."
-                  ></textarea>
-                </div>
-
-                <!-- Link -->
-                <div>
-                  <label :for="`product-link-${index}`" class="mb-1 block text-xs font-medium text-foreground">
-                    Satın Alma Linki
-                  </label>
-                  <input
-                    :id="`product-link-${index}`"
-                    v-model="product.link"
-                    type="url"
-                    class="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                    placeholder="https://..."
-                  />
-                </div>
-              </div>
             </div>
+          </div>
+
+          <!-- Validation Summary -->
+          <div v-if="hasAnyProductError" class="mt-4 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
+            Bazı ürünlerde hata var. Lütfen düzeltin.
           </div>
         </div>
 
         <!-- Submit -->
-        <div class="flex items-center gap-3 pt-4">
-          <button
-            type="submit"
-            :disabled="form.processing"
-            class="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <svg v-if="form.processing" class="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            {{ form.processing ? 'Güncelleniyor...' : 'Güncelle' }}
-          </button>
-          <Link
-            :href="`/workspace/${workspace.id}`"
-            class="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-6 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
+        <div class="flex items-center justify-end gap-3">
+          <Link href="/workspace" class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-accent">
             İptal
           </Link>
+          <button
+            type="submit"
+            :disabled="form.processing || hasAnyProductError"
+            class="rounded-lg bg-primary px-6 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+          >
+            {{ form.processing ? 'Güncelleniyor...' : 'Güncelle' }}
+          </button>
         </div>
       </form>
     </div>
+
+    <!-- Product Modal -->
+    <Teleport to="body">
+      <div v-if="showProductModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" @click.self="closeProductModal">
+        <div class="w-full max-w-md rounded-xl bg-card p-6 shadow-xl">
+          <div class="mb-4 flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-foreground">{{ editingProductIndex !== null ? 'Ürünü Düzenle' : 'Yeni Ürün' }}</h3>
+            <button @click="closeProductModal" class="text-muted-foreground hover:text-foreground">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <label class="mb-1 block text-sm font-medium text-foreground">İsim <span class="text-destructive">*</span></label>
+              <input
+                v-model="productForm.name"
+                type="text"
+                maxlength="255"
+                placeholder="Ürün adı"
+                class="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                :class="{ 'border-destructive': productForm.name.length > 255 }"
+              />
+              <p class="mt-1 text-xs" :class="productForm.name.length > 255 ? 'text-destructive' : 'text-muted-foreground'">
+                {{ productForm.name.length }}/255
+              </p>
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm font-medium text-foreground">Özellikler</label>
+              <textarea
+                v-model="productForm.features"
+                rows="3"
+                placeholder="Ürün özellikleri..."
+                class="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              ></textarea>
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm font-medium text-foreground">Satın Alma Linki</label>
+              <input
+                v-model="productForm.link"
+                type="url"
+                maxlength="500"
+                placeholder="https://..."
+                class="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                :class="{ 'border-destructive': (productForm.link && !isValidUrl(productForm.link)) || productForm.link.length > 500 }"
+              />
+              <p class="mt-1 text-xs" :class="productForm.link.length > 500 ? 'text-destructive' : 'text-muted-foreground'">
+                {{ productForm.link.length }}/500
+                <span v-if="productForm.link && !isValidUrl(productForm.link)" class="text-destructive"> - Geçersiz URL</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-6 flex justify-end gap-3">
+            <button @click="closeProductModal" class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-accent">
+              İptal
+            </button>
+            <button 
+              @click="saveProduct" 
+              :disabled="!productForm.name || productForm.name.length > 255 || (productForm.link && (!isValidUrl(productForm.link) || productForm.link.length > 500))" 
+              class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+            >
+              {{ editingProductIndex !== null ? 'Güncelle' : 'Ekle' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- Delete Confirmation Modal -->
+    <Teleport to="body">
+      <div v-if="showDeleteConfirm" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" @click.self="showDeleteConfirm = false">
+        <div class="w-full max-w-sm rounded-xl bg-card p-6 shadow-xl">
+          <h3 class="mb-2 text-lg font-semibold text-foreground">Ürünü Sil</h3>
+          <p class="mb-4 text-sm text-muted-foreground">
+            "{{ deleteProductName }}" ürününü silmek istediğinizden emin misiniz?
+          </p>
+          <div class="flex justify-end gap-3">
+            <button @click="showDeleteConfirm = false" class="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-accent">
+              İptal
+            </button>
+            <button @click="removeProduct" class="rounded-lg bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground hover:bg-destructive/90">
+              Sil
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </CheckScreen>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { Link, useForm, usePage, Head } from '@inertiajs/vue3';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 
 const page = usePage();
 
-// Browser tab title
-const browserTitle = computed(() => {
-  return (
-    page.props?.screen?.seo?.title ||
-    page.props?.app?.seo?.title ||
-    'Çalışma Alanı Düzenle'
-  );
+const props = defineProps({
+  workspace: { type: Object, required: true },
 });
 
-const props = defineProps({
-  workspace: {
-    type: Object,
-    required: true,
-  },
-});
+const browserTitle = computed(() => page.props?.screen?.seo?.title || 'Çalışma Alanı Düzenle');
 
 const form = useForm({
   images: [],
@@ -229,17 +261,44 @@ const form = useForm({
   _method: 'PUT',
 });
 
+const currentImages = ref(props.workspace.images || []);
 const imagePreviews = ref([]);
+const showProductModal = ref(false);
+const editingProductIndex = ref(null);
+const productForm = ref({ name: '', features: '', link: '' });
+const showDeleteConfirm = ref(false);
+const deleteProductIndex = ref(null);
+const deleteProductName = ref('');
 
 onMounted(() => {
-  // Load existing products
-  if (props.workspace.products && props.workspace.products.length > 0) {
-    form.products = props.workspace.products.map(product => ({
-      name: product.name || '',
-      features: product.features || '',
-      link: product.link || '',
+  if (props.workspace.products?.length > 0) {
+    form.products = props.workspace.products.map(p => ({
+      name: p.name || '',
+      features: p.features || '',
+      link: p.link || '',
     }));
   }
+});
+
+const isValidUrl = (string) => {
+  if (!string) return true;
+  try {
+    new URL(string);
+    return true;
+  } catch (_) {
+    return false;
+  }
+};
+
+const hasProductError = (index) => {
+  const product = form.products[index];
+  return product.name.length > 255 || 
+         (product.link && !isValidUrl(product.link)) || 
+         (product.link && product.link.length > 500);
+};
+
+const hasAnyProductError = computed(() => {
+  return form.products.some((_, index) => hasProductError(index));
 });
 
 const handleImagesChange = (event) => {
@@ -253,22 +312,51 @@ const removeImage = (index) => {
   imagePreviews.value.splice(index, 1);
 };
 
-const addProduct = () => {
-  form.products.push({
-    name: '',
-    features: '',
-    link: '',
-  });
+const openProductModal = (index = null) => {
+  editingProductIndex.value = index;
+  if (index !== null) {
+    productForm.value = { ...form.products[index] };
+  } else {
+    productForm.value = { name: '', features: '', link: '' };
+  }
+  showProductModal.value = true;
 };
 
-const removeProduct = (index) => {
-  form.products.splice(index, 1);
+const closeProductModal = () => {
+  showProductModal.value = false;
+  editingProductIndex.value = null;
+  productForm.value = { name: '', features: '', link: '' };
+};
+
+const saveProduct = () => {
+  if (!productForm.value.name || productForm.value.name.length > 255) return;
+  if (productForm.value.link && (!isValidUrl(productForm.value.link) || productForm.value.link.length > 500)) return;
+  
+  if (editingProductIndex.value !== null) {
+    form.products[editingProductIndex.value] = { ...productForm.value };
+  } else {
+    form.products.push({ ...productForm.value });
+  }
+  closeProductModal();
+};
+
+const confirmRemoveProduct = (index) => {
+  deleteProductIndex.value = index;
+  deleteProductName.value = form.products[index].name;
+  showDeleteConfirm.value = true;
+};
+
+const removeProduct = () => {
+  if (deleteProductIndex.value !== null) {
+    form.products.splice(deleteProductIndex.value, 1);
+  }
+  showDeleteConfirm.value = false;
+  deleteProductIndex.value = null;
+  deleteProductName.value = '';
 };
 
 const submit = () => {
-  form.post(`/workspace/${props.workspace.id}`, {
-    forceFormData: true,
-  });
+  if (hasAnyProductError.value) return;
+  form.post(`/workspace/${props.workspace.id}`, { forceFormData: true });
 };
 </script>
-

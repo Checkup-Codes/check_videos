@@ -4,35 +4,12 @@
     <div class="mx-auto max-w-5xl py-8">
       <!-- Hero Section -->
       <div class="mb-12">
-        <h1 class="mb-4 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Çalışma Alanım</h1>
+          <h1 class="xl:-translate-x-[80px] mb-5 text-2xl font-bold text-foreground sm:text-3xl">Çalışma Alanım</h1>
       </div>
 
       <!-- Single Workspace View -->
       <div v-if="workspaces.length === 1" class="space-y-8">
         <div class="overflow-hidden rounded-xl bg-card shadow-sm">
-          <!-- Action Buttons (if logged in) -->
-          <div v-if="isLoggedIn" class="flex items-center justify-end gap-2 p-4">
-            <Link
-              :href="`/workspace/${workspaces[0].id}/edit`"
-              class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="h-3.5 w-3.5"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                />
-              </svg>
-              Düzenle
-            </Link>
-          </div>
           <!-- Images Gallery -->
           <div v-if="workspaces[0].images && workspaces[0].images.length > 0" class="space-y-2 p-4">
             <div
@@ -116,29 +93,6 @@
       <div v-else-if="workspaces.length > 1" class="relative">
         <!-- Slider Container -->
         <div class="relative overflow-hidden rounded-xl bg-card shadow-sm">
-          <!-- Action Buttons (if logged in) -->
-          <div v-if="isLoggedIn" class="flex items-center justify-end gap-2 p-4">
-            <Link
-              :href="`/workspace/${workspaces[currentIndex].id}/edit`"
-              class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="h-3.5 w-3.5"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                />
-              </svg>
-              Düzenle
-            </Link>
-          </div>
           <!-- Workspaces Slider -->
           <div
             class="flex transition-transform duration-500 ease-in-out"
@@ -319,10 +273,6 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-});
-
-const isLoggedIn = computed(() => {
-  return !!(page.props.auth && page.props.auth.user);
 });
 
 const currentIndex = ref(0);

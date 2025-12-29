@@ -26,8 +26,8 @@ class WordController extends Controller
             $status = request()->input('status');
             $perPage = 10; // Number of words per page
 
-            // Start building the query
-            $query = Word::query();
+            // Start building the query - sadece tamamlanmış kelimeler
+            $query = Word::complete();
 
             // Apply filters
             if ($search) {
@@ -175,10 +175,11 @@ class WordController extends Controller
                 ->orderBy('lang_language_packs.name')
                 ->get();
 
-            // Slug'a göre istenen paket ve kelimeleri getir
+            // Slug'a göre istenen paket ve kelimeleri getir (sadece tamamlanmış kelimeler)
             $languagePack = LanguagePack::with([
                 'words' => function ($query) {
-                    $query->with(['exampleSentences', 'synonyms', 'meanings'])
+                    $query->complete()
+                        ->with(['exampleSentences', 'synonyms', 'meanings'])
                         ->orderBy('word');
                 }
             ])
@@ -253,8 +254,25 @@ class WordController extends Controller
             ->orderBy('lang_language_packs.name')
             ->get();
 
+        // Yarım kalan kelimeleri getir
+        $incompleteWords = Word::incomplete()
+            ->with(['meanings'])
+            ->orderBy('created_at', 'desc')
+            ->limit(20)
+            ->get()
+            ->map(function ($word) {
+                return [
+                    'id' => $word->id,
+                    'word' => $word->word,
+                    'language' => $word->language,
+                    'type' => $word->type,
+                    'created_at' => $word->created_at->diffForHumans(),
+                ];
+            });
+
         return Inertia::render('Rendition/Words/CreateWord', [
             'languagePacks' => $languagePacks,
+            'incompleteWords' => $incompleteWords,
             'screen' => $this->getScreenData('Yeni Kelime')
         ]);
     }
@@ -264,70 +282,106 @@ class WordController extends Controller
         Log::info('Word form data:', $request->all());
 
         try {
-            $request->validate([
+            // Basitleştirilmiş validation - sadece kelime ve dil zorunlu
+            $rules = [
                 'word' => [
                     'required',
                     'string',
                     'max:255',
-                    function ($attribute, $value, $fail) use ($request) {
-                        $exists = Word::where('word', $value)
-                            ->where('language', $request->language)
-                            ->where('type', $request->type)
-                            ->exists();
-                        if ($exists) {
-                            $fail('Bu kelime (' . $value . ') ve tür (' . $request->type . ') kombinasyonu zaten veritabanında mevcut.');
-                        }
-                    }
                 ],
-                'meanings' => 'required|array|min:1',
-                'meanings.*.meaning' => 'required|string',
-                'meanings.*.is_primary' => 'boolean',
-                'type' => 'required|string',
                 'language' => 'required|string|size:2',
-                'difficulty_level' => 'required|integer|min:1|max:4',
-                'language_pack_ids' => 'required|array',
+                'type' => 'nullable|string',
+                'difficulty_level' => 'nullable|integer|min:1|max:4',
+                'language_pack_ids' => 'nullable|array',
                 'language_pack_ids.*' => 'exists:lang_language_packs,id',
-                'learning_status' => 'integer|min:0|max:2',
-                'flag' => 'boolean',
+                'learning_status' => 'nullable|integer|min:0|max:2',
+                'flag' => 'nullable|boolean',
+                'meanings' => 'nullable|array',
+                'meanings.*.meaning' => 'nullable|string',
+                'meanings.*.is_primary' => 'nullable|boolean',
                 'example_sentences' => 'nullable|array',
                 'example_translations' => 'nullable|array',
                 'synonyms' => 'nullable|array',
-            ]);
+            ];
+
+            // Eğer aynı kelime + dil + tür varsa hata ver (sadece tür doluysa kontrol et)
+            if ($request->type) {
+                $rules['word'][] = function ($attribute, $value, $fail) use ($request) {
+                    $exists = Word::where('word', $value)
+                        ->where('language', $request->language)
+                        ->where('type', $request->type)
+                        ->exists();
+                    if ($exists) {
+                        $fail('Bu kelime (' . $value . ') ve tür (' . $request->type . ') kombinasyonu zaten mevcut.');
+                    }
+                };
+            } else {
+                // Tür yoksa sadece kelime + dil kontrolü
+                $rules['word'][] = function ($attribute, $value, $fail) use ($request) {
+                    $exists = Word::where('word', $value)
+                        ->where('language', $request->language)
+                        ->whereNull('type')
+                        ->exists();
+                    if ($exists) {
+                        $fail('Bu kelime (' . $value . ') zaten mevcut.');
+                    }
+                };
+            }
+
+            $request->validate($rules);
 
             DB::beginTransaction();
 
+            // is_complete: anlam varsa true, yoksa false
+            $hasMeaning = false;
+            if ($request->has('meanings') && is_array($request->meanings)) {
+                foreach ($request->meanings as $meaningData) {
+                    if (!empty($meaningData['meaning'])) {
+                        $hasMeaning = true;
+                        break;
+                    }
+                }
+            }
+
             $word = Word::create([
                 'word' => $request->word,
-                'type' => $request->type,
+                'type' => $request->type ?: null,
                 'language' => $request->language,
+                'is_complete' => $hasMeaning,
                 'learning_status' => $request->learning_status ?? 0,
                 'flag' => $request->flag ?? false,
-                'difficulty_level' => $request->difficulty_level,
+                'difficulty_level' => $request->difficulty_level ?? 2,
                 'incorrect_count' => 0,
                 'review_count' => 0,
             ]);
 
-            // Save word meanings
-            $hasPrimary = false;
-            foreach ($request->meanings as $index => $meaningData) {
-                // If this is the first meaning and no primary is set, make it primary
-                $isPrimary = isset($meaningData['is_primary']) ? $meaningData['is_primary'] : false;
+            // Save word meanings (sadece dolu olanları kaydet)
+            if ($request->has('meanings') && is_array($request->meanings)) {
+                $hasPrimary = false;
+                $meaningIndex = 0;
+                foreach ($request->meanings as $meaningData) {
+                    if (!empty($meaningData['meaning'])) {
+                        $isPrimary = isset($meaningData['is_primary']) ? $meaningData['is_primary'] : false;
 
-                // If it's explicitly set to primary or no primary exists yet and it's the first item
-                if ($isPrimary || (!$hasPrimary && $index === 0)) {
-                    $isPrimary = true;
-                    $hasPrimary = true;
+                        if ($isPrimary || (!$hasPrimary && $meaningIndex === 0)) {
+                            $isPrimary = true;
+                            $hasPrimary = true;
+                        }
+
+                        $word->meanings()->create([
+                            'meaning' => $meaningData['meaning'],
+                            'is_primary' => $isPrimary,
+                            'display_order' => $meaningIndex,
+                        ]);
+                        $meaningIndex++;
+                    }
                 }
-
-                $word->meanings()->create([
-                    'meaning' => $meaningData['meaning'],
-                    'is_primary' => $isPrimary,
-                    'display_order' => $index,
-                ]);
             }
 
-            // İlişkili dil paketlerini ekle
-            $word->languagePacks()->attach($request->language_pack_ids);
+            // İlişkili dil paketlerini ekle (sadece seçilmişse)
+            if ($request->has('language_pack_ids') && is_array($request->language_pack_ids) && count($request->language_pack_ids) > 0) {
+                $word->languagePacks()->attach($request->language_pack_ids);
+            }
 
             // Örnek cümleleri ekle
             if ($request->has('example_sentences') && is_array($request->example_sentences)) {
@@ -356,8 +410,12 @@ class WordController extends Controller
 
             DB::commit();
 
+            $message = $hasMeaning 
+                ? 'Kelime başarıyla eklendi.' 
+                : 'Kelime kaydedildi. Daha sonra tamamlayabilirsiniz.';
+
             return Redirect::route('rendition.words.index')
-                ->with('success', 'Kelime başarıyla eklendi.');
+                ->with('success', $message);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Word creation error: ' . $e->getMessage());
@@ -397,49 +455,53 @@ class WordController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            // Basitleştirilmiş validation
             $request->validate([
-                'word' => [
-                    'required',
-                    'string',
-                    'max:255',
-                    function ($attribute, $value, $fail) use ($request, $id) {
-                        $exists = Word::where('word', $value)
-                            ->where('language', $request->language)
-                            ->where('type', $request->type)
-                            ->where('id', '!=', $id)
-                            ->exists();
-                        if ($exists) {
-                            $fail('Bu kelime (' . $value . ') ve tür (' . $request->type . ') kombinasyonu zaten veritabanında mevcut.');
-                        }
-                    }
-                ],
-                'meanings' => 'required|array|min:1',
-                'meanings.*.meaning' => 'required|string',
-                'meanings.*.is_primary' => 'boolean',
-                'type' => 'required|string',
+                'word' => 'required|string|max:255',
                 'language' => 'required|string|size:2',
-                'difficulty_level' => 'required|integer|min:1|max:4',
-                'language_pack_ids' => 'required|array',
+                'type' => 'nullable|string',
+                'difficulty_level' => 'nullable|integer|min:1|max:4',
+                'language_pack_ids' => 'nullable|array',
                 'language_pack_ids.*' => 'exists:lang_language_packs,id',
-                'learning_status' => 'integer|min:0|max:2',
-                'flag' => 'boolean',
+                'learning_status' => 'nullable|integer|min:0|max:2',
+                'flag' => 'nullable|boolean',
+                'meanings' => 'nullable|array',
+                'meanings.*.meaning' => 'nullable|string',
+                'meanings.*.is_primary' => 'nullable|boolean',
                 'example_sentences' => 'nullable|array',
                 'example_translations' => 'nullable|array',
                 'synonyms' => 'nullable|array',
             ]);
 
             $word = Word::findOrFail($id);
+
+            // is_complete: anlam varsa true, yoksa false
+            $hasMeaning = false;
+            if ($request->has('meanings') && is_array($request->meanings)) {
+                foreach ($request->meanings as $meaningData) {
+                    if (!empty($meaningData['meaning'])) {
+                        $hasMeaning = true;
+                        break;
+                    }
+                }
+            }
+
             $word->update([
                 'word' => $request->word,
-                'type' => $request->type,
+                'type' => $request->type ?: null,
                 'language' => $request->language,
-                'learning_status' => $request->learning_status,
-                'flag' => $request->flag,
-                'difficulty_level' => $request->difficulty_level,
+                'is_complete' => $hasMeaning,
+                'learning_status' => $request->learning_status ?? 0,
+                'flag' => $request->flag ?? false,
+                'difficulty_level' => $request->difficulty_level ?? 2,
             ]);
 
             // İlişkili dil paketlerini güncelle
-            $word->languagePacks()->sync($request->language_pack_ids);
+            if ($request->has('language_pack_ids') && is_array($request->language_pack_ids)) {
+                $word->languagePacks()->sync($request->language_pack_ids);
+            } else {
+                $word->languagePacks()->detach();
+            }
 
             // Örnek cümleleri güncelle
             $word->exampleSentences()->delete();
@@ -468,18 +530,34 @@ class WordController extends Controller
                 }
             }
 
-            // Save word meanings
+            // Anlamları güncelle
             $word->meanings()->delete();
-            foreach ($request->meanings as $index => $meaningData) {
-                $word->meanings()->create([
-                    'meaning' => $meaningData['meaning'],
-                    'is_primary' => isset($meaningData['is_primary']) ? $meaningData['is_primary'] : false,
-                    'display_order' => $index,
-                ]);
+            if ($request->has('meanings') && is_array($request->meanings)) {
+                $hasPrimary = false;
+                $meaningIndex = 0;
+                foreach ($request->meanings as $meaningData) {
+                    if (!empty($meaningData['meaning'])) {
+                        $isPrimary = isset($meaningData['is_primary']) ? $meaningData['is_primary'] : false;
+                        if ($isPrimary || (!$hasPrimary && $meaningIndex === 0)) {
+                            $isPrimary = true;
+                            $hasPrimary = true;
+                        }
+                        $word->meanings()->create([
+                            'meaning' => $meaningData['meaning'],
+                            'is_primary' => $isPrimary,
+                            'display_order' => $meaningIndex,
+                        ]);
+                        $meaningIndex++;
+                    }
+                }
             }
 
+            $message = $hasMeaning 
+                ? 'Kelime başarıyla güncellendi.' 
+                : 'Kelime kaydedildi. Anlam ekleyerek tamamlayabilirsiniz.';
+
             return Redirect::route('rendition.words.index')
-                ->with('success', 'Kelime başarıyla güncellendi.');
+                ->with('success', $message);
         } catch (\Exception $e) {
             Log::error('Error in WordController@update: ' . $e->getMessage());
             Log::error($e->getTraceAsString());
@@ -582,13 +660,14 @@ class WordController extends Controller
                 ]);
             }
 
-            // Kelimeyi bul - önce tam eşleşme, sonra kısmi eşleşme
-            $word = Word::with([
-                'meanings',
-                'exampleSentences',
-                'synonyms',
-                'languagePacks'
-            ])
+            // Kelimeyi bul - sadece tamamlanmış kelimeler, önce tam eşleşme, sonra kısmi eşleşme
+            $word = Word::complete()
+                ->with([
+                    'meanings',
+                    'exampleSentences',
+                    'synonyms',
+                    'languagePacks'
+                ])
                 ->where(function ($query) use ($searchTerm) {
                     // Önce tam eşleşme (büyük/küçük harf duyarsız)
                     $query->whereRaw('LOWER(word) = ?', [strtolower($searchTerm)])
