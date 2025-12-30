@@ -18,7 +18,7 @@
         Metne Dön
       </button>
     </div>
-    <ExcalidrawComponent ref="excalidrawRef" :write="write" />
+    <ExcalidrawComponent ref="excalidrawRef" :write="write" :auth="props.auth" />
   </div>
 
   <CheckScreen v-else>

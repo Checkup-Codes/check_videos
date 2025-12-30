@@ -41,21 +41,35 @@
 
 <script setup>
 import { onMounted, ref, watch, computed, onBeforeUnmount } from 'vue';
-import { usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 
-const { props } = usePage();
+const props = defineProps({
+  write: {
+    type: Object,
+    default: () => ({})
+  },
+  auth: {
+    type: Object,
+    default: null
+  }
+});
+
 const elementsRef = ref([]);
 const filesRef = ref({}); // Excalidraw resimleri için
 const flashMessage = ref('');
-const writeDraws = ref(props.write?.writeDraws || props.write?.write_draws || []);
 const excalidrawInstance = ref(null);
 const savedElements = ref(null);
 const savedFiles = ref(null);
 const isSaving = ref(false);
+const isInitialized = ref(false);
 
 // Theme detection
 const isDarkTheme = ref(document.documentElement.getAttribute('data-theme') === 'dark');
+
+// Get writeDraws from props
+const writeDraws = computed(() => {
+  return props.write?.writeDraws || props.write?.write_draws || [];
+});
 
 // Watch for theme changes
 watch(isDarkTheme, (newValue) => {
@@ -64,40 +78,10 @@ watch(isDarkTheme, (newValue) => {
   }
 });
 
-// Watch for write prop changes (lazy loading)
-watch(() => props.write, (newWrite) => {
-  if (newWrite) {
-    const draws = newWrite.writeDraws || newWrite.write_draws || [];
-    if (draws.length > 0 && writeDraws.value.length === 0) {
-      writeDraws.value = draws;
-      // Reload excalidraw with new data
-      loadInitialVersion();
-    }
-  }
-}, { deep: true });
-
-// Observe theme changes in the DOM
-onMounted(() => {
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      if (mutation.attributeName === 'data-theme') {
-        isDarkTheme.value = document.documentElement.getAttribute('data-theme') === 'dark';
-      }
-    });
-  });
-
-  observer.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['data-theme'],
-  });
-
-  loadInitialVersion();
-
-  // Cleanup observer on component unmount
-  return () => observer.disconnect();
-});
-
-const loadInitialVersion = () => {
+const loadExcalidraw = () => {
+  if (isInitialized.value) return;
+  isInitialized.value = true;
+  
   import('@excalidraw/excalidraw').then(({ Excalidraw }) => {
     import('react').then((React) => {
       import('react-dom/client').then((ReactDOMClient) => {
@@ -107,23 +91,39 @@ const loadInitialVersion = () => {
         const root = ReactDOMClient.createRoot(container);
 
         const draws = writeDraws.value || [];
-        const initialElements = draws.length > 0 && draws[0]?.elements 
-          ? JSON.parse(draws[0].elements) 
-          : [];
-        
-        // Kaydedilmiş resimleri yükle
+        let initialElements = [];
         let initialFiles = {};
-        if (draws.length > 0 && draws[0]?.files) {
-          try {
-            initialFiles = JSON.parse(draws[0].files);
-          } catch (e) {
-            console.warn('Files parse error:', e);
+        
+        if (draws.length > 0 && draws[0]) {
+          // Parse elements
+          if (draws[0].elements) {
+            try {
+              initialElements = typeof draws[0].elements === 'string' 
+                ? JSON.parse(draws[0].elements) 
+                : draws[0].elements;
+            } catch (e) {
+              console.warn('Elements parse error:', e);
+              initialElements = [];
+            }
+          }
+          
+          // Parse files
+          if (draws[0].files) {
+            try {
+              initialFiles = typeof draws[0].files === 'string'
+                ? JSON.parse(draws[0].files)
+                : draws[0].files;
+            } catch (e) {
+              console.warn('Files parse error:', e);
+              initialFiles = {};
+            }
           }
         }
 
         savedElements.value = JSON.stringify(initialElements);
         savedFiles.value = JSON.stringify(initialFiles);
         filesRef.value = initialFiles;
+        elementsRef.value = initialElements;
 
         const initialData = {
           elements: initialElements,
@@ -134,7 +134,6 @@ const loadInitialVersion = () => {
 
         const handleChange = (elements, appState, files) => {
           elementsRef.value = elements;
-          // Excalidraw files objesini güncelle
           if (files) {
             filesRef.value = files;
           }
@@ -156,6 +155,37 @@ const loadInitialVersion = () => {
   });
 };
 
+// Watch for writeDraws changes (when lazy loaded)
+watch(writeDraws, (newDraws) => {
+  if (newDraws && newDraws.length > 0 && !isInitialized.value) {
+    loadExcalidraw();
+  }
+}, { deep: true });
+
+// Observe theme changes in the DOM
+onMounted(() => {
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === 'data-theme') {
+        isDarkTheme.value = document.documentElement.getAttribute('data-theme') === 'dark';
+      }
+    });
+  });
+
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme'],
+  });
+
+  // Load excalidraw if writeDraws already available or write exists
+  if (writeDraws.value.length > 0 || props.write?.id) {
+    loadExcalidraw();
+  }
+
+  // Cleanup observer on component unmount
+  return () => observer.disconnect();
+});
+
 // Check if there are unsaved changes
 const hasUnsavedChanges = computed(() => {
   if (!savedElements.value) return false;
@@ -166,7 +196,7 @@ const hasUnsavedChanges = computed(() => {
 
 // Otomatik kaydetme - Promise döndürür
 const saveIfNeeded = async () => {
-  if (!hasUnsavedChanges.value || isSaving.value) {
+  if (!hasUnsavedChanges.value || isSaving.value || !props.write?.id) {
     return Promise.resolve(true);
   }
   
@@ -176,7 +206,7 @@ const saveIfNeeded = async () => {
   isSaving.value = true;
 
   try {
-    const response = await axios.post(`/writes/${props.write.id}/draw`, {
+    await axios.post(`/writes/${props.write.id}/draw`, {
       elements: elementsJson,
       files: filesJson,
       version: 1,
@@ -185,13 +215,6 @@ const saveIfNeeded = async () => {
     // Update saved elements and files
     savedElements.value = elementsJson;
     savedFiles.value = filesJson;
-    
-    // Update the first draw version or create it if it doesn't exist
-    if (writeDraws.value.length > 0) {
-      writeDraws.value[0] = response.data;
-    } else {
-      writeDraws.value.push(response.data);
-    }
     
     setFlashMessage('Otomatik kaydedildi!');
     return true;
@@ -205,6 +228,11 @@ const saveIfNeeded = async () => {
 };
 
 const saveDrawToServer = () => {
+  if (!props.write?.id) {
+    setFlashMessage('Yazı bulunamadı, kaydetme başarısız.');
+    return;
+  }
+  
   const latestElements = elementsRef.value.length > 0 ? elementsRef.value : [];
   const elementsJson = JSON.stringify(latestElements);
   const filesJson = JSON.stringify(filesRef.value || {});
@@ -221,14 +249,9 @@ const saveDrawToServer = () => {
       // Update saved elements and files
       savedElements.value = elementsJson;
       savedFiles.value = filesJson;
-      // Update the first draw version or create it if it doesn't exist
-      if (writeDraws.value.length > 0) {
-        writeDraws.value[0] = response.data;
-      } else {
-        writeDraws.value.push(response.data);
-      }
     })
-    .catch(() => {
+    .catch((error) => {
+      console.error('Save error:', error);
       setFlashMessage('Kaydetme sırasında bir hata oluştu. Lütfen tekrar deneyin.');
     })
     .finally(() => {
