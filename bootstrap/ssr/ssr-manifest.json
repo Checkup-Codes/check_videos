@@ -50,6 +50,14 @@
   "resources/js/Components/GoBackButton.vue": [
     "/build/assets/GoBackButton-u55EQwn1.js"
   ],
+  "resources/js/Components/ImageCropper.vue": [
+    "/build/assets/ImageCropper-rr4d9pon.js",
+    "/build/assets/ImageCropper-BY4QvvKr.css"
+  ],
+  "resources/js/Components/ImageCropper.vue?vue&type=style&index=0&scoped=9937c924&lang.css": [
+    "/build/assets/ImageCropper-rr4d9pon.js",
+    "/build/assets/ImageCropper-BY4QvvKr.css"
+  ],
   "resources/js/Components/InputError.vue": [
     "/build/assets/InputError-BNVGxBhc.js"
   ],
@@ -328,7 +336,7 @@
     "/build/assets/EditJourney-ClSiAHdy.js"
   ],
   "resources/js/Pages/Journey/IndexJourney.vue": [
-    "/build/assets/IndexJourney-CTCjtIey.js"
+    "/build/assets/IndexJourney-b-7ryu-B.js"
   ],
   "resources/js/Pages/Journey/ShowJourney.vue": [
     "/build/assets/ShowJourney-sp0kLZa1.js"
@@ -829,18 +837,18 @@
     "/build/assets/Welcome-bSatZHEn.js"
   ],
   "resources/js/Pages/Workspace/CreateWorkspace.vue": [
-    "/build/assets/CreateWorkspace-GX7LMX8I.js"
+    "/build/assets/CreateWorkspace-Crdaus7R.js"
   ],
   "resources/js/Pages/Workspace/EditWorkspace.vue": [
-    "/build/assets/EditWorkspace-CldLLAw6.js"
+    "/build/assets/EditWorkspace-DqdkcgSQ.js"
   ],
   "resources/js/Pages/Workspace/IndexWorkspace.vue": [
-    "/build/assets/IndexWorkspace-DQ_tIa4s.js",
-    "/build/assets/IndexWorkspace-Dwdnd75w.css"
+    "/build/assets/IndexWorkspace-Bf5MF9yO.js",
+    "/build/assets/IndexWorkspace-BknG7E3N.css"
   ],
-  "resources/js/Pages/Workspace/IndexWorkspace.vue?vue&type=style&index=0&scoped=3f88ab27&lang.css": [
-    "/build/assets/IndexWorkspace-DQ_tIa4s.js",
-    "/build/assets/IndexWorkspace-Dwdnd75w.css"
+  "resources/js/Pages/Workspace/IndexWorkspace.vue?vue&type=style&index=0&scoped=df4df58d&lang.css": [
+    "/build/assets/IndexWorkspace-Bf5MF9yO.js",
+    "/build/assets/IndexWorkspace-BknG7E3N.css"
   ],
   "resources/js/Pages/Workspace/ShowWorkspace.vue": [
     "/build/assets/ShowWorkspace-DKEPOK-f.js"

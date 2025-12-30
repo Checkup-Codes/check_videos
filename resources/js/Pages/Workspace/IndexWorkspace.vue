@@ -20,7 +20,7 @@
               <img
                 :src="`/storage/${image}`"
                 :alt="`Çalışma Alanı Resim ${index + 1}`"
-                class="h-auto w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                class="max-h-[50vh] w-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
             </div>
           </div>
@@ -109,7 +109,7 @@
                   <img
                     :src="`/storage/${image}`"
                     :alt="`Çalışma Alanı Resim ${index + 1}`"
-                    class="h-auto w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    class="max-h-[50vh] w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
               </div>

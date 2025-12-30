@@ -228,6 +228,15 @@
         </div>
       </div>
     </Teleport>
+
+    <!-- Image Cropper -->
+    <ImageCropper
+      :show="showCropper"
+      :image-src="cropperImageSrc"
+      :aspect-ratio="16 / 9"
+      @crop="handleCrop"
+      @cancel="handleCropCancel"
+    />
   </CheckScreen>
 </template>
 
@@ -235,6 +244,7 @@
 import { ref, computed } from 'vue';
 import { Link, useForm, usePage, Head } from '@inertiajs/vue3';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import ImageCropper from '@/Components/ImageCropper.vue';
 
 const page = usePage();
 
@@ -247,6 +257,12 @@ const form = useForm({
 });
 
 const imagePreviews = ref([]);
+
+// Cropper state
+const showCropper = ref(false);
+const cropperImageSrc = ref('');
+const pendingFiles = ref([]);
+const currentCropIndex = ref(0);
 const showProductModal = ref(false);
 const editingProductIndex = ref(null);
 const productForm = ref({ name: '', features: '', link: '' });
@@ -277,8 +293,60 @@ const hasAnyProductError = computed(() => {
 
 const handleImagesChange = (event) => {
   const files = Array.from(event.target.files);
-  form.images = [...form.images, ...files];
-  imagePreviews.value = [...imagePreviews.value, ...files.map(file => URL.createObjectURL(file))];
+  if (files.length === 0) return;
+  
+  // Store files for sequential cropping
+  pendingFiles.value = files;
+  currentCropIndex.value = 0;
+  
+  // Start cropping first image
+  startCropping(files[0]);
+};
+
+const startCropping = (file) => {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    cropperImageSrc.value = e.target.result;
+    showCropper.value = true;
+  };
+  reader.readAsDataURL(file);
+};
+
+const handleCrop = (blob) => {
+  // Create file from blob
+  const fileName = pendingFiles.value[currentCropIndex.value]?.name || `image-${Date.now()}.jpg`;
+  const croppedFile = new File([blob], fileName, { type: 'image/jpeg' });
+  
+  // Add to form
+  form.images.push(croppedFile);
+  imagePreviews.value.push(URL.createObjectURL(blob));
+  
+  // Close cropper
+  showCropper.value = false;
+  
+  // Process next image if any
+  currentCropIndex.value++;
+  if (currentCropIndex.value < pendingFiles.value.length) {
+    setTimeout(() => {
+      startCropping(pendingFiles.value[currentCropIndex.value]);
+    }, 100);
+  } else {
+    pendingFiles.value = [];
+  }
+};
+
+const handleCropCancel = () => {
+  showCropper.value = false;
+  
+  // Process next image if any, or clear pending
+  currentCropIndex.value++;
+  if (currentCropIndex.value < pendingFiles.value.length) {
+    setTimeout(() => {
+      startCropping(pendingFiles.value[currentCropIndex.value]);
+    }, 100);
+  } else {
+    pendingFiles.value = [];
+  }
 };
 
 const removeImage = (index) => {

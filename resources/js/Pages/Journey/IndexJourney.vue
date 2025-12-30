@@ -41,54 +41,60 @@
                   :href="`/journey/${entry.id}`"
                   class="group block overflow-hidden rounded-xl bg-card ring-1 ring-border/50 transition-all duration-200 hover:ring-primary/40 hover:shadow-lg"
                 >
-                  <!-- With Image -->
-                  <div v-if="entry.image" class="relative">
+                  <!-- Horizontal Layout: Image Left, Content Right -->
+                  <div class="flex flex-col sm:flex-row">
                     <!-- Image Container -->
-                    <div class="aspect-[21/9] w-full overflow-hidden sm:aspect-[3/1]">
-                      <img 
-                        :src="`/storage/${entry.image}`" 
-                        :alt="entry.title"
-                        class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                      <!-- Gradient Overlay -->
-                      <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                    <div v-if="entry.image" class="relative w-full flex-shrink-0 sm:w-80 md:w-96 lg:w-[420px]">
+                      <div class="aspect-video w-full overflow-hidden">
+                        <img 
+                          :src="`/storage/${entry.image}`" 
+                          :alt="entry.title"
+                          class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      </div>
+                      <!-- Duration/Status Badge on Image -->
+                      <span v-if="entry.status === 'draft'" class="absolute bottom-2 right-2 rounded bg-yellow-500/90 px-1.5 py-0.5 text-xs font-medium text-yellow-900">
+                        Taslak
+                      </span>
                     </div>
-                    <!-- Content on Image -->
-                    <div class="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
-                      <div class="flex items-center gap-2 text-xs text-white/80 sm:text-sm">
-                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    
+                    <!-- Placeholder for no image -->
+                    <div v-else class="relative hidden aspect-video w-80 flex-shrink-0 items-center justify-center bg-muted/50 sm:flex md:w-96 lg:w-[420px]">
+                      <svg class="h-12 w-12 text-muted-foreground/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <span v-if="entry.status === 'draft'" class="absolute bottom-2 right-2 rounded bg-yellow-500/90 px-1.5 py-0.5 text-xs font-medium text-yellow-900">
+                        Taslak
+                      </span>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="flex min-w-0 flex-1 flex-col justify-center p-4 sm:p-5">
+                      <!-- Date -->
+                      <div class="flex items-center gap-2 text-xs text-muted-foreground">
+                        <svg class="h-3.5 w-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                         <span>{{ formatDate(entry.entry_date) }}</span>
-                        <span v-if="entry.status === 'draft'" class="rounded bg-yellow-500/90 px-1.5 py-0.5 text-xs font-medium text-yellow-900">
+                        <span v-if="entry.status === 'draft' && !entry.image" class="rounded bg-yellow-500/20 px-1.5 py-0.5 text-xs font-medium text-yellow-600 dark:text-yellow-400 sm:hidden">
                           Taslak
                         </span>
                       </div>
-                      <h3 class="mt-1 text-lg font-semibold text-white sm:text-xl">
+                      
+                      <!-- Title -->
+                      <h3 class="mt-2 line-clamp-2 text-base font-semibold text-foreground transition-colors group-hover:text-primary sm:text-lg">
                         {{ entry.title }}
                       </h3>
-                    </div>
-                  </div>
-
-                  <!-- Without Image -->
-                  <div v-else class="p-4 sm:p-5">
-                    <div class="flex items-start justify-between gap-4">
-                      <div class="min-w-0 flex-1">
-                        <div class="flex items-center gap-2 text-xs text-muted-foreground sm:text-sm">
-                          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                          <span>{{ formatDate(entry.entry_date) }}</span>
-                          <span v-if="entry.status === 'draft'" class="rounded bg-yellow-500/20 px-1.5 py-0.5 text-xs font-medium text-yellow-600 dark:text-yellow-400">
-                            Taslak
-                          </span>
-                        </div>
-                        <h3 class="mt-2 text-base font-semibold text-foreground group-hover:text-primary sm:text-lg">
-                          {{ entry.title }}
-                        </h3>
-                      </div>
-                      <div class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-muted/50 transition-colors group-hover:bg-primary/10">
-                        <svg class="h-4 w-4 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      
+                      <!-- Description (if exists) -->
+                      <p v-if="entry.description" class="mt-2 line-clamp-2 text-sm text-muted-foreground">
+                        {{ entry.description }}
+                      </p>
+                      
+                      <!-- Arrow indicator -->
+                      <div class="mt-3 flex items-center gap-1 text-xs text-muted-foreground transition-colors group-hover:text-primary">
+                        <span>Devamını oku</span>
+                        <svg class="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                         </svg>
                       </div>

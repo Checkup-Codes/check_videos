@@ -1,0 +1,1 @@
+import{d as t,c as o,a as s,r as n,o as r}from"./ssr-BxLEzc_r.js";const a={class:"flex min-h-screen flex-col items-center justify-center bg-background text-foreground transition-colors duration-300 px-4 py-12"},c={class:"w-full max-w-md"},_=t({__name:"GuestLayout",setup(l){return(e,d)=>(r(),o("div",a,[s("div",c,[n(e.$slots,"default")])]))}});export{_};
