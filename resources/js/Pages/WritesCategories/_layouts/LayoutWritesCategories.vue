@@ -24,7 +24,7 @@
 
 <script setup>
 import { computed, ref, provide, watch, onMounted, onBeforeUnmount } from 'vue';
-import { usePage } from '@inertiajs/vue3';
+import { usePage, router } from '@inertiajs/vue3';
 import CheckLayout from '@/Components/CekapUI/Slots/CheckLayout.vue';
 import SidebarLayoutWrite from './SidebarLayoutWrite.vue';
 import SidebarLayoutCategory from './SidebarLayoutCategory.vue';
@@ -175,6 +175,9 @@ const handleSidebarWidthChange = (isNarrow) => {
 // Track if component is mounted (client-side only)
 const isMounted = ref(false);
 
+// Router event cleanup function
+let removeRouterListener = null;
+
 // Prevent body scrolling on writes pages
 onMounted(() => {
   // Mark as mounted to enable sidebar rendering (client-side only)
@@ -186,6 +189,29 @@ onMounted(() => {
     windowWidth.value = window.innerWidth;
     window.addEventListener('resize', updateWindowWidth);
   }
+  
+  // CRUD işlemlerinden sonra sidebar cache'ini invalidate et
+  // Flash message 'success' içeriyorsa ve writes/categories sayfasındaysak cache'i yenile
+  removeRouterListener = router.on('success', (event) => {
+    const flash = page.props.flash;
+    const url = event.detail.page.url || '';
+    
+    // Yazı veya kategori CRUD işlemi yapıldıysa (success mesajı varsa)
+    if (flash?.success && (url.includes('/writes') || url.includes('/categories'))) {
+      // Store, update, destroy işlemlerinden sonra cache'i yenile
+      const isCreatePage = url.includes('/create');
+      const isEditPage = url.includes('/edit');
+      const isIndexPage = url === '/writes' || url === '/categories';
+      
+      // Create veya Edit sayfasından redirect olduysa (yani CRUD işlemi yapıldı)
+      if (!isCreatePage && !isEditPage) {
+        // Sidebar verilerini yeniden yükle
+        store.dispatch('Writes/invalidateAndReload', { 
+          currentUserId: page.props.auth?.user?.id || null 
+        });
+      }
+    }
+  });
 });
 
 onBeforeUnmount(() => {
@@ -195,14 +221,88 @@ onBeforeUnmount(() => {
   if (typeof window !== 'undefined') {
     window.removeEventListener('resize', updateWindowWidth);
   }
+  
+  // Remove router listener
+  if (removeRouterListener) {
+    removeRouterListener();
+  }
 });
 
 // Provide reactive data
 const categories = computed(() => page.props.categories || []);
 const writes = computed(() => page.props.writes || []);
 
-provide('categories', categories);
-provide('writes', writes);
+// Current user ID (login durumu takibi için)
+const currentUserId = computed(() => page.props.auth?.user?.id || null);
+
+// Store'dan sidebar verilerini al
+const storeWrites = computed(() => store.getters['Writes/writes']);
+const storeCategories = computed(() => store.getters['Writes/categories']);
+const sidebarDataLoaded = computed(() => store.getters['Writes/sidebarDataLoaded']);
+const lastUserId = computed(() => store.getters['Writes/lastUserId']);
+
+// Combined categories and writes (store > props)
+const combinedCategories = computed(() => {
+  // Önce store'a bak (cache'lenmiş veri)
+  if (storeCategories.value && storeCategories.value.length > 0) {
+    return storeCategories.value;
+  }
+  // Sonra props'a bak
+  if (categories.value && categories.value.length > 0) {
+    return categories.value;
+  }
+  return [];
+});
+
+const combinedWrites = computed(() => {
+  // Önce store'a bak (cache'lenmiş veri)
+  if (storeWrites.value && storeWrites.value.length > 0) {
+    return storeWrites.value;
+  }
+  // Sonra props'a bak
+  if (writes.value && writes.value.length > 0) {
+    return writes.value;
+  }
+  return [];
+});
+
+provide('categories', combinedCategories);
+provide('writes', combinedWrites);
+
+// Sidebar verilerini yükle (user değişikliğini kontrol eder)
+const loadSidebarDataOnce = async () => {
+  const userId = currentUserId.value;
+  const userChanged = userId !== lastUserId.value;
+  
+  // Props'tan veri geldiyse store'a kaydet
+  if (categories.value.length > 0 || writes.value.length > 0) {
+    store.dispatch('Writes/setSidebarDataFromProps', {
+      writes: writes.value,
+      categories: categories.value,
+      currentUserId: userId
+    });
+    return;
+  }
+  
+  // Store'da veri yoksa veya user değiştiyse API'den yükle
+  if (!sidebarDataLoaded.value || userChanged) {
+    await store.dispatch('Writes/loadSidebarData', { currentUserId: userId });
+  }
+};
+
+// Mount olduğunda ve sidebar gösterilmesi gerektiğinde veri yükle
+watch([isMounted, shouldShowSidebarOnMobile, shouldHideSidebarContent], ([mounted, showSidebar, hideSidebar]) => {
+  if (mounted && showSidebar && !hideSidebar) {
+    loadSidebarDataOnce();
+  }
+}, { immediate: true });
+
+// User değiştiğinde (login/logout) cache'i yenile
+watch(currentUserId, (newUserId, oldUserId) => {
+  if (newUserId !== oldUserId && isMounted.value) {
+    store.dispatch('Writes/loadSidebarData', { forceRefresh: true, currentUserId: newUserId });
+  }
+});
 </script>
 
 <style>

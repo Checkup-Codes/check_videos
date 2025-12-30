@@ -4,11 +4,11 @@
       v-for="write in filteredWrites"
       :key="write.id"
       :href="getWriteRoute(write)"
+      class="block rounded-lg border border-transparent p-3"
       :class="[
-        'block rounded-lg p-3',
         activeWrite === getActiveWritePath(write)
           ? 'bg-primary text-primary-foreground'
-          : 'border border-border bg-card hover:bg-accent',
+          : 'border-border bg-card hover:bg-accent',
       ]"
     >
       <h3

@@ -195,6 +195,10 @@ Route::get('/api/categories/{category}/writes', [CategoriesController::class, 'g
 Route::get('/api/search', [WritesController::class, 'search'])->name('api.search');
 Route::get('/api/write-images', [WriteImageController::class, 'index'])->name('api.write-images.index');
 
+// Write Lazy Loading API Routes (Performance optimization)
+Route::get('/api/writes/{slug}/content', [WritesController::class, 'getWriteContent'])->name('api.writes.content');
+Route::get('/api/writes/sidebar-data', [WritesController::class, 'getSidebarData'])->name('api.writes.sidebar');
+
 // SEO Routes
 Route::get('/robots.txt', [App\Http\Controllers\RobotsController::class, 'generate']);
 Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'generate']);

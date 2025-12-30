@@ -22,16 +22,19 @@ class WritesController extends Controller
 
     /**
      * Display a listing of writes
+     * Index sayfası sidebar verilerini de gönderir (ilk yükleme için cache'lenir)
      * 
      * @return \Inertia\Response
      */
     public function index()
     {
         $writesResult = $this->writeService->getWrites();
+        $categoriesResult = $this->writeService->getCategories();
         $isAdmin = Auth::check();
 
         return inertia('WritesCategories/Writes/IndexWrite', [
             'writes'     => $writesResult['data'],
+            'categories' => $categoriesResult['data'],
             'screen'     => $this->writeService->getScreenData('Yazılar', true),
             'isAdmin'    => $isAdmin
         ]);
@@ -58,27 +61,82 @@ class WritesController extends Controller
 
     /**
      * Display the specified write
+     * Two-phase loading: Basic info first (instant), content via AJAX (lazy)
      * 
      * @param string $slug
      * @return \Inertia\Response
      */
     public function show($slug)
     {
-        $categoriesResult = $this->writeService->getCategories();
-        $writesResult = $this->writeService->getWrites();
-        $writeResult = $this->writeService->getWriteBySlug($slug);
         $isAdmin = Auth::check();
-
-        $this->writeService->incrementViewCount($writeResult['data']);
+        
+        // Phase 1: Get minimal write data for instant page load (SEO + basic info)
+        $writeBasic = $this->writeService->getWriteBasicBySlug($slug);
+        
+        // Increment view count asynchronously (doesn't block page load)
+        $this->writeService->incrementViewCount($writeBasic['data']);
 
         return inertia('WritesCategories/Writes/ShowWrite', [
-            'writes'     => $writesResult['data'],
-            'write'      => $writeResult['data'],
-            'categories' => $categoriesResult['data'],
-            'screen'     => $this->writeService->getScreenData($writeResult['data']->title),
+            'writes'     => [], // Will be loaded via sidebar lazy loading
+            'write'      => $writeBasic['data'],
+            'categories' => [], // Will be loaded via sidebar lazy loading
+            'screen'     => $this->writeService->getScreenData($writeBasic['data']->title),
             'showDraw'   => filter_var(request()->query('showDraw', false), FILTER_VALIDATE_BOOLEAN),
             'isAdmin'    => $isAdmin
         ]);
+    }
+
+    /**
+     * Get write content for lazy loading (AJAX endpoint)
+     * 
+     * @param string $slug
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getWriteContent($slug)
+    {
+        try {
+            $writeResult = $this->writeService->getWriteBySlug($slug);
+            $write = $writeResult['data'];
+            
+            return response()->json([
+                'success' => true,
+                'content' => $write->content,
+                'writeDraws' => $write->writeDraws,
+                'hasDraw' => $write->hasDraw,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error fetching write content: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => 'İçerik yüklenirken bir hata oluştu.'
+            ], 500);
+        }
+    }
+
+    /**
+     * Get sidebar data for lazy loading (AJAX endpoint)
+     * Returns writes list and categories for sidebar
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSidebarData()
+    {
+        try {
+            $categoriesResult = $this->writeService->getCategories();
+            $writesResult = $this->writeService->getWrites();
+            
+            return response()->json([
+                'success' => true,
+                'categories' => $categoriesResult['data'],
+                'writes' => $writesResult['data'],
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error fetching sidebar data: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => 'Sidebar verileri yüklenirken bir hata oluştu.'
+            ], 500);
+        }
     }
 
     /**

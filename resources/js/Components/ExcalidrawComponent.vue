@@ -1,7 +1,7 @@
 <template>
   <div class="relative h-full w-full">
     <!-- Save button - only for authenticated users -->
-    <div v-if="props.auth.user" class="absolute left-32 top-[53px] z-10 lg:left-36 lg:top-4">
+    <div v-if="props.auth?.user" class="absolute left-32 top-[53px] z-10 lg:left-36 lg:top-4">
       <button
         @click="saveDrawToServer"
         class="flex items-center gap-2 rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground shadow-lg transition-all hover:bg-accent"
@@ -48,7 +48,7 @@ const { props } = usePage();
 const elementsRef = ref([]);
 const filesRef = ref({}); // Excalidraw resimleri için
 const flashMessage = ref('');
-const writeDraws = ref(props.write.write_draws);
+const writeDraws = ref(props.write?.writeDraws || props.write?.write_draws || []);
 const excalidrawInstance = ref(null);
 const savedElements = ref(null);
 const savedFiles = ref(null);
@@ -63,6 +63,18 @@ watch(isDarkTheme, (newValue) => {
     excalidrawInstance.value.updateScene({ theme: newValue ? 'dark' : 'light' });
   }
 });
+
+// Watch for write prop changes (lazy loading)
+watch(() => props.write, (newWrite) => {
+  if (newWrite) {
+    const draws = newWrite.writeDraws || newWrite.write_draws || [];
+    if (draws.length > 0 && writeDraws.value.length === 0) {
+      writeDraws.value = draws;
+      // Reload excalidraw with new data
+      loadInitialVersion();
+    }
+  }
+}, { deep: true });
 
 // Observe theme changes in the DOM
 onMounted(() => {
@@ -90,16 +102,20 @@ const loadInitialVersion = () => {
     import('react').then((React) => {
       import('react-dom/client').then((ReactDOMClient) => {
         const container = document.getElementById('excali');
+        if (!container) return;
+        
         const root = ReactDOMClient.createRoot(container);
 
-        const initialElements =
-          writeDraws.value.length > 0 ? JSON.parse(writeDraws.value[0].elements) : [];
+        const draws = writeDraws.value || [];
+        const initialElements = draws.length > 0 && draws[0]?.elements 
+          ? JSON.parse(draws[0].elements) 
+          : [];
         
         // Kaydedilmiş resimleri yükle
         let initialFiles = {};
-        if (writeDraws.value.length > 0 && writeDraws.value[0].files) {
+        if (draws.length > 0 && draws[0]?.files) {
           try {
-            initialFiles = JSON.parse(writeDraws.value[0].files);
+            initialFiles = JSON.parse(draws[0].files);
           } catch (e) {
             console.warn('Files parse error:', e);
           }
@@ -127,7 +143,7 @@ const loadInitialVersion = () => {
         const excalidrawElement = React.createElement(Excalidraw, {
           initialData: initialData,
           onChange: handleChange,
-          viewModeEnabled: !props.auth.user,
+          viewModeEnabled: !props.auth?.user,
           theme: isDarkTheme.value ? 'dark' : 'light',
           onMount: (excalidrawApi) => {
             excalidrawInstance.value = excalidrawApi;

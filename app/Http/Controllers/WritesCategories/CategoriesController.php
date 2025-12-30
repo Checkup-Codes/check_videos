@@ -43,6 +43,7 @@ class CategoriesController extends Controller
 
     /**
      * Display the specified category
+     * Sidebar verileri store'dan gelir, sadece kategori ve kategoriye ait yazılar gönderilir
      * 
      * @param string $slug
      * @return \Inertia\Response
@@ -56,7 +57,6 @@ class CategoriesController extends Controller
             abort(404);
         }
 
-        $categoriesResult = $this->categoryService->getCategories();
         $isAdmin = Auth::check();
 
         // Collect IDs of current category and all its children
@@ -66,9 +66,9 @@ class CategoriesController extends Controller
         $writesResult = $this->writeService->getWritesByCategories($categoryIds);
 
         return inertia('WritesCategories/Categories/ShowCategory', [
-            'categories' => $categoriesResult['data'],
+            'categories' => [], // Store'dan gelecek
             'category' => $category,
-            'writes' => $writesResult['data'],
+            'writes' => $writesResult['data'], // Bu kategoriye ait yazılar (sidebar için değil, içerik için)
             'screen'     => $this->categoryService->getScreenData($category->name),
             'isAdmin' => $isAdmin
         ]);
@@ -190,6 +190,7 @@ class CategoriesController extends Controller
 
     /**
      * Display write by category
+     * Two-phase loading: Basic info first (instant), content via AJAX (lazy)
      * 
      * @param string $categorySlug
      * @param string $writeSlug
@@ -198,18 +199,17 @@ class CategoriesController extends Controller
     public function showByCategory($categorySlug, $writeSlug)
     {
         $category = Category::with('children')->where('slug', $categorySlug)->firstOrFail();
-        $categoriesResult = $this->categoryService->getCategories();
         $isAdmin = Auth::check();
 
-        $writesResult = $this->writeService->getWritesByCategory($category);
-        $writeResult = $this->writeService->getWriteBySlug($writeSlug);
+        // Phase 1: Get minimal write data for instant page load
+        $writeBasic = $this->writeService->getWriteBasicBySlug($writeSlug);
 
         return inertia('WritesCategories/Categories/WriteByCategory', [
-            'categories' => $categoriesResult['data'],
+            'categories' => [], // Will be loaded via sidebar lazy loading
             'category' => $category,
-            'writes' => $writesResult['data'],
-            'write' => $writeResult['data'],
-            'screen'     => $this->categoryService->getScreenData($writeResult['data']->title),
+            'writes' => [], // Will be loaded via sidebar lazy loading
+            'write' => $writeBasic['data'],
+            'screen'     => $this->categoryService->getScreenData($writeBasic['data']->title),
             'isAdmin' => $isAdmin
         ]);
     }

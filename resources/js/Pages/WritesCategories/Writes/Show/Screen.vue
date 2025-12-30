@@ -74,7 +74,7 @@
                     </template>
                   </div>
                 </template>
-                <template v-if="write.hasDraw || (write.writeDraws && write.writeDraws.length > 0)">
+                <template v-if="write.hasDraw || (writeDraws && writeDraws.length > 0) || (write.writeDraws && write.writeDraws.length > 0)">
                   <span class="text-muted-foreground/40">•</span>
                   <button
                     @click="toggleContent"
@@ -123,8 +123,31 @@
           </div>
           <div v-else>
             <div class="content-container">
+              <!-- Content loading skeleton -->
+              <div v-if="isContentLoading" class="space-y-4">
+                <div class="skeleton h-4 w-full rounded-md"></div>
+                <div class="skeleton h-4 w-5/6 rounded-md"></div>
+                <div class="skeleton h-4 w-4/6 rounded-md"></div>
+                <div class="skeleton h-4 w-full rounded-md"></div>
+                <div class="skeleton h-4 w-3/4 rounded-md"></div>
+                <div class="skeleton h-32 w-full rounded-md"></div>
+                <div class="skeleton h-4 w-5/6 rounded-md"></div>
+                <div class="skeleton h-4 w-full rounded-md"></div>
+                <div class="skeleton h-4 w-2/3 rounded-md"></div>
+              </div>
+              <!-- Content load error -->
+              <div v-else-if="contentLoadError" class="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-center">
+                <p class="text-sm text-destructive">{{ contentLoadError }}</p>
+                <button 
+                  @click="loadWriteContent" 
+                  class="mt-2 text-sm text-primary hover:underline"
+                >
+                  Tekrar Dene
+                </button>
+              </div>
+              <!-- Actual content -->
               <div
-                v-if="contentShouldLoad"
+                v-else-if="contentShouldLoad"
                 class="article-content ql-editor"
                 ref="contentRef"
                 v-html="processedContent"
@@ -338,6 +361,12 @@ const excalidrawRef = ref(null);
 const showDraw = ref(false);
 const contentShouldLoad = ref(false);
 
+// Lazy loading state
+const isContentLoading = ref(true);
+const contentLoadError = ref(null);
+const writeContent = ref('');
+const writeDraws = ref([]);
+
 // Get categories from inject or props
 const injectedCategories = inject('categories', null);
 const allCategories = computed(() => {
@@ -453,10 +482,45 @@ const initializeTableOfContentsState = () => {
 
 const isLoading = computed(() => !write.value.title);
 
+// Content is loaded lazily - use writeContent instead of write.value.content
+const actualContent = computed(() => writeContent.value || write.value.content || '');
+
 const processedContent = useProcessedQuillContent(
   contentRef,
-  computed(() => (contentShouldLoad.value ? write.value.content : ''))
+  computed(() => (contentShouldLoad.value ? actualContent.value : ''))
 );
+
+// Lazy load write content from API
+const loadWriteContent = async () => {
+  if (!write.value.slug) return;
+  
+  try {
+    isContentLoading.value = true;
+    contentLoadError.value = null;
+    
+    const response = await fetch(`/api/writes/${write.value.slug}/content`);
+    const data = await response.json();
+    
+    if (data.success) {
+      writeContent.value = data.content;
+      writeDraws.value = data.writeDraws || [];
+      // Update write ref with draws for Excalidraw component
+      write.value = {
+        ...write.value,
+        content: data.content,
+        writeDraws: data.writeDraws || [],
+        hasDraw: data.hasDraw
+      };
+    } else {
+      contentLoadError.value = data.error || 'İçerik yüklenemedi';
+    }
+  } catch (error) {
+    console.error('Error loading write content:', error);
+    contentLoadError.value = 'İçerik yüklenirken bir hata oluştu';
+  } finally {
+    isContentLoading.value = false;
+  }
+};
 
 const formatDate = (dateString) => {
   if (!dateString) return '';
@@ -847,61 +911,70 @@ onMounted(() => {
   };
   window.addEventListener('beforeunload', beforeUnloadHandler);
 
-  contentShouldLoad.value = false;
-  const contentPlaceholder = document.querySelector('.content-placeholder');
-  if (contentPlaceholder) {
-    contentObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !contentShouldLoad.value) {
-            contentShouldLoad.value = true;
-            nextTick(() => {
-              useGsapFadeIn(contentRef, { duration: 0.8 });
-              setTimeout(() => {
-                generateTableOfContents();
-                if (tableOfContents.value.length > 0) {
-                  setupActiveHeadingTracking();
-                  if (isLargeScreen.value) {
-                    isTableOfContentsOpen.value = true;
+  // Start lazy loading content immediately
+  loadWriteContent().then(() => {
+    // After content is loaded, setup content observation
+    contentShouldLoad.value = false;
+    const contentPlaceholder = document.querySelector('.content-placeholder');
+    if (contentPlaceholder) {
+      contentObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && !contentShouldLoad.value && !isContentLoading.value) {
+              contentShouldLoad.value = true;
+              nextTick(() => {
+                useGsapFadeIn(contentRef, { duration: 0.8 });
+                setTimeout(() => {
+                  generateTableOfContents();
+                  if (tableOfContents.value.length > 0) {
+                    setupActiveHeadingTracking();
+                    if (isLargeScreen.value) {
+                      isTableOfContentsOpen.value = true;
+                    }
                   }
-                }
-              }, 100);
-            });
-          }
-        });
-      },
-      {
-        threshold: 0.1,
-        rootMargin: '50px',
-      }
-    );
-    contentObserver.observe(contentPlaceholder);
-  } else {
-    contentShouldLoad.value = true;
-    nextTick(() => {
-      useGsapFadeIn(contentRef, { duration: 0.8 });
-      setTimeout(() => {
-        generateTableOfContents();
-        if (tableOfContents.value.length > 0) {
-          setupActiveHeadingTracking();
-          if (isLargeScreen.value) {
-            isTableOfContentsOpen.value = true;
-          }
+                }, 100);
+              });
+            }
+          });
+        },
+        {
+          threshold: 0.1,
+          rootMargin: '50px',
         }
-      }, 100);
-    });
-  }
+      );
+      contentObserver.observe(contentPlaceholder);
+    } else if (!isContentLoading.value) {
+      contentShouldLoad.value = true;
+      nextTick(() => {
+        useGsapFadeIn(contentRef, { duration: 0.8 });
+        setTimeout(() => {
+          generateTableOfContents();
+          if (tableOfContents.value.length > 0) {
+            setupActiveHeadingTracking();
+            if (isLargeScreen.value) {
+              isTableOfContentsOpen.value = true;
+            }
+          }
+        }, 100);
+      });
+    }
+  });
+
   const urlParams = new URLSearchParams(window.location.search);
   showDraw.value = urlParams.has('draw');
-  if (write.value.content && write.value.content.includes('<img')) {
+});
+
+// Preload images after content is loaded (outside onMounted)
+watch(actualContent, (newContent) => {
+  if (newContent && newContent.includes('<img')) {
     const imgRegex = /<img[^>]+src="([^"]+)"/g;
     let match;
-    while ((match = imgRegex.exec(write.value.content)) !== null) {
+    while ((match = imgRegex.exec(newContent)) !== null) {
       const img = new Image();
       img.src = match[1];
     }
   }
-});
+}, { immediate: true });
 
 onUnmounted(() => {
   if (contentObserver) {

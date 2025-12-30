@@ -208,6 +208,49 @@ class WriteService
     }
 
     /**
+     * Get basic write info by slug (for instant page load - SEO + title)
+     * Does NOT include content or heavy relations
+     * 
+     * @param string $slug
+     * @return array Associated array with data
+     */
+    public function getWriteBasicBySlug($slug)
+    {
+        $isAdmin = Auth::check();
+        $query = Write::select([
+            'id',
+            'title',
+            'slug',
+            'status',
+            'published_at',
+            'created_at',
+            'updated_at',
+            'views_count',
+            'meta_description',
+            'summary',
+            'cover_image',
+            'seo_keywords',
+            'tags',
+            'category_id',
+            'hasDraw'
+        ])
+        ->with(['category:id,name,slug', 'categories:id,name,slug,parent_id'])
+        ->where('slug', $slug);
+        
+        if (!$isAdmin) {
+            $query->where(function ($q) {
+                $q->where('status', 'published')
+                    ->orWhere('status', Write::STATUS_LINK_ONLY);
+            });
+        }
+        
+        $write = $query->firstOrFail();
+        return [
+            'data' => $write
+        ];
+    }
+
+    /**
      * Increment view count for a write
      * 
      * @param Write $write
