@@ -32,8 +32,8 @@
             <span v-if="!isNarrow">Kategori</span>
           </Link>
         </div>
-        <!-- Collapse/Expand Button (Right) - Only for logged in users -->
-        <div v-if="isLoggedIn" class="flex items-center gap-1">
+        <!-- Collapse/Expand Button (Right) -->
+        <div class="flex items-center gap-1">
           <button
             @click="toggleAllCategories"
             class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"

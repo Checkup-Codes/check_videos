@@ -4,8 +4,8 @@
       <div class="min-h-screen bg-background">
 
         <!-- Timeline -->
-        <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-          <h1 class="xl:-translate-x-[80px] mb-5 text-2xl font-bold text-foreground sm:text-3xl">Yolculuk</h1>
+        <div class="mx-auto max-w-4xl px-4 py-6 sm:px-6">
+          <h1 class="xl:-translate-x-[80px] mb-6 text-2xl font-semibold text-foreground">Yolculuk</h1>
 
           <div 
             v-if="filteredEntries.length > 0" 
@@ -13,25 +13,25 @@
             :class="{ 'xl:-translate-x-[80px]': showYearFilter && isYearFilterOpen }"
           >
             <!-- Timeline Line -->
-            <div class="absolute bottom-0 left-3 top-0 w-0.5 bg-gradient-to-b from-primary/50 via-border to-border sm:left-4"></div>
+            <div class="absolute bottom-0 left-2 top-0 w-px bg-border sm:left-3"></div>
 
             <!-- Entries -->
-            <div class="space-y-6">
+            <div class="space-y-4">
               <div
                 v-for="(entry, index) in filteredEntries"
                 :key="entry.id"
-                class="timeline-entry relative pl-10 sm:pl-12"
+                class="timeline-entry relative pl-8 sm:pl-10"
               >
-                <!-- Dot with pulse effect for first item -->
+                <!-- Dot -->
                 <div 
-                  class="absolute left-1 top-4 flex h-5 w-5 items-center justify-center sm:left-2 sm:h-5 sm:w-5"
+                  class="absolute left-0 top-3 flex h-4 w-4 items-center justify-center sm:left-1"
                 >
                   <div 
                     v-if="index === 0" 
-                    class="absolute h-5 w-5 animate-ping rounded-full bg-primary/30"
+                    class="absolute h-4 w-4 animate-ping rounded-full bg-primary/20"
                   ></div>
                   <div 
-                    class="relative h-3 w-3 rounded-full border-2 border-primary bg-background sm:h-3 sm:w-3"
+                    class="relative h-2 w-2 rounded-full border border-primary bg-background"
                     :class="{ 'bg-primary': index === 0 }"
                   ></div>
                 </div>
@@ -39,62 +39,52 @@
                 <!-- Card -->
                 <Link
                   :href="`/journey/${entry.id}`"
-                  class="group block overflow-hidden rounded-xl bg-card ring-1 ring-border/50 transition-all duration-200 hover:ring-primary/40 hover:shadow-lg"
+                  class="group block rounded-lg border border-border bg-card transition-all hover:border-primary/50 hover:shadow-sm"
                 >
-                  <!-- Horizontal Layout: Image Left, Content Right -->
-                  <div class="flex flex-col sm:flex-row">
-                    <!-- Image Container -->
-                    <div v-if="entry.image" class="relative w-full flex-shrink-0 sm:w-80 md:w-96 lg:w-[420px]">
-                      <div class="aspect-video w-full overflow-hidden">
+                  <!-- Layout: Image (if exists) + Content -->
+                  <div :class="entry.image ? 'flex flex-col sm:flex-row' : ''">
+                    <!-- Image Container (only if image exists) -->
+                    <div v-if="entry.image" class="relative w-full flex-shrink-0 sm:w-64 md:w-72">
+                      <div class="aspect-video w-full overflow-hidden rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none">
                         <img 
                           :src="`/storage/${entry.image}`" 
                           :alt="entry.title"
-                          class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                         />
                       </div>
-                      <!-- Duration/Status Badge on Image -->
-                      <span v-if="entry.status === 'draft'" class="absolute bottom-2 right-2 rounded bg-yellow-500/90 px-1.5 py-0.5 text-xs font-medium text-yellow-900">
-                        Taslak
-                      </span>
-                    </div>
-                    
-                    <!-- Placeholder for no image -->
-                    <div v-else class="relative hidden aspect-video w-80 flex-shrink-0 items-center justify-center bg-muted/50 sm:flex md:w-96 lg:w-[420px]">
-                      <svg class="h-12 w-12 text-muted-foreground/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      <span v-if="entry.status === 'draft'" class="absolute bottom-2 right-2 rounded bg-yellow-500/90 px-1.5 py-0.5 text-xs font-medium text-yellow-900">
+                      <!-- Status Badge on Image -->
+                      <span v-if="entry.status === 'draft'" class="absolute top-2 right-2 rounded-md bg-yellow-500/90 px-1.5 py-0.5 text-xs font-medium text-yellow-900">
                         Taslak
                       </span>
                     </div>
 
                     <!-- Content -->
-                    <div class="flex min-w-0 flex-1 flex-col justify-center p-4 sm:p-5">
-                      <!-- Date -->
+                    <div :class="entry.image ? 'flex min-w-0 flex-1 flex-col p-4' : 'p-4'">
+                      <!-- Date and Status -->
                       <div class="flex items-center gap-2 text-xs text-muted-foreground">
-                        <svg class="h-3.5 w-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="h-3 w-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                         <span>{{ formatDate(entry.entry_date) }}</span>
-                        <span v-if="entry.status === 'draft' && !entry.image" class="rounded bg-yellow-500/20 px-1.5 py-0.5 text-xs font-medium text-yellow-600 dark:text-yellow-400 sm:hidden">
+                        <span v-if="entry.status === 'draft'" class="rounded-md bg-yellow-500/20 px-1.5 py-0.5 text-xs font-medium text-yellow-600 dark:text-yellow-400">
                           Taslak
                         </span>
                       </div>
                       
                       <!-- Title -->
-                      <h3 class="mt-2 line-clamp-2 text-base font-semibold text-foreground transition-colors group-hover:text-primary sm:text-lg">
+                      <h3 class="mt-2 line-clamp-2 text-sm font-semibold text-foreground transition-colors group-hover:text-primary sm:text-base">
                         {{ entry.title }}
                       </h3>
                       
                       <!-- Description (if exists) -->
-                      <p v-if="entry.description" class="mt-2 line-clamp-2 text-sm text-muted-foreground">
+                      <p v-if="entry.description" class="mt-2 line-clamp-2 text-xs text-muted-foreground sm:text-sm">
                         {{ entry.description }}
                       </p>
                       
                       <!-- Arrow indicator -->
                       <div class="mt-3 flex items-center gap-1 text-xs text-muted-foreground transition-colors group-hover:text-primary">
                         <span>Devamını oku</span>
-                        <svg class="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="h-3 w-3 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                         </svg>
                       </div>
@@ -105,42 +95,42 @@
             </div>
 
             <!-- End Marker -->
-            <div class="relative mt-6 pl-10 sm:pl-12">
-              <div class="absolute left-1 top-0 flex h-5 w-5 items-center justify-center sm:left-2">
-                <div class="h-2 w-2 rounded-full bg-border"></div>
+            <div class="relative mt-4 pl-8 sm:pl-10">
+              <div class="absolute left-0 top-0 flex h-4 w-4 items-center justify-center sm:left-1">
+                <div class="h-1.5 w-1.5 rounded-full bg-border"></div>
               </div>
               <p class="text-xs text-muted-foreground">Yolculuğun başlangıcı</p>
             </div>
           </div>
 
           <!-- Empty State -->
-          <div v-else class="py-16 text-center">
-            <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-              <svg class="h-8 w-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div v-else class="py-12 text-center">
+            <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted/50">
+              <svg class="h-6 w-6 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <p class="text-muted-foreground">
+            <p class="text-sm text-muted-foreground">
               {{ selectedYear ? `${selectedYear} yılında kayıt bulunamadı` : 'Henüz kayıt yok' }}
             </p>
           </div>
         </div>
 
         <!-- Stats -->
-        <div v-if="entries.length > 0" class="border-t border-border bg-muted/30">
-          <div class="mx-auto max-w-4xl px-4 py-5 sm:px-6">
-            <div class="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm">
-              <div class="flex items-center gap-2">
-                <div class="h-2 w-2 rounded-full bg-primary"></div>
-                <span class="text-muted-foreground"><strong class="text-foreground">{{ entries.length }}</strong> kayıt</span>
+        <div v-if="entries.length > 0" class="border-t border-border bg-muted/20">
+          <div class="mx-auto max-w-4xl px-4 py-4 sm:px-6">
+            <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-1.5 text-xs text-muted-foreground">
+              <div class="flex items-center gap-1.5">
+                <div class="h-1.5 w-1.5 rounded-full bg-primary"></div>
+                <span><span class="font-medium text-foreground">{{ entries.length }}</span> kayıt</span>
               </div>
-              <div class="flex items-center gap-2">
-                <div class="h-2 w-2 rounded-full bg-primary/60"></div>
-                <span class="text-muted-foreground"><strong class="text-foreground">{{ years.length }}</strong> yıl</span>
+              <div class="flex items-center gap-1.5">
+                <div class="h-1.5 w-1.5 rounded-full bg-primary/60"></div>
+                <span><span class="font-medium text-foreground">{{ years.length }}</span> yıl</span>
               </div>
-              <div class="flex items-center gap-2">
-                <div class="h-2 w-2 rounded-full bg-primary/30"></div>
-                <span class="text-muted-foreground">{{ oldestYear }} - {{ newestYear }}</span>
+              <div class="flex items-center gap-1.5">
+                <div class="h-1.5 w-1.5 rounded-full bg-primary/30"></div>
+                <span>{{ oldestYear }} - {{ newestYear }}</span>
               </div>
             </div>
           </div>
