@@ -74,7 +74,13 @@
                     </template>
                   </div>
                 </template>
-                <template v-if="write.hasDraw || (writeDraws && writeDraws.length > 0) || (write.writeDraws && write.writeDraws.length > 0)">
+                <template
+                  v-if="
+                    write.hasDraw ||
+                    (writeDraws && writeDraws.length > 0) ||
+                    (write.writeDraws && write.writeDraws.length > 0)
+                  "
+                >
                   <span class="text-muted-foreground/40">•</span>
                   <button
                     @click="toggleContent"
@@ -110,6 +116,23 @@
             </template>
           </div>
 
+          <!-- Youtube Video -->
+          <div v-if="!isLoading && write.youtube_url" class="mb-8">
+            <div
+              class="relative w-full overflow-hidden rounded-lg border border-border bg-muted/30"
+              style="padding-bottom: 56.25%"
+            >
+              <iframe
+                :src="getYoutubeEmbedUrl(write.youtube_url)"
+                class="absolute inset-0 h-full w-full"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                loading="lazy"
+              ></iframe>
+            </div>
+          </div>
+
           <div v-if="isLoading" class="space-y-3">
             <div class="skeleton h-4 w-full rounded-md"></div>
             <div class="skeleton h-4 w-5/6 rounded-md"></div>
@@ -136,14 +159,12 @@
                 <div class="skeleton h-4 w-2/3 rounded-md"></div>
               </div>
               <!-- Content load error -->
-              <div v-else-if="contentLoadError" class="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-center">
+              <div
+                v-else-if="contentLoadError"
+                class="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-center"
+              >
                 <p class="text-sm text-destructive">{{ contentLoadError }}</p>
-                <button 
-                  @click="loadWriteContent" 
-                  class="mt-2 text-sm text-primary hover:underline"
-                >
-                  Tekrar Dene
-                </button>
+                <button @click="loadWriteContent" class="mt-2 text-sm text-primary hover:underline">Tekrar Dene</button>
               </div>
               <!-- Actual content -->
               <div
@@ -493,14 +514,14 @@ const processedContent = useProcessedQuillContent(
 // Lazy load write content from API
 const loadWriteContent = async () => {
   if (!write.value.slug) return;
-  
+
   try {
     isContentLoading.value = true;
     contentLoadError.value = null;
-    
+
     const response = await fetch(`/api/writes/${write.value.slug}/content`);
     const data = await response.json();
-    
+
     if (data.success) {
       writeContent.value = data.content;
       writeDraws.value = data.writeDraws || [];
@@ -509,7 +530,7 @@ const loadWriteContent = async () => {
         ...write.value,
         content: data.content,
         writeDraws: data.writeDraws || [],
-        hasDraw: data.hasDraw
+        hasDraw: data.hasDraw,
       };
     } else {
       contentLoadError.value = data.error || 'İçerik yüklenemedi';
@@ -534,6 +555,36 @@ const formatDate = (dateString) => {
 
 const formatNumber = (num) => {
   return new Intl.NumberFormat('tr-TR').format(num);
+};
+
+/**
+ * Convert Youtube URL to embed URL
+ * @param {string} url - Youtube URL (watch or youtu.be format)
+ * @returns {string} Embed URL
+ */
+const getYoutubeEmbedUrl = (url) => {
+  if (!url) return '';
+
+  // Extract video ID from various Youtube URL formats
+  let videoId = '';
+
+  // Handle youtu.be format: https://youtu.be/VIDEO_ID
+  if (url.includes('youtu.be/')) {
+    videoId = url.split('youtu.be/')[1]?.split('?')[0]?.split('&')[0];
+  }
+  // Handle youtube.com/watch?v=VIDEO_ID format
+  else if (url.includes('youtube.com/watch')) {
+    const urlObj = new URL(url);
+    videoId = urlObj.searchParams.get('v');
+  }
+  // Handle youtube.com/embed/VIDEO_ID format (already embed)
+  else if (url.includes('youtube.com/embed/')) {
+    return url; // Already embed format
+  }
+
+  if (!videoId) return '';
+
+  return `https://www.youtube.com/embed/${videoId}`;
 };
 
 const toggleContent = async () => {
@@ -965,16 +1016,20 @@ onMounted(() => {
 });
 
 // Preload images after content is loaded (outside onMounted)
-watch(actualContent, (newContent) => {
-  if (newContent && newContent.includes('<img')) {
-    const imgRegex = /<img[^>]+src="([^"]+)"/g;
-    let match;
-    while ((match = imgRegex.exec(newContent)) !== null) {
-      const img = new Image();
-      img.src = match[1];
+watch(
+  actualContent,
+  (newContent) => {
+    if (newContent && newContent.includes('<img')) {
+      const imgRegex = /<img[^>]+src="([^"]+)"/g;
+      let match;
+      while ((match = imgRegex.exec(newContent)) !== null) {
+        const img = new Image();
+        img.src = match[1];
+      }
     }
-  }
-}, { immediate: true });
+  },
+  { immediate: true }
+);
 
 onUnmounted(() => {
   if (contentObserver) {

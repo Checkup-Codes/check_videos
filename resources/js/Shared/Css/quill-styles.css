@@ -807,6 +807,7 @@ html.dark .article-content pre:not(.mockup-code) {
 .article-content img {
   @apply max-w-full h-auto block mx-auto my-4 rounded;
   border: 1px solid hsl(var(--border));
+  object-fit: contain;
 }
 
 /* Image wrapper styles */
@@ -828,6 +829,12 @@ html.dark .article-content pre:not(.mockup-code) {
   position: relative !important;
   width: 100% !important;
   line-height: 0 !important;
+}
+
+.article-content .img-wrapper img {
+  object-fit: contain !important;
+  max-width: 100% !important;
+  height: auto !important;
 }
 
 .article-content .skeleton {

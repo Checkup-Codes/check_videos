@@ -27,6 +27,7 @@ class Write extends Model
         'meta_description',
         'cover_image',
         'hasDraw',
+        'youtube_url',
     ];
 
     const STATUS_DRAFT = 'draft';

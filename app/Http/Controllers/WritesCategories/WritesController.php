@@ -194,6 +194,7 @@ class WritesController extends Controller
             'seo_keywords' => 'nullable|string|max:255',
             'tags'         => 'nullable|string|max:255',
             'hasDraw'      => 'required|boolean',
+            'youtube_url'  => 'nullable|url|max:500',
         ]);
 
         $data = $request->all();
@@ -233,6 +234,7 @@ class WritesController extends Controller
             'seo_keywords' => 'nullable|string|max:255',
             'tags'         => 'nullable|string|max:255',
             'hasDraw'      => 'required|boolean',
+            'youtube_url'  => 'nullable|url|max:500',
         ]);
 
         try {

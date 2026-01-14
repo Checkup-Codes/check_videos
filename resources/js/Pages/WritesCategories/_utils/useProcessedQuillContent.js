@@ -348,11 +348,12 @@ export function useProcessedQuillContent(contentRef, contentString) {
         img.setAttribute('importance', 'low');
 
         // Set default dimensions for better layout stability
+        // Don't set aspect-ratio to preserve original image proportions
         if (!img.hasAttribute('width') && !img.hasAttribute('height')) {
           img.style.width = '100%';
           img.style.maxWidth = '800px';
           img.style.height = 'auto';
-          img.style.aspectRatio = '16/9';
+          img.style.objectFit = 'contain';
         }
 
         // Enhanced skeleton wrapper with better styling

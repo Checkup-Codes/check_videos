@@ -99,6 +99,20 @@
             </template>
           </div>
 
+          <!-- Youtube Video -->
+          <div v-if="!isLoading && write.youtube_url" class="mb-8">
+            <div class="relative w-full overflow-hidden rounded-lg border border-border bg-muted/30" style="padding-bottom: 56.25%;">
+              <iframe
+                :src="getYoutubeEmbedUrl(write.youtube_url)"
+                class="absolute inset-0 h-full w-full"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                loading="lazy"
+              ></iframe>
+            </div>
+          </div>
+
           <div v-if="isLoading" class="space-y-3">
             <div class="skeleton h-4 w-full rounded-md"></div>
             <div class="skeleton h-4 w-5/6 rounded-md"></div>
@@ -522,6 +536,36 @@ const formatDate = (dateString) => {
  */
 const formatNumber = (num) => {
   return new Intl.NumberFormat('tr-TR').format(num);
+};
+
+/**
+ * Convert Youtube URL to embed URL
+ * @param {string} url - Youtube URL (watch or youtu.be format)
+ * @returns {string} Embed URL
+ */
+const getYoutubeEmbedUrl = (url) => {
+  if (!url) return '';
+  
+  // Extract video ID from various Youtube URL formats
+  let videoId = '';
+  
+  // Handle youtu.be format: https://youtu.be/VIDEO_ID
+  if (url.includes('youtu.be/')) {
+    videoId = url.split('youtu.be/')[1]?.split('?')[0]?.split('&')[0];
+  }
+  // Handle youtube.com/watch?v=VIDEO_ID format
+  else if (url.includes('youtube.com/watch')) {
+    const urlObj = new URL(url);
+    videoId = urlObj.searchParams.get('v');
+  }
+  // Handle youtube.com/embed/VIDEO_ID format (already embed)
+  else if (url.includes('youtube.com/embed/')) {
+    return url; // Already embed format
+  }
+  
+  if (!videoId) return '';
+  
+  return `https://www.youtube.com/embed/${videoId}`;
 };
 
 let headingObserver = null;

@@ -236,11 +236,98 @@
           />
         </div>
 
-        <div class="flex items-center">
-          <label class="flex cursor-pointer items-center gap-2">
-            <input type="checkbox" v-model="form.hasDraw" class="h-4 w-4 rounded border-input text-primary" />
-            <span class="text-xs text-foreground">Çizim İçerir</span>
-          </label>
+        <!-- Çizim ve Youtube Video Seçenekleri -->
+        <div class="md:col-span-2 space-y-4 rounded-lg border border-border bg-card p-4">
+          <h3 class="text-sm font-semibold text-foreground">Ek İçerik Seçenekleri</h3>
+          
+          <!-- Çizim İçerir -->
+          <div class="flex items-start gap-3 rounded-md border border-border bg-background p-3 transition-colors hover:bg-accent/50" :class="{ 'border-primary bg-primary/5': form.hasDraw }">
+            <label class="flex cursor-pointer items-start gap-3 flex-1">
+              <input
+                type="checkbox"
+                v-model="form.hasDraw"
+                class="mt-0.5 h-4 w-4 rounded border-input text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="h-4 w-4 text-foreground"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21h-4.5A2.25 2.25 0 019 18.75V15.5m9-1.125v-4.5"
+                    />
+                  </svg>
+                  <span class="text-sm font-medium text-foreground">Çizim İçerir</span>
+                </div>
+                <p class="mt-1 text-xs text-muted-foreground">
+                  Bu yazı interaktif çizim içeriyor. Kullanıcılar çizim moduna geçebilir.
+                </p>
+              </div>
+            </label>
+          </div>
+
+          <!-- Youtube Video -->
+          <div class="flex items-start gap-3 rounded-md border border-border bg-background p-3 transition-colors hover:bg-accent/50" :class="{ 'border-primary bg-primary/5': form.hasYoutubeVideo }">
+            <label class="flex cursor-pointer items-start gap-3 flex-1">
+              <input
+                type="checkbox"
+                v-model="form.hasYoutubeVideo"
+                class="mt-0.5 h-4 w-4 rounded border-input text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="h-4 w-4 text-foreground"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.258.232-.414.557-.328l5.603 3.112z"
+                    />
+                  </svg>
+                  <span class="text-sm font-medium text-foreground">Youtube Videosu Var</span>
+                </div>
+                <p class="mt-1 text-xs text-muted-foreground">
+                  Bu yazı ile ilgili bir Youtube videosu ekleyin. Video yazının en üstünde gösterilecektir.
+                </p>
+              </div>
+            </label>
+          </div>
+
+          <!-- Youtube URL Input -->
+          <div v-if="form.hasYoutubeVideo" class="mt-2 space-y-2 rounded-md border border-border bg-muted/30 p-3">
+            <label class="block text-xs font-medium text-foreground">Youtube Video URL</label>
+            <input
+              type="url"
+              v-model="form.youtube_url"
+              placeholder="https://www.youtube.com/watch?v=..."
+              class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              :class="{ 'border-destructive focus-visible:ring-destructive': errors.youtube_url || form.errors.youtube_url }"
+            />
+            <p v-if="errors.youtube_url || form.errors.youtube_url" class="text-xs text-destructive">
+              {{ errors.youtube_url || form.errors.youtube_url }}
+            </p>
+            <p class="text-xs text-muted-foreground">
+              Geçerli bir Youtube URL'si girin (örn: https://www.youtube.com/watch?v=VIDEO_ID veya https://youtu.be/VIDEO_ID)
+            </p>
+          </div>
         </div>
       </div>
 
@@ -388,6 +475,8 @@ const form = useForm({
   tags: writeData.value.tags || '',
   views_count: writeData.value.views_count || 0,
   hasDraw: writeData.value.hasDraw || false,
+  hasYoutubeVideo: !!(writeData.value.youtube_url && writeData.value.youtube_url.trim() !== ''),
+  youtube_url: writeData.value.youtube_url || '',
 });
 
 const errors = ref({
@@ -401,6 +490,7 @@ const errors = ref({
   seo_keywords: '',
   meta_description: '',
   tags: '',
+  youtube_url: '',
 });
 
 const publishDateObj = ref({
@@ -700,6 +790,21 @@ const validateForm = () => {
   if (!form.category_id) {
     errors.value.category_id = 'Kategori seçilmelidir.';
     hasErrors = true;
+  }
+
+  // Validate Youtube URL if hasYoutubeVideo is true
+  if (form.hasYoutubeVideo) {
+    if (!form.youtube_url || form.youtube_url.trim() === '') {
+      errors.value.youtube_url = 'Youtube videosu seçildiğinde URL zorunludur.';
+      hasErrors = true;
+    } else {
+      // Validate Youtube URL format
+      const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]+/;
+      if (!youtubeRegex.test(form.youtube_url)) {
+        errors.value.youtube_url = 'Geçerli bir Youtube URL\'si girin.';
+        hasErrors = true;
+      }
+    }
   }
 
   // Handle published_at
