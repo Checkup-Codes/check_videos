@@ -1,7 +1,61 @@
 <template>
   <FlashMessage :message="flashMessage" @close="handleFlashClose" />
+  
+  <!-- Toggle Sidebar Button - Fixed position, only for logged in users and NOT on index pages -->
+  <div v-if="isLoggedIn && !shouldHideSidebarContent && !isIndexPage" class="fixed bottom-6 right-6 z-50 lg:bottom-8 lg:right-8">
+    <!-- Tooltip hint for first-time external visitors -->
+    <div
+      v-if="showSidebarHint"
+      class="absolute bottom-full right-0 mb-2 w-64 animate-in slide-in-from-bottom-2 rounded-lg border border-primary/20 bg-primary/10 p-3 shadow-lg backdrop-blur-sm"
+    >
+      <div class="flex items-start gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div class="flex-1">
+          <p class="text-xs font-medium text-foreground">Daha fazla içerik keşfet!</p>
+          <p class="mt-1 text-xs text-muted-foreground">Sidebar'ı açmak için tıklayın</p>
+        </div>
+        <button @click="dismissSidebarHint" class="flex-shrink-0 text-muted-foreground hover:text-foreground">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    
+    <button
+      @click="toggleSidebarVisibility"
+      class="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all hover:scale-110 hover:shadow-xl"
+      :title="isSidebarVisible ? 'Sidebar\'ı Gizle (Odaklanmış Okuma)' : 'Sidebar\'ı Göster (Daha Fazla İçerik)'"
+    >
+      <svg
+        v-if="isSidebarVisible"
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+      </svg>
+      <svg
+        v-else
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+      </svg>
+    </button>
+  </div>
+  
   <CheckLayout
-    :isCollapsed="!shouldHideSidebarContent"
+    :isCollapsed="!shouldHideSidebarContent && (isIndexPage || isSidebarVisible)"
     :show-sidebar-on-mobile="shouldShowSidebarOnMobile"
     :show-main-content-on-mobile="shouldShowMainContentOnMobile"
   >
@@ -9,7 +63,7 @@
       <!-- SSR'da sidebar içeriğini gizle, sadece client-side'da göster -->
       <!-- Mobil show sayfalarında sidebar hiç render edilmez -->
       <KeepAlive
-        v-if="shouldShowSidebarOnMobile && !shouldHideSidebarContent && isMounted"
+        v-if="shouldShowSidebarOnMobile && !shouldHideSidebarContent && isMounted && (isIndexPage || isSidebarVisible)"
         :max="5"
         :include="['SidebarLayoutWrite', 'SidebarLayoutCategory']"
       >
@@ -71,6 +125,16 @@ const sidebarComponents = {
 // Check if user is logged in
 const isLoggedIn = computed(() => {
   return !!(page.props.auth && page.props.auth.user);
+});
+
+// Check if we're on an index page (list page) where sidebar should always be visible
+const isIndexPage = computed(() => {
+  const currentUrl = page.url || '';
+  // Index pages: /writes, /categories, /writes?search=..., /categories?search=...
+  return currentUrl === '/writes' || 
+         currentUrl.startsWith('/writes?') || 
+         currentUrl === '/categories' || 
+         currentUrl.startsWith('/categories?');
 });
 
 // Check if we're on a non-index page (show, create, or edit) - on mobile, hide sidebar for these pages
@@ -143,7 +207,7 @@ const shouldShowMainContentOnMobile = computed(() => {
 
 // Determine which sidebar component to display based on screen name
 const sidebarComponent = computed(() => {
-  if (isCollapsed.value && screenName.value && !shouldHideSidebarContent.value && shouldShowSidebarOnMobile.value) {
+  if (isCollapsed.value && screenName.value && !shouldHideSidebarContent.value && shouldShowSidebarOnMobile.value && (isIndexPage.value || isSidebarVisible.value)) {
     return sidebarComponents[screenName.value] || null;
   }
   return null;
@@ -163,9 +227,9 @@ watch(
 
 const mainContentClass = computed(() => ({
   'transition-all duration-300': true,
-  'lg:ml-[-200px]': isSidebarNarrow.value && !shouldHideSidebarContent.value,
-  'lg:ml-[00px]': !isSidebarNarrow.value && !shouldHideSidebarContent.value,
-  'lg:ml-0': shouldHideSidebarContent.value, // Full width when sidebar is hidden
+  'lg:ml-[-200px]': isSidebarNarrow.value && !shouldHideSidebarContent.value && (isIndexPage.value || isSidebarVisible.value),
+  'lg:ml-[00px]': !isSidebarNarrow.value && !shouldHideSidebarContent.value && (isIndexPage.value || isSidebarVisible.value),
+  'lg:ml-0': shouldHideSidebarContent.value || (!isIndexPage.value && !isSidebarVisible.value), // Full width when sidebar is hidden or toggled off (except on index pages)
 }));
 
 const handleSidebarWidthChange = (isNarrow) => {
@@ -175,6 +239,139 @@ const handleSidebarWidthChange = (isNarrow) => {
 // Track if component is mounted (client-side only)
 const isMounted = ref(false);
 
+// Sidebar visibility state - smart default based on referrer
+const isSidebarVisible = ref(true);
+
+// Show hint for first-time external visitors
+const showSidebarHint = ref(false);
+
+// Track if this is the first load in the session
+const isFirstLoad = ref(true);
+
+// Check if user came from external source (Google, social media, etc.)
+const isExternalReferrer = () => {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return false;
+  
+  const referrer = document.referrer;
+  const currentHost = window.location.hostname;
+  
+  // No referrer means direct access (bookmark, typed URL, etc.) - treat as external
+  if (!referrer) return true;
+  
+  try {
+    const referrerUrl = new URL(referrer);
+    const referrerHost = referrerUrl.hostname;
+    
+    // Check if referrer is from the same domain (including subdomains)
+    // For multi-tenant: checkupcodes.com, elselif.com, etc.
+    const currentDomain = currentHost.split('.').slice(-2).join('.');
+    const referrerDomain = referrerHost.split('.').slice(-2).join('.');
+    
+    // If domains match, it's internal navigation
+    return currentDomain !== referrerDomain;
+  } catch (e) {
+    // If URL parsing fails, treat as external
+    return true;
+  }
+};
+
+// Smart initial sidebar state
+const getInitialSidebarState = () => {
+  if (typeof window === 'undefined') return true;
+  
+  // On index pages, sidebar is always visible
+  if (isIndexPage.value) return true;
+  
+  // PRIORITY 1: Check sessionStorage first (maintains state during site navigation)
+  const sessionPreference = sessionStorage.getItem('sidebar_visible');
+  if (sessionPreference !== null) {
+    return sessionPreference === 'true';
+  }
+  
+  // PRIORITY 2: Check localStorage (user's saved preference from previous sessions)
+  const savedPreference = localStorage.getItem('sidebar_visible');
+  if (savedPreference !== null) {
+    return savedPreference === 'true';
+  }
+  
+  // PRIORITY 3: No saved preference - use smart default based on referrer
+  // External referrer (Google, social, direct) = hide sidebar for focused reading
+  // Internal navigation = show sidebar for easy navigation
+  return !isExternalReferrer();
+};
+
+// Check if we should show the hint
+const shouldShowHint = () => {
+  if (typeof window === 'undefined') return false;
+  
+  // Never show hint on index pages (sidebar is always visible there)
+  if (isIndexPage.value) return false;
+  
+  // Don't show hint if user has already seen it
+  const hintDismissed = localStorage.getItem('sidebar_hint_dismissed');
+  if (hintDismissed === 'true') return false;
+  
+  // Don't show hint if user has a saved preference (they already know about the feature)
+  const savedPreference = localStorage.getItem('sidebar_visible');
+  if (savedPreference !== null) return false;
+  
+  // Show hint only for external visitors with sidebar hidden
+  return isExternalReferrer();
+};
+
+// Dismiss the hint
+const dismissSidebarHint = () => {
+  showSidebarHint.value = false;
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('sidebar_hint_dismissed', 'true');
+  }
+};
+
+// Load sidebar visibility with smart defaults
+const loadSidebarVisibility = () => {
+  if (typeof window !== 'undefined') {
+    isSidebarVisible.value = getInitialSidebarState();
+    
+    // Mark that we've loaded the initial state
+    isFirstLoad.value = false;
+    
+    // Save to sessionStorage to maintain state during site navigation
+    sessionStorage.setItem('sidebar_visible', isSidebarVisible.value.toString());
+    
+    // Show hint after a short delay if conditions are met
+    if (shouldShowHint() && !isSidebarVisible.value) {
+      setTimeout(() => {
+        showSidebarHint.value = true;
+        // Auto-dismiss hint after 8 seconds
+        setTimeout(() => {
+          if (showSidebarHint.value) {
+            dismissSidebarHint();
+          }
+        }, 8000);
+      }, 2000); // Show hint 2 seconds after page load
+    }
+  }
+};
+
+// Save sidebar visibility to both localStorage and sessionStorage
+const saveSidebarVisibility = () => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('sidebar_visible', isSidebarVisible.value.toString());
+    sessionStorage.setItem('sidebar_visible', isSidebarVisible.value.toString());
+  }
+};
+
+// Toggle sidebar visibility
+const toggleSidebarVisibility = () => {
+  isSidebarVisible.value = !isSidebarVisible.value;
+  saveSidebarVisibility();
+  
+  // Dismiss hint when user interacts with the button
+  if (showSidebarHint.value) {
+    dismissSidebarHint();
+  }
+};
+
 // Router event cleanup function
 let removeRouterListener = null;
 
@@ -183,6 +380,9 @@ onMounted(() => {
   // Mark as mounted to enable sidebar rendering (client-side only)
   isMounted.value = true;
   document.body.style.overflow = 'hidden';
+  
+  // Load sidebar visibility preference
+  loadSidebarVisibility();
 
   // Initialize window width and add resize listener
   if (typeof window !== 'undefined') {
@@ -190,9 +390,26 @@ onMounted(() => {
     window.addEventListener('resize', updateWindowWidth);
   }
   
+  // F5 sonrası veya ilk yüklemede sidebar verilerini yükle
+  // Watch'tan bağımsız olarak, mount olduğunda da kontrol et
+  if (shouldShowSidebarOnMobile.value && !shouldHideSidebarContent.value && (isIndexPage.value || isSidebarVisible.value)) {
+    loadSidebarDataOnce();
+  }
+  
+  // Listen to Inertia navigation events to maintain sidebar state
+  removeRouterListener = router.on('navigate', (event) => {
+    // On every navigation, reload sidebar state from storage
+    // This ensures state persists when navigating between write pages
+    if (typeof window !== 'undefined') {
+      const sessionPreference = sessionStorage.getItem('sidebar_visible');
+      if (sessionPreference !== null) {
+        isSidebarVisible.value = sessionPreference === 'true';
+      }
+    }
+  });
+  
   // CRUD işlemlerinden sonra sidebar cache'ini invalidate et
-  // Flash message 'success' içeriyorsa ve writes/categories sayfasındaysak cache'i yenile
-  removeRouterListener = router.on('success', (event) => {
+  router.on('success', (event) => {
     const flash = page.props.flash;
     const url = event.detail.page.url || '';
     
@@ -201,7 +418,7 @@ onMounted(() => {
       // Store, update, destroy işlemlerinden sonra cache'i yenile
       const isCreatePage = url.includes('/create');
       const isEditPage = url.includes('/edit');
-      const isIndexPage = url === '/writes' || url === '/categories';
+      const isIndexPageCheck = url === '/writes' || url === '/categories';
       
       // Create veya Edit sayfasından redirect olduysa (yani CRUD işlemi yapıldı)
       if (!isCreatePage && !isEditPage) {
@@ -230,7 +447,7 @@ onBeforeUnmount(() => {
 
 // Provide reactive data
 const categories = computed(() => page.props.categories || []);
-const writes = computed(() => page.props.writes || []);
+const writes = computed(() => page.props.writes || page.props.allWrites || []); // allWrites fallback for category pages
 
 // Current user ID (login durumu takibi için)
 const currentUserId = computed(() => page.props.auth?.user?.id || null);
@@ -284,16 +501,22 @@ const loadSidebarDataOnce = async () => {
     return;
   }
   
-  // Store'da veri yoksa veya user değiştiyse API'den yükle
-  if (!sidebarDataLoaded.value || userChanged) {
-    await store.dispatch('Writes/loadSidebarData', { currentUserId: userId });
+  // Store'da veri yoksa, user değiştiyse, veya F5 sonrası store boşaldıysa API'den yükle
+  const storeIsEmpty = (!storeWrites.value || storeWrites.value.length === 0) && 
+                        (!storeCategories.value || storeCategories.value.length === 0);
+  
+  if (!sidebarDataLoaded.value || userChanged || storeIsEmpty) {
+    await store.dispatch('Writes/loadSidebarData', { 
+      currentUserId: userId,
+      forceRefresh: storeIsEmpty // F5 sonrası force refresh
+    });
   }
 };
 
 // Mount olduğunda ve sidebar gösterilmesi gerektiğinde veri yükle
-watch([isMounted, shouldShowSidebarOnMobile, shouldHideSidebarContent], ([mounted, showSidebar, hideSidebar]) => {
-  if (mounted && showSidebar && !hideSidebar) {
-    loadSidebarDataOnce();
+watch([isMounted, shouldShowSidebarOnMobile, shouldHideSidebarContent, isSidebarVisible, isIndexPage], async ([mounted, showSidebar, hideSidebar, visible, indexPage]) => {
+  if (mounted && showSidebar && !hideSidebar && (indexPage || visible)) {
+    await loadSidebarDataOnce();
   }
 }, { immediate: true });
 

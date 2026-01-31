@@ -1824,8 +1824,6 @@ const performSearch = () => {
         params: {
           q: searchQuery.value,
           type: 'articles,categories',
-          // Giriş yapmış kullanıcılar için tüm yazıları dahil et
-          include_all: isLoggedIn.value ? '1' : '0',
         },
       });
       console.log('Search response:', response.data);
@@ -1863,7 +1861,6 @@ const performMobileSearch = () => {
         params: {
           q: mobileSearchQuery.value,
           type: 'articles,categories',
-          include_all: isLoggedIn.value ? '1' : '0',
         },
       });
       mobileSearchResults.value = response.data;

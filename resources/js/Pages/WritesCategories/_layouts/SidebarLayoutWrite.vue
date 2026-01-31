@@ -54,32 +54,32 @@
             </button>
             <div
               v-if="showWriteFilterDropdown"
-              class="absolute left-0 top-full z-50 mt-1 w-32 rounded-md border border-border bg-popover shadow-md"
+              class="absolute right-0 top-full z-50 mt-1 w-36 rounded-md border border-border bg-popover shadow-lg"
             >
-              <div class="flex flex-col p-1">
+              <div class="flex flex-col gap-0.5 p-1">
                 <button
-                  class="inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  class="inline-flex h-7 items-center gap-2 rounded-sm px-2 text-left text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                   :class="{ 'bg-accent text-accent-foreground': writeFilter === 'all' }"
                   @click="setWriteFilter('all')"
                 >
                   Tümü
                 </button>
                 <button
-                  class="inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  class="inline-flex h-7 items-center gap-2 rounded-sm px-2 text-left text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                   :class="{ 'bg-accent text-accent-foreground': writeFilter === 'published' }"
                   @click="setWriteFilter('published')"
                 >
                   Herkese Açık
                 </button>
                 <button
-                  class="inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  class="inline-flex h-7 items-center gap-2 rounded-sm px-2 text-left text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                   :class="{ 'bg-accent text-accent-foreground': writeFilter === 'link_only' }"
                   @click="setWriteFilter('link_only')"
                 >
                   Sadece Link
                 </button>
                 <button
-                  class="inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  class="inline-flex h-7 items-center gap-2 rounded-sm px-2 text-left text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                   :class="{ 'bg-accent text-accent-foreground': writeFilter === 'private' }"
                   @click="setWriteFilter('private')"
                 >

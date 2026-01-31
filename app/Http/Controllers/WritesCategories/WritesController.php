@@ -26,17 +26,100 @@ class WritesController extends Controller
      * 
      * @return \Inertia\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $searchQuery = $request->get('search', '');
+        $isAdmin = Auth::check();
+        
+        // If there's a search query, show search results page
+        if ($searchQuery) {
+            return $this->searchResults($request);
+        }
+        
         $writesResult = $this->writeService->getWrites();
         $categoriesResult = $this->writeService->getCategories();
-        $isAdmin = Auth::check();
 
         return inertia('WritesCategories/Writes/IndexWrite', [
             'writes'     => $writesResult['data'],
             'categories' => $categoriesResult['data'],
             'screen'     => $this->writeService->getScreenData('Yazılar', true),
             'isAdmin'    => $isAdmin
+        ]);
+    }
+    
+    /**
+     * Show search results page
+     * 
+     * @param Request $request
+     * @return \Inertia\Response
+     */
+    private function searchResults(Request $request)
+    {
+        $searchQuery = $request->get('search', '');
+        $isAdmin = Auth::check();
+        
+        // Perform search
+        $articlesQuery = Write::where(function ($q) use ($searchQuery) {
+            $q->where('title', 'LIKE', "%{$searchQuery}%")
+                ->orWhere('summary', 'LIKE', "%{$searchQuery}%")
+                ->orWhere('content', 'LIKE', "%{$searchQuery}%")
+                ->orWhere('tags', 'LIKE', "%{$searchQuery}%");
+        });
+
+        // Filter by status based on login status
+        if ($isAdmin) {
+            $articlesQuery->whereIn('status', ['published', 'draft', 'private', 'link_only']);
+        } else {
+            $articlesQuery->where('status', 'published');
+        }
+
+        $articles = $articlesQuery
+            ->with('category')
+            ->paginate(12)
+            ->through(function ($write) {
+                return [
+                    'id' => $write->id,
+                    'title' => $write->title,
+                    'slug' => $write->slug,
+                    'summary' => $write->summary,
+                    'excerpt' => $write->summary ?: Str::limit(strip_tags($write->content), 150),
+                    'published_at' => $write->published_at,
+                    'category' => $write->category ? [
+                        'id' => $write->category->id,
+                        'name' => $write->category->name,
+                        'slug' => $write->category->slug,
+                    ] : null,
+                    'url' => route('writes.show', $write->slug)
+                ];
+            });
+
+        // Search categories
+        $categoriesQuery = Category::where('name', 'LIKE', "%{$searchQuery}%");
+        
+        if ($isAdmin) {
+            $categoriesQuery->whereIn('status', ['public', 'private', 'link_only']);
+        } else {
+            $categoriesQuery->where('status', 'public');
+        }
+
+        $categories = $categoriesQuery
+            ->limit(10)
+            ->get()
+            ->map(function ($category) {
+                return [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'slug' => $category->slug,
+                    'url' => route('categories.show', $category->slug)
+                ];
+            });
+
+        return inertia('WritesCategories/Writes/SearchResults', [
+            'searchQuery' => $searchQuery,
+            'articles' => $articles,
+            'categories' => $categories,
+            'screen' => $this->writeService->getScreenData("Arama: {$searchQuery}", true),
+            'isAdmin' => $isAdmin
         ]);
     }
 
@@ -73,16 +156,17 @@ class WritesController extends Controller
         // Phase 1: Get minimal write data for instant page load (SEO + basic info)
         $writeBasic = $this->writeService->getWriteBasicBySlug($slug);
         
-        // Get all categories for breadcrumb navigation
+        // Get sidebar data (writes and categories)
+        $writesResult = $this->writeService->getWrites();
         $categoriesResult = $this->writeService->getCategories();
         
         // Increment view count asynchronously (doesn't block page load)
         $this->writeService->incrementViewCount($writeBasic['data']);
 
         return inertia('WritesCategories/Writes/ShowWrite', [
-            'writes'     => [], // Will be loaded via sidebar lazy loading
+            'writes'     => $writesResult['data'], // Sidebar data
             'write'      => $writeBasic['data'],
-            'categories' => $categoriesResult['data'], // All categories for breadcrumb
+            'categories' => $categoriesResult['data'], // All categories for breadcrumb and sidebar
             'screen'     => $this->writeService->getScreenData($writeBasic['data']->title),
             'showDraw'   => filter_var(request()->query('showDraw', false), FILTER_VALIDATE_BOOLEAN),
             'isAdmin'    => $isAdmin
@@ -301,10 +385,9 @@ class WritesController extends Controller
         try {
             $query = $request->get('q', '');
             $type = $request->get('type', 'articles,categories');
-            $includeAll = (bool) $request->get('include_all', '0');
             $isLoggedIn = Auth::check();
 
-            Log::info('Search request', ['query' => $query, 'type' => $type, 'is_logged_in' => $isLoggedIn, 'include_all' => $includeAll]);
+            Log::info('Search request', ['query' => $query, 'type' => $type, 'is_logged_in' => $isLoggedIn]);
 
             if (strlen($query) < 2) {
                 return response()->json([
@@ -327,13 +410,10 @@ class WritesController extends Controller
                         ->orWhere('tags', 'LIKE', "%{$query}%");
                 });
 
-                // Filter by status based on login status and include_all parameter
-                if ($isLoggedIn && $includeAll) {
-                    // Logged in users with include_all can see ALL articles including link_only
+                // Filter by status based on login status
+                if ($isLoggedIn) {
+                    // Logged in users can see all articles
                     $articlesQuery->whereIn('status', ['published', 'draft', 'private', 'link_only']);
-                } elseif ($isLoggedIn) {
-                    // Logged in users can see most articles (published, draft, private) but not link_only
-                    $articlesQuery->whereIn('status', ['published', 'draft', 'private']);
                 } else {
                     // Non-logged in users can only see published articles
                     $articlesQuery->where('status', 'published');
@@ -360,13 +440,10 @@ class WritesController extends Controller
             if (str_contains($type, 'categories')) {
                 $categoriesQuery = Category::where('name', 'LIKE', "%{$query}%");
 
-                // Filter by status based on login status and include_all parameter
-                if ($isLoggedIn && $includeAll) {
-                    // Logged in users with include_all can see ALL categories including link_only
+                // Filter by status based on login status
+                if ($isLoggedIn) {
+                    // Logged in users can see all categories (public, private, link_only)
                     $categoriesQuery->whereIn('status', ['public', 'private', 'link_only']);
-                } elseif ($isLoggedIn) {
-                    // Logged in users can see most categories (public, private) but not link_only
-                    $categoriesQuery->whereIn('status', ['public', 'private']);
                 } else {
                     // Non-logged in users can only see public categories
                     $categoriesQuery->where('status', 'public');
@@ -390,8 +467,7 @@ class WritesController extends Controller
             Log::info('Search results', [
                 'articles_count' => count($results['articles']),
                 'categories_count' => count($results['categories']),
-                'is_logged_in' => $isLoggedIn,
-                'include_all' => $includeAll
+                'is_logged_in' => $isLoggedIn
             ]);
 
             return response()->json($results);

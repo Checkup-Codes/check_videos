@@ -64,11 +64,16 @@ class CategoriesController extends Controller
         $this->getChildCategoryIds($category, $categoryIds);
 
         $writesResult = $this->writeService->getWritesByCategories($categoryIds);
+        
+        // Get sidebar data (all writes and categories)
+        $allWritesResult = $this->writeService->getWrites();
+        $allCategoriesResult = $this->categoryService->getCategories();
 
         return inertia('WritesCategories/Categories/ShowCategory', [
-            'categories' => [], // Store'dan gelecek
+            'categories' => $allCategoriesResult['data'], // Sidebar için tüm kategoriler
             'category' => $category,
-            'writes' => $writesResult['data'], // Bu kategoriye ait yazılar (sidebar için değil, içerik için)
+            'writes' => $writesResult['data'], // Bu kategoriye ait yazılar (içerik için)
+            'allWrites' => $allWritesResult['data'], // Sidebar için tüm yazılar
             'screen'     => $this->categoryService->getScreenData($category->name),
             'isAdmin' => $isAdmin
         ]);
@@ -204,13 +209,14 @@ class CategoriesController extends Controller
         // Phase 1: Get minimal write data for instant page load
         $writeBasic = $this->writeService->getWriteBasicBySlug($writeSlug);
         
-        // Get all categories for breadcrumb navigation
-        $categoriesResult = $this->categoryService->getCategories();
+        // Get sidebar data (all writes and categories)
+        $allWritesResult = $this->writeService->getWrites();
+        $allCategoriesResult = $this->categoryService->getCategories();
 
         return inertia('WritesCategories/Categories/WriteByCategory', [
-            'categories' => $categoriesResult['data'], // All categories for breadcrumb
+            'categories' => $allCategoriesResult['data'], // Sidebar için tüm kategoriler
             'category' => $category,
-            'writes' => [], // Will be loaded via sidebar lazy loading
+            'writes' => $allWritesResult['data'], // Sidebar için tüm yazılar
             'write' => $writeBasic['data'],
             'screen'     => $this->categoryService->getScreenData($writeBasic['data']->title),
             'isAdmin' => $isAdmin
