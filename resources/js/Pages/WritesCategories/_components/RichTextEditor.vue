@@ -1,7 +1,11 @@
 <template>
   <div class="w-full">
     <label v-if="label" class="mb-1 block text-sm font-medium text-foreground">{{ label }}</label>
-    <div ref="editorContainer" class="quill-editor-container"></div>
+    <div 
+      ref="editorContainer" 
+      class="quill-editor-container rounded-md border border-input bg-background"
+      :style="{ height: height }"
+    ></div>
     <p v-if="error" class="mt-1 text-xs text-destructive">{{ error }}</p>
   </div>
 </template>
@@ -16,7 +20,7 @@ const props = defineProps({
   label: { type: String, default: '' },
   error: { type: String, default: '' },
   placeholder: { type: String, default: 'İçeriği buraya yazın...' },
-  height: { type: String, default: '400px' },
+  height: { type: String, default: '500px' }, // Increased default height
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -61,12 +65,23 @@ onMounted(async () => {
     },
   });
 
-  // Height ayarla
-  if (props.height) {
-    const container = editorContainer.value.querySelector('.ql-container');
-    if (container) {
-      container.style.height = props.height;
-    }
+  // Toolbar'ı sticky yap ve container'a height ayarla
+  const toolbar = editorContainer.value.querySelector('.ql-toolbar');
+  const container = editorContainer.value.querySelector('.ql-container');
+  
+  if (toolbar) {
+    toolbar.style.position = 'sticky';
+    toolbar.style.top = '0';
+    toolbar.style.zIndex = '10';
+    toolbar.style.backgroundColor = 'hsl(var(--background))';
+    toolbar.style.borderBottom = '1px solid hsl(var(--border))';
+  }
+  
+  if (container) {
+    // Container height = total height - toolbar height
+    const toolbarHeight = toolbar ? toolbar.offsetHeight : 42;
+    container.style.height = `calc(${props.height} - ${toolbarHeight}px)`;
+    container.style.overflowY = 'auto';
   }
 
   // İlk içeriği yükle
@@ -106,3 +121,41 @@ defineExpose({
   insertImage,
 });
 </script>
+
+<style scoped>
+.quill-editor-container {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure toolbar stays at top */
+.quill-editor-container :deep(.ql-toolbar) {
+  flex-shrink: 0;
+  border-radius: 0.375rem 0.375rem 0 0;
+}
+
+/* Ensure container scrolls */
+.quill-editor-container :deep(.ql-container) {
+  flex: 1;
+  border-radius: 0 0 0.375rem 0.375rem;
+}
+
+/* Custom scrollbar for better UX */
+.quill-editor-container :deep(.ql-container)::-webkit-scrollbar {
+  width: 8px;
+}
+
+.quill-editor-container :deep(.ql-container)::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+  border-radius: 4px;
+}
+
+.quill-editor-container :deep(.ql-container)::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 4px;
+}
+
+.quill-editor-container :deep(.ql-container)::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+</style>

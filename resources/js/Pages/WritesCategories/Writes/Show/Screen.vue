@@ -58,8 +58,11 @@
                 <template v-if="writeCategories.length > 0">
                   <span class="text-muted-foreground/40">•</span>
                   <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <template v-for="(categoryPath, index) in writeCategories" :key="index">
-                      <div class="inline-flex items-center gap-1">
+                    <template v-for="(categoryPath, pathIndex) in writeCategories" :key="pathIndex">
+                      <div class="inline-flex items-center gap-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                        </svg>
                         <template v-for="(category, catIndex) in categoryPath" :key="category.id">
                           <Link
                             :href="getCategoryRoute(category)"
@@ -67,10 +70,12 @@
                           >
                             {{ category.name }}
                           </Link>
-                          <span v-if="catIndex < categoryPath.length - 1" class="text-muted-foreground/50">/</span>
+                          <svg v-if="catIndex < categoryPath.length - 1" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-muted-foreground/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                          </svg>
                         </template>
                       </div>
-                      <span v-if="index < writeCategories.length - 1" class="text-muted-foreground/40">,</span>
+                      <span v-if="pathIndex < writeCategories.length - 1" class="text-muted-foreground/40">|</span>
                     </template>
                   </div>
                 </template>
@@ -403,12 +408,18 @@ const allCategories = computed(() => {
 
 // Get category hierarchy for write
 const writeCategories = computed(() => {
+  console.log('=== BREADCRUMB DEBUG ===');
+  console.log('write.value:', write.value);
+  console.log('allCategories.value:', allCategories.value);
+  
   if (!write.value) {
+    console.log('No write found');
     return [];
   }
 
   const categories = allCategories.value;
   if (categories.length === 0) {
+    console.log('No categories found');
     return [];
   }
 
@@ -417,10 +428,12 @@ const writeCategories = computed(() => {
 
   // Check for write.categories (belongsToMany relationship)
   if (write.value.categories && Array.isArray(write.value.categories) && write.value.categories.length > 0) {
+    console.log('Found write.categories:', write.value.categories);
     write.value.categories.forEach((category) => {
       if (category && category.id && !categoryIds.has(category.id)) {
         categoryIds.add(category.id);
         const path = getCategoryPath(category.id, categories);
+        console.log('Category path for', category.name, ':', path);
         if (path.length > 0) {
           categoryPaths.push(path);
         }
@@ -430,8 +443,10 @@ const writeCategories = computed(() => {
 
   // Check for write.category (belongsTo relationship - full object)
   if (write.value.category && write.value.category.id && !categoryIds.has(write.value.category.id)) {
+    console.log('Found write.category:', write.value.category);
     categoryIds.add(write.value.category.id);
     const path = getCategoryPath(write.value.category.id, categories);
+    console.log('Category path for', write.value.category.name, ':', path);
     if (path.length > 0) {
       categoryPaths.push(path);
     }
@@ -439,13 +454,17 @@ const writeCategories = computed(() => {
 
   // Check for write.category_id (belongsTo relationship - just ID)
   if (write.value.category_id && !categoryIds.has(write.value.category_id)) {
+    console.log('Found write.category_id:', write.value.category_id);
     categoryIds.add(write.value.category_id);
     const path = getCategoryPath(write.value.category_id, categories);
+    console.log('Category path for ID', write.value.category_id, ':', path);
     if (path.length > 0) {
       categoryPaths.push(path);
     }
   }
 
+  console.log('Final categoryPaths:', categoryPaths);
+  console.log('=== END DEBUG ===');
   return categoryPaths;
 });
 

@@ -203,9 +203,12 @@ class CategoriesController extends Controller
 
         // Phase 1: Get minimal write data for instant page load
         $writeBasic = $this->writeService->getWriteBasicBySlug($writeSlug);
+        
+        // Get all categories for breadcrumb navigation
+        $categoriesResult = $this->categoryService->getCategories();
 
         return inertia('WritesCategories/Categories/WriteByCategory', [
-            'categories' => [], // Will be loaded via sidebar lazy loading
+            'categories' => $categoriesResult['data'], // All categories for breadcrumb
             'category' => $category,
             'writes' => [], // Will be loaded via sidebar lazy loading
             'write' => $writeBasic['data'],

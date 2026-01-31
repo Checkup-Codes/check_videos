@@ -56,17 +56,22 @@
         </div>
 
         <div class="md:col-span-2" ref="summaryRef">
-          <label class="mb-1 block text-sm font-medium text-foreground">Özet</label>
+          <label class="mb-1 block text-sm font-medium text-foreground">Özet (SEO Meta Açıklaması)</label>
           <textarea
             v-model="form.summary"
+            @input="handleSummaryInput"
             rows="2"
-            placeholder="Yazının kısa özeti"
+            maxlength="160"
+            placeholder="Yazının kısa özeti (arama motorları için de kullanılacaktır, max 160 karakter)"
             class="flex min-h-[60px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             :class="{ 'border-destructive focus-visible:ring-destructive': errors.summary || form.errors.summary }"
           ></textarea>
-          <p v-if="errors.summary || form.errors.summary" class="mt-1 text-xs text-destructive">
-            {{ errors.summary || form.errors.summary }}
-          </p>
+          <div class="mt-1 flex items-center justify-between">
+            <p v-if="errors.summary || form.errors.summary" class="text-xs text-destructive">
+              {{ errors.summary || form.errors.summary }}
+            </p>
+            <span class="text-xs text-muted-foreground">{{ form.summary?.length || 0 }}/160 karakter</span>
+          </div>
         </div>
 
         <div class="md:col-span-2" ref="contentRef">
@@ -76,7 +81,7 @@
             label="İçerik"
             :error="errors.content || form.errors.content"
             placeholder="İçeriği buraya yazın..."
-            height="400px"
+            height="600px"
           />
         </div>
 
@@ -89,49 +94,71 @@
           />
         </div>
 
-        <div ref="statusRef">
-          <label class="mb-1 block text-sm font-medium text-foreground">Durumu</label>
-          <div class="relative">
-            <input
-              type="text"
-              v-model="statusSearch"
-              @focus="handleStatusFocus"
-              @blur="handleStatusBlur"
-              @input="filterStatus"
-              @keydown.esc="showStatusList = false"
-              placeholder="Durum seçin..."
-              class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 pr-8 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              :class="{ 'border-destructive focus-visible:ring-destructive': errors.status || form.errors.status }"
-              tabindex="0"
-            />
-            <button
-              v-if="statusSearch"
-              @click="clearStatus"
-              class="absolute right-2 top-1/2 inline-flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded text-xs hover:bg-accent"
+        <div ref="statusRef" class="md:col-span-2">
+          <label class="mb-2 block text-sm font-medium text-foreground">Durumu</label>
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <label
+              v-for="status in statusOptions"
+              :key="status.value"
+              class="relative flex cursor-pointer items-center gap-3 rounded-lg border-2 p-4 transition-all hover:bg-accent/50"
+              :class="{
+                'border-primary bg-primary/5': form.status === status.value,
+                'border-border': form.status !== status.value,
+              }"
             >
-              ✕
-            </button>
-            <ul
-              tabindex="0"
-              class="absolute z-50 mt-1 max-h-48 w-full overflow-y-auto rounded border border-border bg-popover shadow-lg"
-              v-if="showStatusList && filteredStatuses.length > 0"
-            >
-              <li
-                v-for="status in filteredStatuses"
-                :key="status.value"
-                @mousedown="selectStatus(status)"
-                class="cursor-pointer px-2 py-1.5 text-sm hover:bg-accent"
-              >
-                {{ status.label }}
-              </li>
-            </ul>
+              <input
+                type="radio"
+                :value="status.value"
+                v-model="form.status"
+                class="h-4 w-4 border-input text-primary ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              />
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <svg
+                    v-if="status.value === 'published'"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 text-green-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <svg
+                    v-else-if="status.value === 'private'"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 text-amber-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  <svg
+                    v-else
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 text-blue-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
+                  <span class="text-sm font-semibold text-foreground">{{ status.label }}</span>
+                </div>
+                <p class="mt-1 text-xs text-muted-foreground">{{ status.description }}</p>
+              </div>
+            </label>
           </div>
-          <p v-if="errors.status || form.errors.status" class="mt-1 text-xs text-destructive">
+          <p v-if="errors.status || form.errors.status" class="mt-2 text-xs text-destructive">
             {{ errors.status || form.errors.status }}
           </p>
         </div>
 
-        <div ref="categoryRef">
+        <div ref="categoryRef" class="md:col-span-2">
           <label class="mb-1 block text-sm font-medium text-foreground">Kategori</label>
           <div class="relative">
             <input
@@ -141,7 +168,7 @@
               @blur="handleCategoryBlur"
               @input="filterCategories"
               @keydown.esc="showCategoryList = false"
-              placeholder="Kategori seçin..."
+              placeholder="Kategori ara veya seç..."
               class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 pr-8 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               :class="{
                 'border-destructive focus-visible:ring-destructive': errors.category_id || form.errors.category_id,
@@ -157,20 +184,40 @@
             </button>
             <ul
               tabindex="0"
-              class="absolute z-50 mt-1 max-h-48 w-full overflow-y-auto rounded border border-border bg-popover shadow-lg"
+              class="absolute z-50 mt-1 max-h-80 w-full overflow-y-auto rounded-md border border-border bg-popover shadow-lg"
               v-if="showCategoryList && filteredCategories && filteredCategories.length > 0"
             >
               <li
                 v-for="category in filteredCategories"
                 :key="category.id"
                 @mousedown="selectCategory(category)"
-                class="cursor-pointer px-2 py-1.5 text-sm hover:bg-accent"
+                class="cursor-pointer border-b border-border px-3 py-2.5 transition-colors last:border-b-0 hover:bg-accent"
               >
-                <div class="flex flex-col">
-                  <span>{{ category.name }}</span>
-                  <span v-if="getCategoryPath(category.id)" class="text-xs text-muted-foreground">
-                    {{ getCategoryPath(category.id) }}
-                  </span>
+                <div class="flex items-center justify-between gap-3">
+                  <!-- Sol: Kategori İsmi -->
+                  <div class="flex-1">
+                    <span class="text-sm font-medium text-foreground">{{ category.name }}</span>
+                  </div>
+                  
+                  <!-- Sağ: Breadcrumb (Üst Kategoriler) -->
+                  <div v-if="getCategoryPath(category.id)" class="flex items-center gap-1 text-xs text-muted-foreground">
+                    <template v-for="(pathPart, index) in getCategoryPathArray(category.id)" :key="index">
+                      <span class="rounded bg-muted px-1.5 py-0.5 font-medium">
+                        {{ getInitials(pathPart) }}
+                      </span>
+                      <svg
+                        v-if="index < getCategoryPathArray(category.id).length - 1"
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-3 w-3"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </template>
+                  </div>
                 </div>
               </li>
             </ul>
@@ -184,11 +231,14 @@
           <label class="mb-1 block text-sm font-medium text-foreground">Etiketler</label>
           <input
             type="text"
-            v-model="form.tags"
+            :value="form.tags"
+            @input="handleTagsInput"
+            @blur="formatTags"
             placeholder="etiket1, etiket2, etiket3"
             class="flex h-9 w-full rounded border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             :class="{ 'border-destructive': errors.tags || form.errors.tags }"
           />
+          <p class="mt-1 text-xs text-muted-foreground">Virgülle ayırın. Otomatik olarak # eklenecek.</p>
           <p v-if="errors.tags || form.errors.tags" class="mt-1 text-xs text-destructive">
             {{ errors.tags || form.errors.tags }}
           </p>
@@ -198,32 +248,17 @@
           <label class="mb-1 block text-sm font-medium text-foreground">SEO Anahtar Kelimeleri</label>
           <input
             type="text"
-            v-model="form.seo_keywords"
+            :value="form.seo_keywords"
+            @input="handleKeywordsInput"
+            @blur="formatKeywords"
             placeholder="anahtar1, anahtar2, anahtar3"
             class="flex h-9 w-full rounded border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             :class="{ 'border-destructive': errors.seo_keywords || form.errors.seo_keywords }"
           />
+          <p class="mt-1 text-xs text-muted-foreground">Virgülle ayırın. Otomatik olarak # eklenecek.</p>
           <p v-if="errors.seo_keywords || form.errors.seo_keywords" class="mt-1 text-xs text-destructive">
             {{ errors.seo_keywords || form.errors.seo_keywords }}
           </p>
-        </div>
-
-        <div>
-          <label class="mb-1 block text-sm font-medium text-foreground">SEO Meta Açıklaması</label>
-          <textarea
-            v-model="form.meta_description"
-            placeholder="Arama motorları için kısa bir açıklama (max 160 karakter)"
-            class="flex min-h-[60px] w-full rounded border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-            :class="{ 'border-destructive': errors.meta_description || form.errors.meta_description }"
-            maxlength="160"
-            rows="2"
-          ></textarea>
-          <div class="mt-1 flex items-center justify-between">
-            <p v-if="errors.meta_description || form.errors.meta_description" class="text-xs text-destructive">
-              {{ errors.meta_description || form.errors.meta_description }}
-            </p>
-            <span class="text-xs text-muted-foreground">{{ form.meta_description?.length || 0 }}/160</span>
-          </div>
         </div>
 
         <div>
@@ -237,95 +272,129 @@
         </div>
 
         <!-- Çizim ve Youtube Video Seçenekleri -->
-        <div class="md:col-span-2 space-y-4 rounded-lg border border-border bg-card p-4">
+        <div class="space-y-3 rounded-lg border border-border bg-card p-4 md:col-span-2">
           <h3 class="text-sm font-semibold text-foreground">Ek İçerik Seçenekleri</h3>
-          
+
           <!-- Çizim İçerir -->
-          <div class="flex items-start gap-3 rounded-md border border-border bg-background p-3 transition-colors hover:bg-accent/50" :class="{ 'border-primary bg-primary/5': form.hasDraw }">
-            <label class="flex cursor-pointer items-start gap-3 flex-1">
-              <input
-                type="checkbox"
-                v-model="form.hasDraw"
-                class="mt-0.5 h-4 w-4 rounded border-input text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-              <div class="flex-1">
-                <div class="flex items-center gap-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="h-4 w-4 text-foreground"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21h-4.5A2.25 2.25 0 019 18.75V15.5m9-1.125v-4.5"
-                    />
-                  </svg>
-                  <span class="text-sm font-medium text-foreground">Çizim İçerir</span>
-                </div>
-                <p class="mt-1 text-xs text-muted-foreground">
-                  Bu yazı interaktif çizim içeriyor. Kullanıcılar çizim moduna geçebilir.
-                </p>
+          <label
+            class="group relative flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all"
+            :class="
+              form.hasDraw
+                ? 'border-primary bg-primary/10 shadow-sm'
+                : 'border-border bg-background hover:border-primary/50 hover:bg-accent/50'
+            "
+          >
+            <input
+              type="checkbox"
+              v-model="form.hasDraw"
+              class="mt-0.5 h-4 w-4 rounded border-input text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            />
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="h-5 w-5"
+                  :class="form.hasDraw ? 'text-primary' : 'text-muted-foreground'"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21h-4.5A2.25 2.25 0 019 18.75V15.5m9-1.125v-4.5"
+                  />
+                </svg>
+                <span class="text-sm font-semibold" :class="form.hasDraw ? 'text-foreground' : 'text-muted-foreground'">
+                  Çizim İçerir
+                </span>
               </div>
-            </label>
-          </div>
+              <p class="mt-1 text-xs text-muted-foreground">
+                Bu yazı interaktif çizim içeriyor. Kullanıcılar çizim moduna geçebilir.
+              </p>
+            </div>
+            <div
+              v-if="form.hasDraw"
+              class="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+          </label>
 
           <!-- Youtube Video -->
-          <div class="flex items-start gap-3 rounded-md border border-border bg-background p-3 transition-colors hover:bg-accent/50" :class="{ 'border-primary bg-primary/5': form.hasYoutubeVideo }">
-            <label class="flex cursor-pointer items-start gap-3 flex-1">
-              <input
-                type="checkbox"
-                v-model="form.hasYoutubeVideo"
-                class="mt-0.5 h-4 w-4 rounded border-input text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-              <div class="flex-1">
-                <div class="flex items-center gap-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="h-4 w-4 text-foreground"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.258.232-.414.557-.328l5.603 3.112z"
-                    />
-                  </svg>
-                  <span class="text-sm font-medium text-foreground">Youtube Videosu Var</span>
-                </div>
-                <p class="mt-1 text-xs text-muted-foreground">
-                  Bu yazı ile ilgili bir Youtube videosu ekleyin. Video yazının en üstünde gösterilecektir.
-                </p>
+          <label
+            class="group relative flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all"
+            :class="
+              form.hasYoutubeVideo
+                ? 'border-primary bg-primary/10 shadow-sm'
+                : 'border-border bg-background hover:border-primary/50 hover:bg-accent/50'
+            "
+          >
+            <input
+              type="checkbox"
+              v-model="form.hasYoutubeVideo"
+              class="mt-0.5 h-4 w-4 rounded border-input text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            />
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="h-5 w-5"
+                  :class="form.hasYoutubeVideo ? 'text-primary' : 'text-muted-foreground'"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.258.232-.414.557-.328l5.603 3.112z"
+                  />
+                </svg>
+                <span class="text-sm font-semibold" :class="form.hasYoutubeVideo ? 'text-foreground' : 'text-muted-foreground'">
+                  Youtube Videosu Var
+                </span>
               </div>
-            </label>
-          </div>
+              <p class="mt-1 text-xs text-muted-foreground">
+                Bu yazı ile ilgili bir Youtube videosu ekleyin. Video yazının en üstünde gösterilecektir.
+              </p>
+            </div>
+            <div
+              v-if="form.hasYoutubeVideo"
+              class="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+          </label>
 
           <!-- Youtube URL Input -->
-          <div v-if="form.hasYoutubeVideo" class="mt-2 space-y-2 rounded-md border border-border bg-muted/30 p-3">
-            <label class="block text-xs font-medium text-foreground">Youtube Video URL</label>
+          <div
+            v-if="form.hasYoutubeVideo"
+            class="animate-in slide-in-from-top-2 space-y-2 rounded-lg border-2 border-primary/20 bg-primary/5 p-4"
+          >
+            <label class="block text-sm font-medium text-foreground">Youtube Video URL</label>
             <input
               type="url"
               v-model="form.youtube_url"
               placeholder="https://www.youtube.com/watch?v=..."
               class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              :class="{ 'border-destructive focus-visible:ring-destructive': errors.youtube_url || form.errors.youtube_url }"
+              :class="{
+                'border-destructive focus-visible:ring-destructive': errors.youtube_url || form.errors.youtube_url,
+              }"
             />
             <p v-if="errors.youtube_url || form.errors.youtube_url" class="text-xs text-destructive">
               {{ errors.youtube_url || form.errors.youtube_url }}
             </p>
             <p class="text-xs text-muted-foreground">
-              Geçerli bir Youtube URL'si girin (örn: https://www.youtube.com/watch?v=VIDEO_ID veya https://youtu.be/VIDEO_ID)
+              Geçerli bir Youtube URL'si girin (örn: https://www.youtube.com/watch?v=VIDEO_ID veya
+              https://youtu.be/VIDEO_ID)
             </p>
           </div>
         </div>
@@ -398,6 +467,114 @@ const handleInsertImage = (image) => {
   }
 };
 
+// Özet input handler - aynı zamanda meta_description'ı da günceller
+const handleSummaryInput = (event) => {
+  form.summary = event.target.value;
+  form.meta_description = event.target.value; // Özet aynı zamanda SEO meta açıklaması
+};
+
+/**
+ * Get category path as array
+ * @param {String} categoryId - The category ID
+ * @returns {Array} Category path array
+ */
+const getCategoryPathArray = (categoryId) => {
+  if (!categoryId || !categories.value || categories.value.length === 0) return [];
+
+  const findCategory = (id) => {
+    return categories.value.find((cat) => cat.id === id);
+  };
+
+  const buildPath = (id, path = []) => {
+    const category = findCategory(id);
+    if (!category) return path;
+
+    path.unshift(category.name);
+
+    if (category.parent_id) {
+      return buildPath(category.parent_id, path);
+    }
+
+    return path;
+  };
+
+  const path = buildPath(categoryId);
+  // Remove the last item (current category) and return parent path
+  if (path.length > 1) {
+    return path.slice(0, -1);
+  }
+
+  return [];
+};
+
+/**
+ * Get initials from category name
+ * @param {String} name - Category name
+ * @returns {String} Initials (max 3 chars)
+ */
+const getInitials = (name) => {
+  if (!name) return '';
+  const words = name.trim().split(/\s+/);
+  if (words.length === 1) {
+    return name.substring(0, 3).toUpperCase();
+  }
+  return words
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join('')
+    .toUpperCase();
+};
+
+/**
+ * Format tags - add # prefix if not present
+ * @param {String} tags - Comma separated tags
+ * @returns {String} Formatted tags with # prefix
+ */
+const formatTagsString = (tags) => {
+  if (!tags) return '';
+  return tags
+    .split(',')
+    .map((tag) => {
+      const trimmed = tag.trim();
+      if (!trimmed) return '';
+      return trimmed.startsWith('#') ? trimmed : `#${trimmed}`;
+    })
+    .filter(Boolean)
+    .join(', ');
+};
+
+/**
+ * Handle tags input
+ */
+const handleTagsInput = (event) => {
+  form.tags = event.target.value;
+};
+
+/**
+ * Format tags on blur
+ */
+const formatTags = () => {
+  if (form.tags) {
+    form.tags = formatTagsString(form.tags);
+  }
+};
+
+/**
+ * Handle keywords input
+ */
+const handleKeywordsInput = (event) => {
+  form.seo_keywords = event.target.value;
+};
+
+/**
+ * Format keywords on blur
+ */
+const formatKeywords = () => {
+  if (form.seo_keywords) {
+    form.seo_keywords = formatTagsString(form.seo_keywords);
+  }
+};
+
 defineOptions({
   name: 'WriteUpdateForm',
 });
@@ -438,9 +615,9 @@ const showCategoryList = ref(false);
 const categoryDropdownTimer = ref(null);
 
 const statusOptions = [
-  { value: 'published', label: 'Herkese Açık' },
-  { value: 'private', label: 'Gizli' },
-  { value: 'link_only', label: 'Sadece Link' },
+  { value: 'published', label: 'Herkese Açık', description: 'Herkes görebilir' },
+  { value: 'private', label: 'Gizli', description: 'Sadece siz görebilirsiniz' },
+  { value: 'link_only', label: 'Sadece Link', description: 'Link ile erişilebilir' },
 ];
 
 const statusSearch = ref('');

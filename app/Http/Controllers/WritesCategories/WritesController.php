@@ -73,13 +73,16 @@ class WritesController extends Controller
         // Phase 1: Get minimal write data for instant page load (SEO + basic info)
         $writeBasic = $this->writeService->getWriteBasicBySlug($slug);
         
+        // Get all categories for breadcrumb navigation
+        $categoriesResult = $this->writeService->getCategories();
+        
         // Increment view count asynchronously (doesn't block page load)
         $this->writeService->incrementViewCount($writeBasic['data']);
 
         return inertia('WritesCategories/Writes/ShowWrite', [
             'writes'     => [], // Will be loaded via sidebar lazy loading
             'write'      => $writeBasic['data'],
-            'categories' => [], // Will be loaded via sidebar lazy loading
+            'categories' => $categoriesResult['data'], // All categories for breadcrumb
             'screen'     => $this->writeService->getScreenData($writeBasic['data']->title),
             'showDraw'   => filter_var(request()->query('showDraw', false), FILTER_VALIDATE_BOOLEAN),
             'isAdmin'    => $isAdmin

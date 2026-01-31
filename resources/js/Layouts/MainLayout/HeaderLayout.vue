@@ -62,7 +62,39 @@
             "{{ mobileSearchQuery }}" için sonuç bulunamadı
           </div>
           <div v-else class="py-1">
-            <template v-if="mobileSearchResults.articles && mobileSearchResults.articles.length > 0">
+            <!-- Grid Layout for Mobile: 75% Articles, 25% Categories -->
+            <div v-if="mobileSearchResults.categories && mobileSearchResults.categories.length > 0" class="grid grid-cols-4 gap-0">
+              <!-- Articles Section - 3/4 width -->
+              <div v-if="mobileSearchResults.articles && mobileSearchResults.articles.length > 0" class="col-span-3 border-r border-border">
+                <div class="border-b border-border px-3 py-1.5 text-xs font-medium text-muted-foreground">Yazılar</div>
+                <a
+                  v-for="article in mobileSearchResults.articles.slice(0, 5)"
+                  :key="article.id"
+                  :href="article.url"
+                  class="block border-b border-border px-3 py-2 text-sm last:border-b-0 hover:bg-accent"
+                  @mousedown.prevent="navigateToMobileResult(article.url)"
+                >
+                  {{ article.title }}
+                </a>
+              </div>
+              
+              <!-- Categories Section - 1/4 width -->
+              <div class="col-span-1">
+                <div class="border-b border-border px-3 py-1.5 text-xs font-medium text-muted-foreground">Kategoriler</div>
+                <a
+                  v-for="category in mobileSearchResults.categories.slice(0, 3)"
+                  :key="category.id"
+                  :href="category.url"
+                  class="block border-b border-border px-3 py-2 text-sm last:border-b-0 hover:bg-accent"
+                  @mousedown.prevent="navigateToMobileResult(category.url)"
+                >
+                  {{ category.name }}
+                </a>
+              </div>
+            </div>
+            
+            <!-- Full Width Articles (when no categories) -->
+            <template v-else-if="mobileSearchResults.articles && mobileSearchResults.articles.length > 0">
               <div class="border-b border-border px-3 py-1.5 text-xs font-medium text-muted-foreground">Yazılar</div>
               <a
                 v-for="article in mobileSearchResults.articles.slice(0, 5)"
@@ -72,18 +104,6 @@
                 @mousedown.prevent="navigateToMobileResult(article.url)"
               >
                 {{ article.title }}
-              </a>
-            </template>
-            <template v-if="mobileSearchResults.categories && mobileSearchResults.categories.length > 0">
-              <div class="border-b border-border px-3 py-1.5 text-xs font-medium text-muted-foreground">Kategoriler</div>
-              <a
-                v-for="category in mobileSearchResults.categories.slice(0, 3)"
-                :key="category.id"
-                :href="category.url"
-                class="block px-3 py-2 text-sm hover:bg-accent"
-                @mousedown.prevent="navigateToMobileResult(category.url)"
-              >
-                {{ category.name }}
               </a>
             </template>
           </div>
@@ -257,8 +277,62 @@
               "
               class="py-2"
             >
-              <!-- Articles Section -->
-              <div v-if="searchResults.articles && searchResults.articles.length > 0" class="mb-3">
+              <!-- Grid Layout: 75% Articles, 25% Categories -->
+              <div v-if="searchResults.categories && searchResults.categories.length > 0" class="grid grid-cols-4 gap-0">
+                <!-- Articles Section - 3/4 width -->
+                <div v-if="searchResults.articles && searchResults.articles.length > 0" class="col-span-3 border-r border-border">
+                  <div class="border-b border-border px-3 py-1.5 text-xs font-medium text-muted-foreground">Yazılar</div>
+                  <div
+                    v-for="(article, index) in searchResults.articles"
+                    :key="article.id"
+                    :data-selected-index="index"
+                    @click="navigateToResult(article.url)"
+                    :class="[
+                      'cursor-pointer border-b border-border px-3 py-2 transition-colors last:border-b-0',
+                      selectedIndex === index
+                        ? 'bg-accent text-accent-foreground'
+                        : 'hover:bg-accent hover:text-accent-foreground',
+                    ]"
+                  >
+                    <div class="text-sm font-medium leading-none" v-html="highlightText(article.title)"></div>
+                    <div
+                      class="mt-0.5 text-xs leading-tight text-muted-foreground"
+                      v-html="highlightText(article.excerpt)"
+                    ></div>
+                    <div v-if="article.category" class="mt-1">
+                      <span
+                        class="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
+                      >
+                        {{ article.category }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Categories Section - 1/4 width -->
+                <div class="col-span-1">
+                  <div class="border-b border-border px-3 py-1.5 text-xs font-medium text-muted-foreground">
+                    Kategoriler
+                  </div>
+                  <div
+                    v-for="(category, index) in searchResults.categories"
+                    :key="category.id"
+                    :data-selected-index="searchResults.articles.length + index"
+                    @click="navigateToResult(category.url)"
+                    :class="[
+                      'cursor-pointer border-b border-border px-3 py-2 transition-colors last:border-b-0',
+                      selectedIndex === searchResults.articles.length + index
+                        ? 'bg-accent text-accent-foreground'
+                        : 'hover:bg-accent hover:text-accent-foreground',
+                    ]"
+                  >
+                    <div class="text-sm font-medium leading-none" v-html="highlightText(category.name)"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Full Width Articles (when no categories) -->
+              <div v-else-if="searchResults.articles && searchResults.articles.length > 0">
                 <div class="border-b border-border px-3 py-1.5 text-xs font-medium text-muted-foreground">Yazılar</div>
                 <div
                   v-for="(article, index) in searchResults.articles"
@@ -284,27 +358,6 @@
                       {{ article.category }}
                     </span>
                   </div>
-                </div>
-              </div>
-
-              <!-- Categories Section -->
-              <div v-if="searchResults.categories && searchResults.categories.length > 0" class="mb-3">
-                <div class="border-b border-border px-3 py-1.5 text-xs font-medium text-muted-foreground">
-                  Kategoriler
-                </div>
-                <div
-                  v-for="(category, index) in searchResults.categories"
-                  :key="category.id"
-                  :data-selected-index="searchResults.articles.length + index"
-                  @click="navigateToResult(category.url)"
-                  :class="[
-                    'cursor-pointer border-b border-border px-3 py-2 transition-colors last:border-b-0',
-                    selectedIndex === searchResults.articles.length + index
-                      ? 'bg-accent text-accent-foreground'
-                      : 'hover:bg-accent hover:text-accent-foreground',
-                  ]"
-                >
-                  <div class="text-sm font-medium leading-none" v-html="highlightText(category.name)"></div>
                 </div>
               </div>
             </div>
