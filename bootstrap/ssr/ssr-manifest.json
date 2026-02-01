@@ -582,11 +582,14 @@
   "resources/js/Pages/Rendition/LanguagePacks/Words/Screen.vue": [
     "/build/assets/Screen-CbRE3i8d.js"
   ],
+  "resources/js/Pages/Rendition/Words/Create/BulkImportTab.vue": [
+    "/build/assets/BulkImportTab-DKBKZPdS.js"
+  ],
   "resources/js/Pages/Rendition/Words/Create/Screen.vue": [
-    "/build/assets/Screen-E3oUvXG3.js"
+    "/build/assets/Screen-DoXWlrPz.js"
   ],
   "resources/js/Pages/Rendition/Words/CreateWord.vue": [
-    "/build/assets/CreateWord-CABFFDRC.js"
+    "/build/assets/CreateWord-DgxIL3kN.js"
   ],
   "resources/js/Pages/Rendition/Words/Edit/Screen.vue": [
     "/build/assets/Screen-BdQloBw4.js"
@@ -594,11 +597,17 @@
   "resources/js/Pages/Rendition/Words/EditWord.vue": [
     "/build/assets/EditWord-D9JxtrwS.js"
   ],
+  "resources/js/Pages/Rendition/Words/Index/ActivityHeatmap.vue": [
+    "/build/assets/ActivityHeatmap-yiwzKrSL.js"
+  ],
+  "resources/js/Pages/Rendition/Words/Index/DuplicateModal.vue": [
+    "/build/assets/DuplicateModal-DMSbpHKn.js"
+  ],
   "resources/js/Pages/Rendition/Words/Index/Screen.vue": [
-    "/build/assets/Screen-DL_ttfec.js"
+    "/build/assets/Screen-dg9oRD-f.js"
   ],
   "resources/js/Pages/Rendition/Words/IndexWord.vue": [
-    "/build/assets/IndexWord-CufaxAmx.js"
+    "/build/assets/IndexWord-B_RKwW5i.js"
   ],
   "resources/js/Pages/Rendition/Words/Show/Screen.vue": [
     "/build/assets/Screen-CdwG-CTg.js",
