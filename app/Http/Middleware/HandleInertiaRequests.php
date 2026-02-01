@@ -37,6 +37,9 @@ class HandleInertiaRequests extends Middleware
             ],
             'flash' => [
                 'success' => fn() => $request->session()->get('success'),
+                'error' => fn() => $request->session()->get('error'),
+                'bulkResults' => fn() => $request->session()->get('bulkResults'),
+                'bulk_import_duplicates' => fn() => $request->session()->get('bulk_import_duplicates'),
             ],
             'app' => fn() => $this->getAppData(),
             'workspaceCount' => fn() => \App\Models\Workspace::published()->count(),

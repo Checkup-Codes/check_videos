@@ -13,6 +13,7 @@ import Screen from '@/Pages/Rendition/Words/Index/Screen.vue';
 const props = defineProps({
   words: Array,
   languagePacks: Array,
+  stats: Object,
   screen: Object,
   error: {
     type: String,

@@ -2,9 +2,28 @@
   <CheckScreen>
     <div class="p-6 pt-12 sm:p-8 sm:pt-16">
       <!-- Header - sade tasarım -->
-      <div class="mb-8">
-        <h1 class="text-2xl font-semibold text-foreground sm:text-3xl">Kelime Sözlüğü</h1>
-        <p class="text-muted-foreground mt-2 text-sm">Kelime arayın, anlamlarını öğrenin</p>
+      <div class="mb-8 flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-semibold text-foreground sm:text-3xl">Kelime Sözlüğü</h1>
+        </div>
+        <Link v-if="isLoggedIn" :href="route('rendition.words.create')" class="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="mr-2 h-4 w-4"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          Yeni Kelime
+        </Link>
+      </div>
+
+      <!-- Activity Heatmap -->
+      <div v-if="stats" class="mb-8">
+        <ActivityHeatmap :stats="stats" />
       </div>
 
       <!-- Search Box - sade tasarım -->
@@ -212,34 +231,31 @@
         </p>
       </div>
 
-      <!-- Quick Actions - sade tasarım -->
-      <div v-if="isLoggedIn" class="mt-8 text-center">
-        <Link :href="route('rendition.words.create')" class="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="mr-2 h-4 w-4"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-          Yeni Kelime Ekle
-        </Link>
-      </div>
+
     </div>
+
+    <!-- Duplicate Modal -->
+    <DuplicateModal
+      :show="showDuplicateModal"
+      :duplicates="duplicateData?.duplicates || []"
+      :pack-ids="duplicateData?.pack_ids || []"
+      :pack-names="duplicateData?.pack_names || []"
+      @close="showDuplicateModal = false"
+    />
   </CheckScreen>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { usePage, Link } from '@inertiajs/vue3';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import ActivityHeatmap from './ActivityHeatmap.vue';
+import DuplicateModal from './DuplicateModal.vue';
 
 const props = defineProps({
   words: Array,
   languagePacks: Array,
+  stats: Object,
   screen: Object,
   error: {
     type: String,
@@ -254,6 +270,25 @@ const searchQuery = ref('');
 const searchResult = ref(null);
 const isSearching = ref(false);
 const hasSearched = ref(false);
+
+// Duplicate modal state
+const showDuplicateModal = ref(false);
+const duplicateData = ref(null);
+
+// Check for duplicate data in session
+const page = usePage();
+
+// Watch for flash data changes (handles both initial load and navigation)
+watch(
+  () => page.props.flash?.bulk_import_duplicates,
+  (newData) => {
+    if (newData) {
+      duplicateData.value = newData;
+      showDuplicateModal.value = true;
+    }
+  },
+  { immediate: true }
+);
 
 // User state
 const auth = computed(() => usePage().props.auth);

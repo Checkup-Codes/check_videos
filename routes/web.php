@@ -174,6 +174,9 @@ Route::get('/bookmarks/{id}', [BookmarkController::class, 'show'])->name('bookma
 // Rendition Routes
 Route::group(['prefix' => 'rendition', 'as' => 'rendition.'], function () {
     // Words Management
+    Route::post('words/bulk-store', [WordController::class, 'bulkStore'])->name('words.bulk-store');
+    Route::post('words/bulk-add-to-packs', [WordController::class, 'bulkAddToPacks'])->name('words.bulk-add-to-packs');
+    Route::post('words/check-duplicate', [WordController::class, 'checkDuplicate'])->name('words.check-duplicate');
     Route::post('words/search', [WordController::class, 'searchWord'])->name('words.search');
     Route::post('words/{id}/learning-status', [WordController::class, 'updateLearningStatus'])->name('words.learning-status');
     Route::post('words/{id}/review-status', [WordController::class, 'updateReviewStatus'])->name('words.review-status');

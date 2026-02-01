@@ -205,6 +205,7 @@ class RenditionSeeder extends Seeder
                 'language' => $wordData['language'],
                 'learning_status' => $wordData['learning_status'],
                 'difficulty_level' => $wordData['difficulty_level'],
+                'is_complete' => true, // Anlam ekliyoruz, bu yüzden complete
                 'flag' => false,
                 'incorrect_count' => 0,
                 'review_count' => 0,
@@ -272,6 +273,7 @@ class RenditionSeeder extends Seeder
                 'language' => 'en',
                 'learning_status' => 0,
                 'difficulty_level' => 1,
+                'is_complete' => true, // Anlam ekliyoruz, bu yüzden complete
                 'flag' => false,
                 'incorrect_count' => 0,
                 'review_count' => 0,

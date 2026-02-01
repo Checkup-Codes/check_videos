@@ -4,12 +4,44 @@
       <!-- Header -->
       <div>
         <h1 class="text-2xl font-bold text-foreground">Yeni Kelime</h1>
-        <p class="mt-1 text-sm text-muted-foreground">Kelime ekleyin, detayları sonra tamamlayabilirsiniz</p>
+        <p class="mt-1 text-sm text-muted-foreground">Tek kelime veya toplu olarak ekleyebilirsiniz</p>
       </div>
 
-      <!-- Yarım Kalan Kelimeler Uyarısı -->
+      <!-- Tabs -->
+      <div class="flex gap-2 border-b border-border">
+        <button
+          @click="activeTab = 'single'"
+          class="relative px-4 py-2 text-sm font-medium transition-colors"
+          :class="activeTab === 'single' 
+            ? 'text-primary' 
+            : 'text-muted-foreground hover:text-foreground'"
+        >
+          Tek Kelime
+          <div
+            v-if="activeTab === 'single'"
+            class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+          />
+        </button>
+        <button
+          @click="activeTab = 'bulk'"
+          class="relative px-4 py-2 text-sm font-medium transition-colors"
+          :class="activeTab === 'bulk' 
+            ? 'text-primary' 
+            : 'text-muted-foreground hover:text-foreground'"
+        >
+          Toplu Ekleme
+          <div
+            v-if="activeTab === 'bulk'"
+            class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+          />
+        </button>
+      </div>
+
+      <!-- Single Word Tab -->
+      <div v-if="activeTab === 'single'">
+        <!-- Yarım Kalan Kelimeler Uyarısı -->
       <div 
-        v-if="incompleteWords.length > 0" 
+        v-if="incompleteWordsCount > 0" 
         class="rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-4"
       >
         <div class="flex items-start gap-3">
@@ -18,7 +50,7 @@
           </svg>
           <div class="flex-1">
             <h3 class="font-medium text-yellow-800 dark:text-yellow-200">
-              {{ incompleteWords.length }} yarım kalan kelime var
+              {{ incompleteWordsCount }} yarım kalan kelime var
             </h3>
             <p class="mt-1 text-sm text-yellow-700 dark:text-yellow-300">
               Bu kelimelerin anlamları henüz girilmemiş.
@@ -32,7 +64,7 @@
           </div>
         </div>
 
-        <!-- Yarım Kalan Kelimeler Listesi -->
+        <!-- Yarım Kalan Kelimeler Listesi (İlk 20) -->
         <div v-if="showIncompleteList" class="mt-4 space-y-2">
           <Link
             v-for="word in incompleteWords"
@@ -52,6 +84,9 @@
               </svg>
             </div>
           </Link>
+          <p v-if="incompleteWordsCount > 20" class="text-xs text-center text-muted-foreground pt-2">
+            ... ve {{ incompleteWordsCount - 20 }} kelime daha
+          </p>
         </div>
       </div>
 
@@ -71,10 +106,40 @@
                 type="text"
                 placeholder="Kelimeyi girin..."
                 class="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                :class="{ 'border-destructive': errors.word }"
+                :class="{ 'border-destructive': errors.word || duplicateCheck.exists }"
                 required
               />
               <p v-if="errors.word" class="text-xs text-destructive">{{ errors.word }}</p>
+              
+              <!-- Duplicate Check Loading -->
+              <p v-if="duplicateCheck.checking" class="text-xs text-muted-foreground">
+                <span class="inline-block animate-spin">⏳</span> Kontrol ediliyor...
+              </p>
+              
+              <!-- Duplicate Warning -->
+              <div 
+                v-if="duplicateCheck.exists" 
+                class="rounded-lg border border-destructive/30 bg-destructive/10 p-3"
+              >
+                <div class="flex items-start gap-2">
+                  <svg class="mt-0.5 h-4 w-4 flex-shrink-0 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <div class="flex-1">
+                    <p class="text-xs font-medium text-destructive">{{ duplicateCheck.message }}</p>
+                    <button
+                      type="button"
+                      @click="editExistingWord"
+                      class="mt-2 inline-flex items-center gap-1 text-xs font-medium text-destructive underline hover:no-underline"
+                    >
+                      Mevcut kelimeyi düzenle
+                      <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Dil -->
@@ -293,25 +358,36 @@
           </Link>
           <button
             type="submit"
-            :disabled="processing || !form.word.trim()"
+            :disabled="processing || !form.word.trim() || duplicateCheck.exists || duplicateCheck.checking"
             class="rounded-lg bg-primary px-6 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
           >
             {{ processing ? 'Kaydediliyor...' : 'Kaydet' }}
           </button>
         </div>
       </form>
+      </div>
+
+      <!-- Bulk Import Tab -->
+      <BulkImportTab
+        v-if="activeTab === 'bulk'"
+        :language-packs="languagePacks"
+        @cancel="activeTab = 'single'"
+      />
     </div>
   </CheckScreen>
 </template>
 
 <script setup>
-import { ref, computed, nextTick } from 'vue';
-import { useForm, usePage, Link } from '@inertiajs/vue3';
+import { ref, computed, nextTick, watch } from 'vue';
+import { useForm, usePage, Link, router } from '@inertiajs/vue3';
+import axios from 'axios';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import BulkImportTab from './BulkImportTab.vue';
 
 const props = defineProps({
   languagePacks: { type: Array, default: () => [] },
   incompleteWords: { type: Array, default: () => [] },
+  incompleteWordsCount: { type: Number, default: 0 }, // Toplam yarım kalan sayısı
   error: String,
   screen: Object,
 });
@@ -320,6 +396,7 @@ const errors = computed(() => usePage().props.errors);
 const processing = ref(false);
 const newSynonym = ref('');
 const showIncompleteList = ref(false);
+const activeTab = ref('single'); // Tab state
 
 const form = useForm({
   word: '',
@@ -334,6 +411,80 @@ const form = useForm({
   example_translations: [],
   synonyms: [],
 });
+
+// Duplicate kontrolü için state
+const duplicateCheck = ref({
+  checking: false,
+  exists: false,
+  existingWord: null,
+  message: '',
+});
+
+// Debounce timer
+let checkTimer = null;
+
+// Kelime, dil veya tür değiştiğinde duplicate kontrolü yap
+const checkForDuplicate = async () => {
+  // Kelime veya dil boşsa kontrol etme
+  if (!form.word || !form.language) {
+    duplicateCheck.value = {
+      checking: false,
+      exists: false,
+      existingWord: null,
+      message: '',
+    };
+    return;
+  }
+
+  duplicateCheck.value.checking = true;
+
+  try {
+    const response = await axios.post(route('rendition.words.check-duplicate'), {
+      word: form.word,
+      language: form.language,
+      type: form.type || null,
+    });
+
+    if (response.data.exists) {
+      duplicateCheck.value = {
+        checking: false,
+        exists: true,
+        existingWord: response.data.word,
+        message: response.data.message,
+      };
+    } else {
+      duplicateCheck.value = {
+        checking: false,
+        exists: false,
+        existingWord: null,
+        message: '',
+      };
+    }
+  } catch (error) {
+    console.error('Duplicate check error:', error);
+    duplicateCheck.value.checking = false;
+  }
+};
+
+// Debounced duplicate check
+const debouncedCheck = () => {
+  clearTimeout(checkTimer);
+  checkTimer = setTimeout(() => {
+    checkForDuplicate();
+  }, 500); // 500ms bekle
+};
+
+// Watch for changes
+watch([() => form.word, () => form.language, () => form.type], () => {
+  debouncedCheck();
+});
+
+// Mevcut kelimeyi düzenle
+const editExistingWord = () => {
+  if (duplicateCheck.value.existingWord) {
+    router.visit(duplicateCheck.value.existingWord.edit_url);
+  }
+};
 
 const getWordTypeLabel = (type) => {
   const types = {

@@ -117,6 +117,9 @@ class WordController extends Controller
             Log::info('Total words:', ['total' => $words->total()]);
             Log::info('Last page:', ['last_page' => $words->lastPage()]);
 
+            // İstatistikler - Son 365 gün
+            $stats = $this->getActivityStats();
+
             return Inertia::render('Rendition/Words/IndexWord', [
                 'words' => $words->items(),
                 'pagination' => $paginationData,
@@ -126,6 +129,7 @@ class WordController extends Controller
                     'status' => $status,
                 ],
                 'languagePacks' => $languagePacks,
+                'stats' => $stats,
                 'screen' => $this->getScreenData('Kelimeler', true)
             ]);
         } catch (\Exception $e) {
@@ -151,6 +155,16 @@ class WordController extends Controller
                     'status' => $status ?? '',
                 ],
                 'languagePacks' => [],
+                'stats' => [
+                    'wordsAdded' => [],
+                    'wordsReviewed' => [],
+                    'summary' => [
+                        'totalWordsAdded' => 0,
+                        'avgWordsAddedPerDay' => 0,
+                        'totalWordsReviewed' => 0,
+                        'avgWordsReviewedPerDay' => 0,
+                    ]
+                ],
                 'screen' => [
                     'isMobileSidebar' => true,
                     'name' => 'words'
@@ -158,6 +172,131 @@ class WordController extends Controller
                 'error' => 'Verileri yüklerken bir hata oluştu.'
             ]);
         }
+    }
+
+    /**
+     * Yılın tamamının aktivite istatistiklerini getir
+     * Gelecek günler de dahil (kilitli olarak gösterilmek üzere)
+     */
+    private function getActivityStats()
+    {
+        // Mevcut yılın başlangıcı (1 Ocak)
+        $startDate = now()->startOfYear();
+        // Mevcut yılın sonu (31 Aralık)
+        $endDate = now()->endOfYear();
+        // Bugün (gün sonu dahil)
+        $today = now()->endOfDay();
+
+        // Günlük eklenen kelime sayıları
+        $wordsAdded = DB::table('lang_words')
+            ->select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as count'))
+            ->whereBetween('created_at', [$startDate, $today])
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get()
+            ->keyBy('date')
+            ->map(fn($item) => (int) $item->count)
+            ->toArray();
+
+        // Günlük review edilen kelime sayıları (last_review_date kullanarak)
+        $wordsReviewed = DB::table('lang_words')
+            ->select(DB::raw('DATE(last_review_date) as date'), DB::raw('COUNT(*) as count'))
+            ->whereNotNull('last_review_date')
+            ->whereBetween('last_review_date', [$startDate, $today])
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get()
+            ->keyBy('date')
+            ->map(fn($item) => (int) $item->count)
+            ->toArray();
+
+        // Tüm günleri doldur (Ocak'tan Aralık'a kadar - gelecek günler dahil)
+        $allDates = [];
+        $currentDate = $startDate->copy();
+        $todayDate = now()->format('Y-m-d');
+        
+        while ($currentDate <= $endDate) {
+            $dateStr = $currentDate->format('Y-m-d');
+            $isFuture = $dateStr > $todayDate; // Bugünden sonrası gelecek
+            
+            $allDates[$dateStr] = [
+                'date' => $dateStr,
+                'added' => $isFuture ? null : ($wordsAdded[$dateStr] ?? 0),
+                'reviewed' => $isFuture ? null : ($wordsReviewed[$dateStr] ?? 0),
+                'is_future' => $isFuture,
+            ];
+            $currentDate->addDay();
+        }
+
+        // Özet istatistikler (sadece geçmiş günler)
+        $pastDates = array_filter($allDates, fn($day) => !$day['is_future']);
+        $totalWordsAdded = array_sum(array_column($pastDates, 'added'));
+        $totalWordsReviewed = array_sum(array_column($pastDates, 'reviewed'));
+        $daysWithActivity = count(array_filter($pastDates, fn($day) => $day['added'] > 0));
+        $daysWithReview = count(array_filter($pastDates, fn($day) => $day['reviewed'] > 0));
+
+        return [
+            'data' => array_values($allDates),
+            'summary' => [
+                'totalWordsAdded' => $totalWordsAdded,
+                'avgWordsAddedPerDay' => $daysWithActivity > 0 ? round($totalWordsAdded / $daysWithActivity, 1) : 0,
+                'totalWordsReviewed' => $totalWordsReviewed,
+                'avgWordsReviewedPerDay' => $daysWithReview > 0 ? round($totalWordsReviewed / $daysWithReview, 1) : 0,
+                'currentStreak' => $this->calculateStreak($allDates, 'added'),
+                'longestStreak' => $this->calculateLongestStreak($allDates, 'added'),
+            ]
+        ];
+    }
+
+    /**
+     * Mevcut streak'i hesapla (bugünden geriye doğru)
+     * Gelecek günleri hariç tutar
+     */
+    private function calculateStreak($allDates, $type = 'added')
+    {
+        $streak = 0;
+        $dates = array_reverse($allDates);
+        
+        foreach ($dates as $day) {
+            // Gelecek günleri atla
+            if (isset($day['is_future']) && $day['is_future']) {
+                continue;
+            }
+            
+            if ($day[$type] > 0) {
+                $streak++;
+            } else {
+                break;
+            }
+        }
+        
+        return $streak;
+    }
+
+    /**
+     * En uzun streak'i hesapla
+     * Gelecek günleri hariç tutar
+     */
+    private function calculateLongestStreak($allDates, $type = 'added')
+    {
+        $maxStreak = 0;
+        $currentStreak = 0;
+        
+        foreach ($allDates as $day) {
+            // Gelecek günleri atla
+            if (isset($day['is_future']) && $day['is_future']) {
+                continue;
+            }
+            
+            if ($day[$type] > 0) {
+                $currentStreak++;
+                $maxStreak = max($maxStreak, $currentStreak);
+            } else {
+                $currentStreak = 0;
+            }
+        }
+        
+        return $maxStreak;
     }
 
     public function show($slug)
@@ -175,11 +314,10 @@ class WordController extends Controller
                 ->orderBy('lang_language_packs.name')
                 ->get();
 
-            // Slug'a göre istenen paket ve kelimeleri getir (sadece tamamlanmış kelimeler)
+            // Slug'a göre istenen paket ve kelimeleri getir (tüm kelimeler - complete ve incomplete)
             $languagePack = LanguagePack::with([
                 'words' => function ($query) {
-                    $query->complete()
-                        ->with(['exampleSentences', 'synonyms', 'meanings'])
+                    $query->with(['exampleSentences', 'synonyms', 'meanings'])
                         ->orderBy('word');
                 }
             ])
@@ -270,11 +408,250 @@ class WordController extends Controller
                 ];
             });
 
+        // Debug: Gerçek yarım kalan kelime sayısını logla
+        $totalIncomplete = Word::incomplete()->count();
+        Log::info('Incomplete words count:', [
+            'total' => $totalIncomplete,
+            'shown' => $incompleteWords->count(),
+            'words' => $incompleteWords->pluck('word')->toArray()
+        ]);
+
         return Inertia::render('Rendition/Words/CreateWord', [
             'languagePacks' => $languagePacks,
             'incompleteWords' => $incompleteWords,
+            'incompleteWordsCount' => $totalIncomplete, // Toplam sayı
             'screen' => $this->getScreenData('Yeni Kelime')
         ]);
+    }
+
+    /**
+     * Toplu kelime ekleme (Bulk import)
+     * JSON formatında birden fazla kelime ekler
+     */
+    public function bulkStore(Request $request)
+    {
+        try {
+            $request->validate([
+                'words' => 'required|array|min:1',
+                'words.*.word' => 'required|string|max:255',
+                'words.*.meanings' => 'nullable|array',
+                'words.*.meanings.*.meaning' => 'nullable|string',
+                'words.*.type' => 'nullable|string',
+                'words.*.language' => 'required|string|size:2',
+                'words.*.difficulty_level' => 'nullable|integer|min:1|max:4',
+                'words.*.example_sentences' => 'nullable|array',
+                'words.*.synonyms' => 'nullable|array',
+                'language_pack_ids' => 'nullable|array',
+                'language_pack_ids.*' => 'exists:lang_language_packs,id',
+            ]);
+
+            DB::beginTransaction();
+
+            $results = [
+                'success' => [],
+                'duplicates' => [], // Mevcut kelimeler (pakete eklenebilir)
+                'errors' => [],
+            ];
+
+            foreach ($request->words as $index => $wordData) {
+                try {
+                    // Duplicate kontrolü
+                    $existingWord = Word::where('word', $wordData['word'])
+                        ->where('language', $wordData['language'])
+                        ->where(function ($query) use ($wordData) {
+                            if (isset($wordData['type']) && $wordData['type']) {
+                                $query->where('type', $wordData['type']);
+                            } else {
+                                $query->whereNull('type');
+                            }
+                        })
+                        ->with('languagePacks')
+                        ->first();
+
+                    if ($existingWord) {
+                        // Kelime mevcut - paket bilgilerini topla
+                        $currentPacks = $existingWord->languagePacks->pluck('name')->toArray();
+                        
+                        $results['duplicates'][] = [
+                            'index' => $index,
+                            'word' => $wordData['word'],
+                            'id' => $existingWord->id,
+                            'current_packs' => $currentPacks,
+                            'can_add_to_packs' => $request->has('language_pack_ids') && count($request->language_pack_ids) > 0,
+                        ];
+                        continue;
+                    }
+
+                    // Anlam var mı kontrol et
+                    $hasMeaning = false;
+                    if (isset($wordData['meanings']) && is_array($wordData['meanings'])) {
+                        foreach ($wordData['meanings'] as $meaningData) {
+                            if (!empty($meaningData['meaning'])) {
+                                $hasMeaning = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Kelimeyi oluştur
+                    $word = Word::create([
+                        'word' => $wordData['word'],
+                        'type' => $wordData['type'] ?? null,
+                        'language' => $wordData['language'],
+                        'is_complete' => $hasMeaning,
+                        'learning_status' => $wordData['learning_status'] ?? 0,
+                        'flag' => $wordData['flag'] ?? false,
+                        'difficulty_level' => $wordData['difficulty_level'] ?? 2,
+                        'incorrect_count' => 0,
+                        'review_count' => 0,
+                    ]);
+
+                    // Anlamları ekle
+                    if (isset($wordData['meanings']) && is_array($wordData['meanings'])) {
+                        $hasPrimary = false;
+                        $meaningIndex = 0;
+                        foreach ($wordData['meanings'] as $meaningData) {
+                            if (!empty($meaningData['meaning'])) {
+                                $isPrimary = isset($meaningData['is_primary']) ? $meaningData['is_primary'] : false;
+                                if ($isPrimary || (!$hasPrimary && $meaningIndex === 0)) {
+                                    $isPrimary = true;
+                                    $hasPrimary = true;
+                                }
+                                $word->meanings()->create([
+                                    'meaning' => $meaningData['meaning'],
+                                    'is_primary' => $isPrimary,
+                                    'display_order' => $meaningIndex,
+                                ]);
+                                $meaningIndex++;
+                            }
+                        }
+                    }
+
+                    // Dil paketlerine ekle
+                    if ($request->has('language_pack_ids') && is_array($request->language_pack_ids)) {
+                        $word->languagePacks()->attach($request->language_pack_ids);
+                    }
+
+                    // Örnek cümleleri ekle
+                    if (isset($wordData['example_sentences']) && is_array($wordData['example_sentences'])) {
+                        foreach ($wordData['example_sentences'] as $sentenceIndex => $sentence) {
+                            if (!empty($sentence)) {
+                                $word->exampleSentences()->create([
+                                    'sentence' => $sentence,
+                                    'translation' => $wordData['example_translations'][$sentenceIndex] ?? null,
+                                    'language' => $word->language,
+                                ]);
+                            }
+                        }
+                    }
+
+                    // Eş anlamlıları ekle
+                    if (isset($wordData['synonyms']) && is_array($wordData['synonyms'])) {
+                        foreach ($wordData['synonyms'] as $synonym) {
+                            if (!empty($synonym)) {
+                                $word->synonyms()->create([
+                                    'synonym' => $synonym,
+                                    'language' => $word->language,
+                                ]);
+                            }
+                        }
+                    }
+
+                    $results['success'][] = [
+                        'index' => $index,
+                        'word' => $wordData['word'],
+                        'id' => $word->id,
+                    ];
+                } catch (\Exception $e) {
+                    $results['errors'][] = [
+                        'index' => $index,
+                        'word' => $wordData['word'] ?? 'Unknown',
+                        'error' => $e->getMessage(),
+                    ];
+                }
+            }
+
+            DB::commit();
+
+            // Duplicate kelimeler varsa ve paket seçilmişse, onay için session'a kaydet
+            if (count($results['duplicates']) > 0 && $request->has('language_pack_ids') && count($request->language_pack_ids) > 0) {
+                session()->put('bulk_import_duplicates', [
+                    'duplicates' => $results['duplicates'],
+                    'pack_ids' => $request->language_pack_ids,
+                    'pack_names' => DB::table('lang_language_packs')
+                        ->whereIn('id', $request->language_pack_ids)
+                        ->pluck('name')
+                        ->toArray(),
+                ]);
+            }
+
+            $message = sprintf(
+                '%d kelime eklendi%s%s',
+                count($results['success']),
+                count($results['duplicates']) > 0 ? ', ' . count($results['duplicates']) . ' mevcut kelime bulundu' : '',
+                count($results['errors']) > 0 ? ', ' . count($results['errors']) . ' hata' : ''
+            );
+
+            return Redirect::route('rendition.words.index')
+                ->with('success', $message)
+                ->with('bulkResults', $results);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Bulk word creation error: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
+
+            return Redirect::back()
+                ->withInput()
+                ->with('error', 'Toplu kelime eklenirken bir hata oluştu: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Duplicate kelimeleri seçilen paketlere ekle
+     */
+    public function bulkAddToPacks(Request $request)
+    {
+        try {
+            $request->validate([
+                'word_ids' => 'required|array',
+                'word_ids.*' => 'exists:lang_words,id',
+                'pack_ids' => 'required|array',
+                'pack_ids.*' => 'exists:lang_language_packs,id',
+            ]);
+
+            DB::beginTransaction();
+
+            $addedCount = 0;
+            foreach ($request->word_ids as $wordId) {
+                $word = Word::find($wordId);
+                if ($word) {
+                    // Mevcut paketleri al
+                    $currentPackIds = $word->languagePacks()->pluck('lang_language_packs.id')->toArray();
+                    
+                    // Yeni paketleri ekle (duplicate olmadan)
+                    $newPackIds = array_diff($request->pack_ids, $currentPackIds);
+                    
+                    if (count($newPackIds) > 0) {
+                        $word->languagePacks()->attach($newPackIds);
+                        $addedCount++;
+                    }
+                }
+            }
+
+            DB::commit();
+
+            // Session'dan duplicate bilgisini temizle
+            session()->forget('bulk_import_duplicates');
+
+            return Redirect::route('rendition.words.index')
+                ->with('success', "{$addedCount} kelime seçilen paketlere eklendi.");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Bulk add to packs error: ' . $e->getMessage());
+
+            return Redirect::back()
+                ->with('error', 'Kelimeler paketlere eklenirken bir hata oluştu: ' . $e->getMessage());
+        }
     }
 
     public function store(Request $request)
@@ -303,30 +680,6 @@ class WordController extends Controller
                 'example_translations' => 'nullable|array',
                 'synonyms' => 'nullable|array',
             ];
-
-            // Eğer aynı kelime + dil + tür varsa hata ver (sadece tür doluysa kontrol et)
-            if ($request->type) {
-                $rules['word'][] = function ($attribute, $value, $fail) use ($request) {
-                    $exists = Word::where('word', $value)
-                        ->where('language', $request->language)
-                        ->where('type', $request->type)
-                        ->exists();
-                    if ($exists) {
-                        $fail('Bu kelime (' . $value . ') ve tür (' . $request->type . ') kombinasyonu zaten mevcut.');
-                    }
-                };
-            } else {
-                // Tür yoksa sadece kelime + dil kontrolü
-                $rules['word'][] = function ($attribute, $value, $fail) use ($request) {
-                    $exists = Word::where('word', $value)
-                        ->where('language', $request->language)
-                        ->whereNull('type')
-                        ->exists();
-                    if ($exists) {
-                        $fail('Bu kelime (' . $value . ') zaten mevcut.');
-                    }
-                };
-            }
 
             $request->validate($rules);
 
@@ -789,6 +1142,74 @@ class WordController extends Controller
             ->get();
 
         return Response::json($words);
+    }
+
+    /**
+     * Kelime kontrolü - Aynı kelime + dil + tür kombinasyonu var mı?
+     * Frontend'den AJAX ile çağrılır
+     */
+    public function checkDuplicate(Request $request)
+    {
+        try {
+            $word = $request->input('word');
+            $language = $request->input('language');
+            $type = $request->input('type');
+            $excludeId = $request->input('exclude_id'); // Edit sırasında mevcut kelimeyi hariç tut
+
+            if (empty($word) || empty($language)) {
+                return Response::json([
+                    'exists' => false,
+                    'message' => 'Kelime ve dil gerekli'
+                ]);
+            }
+
+            // Aynı kelime + dil + tür kombinasyonunu ara
+            $query = Word::where('word', $word)
+                ->where('language', $language);
+
+            // Tür kontrolü
+            if ($type) {
+                $query->where('type', $type);
+            } else {
+                $query->whereNull('type');
+            }
+
+            // Edit sırasında mevcut kelimeyi hariç tut
+            if ($excludeId) {
+                $query->where('id', '!=', $excludeId);
+            }
+
+            $existingWord = $query->with(['meanings'])->first();
+
+            if ($existingWord) {
+                // Kelime mevcut - detaylarını döndür
+                return Response::json([
+                    'exists' => true,
+                    'word' => [
+                        'id' => $existingWord->id,
+                        'word' => $existingWord->word,
+                        'type' => $existingWord->type,
+                        'language' => $existingWord->language,
+                        'is_complete' => $existingWord->is_complete,
+                        'edit_url' => route('rendition.words.edit', $existingWord->id)
+                    ],
+                    'message' => $type 
+                        ? "Bu kelime ({$word}) ve tür ({$type}) kombinasyonu zaten mevcut."
+                        : "Bu kelime ({$word}) zaten mevcut."
+                ]);
+            }
+
+            return Response::json([
+                'exists' => false,
+                'message' => 'Kelime mevcut değil'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in WordController@checkDuplicate: ' . $e->getMessage());
+            return Response::json([
+                'exists' => false,
+                'error' => 'Kontrol sırasında bir hata oluştu'
+            ], 500);
+        }
     }
 
     /**
