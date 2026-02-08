@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\WritesCategories\Write;
 use App\Models\WritesCategories\WriteImage;
 use App\Models\Journey;
+use App\Models\Certificate;
 use App\Models\Workspace;
 use App\Models\Seo;
 use Illuminate\Http\Request;
@@ -154,11 +155,34 @@ class MediaController extends Controller
             }
         }
 
+        // Certificates tablosundan resimler
+        $certificateImages = Certificate::whereNotNull('image')
+            ->orderBy('issue_date', 'desc')
+            ->get()
+            ->map(function ($certificate) {
+                return [
+                    'id' => 'certificate_' . $certificate->id,
+                    'source' => 'certificates',
+                    'source_label' => 'Sertifikalar',
+                    'category' => 'awards',
+                    'category_label' => 'Ödüller',
+                    'image_path' => $certificate->image,
+                    'full_url' => url($certificate->image),
+                    'title' => $certificate->title,
+                    'alt_text' => $certificate->title . ' - ' . $certificate->issuer,
+                    'related_title' => $certificate->issuer,
+                    'created_at' => $certificate->created_at,
+                    'deletable' => false,
+                    'editable' => false,
+                ];
+            });
+
         // Tüm resimleri birleştir ve tarihe göre sırala
         $allImages = $writeImages
             ->concat($journeyImages)
             ->concat($workspaceImages)
             ->concat($seoImages)
+            ->concat($certificateImages)
             ->sortByDesc('created_at')
             ->values();
 
@@ -171,6 +195,7 @@ class MediaController extends Controller
             'write_images' => 'Medya',
             'journey' => 'Yolculuk',
             'workspace' => 'Çalışma Alanı',
+            'certificates' => 'Sertifikalar',
             'seo' => 'SEO',
         ];
 

@@ -236,6 +236,7 @@ const allCategories = computed(() => {
   const cats = { ...props.categories };
   cats['journey'] = 'Yolculuk';
   cats['workspace'] = 'Çalışma Alanı';
+  cats['certificates'] = 'Sertifikalar';
   cats['seo'] = 'SEO';
   return cats;
 });

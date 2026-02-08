@@ -23,6 +23,7 @@ use App\Http\Controllers\SocialMediaController;
 use App\Http\Controllers\Tests\TestsController;
 use App\Http\Controllers\Tests\TestCategoriesController;
 use App\Http\Controllers\JourneyController;
+use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\BookmarkCategoryController;
@@ -56,6 +57,9 @@ Route::resource('/test-categories', TestCategoriesController::class);
 
 // Journey Routes (Public - View only index, show is below with proper order)
 Route::get('/journey', [JourneyController::class, 'index'])->name('journey.index');
+
+// Certificates Routes (Public - View only index, show is below with proper order)
+Route::get('/certificates', [CertificateController::class, 'index'])->name('certificates.index');
 
 // Equipments Routes (Public - View Only)
 Route::get('/equipments', [EquipmentsController::class, 'index'])->name('equipments.index');
@@ -127,6 +131,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/journey/{id}', [JourneyController::class, 'update'])->name('journey.update');
     Route::delete('/journey/{id}', [JourneyController::class, 'destroy'])->name('journey.destroy');
 
+    // Certificates CRUD (Admin only)
+    Route::get('/certificates/create', [CertificateController::class, 'create'])->name('certificates.create');
+    Route::post('/certificates', [CertificateController::class, 'store'])->name('certificates.store');
+    Route::get('/certificates/{id}/edit', [CertificateController::class, 'edit'])->name('certificates.edit');
+    Route::put('/certificates/{id}', [CertificateController::class, 'update'])->name('certificates.update');
+    Route::delete('/certificates/{id}', [CertificateController::class, 'destroy'])->name('certificates.destroy');
+
     // Workspace CRUD (Admin only)
     Route::get('/workspace/create', [WorkspaceController::class, 'create'])->name('workspace.create');
     Route::post('/workspace', [WorkspaceController::class, 'store'])->name('workspace.store');
@@ -162,6 +173,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Journey Show (Public - must be after /journey/create to avoid route conflict)
 Route::get('/journey/{id}', [JourneyController::class, 'show'])->name('journey.show');
+
+// Certificates Show (Public - must be after /certificates/create to avoid route conflict)
+Route::get('/certificates/{slug}', [CertificateController::class, 'show'])->name('certificates.show');
 
 // Workspace Routes (Public index, show - must be after /workspace/create to avoid route conflict)
 Route::get('/workspace', [WorkspaceController::class, 'index'])->name('workspace.index');
