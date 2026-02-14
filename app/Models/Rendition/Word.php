@@ -35,6 +35,7 @@ class Word extends Model
 
     protected $fillable = [
         'word',
+        'definition',
         'type',
         'language',
         'is_complete',

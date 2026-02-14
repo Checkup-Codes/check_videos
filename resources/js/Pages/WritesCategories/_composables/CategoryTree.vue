@@ -20,10 +20,9 @@
                     <IconLink class="h-3 w-3" />
                   </span>
                   <h3
-                    class="truncate text-[10px] font-normal"
+                    class="truncate text-sm font-medium"
                     :class="url === `/categories/${category.slug}` ? 'text-accent-foreground' : 'text-foreground'"
                     :title="category.name"
-                    style="font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400;"
                   >
                     {{ category.name }}
                   </h3>
@@ -70,10 +69,9 @@
                             <IconLock class="h-3 w-3" />
                           </span>
                           <span
-                            class="truncate text-[10px] font-normal"
+                            class="truncate text-sm font-medium"
                             :class="url === `/categories/${child.slug}` ? 'text-accent-foreground' : 'text-foreground'"
                             :title="child.name"
-                            style="font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400;"
                           >
                             {{ child.name }}
                           </span>
@@ -90,7 +88,7 @@
                             />
                           </button>
                           <div
-                            class="inline-flex items-center rounded-full border border-border bg-secondary px-1.5 py-0.5 text-[10px] font-semibold text-secondary-foreground"
+                            class="inline-flex items-center rounded-full border border-border bg-secondary px-1.5 py-0.5 text-xs font-semibold text-secondary-foreground"
                           >
                             {{ getTotalWriteCount(child) }}
                           </div>
@@ -125,20 +123,19 @@
                                     <IconLock class="h-3 w-3" />
                                   </span>
                                   <span
-                                    class="truncate text-[9px] font-normal"
+                                    class="truncate text-xs font-medium"
                                     :class="
                                       url === `/categories/${subChild.slug}`
                                         ? 'text-accent-foreground'
                                         : 'text-foreground'
                                     "
                                     :title="subChild.name"
-                                    style="font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400;"
                                   >
                                     {{ subChild.name }}
                                   </span>
                                 </div>
                                 <div
-                                  class="inline-flex shrink-0 items-center rounded-full border border-border bg-secondary px-1.5 py-0.5 text-[10px] font-semibold text-secondary-foreground"
+                                  class="inline-flex shrink-0 items-center rounded-full border border-border bg-secondary px-1.5 py-0.5 text-xs font-semibold text-secondary-foreground"
                                 >
                                   {{ getTotalWriteCount(subChild) }}
                                 </div>

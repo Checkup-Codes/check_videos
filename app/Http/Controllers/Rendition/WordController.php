@@ -698,6 +698,7 @@ class WordController extends Controller
 
             $word = Word::create([
                 'word' => $request->word,
+                'definition' => $request->definition,
                 'type' => $request->type ?: null,
                 'language' => $request->language,
                 'is_complete' => $hasMeaning,
@@ -841,6 +842,7 @@ class WordController extends Controller
 
             $word->update([
                 'word' => $request->word,
+                'definition' => $request->definition,
                 'type' => $request->type ?: null,
                 'language' => $request->language,
                 'is_complete' => $hasMeaning,
