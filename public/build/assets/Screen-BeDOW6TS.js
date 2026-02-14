@@ -1,1 +1,0 @@
-import{_ as e}from"./CheckScreen-C2AyM-zC.js";import a from"./TestCreateForm-Ctqci3aR.js";import{e as t,w as r,f as s,o as c}from"./ssr-CQ9FUimx.js";const p=Object.assign({name:"CreateTestScreen"},{__name:"Screen",setup(o){return(_,n)=>(c(),t(e,null,{default:r(()=>[s(a)]),_:1}))}});export{p as default};
