@@ -22,8 +22,8 @@
         >
           <div class="flex w-full items-center justify-between">
             <div class="flex-1">
-              <div
-                class="text-sm font-medium leading-tight"
+              <h4
+                class="text-[11px] font-medium leading-tight"
                 :class="
                   getLinkClasses(`/rendition/words/${languagePack.slug}`)
                     ? 'text-primary-foreground'
@@ -31,9 +31,9 @@
                 "
               >
                 {{ languagePack.name }}
-              </div>
+              </h4>
               <div
-                class="text-xs uppercase"
+                class="text-[10px] uppercase"
                 :class="
                   getLinkClasses(`/rendition/words/${languagePack.slug}`)
                     ? 'text-primary-foreground/70'
@@ -44,7 +44,7 @@
               </div>
             </div>
             <div
-              class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold"
+              class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold"
               :class="
                 getLinkClasses(`/rendition/words/${languagePack.slug}`)
                   ? 'border-primary-foreground/30 bg-primary-foreground/20 text-primary-foreground'

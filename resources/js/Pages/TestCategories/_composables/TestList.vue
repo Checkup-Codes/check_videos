@@ -9,14 +9,14 @@
         isActive(test) ? 'bg-primary text-primary-foreground' : 'border border-border bg-card hover:bg-accent',
       ]"
     >
-      <h3
-        class="line-clamp-2 text-sm font-medium leading-tight"
+      <h4
+        class="line-clamp-2 text-[11px] font-medium leading-tight"
         :class="isActive(test) ? 'text-primary-foreground' : 'text-foreground'"
       >
         {{ test.title }}
-      </h3>
+      </h4>
       <div
-        class="flex flex-col gap-1 text-xs sm:flex-row sm:items-center sm:justify-between"
+        class="flex flex-col gap-1 text-[10px] sm:flex-row sm:items-center sm:justify-between"
         :class="isActive(test) ? 'text-primary-foreground/70' : 'text-muted-foreground'"
       >
         <div class="flex items-center gap-3">

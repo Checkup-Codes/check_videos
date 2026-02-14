@@ -84,7 +84,7 @@
               >
                 <!-- Date -->
                 <div
-                  class="mb-1 flex items-center gap-1.5 text-xs"
+                  class="mb-1 flex items-center gap-1.5 text-[10px]"
                   :class="isActive(entry.id) ? 'text-primary-foreground/70' : 'text-muted-foreground'"
                 >
                   <svg
@@ -104,19 +104,19 @@
                   <span>{{ formatDate(entry.entry_date) }}</span>
                   <span
                     v-if="entry.status === 'draft'"
-                    class="ml-auto rounded bg-yellow-500/20 px-1.5 py-0.5 text-[10px] font-medium text-yellow-600 dark:text-yellow-400"
+                    class="ml-auto rounded bg-yellow-500/20 px-1.5 py-0.5 text-[9px] font-medium text-yellow-600 dark:text-yellow-400"
                   >
                     Taslak
                   </span>
                 </div>
 
                 <!-- Title -->
-                <h3
-                  class="line-clamp-2 text-sm font-medium leading-snug"
+                <h4
+                  class="line-clamp-2 text-[11px] font-medium leading-snug"
                   :class="isActive(entry.id) ? 'text-primary-foreground' : 'text-foreground'"
                 >
                   {{ entry.title }}
-                </h3>
+                </h4>
               </div>
             </Link>
           </div>

@@ -13,7 +13,7 @@
           v-for="(game, index) in games"
           :key="index"
           @click="updateQuery(game.route)"
-          class="block w-full rounded-lg border border-border bg-card p-3 text-left text-sm font-medium text-foreground transition-all hover:bg-accent hover:text-accent-foreground"
+          class="block w-full rounded-lg border border-border bg-card p-3 text-left text-[11px] font-medium text-foreground transition-all hover:bg-accent hover:text-accent-foreground"
           :class="{ 'border-primary bg-primary text-primary-foreground': isActiveGame(game.route) }"
         >
           {{ game.name }}

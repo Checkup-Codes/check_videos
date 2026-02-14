@@ -11,15 +11,15 @@
           : 'border-border bg-card hover:bg-accent',
       ]"
     >
-      <h3
-        class="line-clamp-2 text-sm font-medium leading-tight"
+      <h4
+        class="line-clamp-2 text-[11px] font-medium leading-tight"
         :class="activeWrite === getActiveWritePath(write) ? 'text-primary-foreground' : 'text-foreground'"
       >
         {{ write.title }}
-      </h3>
+      </h4>
 
       <div
-        class="flex flex-col gap-1 text-xs sm:flex-row sm:items-center sm:justify-between"
+        class="flex flex-col gap-1 text-[10px] sm:flex-row sm:items-center sm:justify-between"
         :class="activeWrite === getActiveWritePath(write) ? 'text-primary-foreground/70' : 'text-muted-foreground'"
       >
         <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">

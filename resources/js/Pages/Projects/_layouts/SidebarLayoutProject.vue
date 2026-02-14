@@ -51,7 +51,7 @@
       <div class="space-y-1 p-2">
         <!-- Services List -->
         <div v-if="currentView === 'services'" class="space-y-1">
-          <div v-if="!services || services.length === 0" class="p-2 text-xs text-muted-foreground">
+          <div v-if="!services || services.length === 0" class="p-2 text-[10px] text-muted-foreground">
             Henüz servis bulunmamaktadır.
           </div>
           <Link
@@ -78,7 +78,7 @@
               </svg>
               <span class="truncate font-medium">{{ service.name }}</span>
             </div>
-            <span v-if="!isNarrow && service.description" class="mt-0.5 truncate text-xs opacity-70">
+            <span v-if="!isNarrow && service.description" class="mt-0.5 truncate text-[10px] opacity-70">
               {{ service.description }}
             </span>
           </Link>
@@ -86,7 +86,7 @@
 
         <!-- Projects List -->
         <div v-if="currentView === 'projects'" class="space-y-1">
-          <div v-if="!projects || projects.length === 0" class="p-2 text-xs text-muted-foreground">
+          <div v-if="!projects || projects.length === 0" class="p-2 text-[10px] text-muted-foreground">
             Henüz proje bulunmamaktadır.
           </div>
           <Link
@@ -117,7 +117,7 @@
               </svg>
               <span class="truncate font-medium">{{ project.project_name }}</span>
             </div>
-            <span v-if="!isNarrow && project.customer" class="mt-0.5 truncate text-xs opacity-70">
+            <span v-if="!isNarrow && project.customer" class="mt-0.5 truncate text-[10px] opacity-70">
               {{ project.customer.first_name }} {{ project.customer.last_name }}
             </span>
           </Link>
@@ -125,7 +125,7 @@
 
         <!-- Customers List -->
         <div v-if="currentView === 'customers'" class="space-y-1">
-          <div v-if="!customers || customers.length === 0" class="p-2 text-xs text-muted-foreground">
+          <div v-if="!customers || customers.length === 0" class="p-2 text-[10px] text-muted-foreground">
             Henüz müşteri bulunmamaktadır.
           </div>
           <Link
@@ -156,7 +156,7 @@
               </svg>
               <span class="truncate font-medium">{{ customer.first_name }} {{ customer.last_name }}</span>
             </div>
-            <span v-if="!isNarrow" class="mt-0.5 truncate text-xs opacity-70">
+            <span v-if="!isNarrow" class="mt-0.5 truncate text-[10px] opacity-70">
               {{ customer.email }}
             </span>
           </Link>

@@ -35,11 +35,11 @@
             
             <!-- Info -->
             <div class="min-w-0 flex-1">
-              <h3 class="truncate text-sm font-medium text-foreground group-hover:text-primary" :class="{ 'text-primary': isActiveCertificate(certificate.slug) }">
+              <h4 class="truncate text-[11px] font-medium text-foreground group-hover:text-primary" :class="{ 'text-primary': isActiveCertificate(certificate.slug) }">
                 {{ certificate.title }}
-              </h3>
-              <p class="mt-0.5 truncate text-xs text-muted-foreground">{{ certificate.issuer }}</p>
-              <p class="mt-1 text-xs text-muted-foreground">{{ formatDate(certificate.issue_date) }}</p>
+              </h4>
+              <p class="mt-0.5 truncate text-[10px] text-muted-foreground">{{ certificate.issuer }}</p>
+              <p class="mt-1 text-[10px] text-muted-foreground">{{ formatDate(certificate.issue_date) }}</p>
             </div>
           </div>
         </Link>

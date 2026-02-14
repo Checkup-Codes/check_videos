@@ -9,14 +9,14 @@
         isActive(version) ? 'bg-primary text-primary-foreground' : 'border border-border bg-card hover:bg-accent',
       ]"
     >
-      <h3
-        class="text-sm font-medium leading-tight"
+      <h4
+        class="text-[11px] font-medium leading-tight"
         :class="isActive(version) ? 'text-primary-foreground' : 'text-foreground'"
       >
         {{ version.version }}
-      </h3>
+      </h4>
       <div
-        class="flex items-center gap-3 text-xs"
+        class="flex items-center gap-3 text-[10px]"
         :class="isActive(version) ? 'text-primary-foreground/70' : 'text-muted-foreground'"
       >
         <span class="flex items-center gap-1">
