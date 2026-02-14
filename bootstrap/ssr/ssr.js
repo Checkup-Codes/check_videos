@@ -4523,7 +4523,7 @@ const _sfc_main$1 = {
     const isWorkspaceIndexPage = computed(() => {
       return page.url === "/workspace" || page.url === "/workspace/";
     });
-    const isCertificateShowPage = computed(() => {
+    computed(() => {
       const url = page.url;
       return url.startsWith("/certificates/") && url !== "/certificates" && url !== "/certificates/create" && !url.includes("/edit");
     });
@@ -4568,7 +4568,7 @@ const _sfc_main$1 = {
     computed(() => page.props.version || null);
     const pack = computed(() => page.props.pack || null);
     const workspace = computed(() => page.props.workspace || null);
-    const certificate = computed(() => page.props.certificate || null);
+    computed(() => page.props.certificate || null);
     const deleteLanguagePack = async (id) => {
       if (!confirm(
         "Bu kelime paketini silmek istediğinizden emin misiniz? Paket içindeki tüm kelimeler de silinecektir. Bu işlem geri alınamaz."
@@ -4601,22 +4601,8 @@ const _sfc_main$1 = {
         console.error("Error deleting workspace:", error);
       }
     };
-    const deleteCertificate = async (id) => {
-      if (!confirm("Bu sertifikayı silmek istediğinizden emin misiniz?")) {
-        return;
-      }
-      try {
-        await router.delete(route("certificates.destroy", id), {
-          onSuccess: () => {
-            router.visit(route("certificates.index"));
-          }
-        });
-      } catch (error) {
-        console.error("Error deleting certificate:", error);
-      }
-    };
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<nav${ssrRenderAttrs(mergeProps({ class: "sticky top-12 z-40 hidden w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 lg:block" }, _attrs))} data-v-d3e7abc3><div class="flex h-9 items-center justify-between px-3" data-v-d3e7abc3><div class="flex items-center gap-0.5" data-v-d3e7abc3>`);
+      _push(`<nav${ssrRenderAttrs(mergeProps({ class: "sticky top-12 z-40 hidden w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 lg:block" }, _attrs))} data-v-e91b6ffe><div class="flex h-9 items-center justify-between px-3" data-v-e91b6ffe><div class="flex items-center gap-0.5" data-v-e91b6ffe>`);
       _push(ssrRenderComponent(_sfc_main$2, {
         href: "/",
         icon: "home",
@@ -4691,17 +4677,17 @@ const _sfc_main$1 = {
       } else {
         _push(`<!---->`);
       }
-      _push(`</div><div class="flex items-center gap-1.5" data-v-d3e7abc3>`);
+      _push(`</div><div class="flex items-center gap-1.5" data-v-e91b6ffe>`);
       _push(ssrRenderComponent(_sfc_main$4, { variant: "desktop" }, null, _parent));
       if (isLanguagePackShowPage.value && isLoggedIn.value && pack.value) {
-        _push(`<div class="flex items-center gap-2" data-v-d3e7abc3>`);
+        _push(`<div class="flex items-center gap-2" data-v-e91b6ffe>`);
         _push(ssrRenderComponent(unref(Link), {
           href: _ctx.route("rendition.language-packs.edit", pack.value.id),
           class: "inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         }, {
           default: withCtx((_2, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" data-v-d3e7abc3${_scopeId}></path></svg> Düzenle `);
+              _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" data-v-e91b6ffe${_scopeId}></path></svg> Düzenle `);
             } else {
               return [
                 (openBlock(), createBlock("svg", {
@@ -4732,7 +4718,7 @@ const _sfc_main$1 = {
         }, {
           default: withCtx((_2, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1.5 h-3.5 w-3.5" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" data-v-d3e7abc3${_scopeId}></path></svg> Sil `);
+              _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1.5 h-3.5 w-3.5" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" data-v-e91b6ffe${_scopeId}></path></svg> Sil `);
             } else {
               return [
                 (openBlock(), createBlock("svg", {
@@ -4760,14 +4746,14 @@ const _sfc_main$1 = {
         _push(`<!---->`);
       }
       if (isWorkspaceIndexPage.value && isLoggedIn.value && currentWorkspaceForIndex.value) {
-        _push(`<div class="flex items-center gap-2" data-v-d3e7abc3>`);
+        _push(`<div class="flex items-center gap-2" data-v-e91b6ffe>`);
         _push(ssrRenderComponent(unref(Link), {
           href: `/workspace/${currentWorkspaceForIndex.value.id}/edit`,
           class: "inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         }, {
           default: withCtx((_2, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" data-v-d3e7abc3${_scopeId}></path></svg> Düzenle `);
+              _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" data-v-e91b6ffe${_scopeId}></path></svg> Düzenle `);
             } else {
               return [
                 (openBlock(), createBlock("svg", {
@@ -4795,14 +4781,14 @@ const _sfc_main$1 = {
         _push(`<!---->`);
       }
       if (isWorkspaceShowPage.value && !isWorkspaceEditPage.value && isLoggedIn.value && workspace.value) {
-        _push(`<div class="flex items-center gap-2" data-v-d3e7abc3>`);
+        _push(`<div class="flex items-center gap-2" data-v-e91b6ffe>`);
         _push(ssrRenderComponent(unref(Link), {
           href: `/workspace/${workspace.value.id}/edit`,
           class: "inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         }, {
           default: withCtx((_2, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" data-v-d3e7abc3${_scopeId}></path></svg> Düzenle `);
+              _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" data-v-e91b6ffe${_scopeId}></path></svg> Düzenle `);
             } else {
               return [
                 (openBlock(), createBlock("svg", {
@@ -4833,73 +4819,7 @@ const _sfc_main$1 = {
         }, {
           default: withCtx((_2, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1.5 h-3.5 w-3.5" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" data-v-d3e7abc3${_scopeId}></path></svg> Sil `);
-            } else {
-              return [
-                (openBlock(), createBlock("svg", {
-                  xmlns: "http://www.w3.org/2000/svg",
-                  fill: "none",
-                  viewBox: "0 0 24 24",
-                  "stroke-width": "1.5",
-                  stroke: "currentColor",
-                  class: "mr-1.5 h-3.5 w-3.5"
-                }, [
-                  createVNode("path", {
-                    "stroke-linecap": "round",
-                    "stroke-linejoin": "round",
-                    d: "M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                  })
-                ])),
-                createTextVNode(" Sil ")
-              ];
-            }
-          }),
-          _: 1
-        }, _parent));
-        _push(`</div>`);
-      } else {
-        _push(`<!---->`);
-      }
-      if (isCertificateShowPage.value && isLoggedIn.value && certificate.value) {
-        _push(`<div class="flex items-center gap-2" data-v-d3e7abc3>`);
-        _push(ssrRenderComponent(unref(Link), {
-          href: _ctx.route("certificates.edit", certificate.value.id),
-          class: "inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        }, {
-          default: withCtx((_2, _push2, _parent2, _scopeId) => {
-            if (_push2) {
-              _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" data-v-d3e7abc3${_scopeId}></path></svg> Düzenle `);
-            } else {
-              return [
-                (openBlock(), createBlock("svg", {
-                  xmlns: "http://www.w3.org/2000/svg",
-                  fill: "none",
-                  viewBox: "0 0 24 24",
-                  "stroke-width": "1.5",
-                  stroke: "currentColor",
-                  class: "h-3.5 w-3.5"
-                }, [
-                  createVNode("path", {
-                    "stroke-linecap": "round",
-                    "stroke-linejoin": "round",
-                    d: "M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                  })
-                ])),
-                createTextVNode(" Düzenle ")
-              ];
-            }
-          }),
-          _: 1
-        }, _parent));
-        _push(ssrRenderComponent(_sfc_main$7, {
-          onClick: ($event) => deleteCertificate(certificate.value.id),
-          variant: "outline",
-          size: "sm",
-          class: "h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
-        }, {
-          default: withCtx((_2, _push2, _parent2, _scopeId) => {
-            if (_push2) {
-              _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1.5 h-3.5 w-3.5" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" data-v-d3e7abc3${_scopeId}></path></svg> Sil `);
+              _push2(`<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mr-1.5 h-3.5 w-3.5" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" data-v-e91b6ffe${_scopeId}></path></svg> Sil `);
             } else {
               return [
                 (openBlock(), createBlock("svg", {
@@ -4927,7 +4847,7 @@ const _sfc_main$1 = {
         _push(`<!---->`);
       }
       if (isLoggedIn.value && (isWriteCreatePage.value || isWriteEditPage.value || isCategoryCreatePage.value || isCategoryEditPage.value || isTestCreatePage.value || isTestEditPage.value || isTestCategoryCreatePage.value || isTestCategoryEditPage.value)) {
-        _push(`<div class="flex items-center gap-1.5" data-v-d3e7abc3>`);
+        _push(`<div class="flex items-center gap-1.5" data-v-e91b6ffe>`);
         if (isWriteCreatePage.value || isCategoryCreatePage.value || isTestCreatePage.value || isTestCategoryCreatePage.value) {
           _push(ssrRenderComponent(_sfc_main$7, {
             onClick: handleFormReset,
@@ -4963,7 +4883,7 @@ const _sfc_main$1 = {
           default: withCtx((_2, _push2, _parent2, _scopeId) => {
             if (_push2) {
               if (!isFormProcessing.value) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="mr-1.5 h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" data-v-d3e7abc3${_scopeId}></path></svg>`);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="mr-1.5 h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" data-v-e91b6ffe${_scopeId}></path></svg>`);
               } else {
                 _push2(`<!---->`);
               }
@@ -4996,9 +4916,9 @@ const _sfc_main$1 = {
         _push(`<!---->`);
       }
       if (isLoggedIn.value) {
-        _push(`<div class="create-dropdown-container relative inline-block" data-v-d3e7abc3><button class="${ssrRenderClass([{ "bg-primary/90": showCreateDropdown.value }, "inline-flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"])}" title="Yeni içerik oluştur" style="${ssrRenderStyle({ "font-family": "'Clash Display', system-ui, sans-serif", "font-weight": "500" })}" data-v-d3e7abc3><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" data-v-d3e7abc3></path></svg></button>`);
+        _push(`<div class="create-dropdown-container relative inline-block" data-v-e91b6ffe><button class="${ssrRenderClass([{ "bg-primary/90": showCreateDropdown.value }, "inline-flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"])}" title="Yeni içerik oluştur" style="${ssrRenderStyle({ "font-family": "'Clash Display', system-ui, sans-serif", "font-weight": "500" })}" data-v-e91b6ffe><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" data-v-e91b6ffe></path></svg></button>`);
         if (showCreateDropdown.value) {
-          _push(`<div class="absolute right-0 top-full z-50 mt-1 w-52 rounded-md border border-border bg-popover shadow-md" style="${ssrRenderStyle({ "font-family": "'Clash Display', system-ui, sans-serif", "font-weight": "500" })}" data-v-d3e7abc3><div class="flex flex-col p-1.5" data-v-d3e7abc3><div class="mb-1.5" data-v-d3e7abc3><div class="mb-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground" data-v-d3e7abc3> Yazılar </div><div class="flex flex-col gap-0.5" data-v-d3e7abc3>`);
+          _push(`<div class="absolute right-0 top-full z-50 mt-1 w-52 rounded-md border border-border bg-popover shadow-md" style="${ssrRenderStyle({ "font-family": "'Clash Display', system-ui, sans-serif", "font-weight": "500" })}" data-v-e91b6ffe><div class="flex flex-col p-1.5" data-v-e91b6ffe><div class="mb-1.5" data-v-e91b6ffe><div class="mb-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground" data-v-e91b6ffe> Yazılar </div><div class="flex flex-col gap-0.5" data-v-e91b6ffe>`);
           _push(ssrRenderComponent(unref(Link), {
             href: "/writes/create",
             class: "inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
@@ -5006,7 +4926,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" data-v-d3e7abc3${_scopeId}></path></svg> Yeni Yazı `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" data-v-e91b6ffe${_scopeId}></path></svg> Yeni Yazı `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -5036,7 +4956,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" data-v-d3e7abc3${_scopeId}></path></svg> Yeni Kategori Ekle `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" data-v-e91b6ffe${_scopeId}></path></svg> Yeni Kategori Ekle `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -5059,7 +4979,7 @@ const _sfc_main$1 = {
             }),
             _: 1
           }, _parent));
-          _push(`</div></div><div class="mb-1.5" data-v-d3e7abc3><div class="mb-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground" data-v-d3e7abc3> Kelimeler </div><div class="flex flex-col gap-0.5" data-v-d3e7abc3>`);
+          _push(`</div></div><div class="mb-1.5" data-v-e91b6ffe><div class="mb-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground" data-v-e91b6ffe> Kelimeler </div><div class="flex flex-col gap-0.5" data-v-e91b6ffe>`);
           _push(ssrRenderComponent(unref(Link), {
             href: "/rendition/words/create",
             class: "inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
@@ -5067,7 +4987,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" data-v-d3e7abc3${_scopeId}></path></svg> Yeni Kelime `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" data-v-e91b6ffe${_scopeId}></path></svg> Yeni Kelime `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -5097,7 +5017,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" data-v-d3e7abc3${_scopeId}></path></svg> Yeni Kelime Paketi `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" data-v-e91b6ffe${_scopeId}></path></svg> Yeni Kelime Paketi `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -5120,7 +5040,7 @@ const _sfc_main$1 = {
             }),
             _: 1
           }, _parent));
-          _push(`</div></div><div class="mb-1.5" data-v-d3e7abc3><div class="mb-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground" data-v-d3e7abc3> Testler </div><div class="flex flex-col gap-0.5" data-v-d3e7abc3>`);
+          _push(`</div></div><div class="mb-1.5" data-v-e91b6ffe><div class="mb-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground" data-v-e91b6ffe> Testler </div><div class="flex flex-col gap-0.5" data-v-e91b6ffe>`);
           _push(ssrRenderComponent(unref(Link), {
             href: "/tests/create",
             class: "inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
@@ -5128,7 +5048,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" data-v-d3e7abc3${_scopeId}></path></svg> Yeni Test `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" data-v-e91b6ffe${_scopeId}></path></svg> Yeni Test `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -5158,7 +5078,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" data-v-d3e7abc3${_scopeId}></path></svg> Yeni Test Kategorisi `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" data-v-e91b6ffe${_scopeId}></path></svg> Yeni Test Kategorisi `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -5181,7 +5101,7 @@ const _sfc_main$1 = {
             }),
             _: 1
           }, _parent));
-          _push(`</div></div><div class="mb-1.5" data-v-d3e7abc3><div class="mb-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground" data-v-d3e7abc3> Projeler </div><div class="flex flex-col gap-0.5" data-v-d3e7abc3>`);
+          _push(`</div></div><div class="mb-1.5" data-v-e91b6ffe><div class="mb-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground" data-v-e91b6ffe> Projeler </div><div class="flex flex-col gap-0.5" data-v-e91b6ffe>`);
           _push(ssrRenderComponent(unref(Link), {
             href: "/projects/create",
             class: "inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
@@ -5189,7 +5109,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" data-v-d3e7abc3${_scopeId}></path></svg> Yeni Proje `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" data-v-e91b6ffe${_scopeId}></path></svg> Yeni Proje `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -5219,7 +5139,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" data-v-d3e7abc3${_scopeId}></path></svg> Yeni Müşteri `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" data-v-e91b6ffe${_scopeId}></path></svg> Yeni Müşteri `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -5249,7 +5169,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" data-v-d3e7abc3${_scopeId}></path></svg> Yeni Servis `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" data-v-e91b6ffe${_scopeId}></path></svg> Yeni Servis `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -5272,7 +5192,7 @@ const _sfc_main$1 = {
             }),
             _: 1
           }, _parent));
-          _push(`</div></div><div class="mb-1.5" data-v-d3e7abc3><div class="mb-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground" data-v-d3e7abc3> Yer İmleri </div><div class="flex flex-col gap-0.5" data-v-d3e7abc3>`);
+          _push(`</div></div><div class="mb-1.5" data-v-e91b6ffe><div class="mb-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground" data-v-e91b6ffe> Yer İmleri </div><div class="flex flex-col gap-0.5" data-v-e91b6ffe>`);
           _push(ssrRenderComponent(unref(Link), {
             href: "/bookmarks/create",
             class: "inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
@@ -5280,7 +5200,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" data-v-d3e7abc3${_scopeId}></path></svg> Yeni Yer İmi `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" data-v-e91b6ffe${_scopeId}></path></svg> Yeni Yer İmi `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -5310,7 +5230,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" data-v-d3e7abc3${_scopeId}></path></svg> Yeni Yer İmi Kategorisi `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" data-v-e91b6ffe${_scopeId}></path></svg> Yeni Yer İmi Kategorisi `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -5333,7 +5253,7 @@ const _sfc_main$1 = {
             }),
             _: 1
           }, _parent));
-          _push(`</div></div><div class="border-t border-border pt-1.5" data-v-d3e7abc3>`);
+          _push(`</div></div><div class="border-t border-border pt-1.5" data-v-e91b6ffe>`);
           _push(ssrRenderComponent(unref(Link), {
             href: "/versions/create",
             class: "inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
@@ -5341,7 +5261,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" data-v-d3e7abc3${_scopeId}></path></svg> Yeni Versiyon `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" data-v-e91b6ffe${_scopeId}></path></svg> Yeni Versiyon `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -5364,7 +5284,7 @@ const _sfc_main$1 = {
             }),
             _: 1
           }, _parent));
-          _push(`</div><div class="border-t border-border pt-1.5" data-v-d3e7abc3>`);
+          _push(`</div><div class="border-t border-border pt-1.5" data-v-e91b6ffe>`);
           _push(ssrRenderComponent(unref(Link), {
             href: "/journey/create",
             class: "inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
@@ -5372,7 +5292,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" data-v-d3e7abc3${_scopeId}></path></svg> Yeni Yolculuk `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" data-v-e91b6ffe${_scopeId}></path></svg> Yeni Yolculuk `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -5395,7 +5315,7 @@ const _sfc_main$1 = {
             }),
             _: 1
           }, _parent));
-          _push(`</div><div class="border-t border-border pt-1.5" data-v-d3e7abc3>`);
+          _push(`</div><div class="border-t border-border pt-1.5" data-v-e91b6ffe>`);
           _push(ssrRenderComponent(unref(Link), {
             href: "/workspace/create",
             class: "inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
@@ -5403,7 +5323,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" data-v-d3e7abc3${_scopeId}></path></svg> Yeni Çalışma Alanı `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" data-v-e91b6ffe${_scopeId}></path></svg> Yeni Çalışma Alanı `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -5433,7 +5353,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" data-v-d3e7abc3${_scopeId}></path></svg> Yeni Sertifika `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" data-v-e91b6ffe${_scopeId}></path></svg> Yeni Sertifika `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -5465,9 +5385,9 @@ const _sfc_main$1 = {
         _push(`<!---->`);
       }
       if (isAdminPanelPage.value && isLoggedIn.value) {
-        _push(`<div class="admin-panel-dropdown-container relative inline-block" data-v-d3e7abc3><button class="${ssrRenderClass([{ "bg-accent text-accent-foreground": showAdminPanelDropdown.value }, "inline-flex h-7 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-2 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"])}" style="${ssrRenderStyle({ "font-family": "'Clash Display', system-ui, sans-serif", "font-weight": "500" })}" data-v-d3e7abc3><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" data-v-d3e7abc3></path></svg> Panel <svg xmlns="http://www.w3.org/2000/svg" class="${ssrRenderClass([{ "rotate-180": showAdminPanelDropdown.value }, "h-3 w-3 transition-transform"])}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" data-v-d3e7abc3></path></svg></button>`);
+        _push(`<div class="admin-panel-dropdown-container relative inline-block" data-v-e91b6ffe><button class="${ssrRenderClass([{ "bg-accent text-accent-foreground": showAdminPanelDropdown.value }, "inline-flex h-7 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-2 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"])}" style="${ssrRenderStyle({ "font-family": "'Clash Display', system-ui, sans-serif", "font-weight": "500" })}" data-v-e91b6ffe><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" data-v-e91b6ffe></path></svg> Panel <svg xmlns="http://www.w3.org/2000/svg" class="${ssrRenderClass([{ "rotate-180": showAdminPanelDropdown.value }, "h-3 w-3 transition-transform"])}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" data-v-e91b6ffe></path></svg></button>`);
         if (showAdminPanelDropdown.value) {
-          _push(`<div class="absolute right-0 top-full z-50 mt-1 w-44 rounded-md border border-border bg-popover shadow-md" style="${ssrRenderStyle({ "font-family": "'Clash Display', system-ui, sans-serif", "font-weight": "500" })}" data-v-d3e7abc3><div class="flex flex-col p-1" data-v-d3e7abc3>`);
+          _push(`<div class="absolute right-0 top-full z-50 mt-1 w-44 rounded-md border border-border bg-popover shadow-md" style="${ssrRenderStyle({ "font-family": "'Clash Display', system-ui, sans-serif", "font-weight": "500" })}" data-v-e91b6ffe><div class="flex flex-col p-1" data-v-e91b6ffe>`);
           _push(ssrRenderComponent(unref(Link), {
             href: _ctx.route("dashboard"),
             class: ["inline-flex h-7 items-center gap-2 rounded-sm px-2 text-xs font-medium text-popover-foreground transition-colors hover:bg-accent hover:text-accent-foreground", { "bg-accent text-accent-foreground": isActiveRoute("/dashboard") }],
@@ -5475,7 +5395,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" data-v-d3e7abc3${_scopeId}></path></svg> Dashboard `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" data-v-e91b6ffe${_scopeId}></path></svg> Dashboard `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -5505,7 +5425,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" data-v-d3e7abc3${_scopeId}></path></svg> Medya Yönetimi `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" data-v-e91b6ffe${_scopeId}></path></svg> Medya Yönetimi `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -5535,7 +5455,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" data-v-d3e7abc3${_scopeId}></path></svg> Sosyal Medya Yönetimi `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" data-v-e91b6ffe${_scopeId}></path></svg> Sosyal Medya Yönetimi `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -5565,7 +5485,7 @@ const _sfc_main$1 = {
           }, {
             default: withCtx((_2, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-d3e7abc3${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" data-v-d3e7abc3${_scopeId}></path></svg> SEO Yönetimi `);
+                _push2(`<svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" data-v-e91b6ffe${_scopeId}><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" data-v-e91b6ffe${_scopeId}></path></svg> SEO Yönetimi `);
               } else {
                 return [
                   (openBlock(), createBlock("svg", {
@@ -5597,7 +5517,7 @@ const _sfc_main$1 = {
         _push(`<!---->`);
       }
       if (!isLoggedIn.value) {
-        _push(`<div class="hidden md:flex" data-v-d3e7abc3>`);
+        _push(`<div class="hidden md:flex" data-v-e91b6ffe>`);
         _push(ssrRenderComponent(_sfc_main$8, { "is-compact": true }, null, _parent));
         _push(`</div>`);
       } else {
@@ -5613,7 +5533,7 @@ _sfc_main$1.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("resources/js/Layouts/MainLayout/SidebarLayout.vue");
   return _sfc_setup$1 ? _sfc_setup$1(props, ctx) : void 0;
 };
-const SidebarLayout = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-d3e7abc3"]]);
+const SidebarLayout = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-e91b6ffe"]]);
 const _sfc_main = {
   __name: "MainLayout",
   __ssrInlineRender: true,
