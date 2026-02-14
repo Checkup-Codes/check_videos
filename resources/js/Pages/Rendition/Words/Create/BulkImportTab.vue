@@ -56,6 +56,7 @@
           <pre class="overflow-x-auto rounded-lg bg-muted p-4 text-xs"><code>[
   {
     "word": "run",
+    "definition": "to move at a speed faster than a walk",
     "language": "en",
     "type": "verb",
     "difficulty_level": 2,
@@ -63,8 +64,8 @@
       { "meaning": "koşmak", "is_primary": true },
       { "meaning": "çalıştırmak", "is_primary": false }
     ],
-    "example_sentences": ["I run every morning"],
-    "example_translations": ["Her sabah koşarım"],
+    "example_sentences": ["I run every morning", "The program runs smoothly"],
+    "example_translations": ["Her sabah koşarım", "Program sorunsuz çalışıyor"],
     "synonyms": ["jog", "sprint"]
   }
 ]</code></pre>
@@ -77,6 +78,10 @@
             <div>
               <dt class="font-medium text-foreground">word <span class="text-destructive">*</span></dt>
               <dd class="text-muted-foreground">Kelime (zorunlu)</dd>
+            </div>
+            <div>
+              <dt class="font-medium text-foreground">definition</dt>
+              <dd class="text-muted-foreground">Kelimenin öğrenilen dildeki tanımı (opsiyonel)</dd>
             </div>
             <div>
               <dt class="font-medium text-foreground">language <span class="text-destructive">*</span></dt>
@@ -259,6 +264,7 @@ const loadTemplate = (type) => {
     jsonInput.value = `[
   {
     "word": "run",
+    "definition": "to move at a speed faster than a walk",
     "language": "en",
     "type": "verb",
     "difficulty_level": 2,

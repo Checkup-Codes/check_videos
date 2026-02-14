@@ -128,6 +128,22 @@
           </summary>
           
           <div class="space-y-6 border-t border-border p-6">
+            <!-- Definition (Tanım) -->
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-foreground">
+                Definition (Öğrenilen Dilde Tanım)
+              </label>
+              <textarea
+                v-model="form.definition"
+                rows="3"
+                placeholder="Enter the definition in the learning language (e.g., 'A vehicle with four wheels')"
+                class="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              <p class="text-xs text-muted-foreground">
+                Kelimenin öğrenilen dildeki tanımını girin (örn: "Car" için "A vehicle with four wheels")
+              </p>
+            </div>
+
             <!-- Tür ve Zorluk -->
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div class="space-y-2">
@@ -328,6 +344,7 @@ const synonyms = props.word?.synonyms?.map((s) => s.synonym) || [];
 
 const form = useForm({
   word: props.word?.word || '',
+  definition: props.word?.definition || '',
   meanings: props.word?.meanings?.length > 0
     ? props.word.meanings.map((m) => ({ meaning: m.meaning, is_primary: m.is_primary }))
     : [{ meaning: '', is_primary: true }],

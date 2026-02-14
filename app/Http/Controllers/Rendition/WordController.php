@@ -496,6 +496,7 @@ class WordController extends Controller
                     // Kelimeyi oluştur
                     $word = Word::create([
                         'word' => $wordData['word'],
+                        'definition' => $wordData['definition'] ?? null,
                         'type' => $wordData['type'] ?? null,
                         'language' => $wordData['language'],
                         'is_complete' => $hasMeaning,
