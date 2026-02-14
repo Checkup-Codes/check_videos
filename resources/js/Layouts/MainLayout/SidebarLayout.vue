@@ -190,6 +190,54 @@
           </div>
         </template>
 
+        <!-- Certificate Show Page Actions -->
+        <template v-if="isCertificateShowPage && isLoggedIn && certificate">
+          <div class="flex items-center gap-2">
+            <Link
+              :href="route('certificates.edit', certificate.id)"
+              class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="h-3.5 w-3.5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                />
+              </svg>
+              Düzenle
+            </Link>
+            <Button
+              @click="deleteCertificate(certificate.id)"
+              variant="outline"
+              size="sm"
+              class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="mr-1.5 h-3.5 w-3.5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                />
+              </svg>
+              Sil
+            </Button>
+          </div>
+        </template>
+
         <!-- Form Action Buttons for Create/Edit Pages -->
         <template
           v-if="
@@ -264,6 +312,7 @@
               class="inline-flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
               :class="{ 'bg-primary/90': showCreateDropdown }"
               title="Yeni içerik oluştur"
+              style="font-family: 'Clash Display', system-ui, sans-serif; font-weight: 500;"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -280,6 +329,7 @@
             <div
               v-if="showCreateDropdown"
               class="absolute right-0 top-full z-50 mt-1 w-52 rounded-md border border-border bg-popover shadow-md"
+              style="font-family: 'Clash Display', system-ui, sans-serif; font-weight: 500;"
             >
               <div class="flex flex-col p-1.5">
                 <!-- Yazılar Grubu -->
@@ -671,6 +721,7 @@
               @click="showAdminPanelDropdown = !showAdminPanelDropdown"
               class="inline-flex h-7 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-2 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
               :class="{ 'bg-accent text-accent-foreground': showAdminPanelDropdown }"
+              style="font-family: 'Clash Display', system-ui, sans-serif; font-weight: 500;"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -703,6 +754,7 @@
             <div
               v-if="showAdminPanelDropdown"
               class="absolute right-0 top-full z-50 mt-1 w-44 rounded-md border border-border bg-popover shadow-md"
+              style="font-family: 'Clash Display', system-ui, sans-serif; font-weight: 500;"
             >
               <div class="flex flex-col p-1">
                 <Link
@@ -1006,6 +1058,11 @@ const isWorkspaceIndexPage = computed(() => {
   return page.url === '/workspace' || page.url === '/workspace/';
 });
 
+const isCertificateShowPage = computed(() => {
+  const url = page.url;
+  return url.startsWith('/certificates/') && url !== '/certificates' && url !== '/certificates/create' && !url.includes('/edit');
+});
+
 // Get current workspace for index page (first workspace from list)
 const currentWorkspaceForIndex = computed(() => {
   if (isWorkspaceIndexPage.value && page.props.workspaces?.length > 0) {
@@ -1063,6 +1120,7 @@ const word = computed(() => page.props.word || null);
 const version = computed(() => page.props.version || null);
 const pack = computed(() => page.props.pack || null);
 const workspace = computed(() => page.props.workspace || null);
+const certificate = computed(() => page.props.certificate || null);
 
 // Handle logout
 const handleLogout = () => {
@@ -1183,6 +1241,21 @@ const deleteWorkspace = async (id) => {
   }
 };
 
+const deleteCertificate = async (id) => {
+  if (!confirm('Bu sertifikayı silmek istediğinizden emin misiniz?')) {
+    return;
+  }
+  try {
+    await router.delete(route('certificates.destroy', id), {
+      onSuccess: () => {
+        router.visit(route('certificates.index'));
+      },
+    });
+  } catch (error) {
+    console.error('Error deleting certificate:', error);
+  }
+};
+
 defineProps({
   isCompact: {
     type: Boolean,
@@ -1192,6 +1265,20 @@ defineProps({
 </script>
 
 <style scoped>
+/* Clash Display font for all sidebar elements - medium weight */
+nav *,
+.create-dropdown-container *,
+.admin-panel-dropdown-container * {
+  font-family: 'Clash Display', system-ui, sans-serif !important;
+  font-weight: 450 !important;
+}
+
+/* Apply to all header action buttons and links */
+nav .inline-flex {
+  font-family: 'Clash Display', system-ui, sans-serif !important;
+  font-weight: 450 !important;
+}
+
 /* Modern button hover effects */
 .btn {
   position: relative;

@@ -43,6 +43,11 @@
         <div v-if="!isLoading" class="space-y-6">
           <h1
             class="animate-fade-in-down text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl"
+            style="font-size: 2.5rem !important; line-height: 1.2 !important;"
+            :style="{
+              fontSize: 'clamp(2rem, 5vw, 4.5rem) !important',
+              lineHeight: '1.2 !important'
+            }"
           >
             {{ seoTitle }}
           </h1>

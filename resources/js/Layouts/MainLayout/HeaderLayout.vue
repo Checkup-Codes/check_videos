@@ -1118,7 +1118,8 @@
                     isServiceShowPage ||
                     isServiceEditPage ||
                     isWorkspaceShowPage ||
-                    isWorkspaceEditPage)
+                    isWorkspaceEditPage ||
+                    isCertificateShowPage)
                 "
                 class="border-t border-border pt-3"
               >
@@ -1606,6 +1607,11 @@ const isServiceEditPage = computed(() => {
 const isWorkspaceShowPage = computed(() => {
   const url = page.url;
   return url.startsWith('/workspace/') && url !== '/workspace' && url !== '/workspace/create' && !url.includes('/edit');
+});
+
+const isCertificateShowPage = computed(() => {
+  const url = page.url;
+  return url.startsWith('/certificates/') && url !== '/certificates' && url !== '/certificates/create' && !url.includes('/edit');
 });
 
 const isWorkspaceEditPage = computed(() => {
@@ -2107,6 +2113,12 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* Clash Display font for all header text elements */
+header * {
+  font-family: 'Clash Display', system-ui, sans-serif !important;
+  font-weight: 450 !important;
+}
+
 /* Animation for the drawer */
 .drawer-content {
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);

@@ -57,7 +57,8 @@ export default {
                 sm: 'calc(var(--radius) - 4px)',
             },
             fontFamily: {
-                sans: ['Geist Sans', ...defaultTheme.fontFamily.sans],
+                sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                inter: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
             },
             gridTemplateColumns: {
                 'subsidebar': 'minmax(0, 320px) 1fr',

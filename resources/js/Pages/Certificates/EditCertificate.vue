@@ -1,7 +1,8 @@
 <template>
   <LayoutCertificates>
-    <CheckScreen>
-      <div class="p-6 pt-12 sm:p-8 sm:pt-16">
+    <template #screen>
+      <CheckScreen>
+        <div class="p-6 pt-12 sm:p-8 sm:pt-16">
         <div class="mx-auto max-w-3xl">
           <h1 class="mb-8 text-2xl font-bold text-foreground">Sertifika Düzenle</h1>
 
@@ -179,6 +180,7 @@
         </div>
       </div>
     </CheckScreen>
+    </template>
   </LayoutCertificates>
 </template>
 

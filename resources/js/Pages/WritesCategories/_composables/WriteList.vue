@@ -12,15 +12,17 @@
       ]"
     >
       <h3
-        class="line-clamp-2 text-sm font-medium leading-tight"
-        :class="activeWrite === getActiveWritePath(write) ? 'text-primary-foreground' : 'text-foreground'"
+        class="line-clamp-2 text-[10px] leading-tight"
+        :class="activeWrite === getActiveWritePath(write) ? 'text-primary-foreground font-normal' : 'text-foreground font-normal'"
+        style="font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400;"
       >
         {{ write.title }}
       </h3>
 
       <div
-        class="flex flex-col gap-1 text-xs sm:flex-row sm:items-center sm:justify-between"
+        class="flex flex-col gap-1 text-[9px] sm:flex-row sm:items-center sm:justify-between"
         :class="activeWrite === getActiveWritePath(write) ? 'text-primary-foreground/70' : 'text-muted-foreground'"
+        style="font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400;"
       >
         <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
           <span class="flex items-center gap-1">

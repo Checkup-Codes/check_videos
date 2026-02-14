@@ -1,9 +1,209 @@
+/* Inter Font Import - Modern tech company standard */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Clash Display Font Import - For modern headings */
+@import url('https://fonts.cdnfonts.com/css/clash-display');
+
+/* Satoshi Font Import - For body text */
+@import url('https://fonts.cdnfonts.com/css/satoshi');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* Shadcn UI Color System */
 @layer base {
+
+  /* Global Font Settings - Default to Inter */
+  * {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+  }
+
+  /* Font preference system - Heading fonts */
+
+  /* Inter heading font */
+  html[data-heading-font='inter'] h1,
+  html[data-heading-font='inter'] h2,
+  html[data-heading-font='inter'] h3,
+  html[data-heading-font='inter'] h4,
+  html[data-heading-font='inter'] h5,
+  html[data-heading-font='inter'] h6,
+  html[data-heading-font='inter'] button,
+  html[data-heading-font='inter'] .btn,
+  html[data-heading-font='inter'] a.btn,
+  html[data-heading-font='inter'] nav * {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  }
+
+  /* Clash Display heading font (new/modern) */
+  html[data-heading-font='new'] h1,
+  html[data-heading-font='new'] h2,
+  html[data-heading-font='new'] h3,
+  html[data-heading-font='new'] h4,
+  html[data-heading-font='new'] h5,
+  html[data-heading-font='new'] h6,
+  html[data-heading-font='new'] button,
+  html[data-heading-font='new'] .btn,
+  html[data-heading-font='new'] a.btn,
+  html[data-heading-font='new'] nav * {
+    font-family: 'Clash Display', system-ui, sans-serif !important;
+  }
+
+  /* Classic heading font (system fonts) */
+  html[data-heading-font='classic'] h1,
+  html[data-heading-font='classic'] h2,
+  html[data-heading-font='classic'] h3,
+  html[data-heading-font='classic'] h4,
+  html[data-heading-font='classic'] h5,
+  html[data-heading-font='classic'] h6,
+  html[data-heading-font='classic'] button,
+  html[data-heading-font='classic'] .btn,
+  html[data-heading-font='classic'] a.btn,
+  html[data-heading-font='classic'] nav * {
+    font-family: system-ui, -apple-system, sans-serif !important;
+  }
+
+  /* Body font preferences */
+
+  /* Inter body font */
+  html[data-body-font='inter'] *:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(button):not(.btn) {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  }
+
+  /* Satoshi body font (new/modern) */
+  html[data-body-font='new'] *:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(button):not(.btn) {
+    font-family: 'Satoshi', system-ui, sans-serif !important;
+  }
+
+  /* Classic body font (system fonts) */
+  html[data-body-font='classic'] *:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(button):not(.btn) {
+    font-family: system-ui, -apple-system, sans-serif !important;
+  }
+
+  /* Headings use Inter - clean and readable */
+  h1 {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 1.5rem !important;
+    /* 24px */
+    line-height: 1.3 !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  h2 {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 1.25rem !important;
+    /* 20px */
+    line-height: 1.35 !important;
+    letter-spacing: -0.015em !important;
+  }
+
+  h3 {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 1.125rem !important;
+    /* 18px */
+    line-height: 1.4 !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  h4 {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    font-weight: 500 !important;
+    font-size: 1rem !important;
+    /* 16px */
+    line-height: 1.45 !important;
+  }
+
+  h5 {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+    /* 14px */
+    line-height: 1.5 !important;
+  }
+
+  h6 {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    font-weight: 500 !important;
+    font-size: 0.8125rem !important;
+    /* 13px */
+    line-height: 1.5 !important;
+  }
+
+  /* Buttons and interactive elements use Inter */
+  button,
+  .btn,
+  a.btn {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.005em !important;
+  }
+
+  /* Body text uses Inter */
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+    font-size: 0.875rem;
+    /* 14px */
+    line-height: 1.6;
+    letter-spacing: -0.005em;
+  }
+
+  p {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+    font-size: 0.875rem;
+    /* 14px */
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  /* Small text */
+  small,
+  .text-sm {
+    font-size: 0.75rem;
+    /* 12px */
+    line-height: 1.5;
+  }
+
+  /* Extra small text */
+  .text-xs {
+    font-size: 0.6875rem;
+    /* 11px */
+    line-height: 1.4;
+  }
+
+  /* Large text */
+  .text-lg {
+    font-size: 0.9375rem;
+    /* 15px */
+    line-height: 1.6;
+  }
+
+  /* Input fields */
+  input,
+  textarea,
+  select {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+    font-size: 0.875rem;
+    /* 14px */
+    line-height: 1.5;
+  }
+
+  /* Labels */
+  label {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 500;
+    font-size: 0.8125rem;
+    /* 13px */
+    line-height: 1.4;
+    letter-spacing: -0.005em;
+  }
+
   /* Light Theme - Shadcn default colors */
   :root {
     --background: 0 0% 100%;
@@ -69,6 +269,10 @@
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     transition: background-color 0.3s ease, color 0.3s ease;
+    /* Better font rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   body {
@@ -77,6 +281,9 @@
     margin: 0;
     padding: 0;
     transition: background-color 0.3s ease, color 0.3s ease;
+    /* Better font rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
@@ -87,6 +294,7 @@
 
 /* Shadcn-style utility classes for common components */
 @layer components {
+
   /* Button utilities - shadcn style */
   .btn {
     @apply inline-flex items-center justify-center rounded-md font-medium transition-colors;
@@ -94,7 +302,7 @@
     @apply disabled:pointer-events-none disabled:opacity-50;
     @apply h-10 px-4 py-2;
   }
-  
+
   .btn-sm {
     @apply h-9 rounded-md px-3 text-xs;
   }
@@ -102,7 +310,7 @@
   .btn-lg {
     @apply h-11 rounded-md px-8;
   }
-  
+
   .btn-xs {
     @apply h-8 rounded-md px-2 text-xs;
   }
@@ -110,7 +318,7 @@
   .btn-primary {
     @apply bg-primary text-primary-foreground hover:bg-primary/90;
   }
-  
+
   .btn-secondary {
     @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
   }
@@ -122,7 +330,7 @@
   .btn-ghost {
     @apply hover:bg-accent hover:text-accent-foreground;
   }
-  
+
   .btn-square {
     @apply aspect-square;
   }
@@ -138,20 +346,20 @@
   .select-bordered {
     @apply border-input;
   }
-  
+
   /* Loading spinner - shadcn style */
   .loading {
     @apply inline-block animate-spin rounded-full border-2 border-current border-t-transparent;
   }
-  
+
   .loading-spinner {
     @apply h-4 w-4;
   }
-  
+
   .loading-md {
     @apply h-6 w-6;
   }
-  
+
   .loading-lg {
     @apply h-8 w-8;
   }
@@ -160,19 +368,19 @@
   .card {
     @apply rounded-lg border bg-card text-card-foreground shadow-sm;
   }
-  
+
   .card-body {
     @apply p-6;
   }
-  
+
   .card-compact .card-body {
     @apply p-4;
-}
+  }
 
   .card-title {
     @apply mb-4 text-lg font-semibold;
   }
-  
+
   .card-actions {
     @apply mt-4 flex justify-end;
   }
@@ -190,4 +398,47 @@ img {
 /* Allow right-click on specific images that need it */
 img.allow-right-click {
   pointer-events: auto;
+}
+
+/* Inter Font Utility Classes */
+@layer utilities {
+  .font-inter {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+  }
+
+  .font-inter-medium {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 500;
+  }
+
+  .font-inter-semibold {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 600;
+  }
+
+  .font-inter-bold {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 700;
+  }
+}
+
+/* Legacy font utility classes for backward compatibility */
+.font-satoshi,
+.font-satoshi-regular {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+}
+
+.font-satoshi-medium {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 500;
+}
+
+.font-satoshi-semibold,
+.font-clash,
+.font-clash-medium,
+.font-clash-semibold {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-weight: 600;
 }

@@ -20,9 +20,10 @@
                     <IconLink class="h-3 w-3" />
                   </span>
                   <h3
-                    class="truncate text-sm font-medium"
+                    class="truncate text-[10px] font-normal"
                     :class="url === `/categories/${category.slug}` ? 'text-accent-foreground' : 'text-foreground'"
                     :title="category.name"
+                    style="font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400;"
                   >
                     {{ category.name }}
                   </h3>
@@ -69,9 +70,10 @@
                             <IconLock class="h-3 w-3" />
                           </span>
                           <span
-                            class="truncate text-sm font-medium"
+                            class="truncate text-[10px] font-normal"
                             :class="url === `/categories/${child.slug}` ? 'text-accent-foreground' : 'text-foreground'"
                             :title="child.name"
+                            style="font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400;"
                           >
                             {{ child.name }}
                           </span>
@@ -123,13 +125,14 @@
                                     <IconLock class="h-3 w-3" />
                                   </span>
                                   <span
-                                    class="truncate text-xs font-medium"
+                                    class="truncate text-[9px] font-normal"
                                     :class="
                                       url === `/categories/${subChild.slug}`
                                         ? 'text-accent-foreground'
                                         : 'text-foreground'
                                     "
                                     :title="subChild.name"
+                                    style="font-family: 'Satoshi', system-ui, sans-serif; font-weight: 400;"
                                   >
                                     {{ subChild.name }}
                                   </span>
