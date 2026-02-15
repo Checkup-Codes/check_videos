@@ -26,15 +26,8 @@ class BookmarkController extends Controller
         // If user is logged in, show only their bookmarks
         // If user is not logged in, show all bookmarks (public)
         if ($user) {
-            // Get categories with bookmarks for the current user
-            $categoriesQuery = BookmarkCategory::where('user_id', $user->id);
-
-            // If category filter is set, only get that category
-            if ($selectedCategoryId) {
-                $categoriesQuery->where('id', $selectedCategoryId);
-            }
-
-            $categories = $categoriesQuery
+            // Get ALL categories with bookmarks for the current user (always show all categories in sidebar)
+            $categories = BookmarkCategory::where('user_id', $user->id)
                 ->with(['bookmarks' => function ($query) {
                     $query->orderBy('order');
                 }])
@@ -55,14 +48,8 @@ class BookmarkController extends Controller
                 ->get();
         } else {
             // Public view: show all bookmarks from all users
-            $categoriesQuery = BookmarkCategory::query();
-
-            // If category filter is set, only get that category
-            if ($selectedCategoryId) {
-                $categoriesQuery->where('id', $selectedCategoryId);
-            }
-
-            $categories = $categoriesQuery
+            // Get ALL categories (always show all categories in sidebar)
+            $categories = BookmarkCategory::query()
                 ->with(['bookmarks' => function ($query) {
                     $query->orderBy('order');
                 }])
