@@ -56,7 +56,7 @@
               :id="`word-${index}`"
               v-model="selectedWords"
               :value="duplicate.id"
-              class="h-4 w-4 rounded border-border text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              class="h-4 w-4 rounded border-2 border-input bg-background text-primary ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:border-muted-foreground"
             />
           </div>
         </div>
@@ -69,7 +69,7 @@
           id="select-all"
           :checked="selectedWords.length === duplicates.length"
           @change="toggleSelectAll"
-          class="h-4 w-4 rounded border-border text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          class="h-4 w-4 rounded border-2 border-input bg-background text-primary ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:border-muted-foreground"
         />
         <label for="select-all" class="text-sm font-medium text-foreground">
           Tümünü Seç ({{ selectedWords.length }}/{{ duplicates.length }})

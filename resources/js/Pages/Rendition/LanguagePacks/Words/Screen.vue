@@ -125,7 +125,7 @@
                 v-model="selectedWords"
                 :value="word.id"
                 type="checkbox"
-                class="h-4 w-4 rounded border border-input text-primary focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                class="h-4 w-4 rounded border-2 border-input bg-background text-primary ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:border-muted-foreground"
               />
               <label :for="`word-${word.id}`" class="ml-2 block cursor-pointer text-sm text-foreground">
                 {{ word.word }} - {{ word.meaning }} ({{ getLanguageName(word.language) }})

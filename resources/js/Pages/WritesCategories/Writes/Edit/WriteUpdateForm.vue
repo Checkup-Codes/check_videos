@@ -287,7 +287,7 @@
             <input
               type="checkbox"
               v-model="form.hasDraw"
-              class="mt-0.5 h-4 w-4 rounded border-input text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              class="mt-0.5 h-4 w-4 rounded border-2 border-input bg-background text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:border-muted-foreground"
             />
             <div class="flex-1">
               <div class="flex items-center gap-2">
@@ -336,7 +336,7 @@
             <input
               type="checkbox"
               v-model="form.hasYoutubeVideo"
-              class="mt-0.5 h-4 w-4 rounded border-input text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              class="mt-0.5 h-4 w-4 rounded border-2 border-input bg-background text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:border-muted-foreground"
             />
             <div class="flex-1">
               <div class="flex items-center gap-2">

@@ -198,7 +198,7 @@
               </div>
               <div class="rounded-lg bg-muted/50 p-3 text-center">
                 <label class="flex cursor-pointer flex-col items-center gap-1">
-                  <input type="checkbox" v-model="form.flag" class="h-5 w-5 rounded" />
+                  <input type="checkbox" v-model="form.flag" class="h-5 w-5 rounded border-2 border-input bg-background text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:border-muted-foreground" />
                   <span class="text-xs text-muted-foreground">Öne Çıkar</span>
                 </label>
               </div>
