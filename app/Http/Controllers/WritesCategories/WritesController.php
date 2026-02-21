@@ -97,7 +97,7 @@ class WritesController extends Controller
         $categoriesQuery = Category::where('name', 'LIKE', "%{$searchQuery}%");
         
         if ($isAdmin) {
-            $categoriesQuery->whereIn('status', ['public', 'private', 'link_only']);
+            $categoriesQuery->whereIn('status', ['public', 'hidden']);
         } else {
             $categoriesQuery->where('status', 'public');
         }
@@ -442,8 +442,8 @@ class WritesController extends Controller
 
                 // Filter by status based on login status
                 if ($isLoggedIn) {
-                    // Logged in users can see all categories (public, private, link_only)
-                    $categoriesQuery->whereIn('status', ['public', 'private', 'link_only']);
+                    // Logged in users can see all categories (public and hidden)
+                    $categoriesQuery->whereIn('status', ['public', 'hidden']);
                 } else {
                     // Non-logged in users can only see public categories
                     $categoriesQuery->where('status', 'public');

@@ -232,7 +232,8 @@ class WriteService
             'seo_keywords',
             'tags',
             'category_id',
-            'hasDraw'
+            'hasDraw',
+            'youtube_url'
         ])
         ->with(['category:id,name,slug', 'categories:id,name,slug,parent_id'])
         ->where('slug', $slug);

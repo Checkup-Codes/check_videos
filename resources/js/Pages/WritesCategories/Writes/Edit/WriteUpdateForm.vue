@@ -442,6 +442,7 @@ import { ref, onMounted, watch, onUnmounted, computed, nextTick } from 'vue';
 import { useForm, usePage, router } from '@inertiajs/vue3';
 import RichTextEditor from '@/Pages/WritesCategories/_components/RichTextEditor.vue';
 import WriteImageUploader from '@/Components/WriteImageUploader.vue';
+import DiagramGeneratorModal from '@/Components/DiagramGeneratorModal.vue';
 
 // Field refs for scroll to error
 const titleRef = ref(null);
@@ -452,6 +453,14 @@ const contentRef = ref(null);
 const statusRef = ref(null);
 const categoryRef = ref(null);
 const richTextEditorRef = ref(null);
+
+// AI Diagram Modal
+const showDiagramModal = ref(false);
+
+const handleDiagramSuccess = () => {
+  // Modal will handle page reload
+  console.log('Diagram generated successfully');
+};
 
 // Base64 resim kontrolü
 const hasBase64Images = computed(() => {
