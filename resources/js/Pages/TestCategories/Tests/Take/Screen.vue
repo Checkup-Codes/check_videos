@@ -125,10 +125,10 @@
               v-for="(option, optIndex) in question.options"
               :key="option.id"
               :for="`question-${question.id}-option-${option.id}`"
-              class="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-background p-4 transition-colors hover:bg-accent"
+              class="flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all duration-200"
               :class="{
-                'border-primary bg-primary/5': answers[question.id] === option.id,
-                'border-border': answers[question.id] !== option.id,
+                'border-primary bg-primary/10 ring-2 ring-primary/20 dark:bg-primary/20': answers[question.id] === option.id,
+                'border-border bg-background hover:border-primary/50 hover:bg-accent': answers[question.id] !== option.id,
               }"
             >
               <input
@@ -137,13 +137,23 @@
                 :name="`question-${question.id}`"
                 :value="option.id"
                 v-model="answers[question.id]"
-                class="mt-1 h-4 w-4 cursor-pointer text-primary focus:ring-primary"
+                class="mt-1 h-5 w-5 cursor-pointer border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/50 dark:bg-background dark:checked:bg-primary dark:checked:border-primary"
                 @change="updateAnsweredCount"
               />
               <div class="flex-1">
                 <div class="flex items-center gap-2">
-                  <span class="font-medium text-muted-foreground">{{ String.fromCharCode(65 + optIndex) }}.</span>
-                  <span class="whitespace-pre-wrap text-foreground">{{ option.option_text }}</span>
+                  <span 
+                    class="font-semibold transition-colors"
+                    :class="answers[question.id] === option.id ? 'text-primary' : 'text-muted-foreground'"
+                  >
+                    {{ String.fromCharCode(65 + optIndex) }}.
+                  </span>
+                  <span 
+                    class="whitespace-pre-wrap transition-colors"
+                    :class="answers[question.id] === option.id ? 'font-medium text-foreground' : 'text-foreground'"
+                  >
+                    {{ option.option_text }}
+                  </span>
                 </div>
               </div>
             </label>

@@ -8,98 +8,123 @@
           <h1 class="xl:-translate-x-[80px] mb-6 text-2xl font-semibold text-foreground">Yolculuk</h1>
 
           <div 
-            v-if="filteredEntries.length > 0" 
+            v-if="groupedByYear.length > 0" 
             class="relative transition-all duration-300"
             :class="{ 'xl:-translate-x-[80px]': showYearFilter && isYearFilterOpen }"
           >
-            <!-- Timeline Line -->
-            <div class="absolute bottom-0 left-2 top-0 w-px bg-border sm:left-3"></div>
-
-            <!-- Entries -->
-            <div class="space-y-4">
+            <!-- Year Groups -->
+            <div class="space-y-8">
               <div
-                v-for="(entry, index) in filteredEntries"
-                :key="entry.id"
-                class="timeline-entry relative pl-8 sm:pl-10"
+                v-for="(yearGroup, yearIndex) in groupedByYear"
+                :key="yearGroup.year"
+                class="relative"
               >
-                <!-- Dot -->
-                <div 
-                  class="absolute left-0 top-3 flex h-4 w-4 items-center justify-center sm:left-1"
-                >
-                  <div 
-                    v-if="index === 0" 
-                    class="absolute h-4 w-4 animate-ping rounded-full bg-primary/20"
-                  ></div>
-                  <div 
-                    class="relative h-2 w-2 rounded-full border border-primary bg-background"
-                    :class="{ 'bg-primary': index === 0 }"
-                  ></div>
+                <!-- Year Badge with Lines -->
+                <div class="relative mb-6 flex items-center">
+                  <div class="h-px flex-1 bg-gradient-to-r from-transparent to-border"></div>
+                  <div class="mx-4 flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 backdrop-blur-sm">
+                    <svg class="h-3.5 w-3.5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span class="text-sm font-semibold text-primary">{{ yearGroup.year }}</span>
+                    <span class="text-xs text-muted-foreground">{{ yearGroup.entries.length }} kayıt</span>
+                  </div>
+                  <div class="h-px flex-1 bg-gradient-to-l from-transparent to-border"></div>
                 </div>
 
-                <!-- Card -->
-                <Link
-                  :href="`/journey/${entry.id}`"
-                  class="group block rounded-lg border border-border bg-card transition-all hover:border-primary/50 hover:shadow-sm"
-                >
-                  <!-- Layout: Image (if exists) + Content -->
-                  <div :class="entry.image ? 'flex flex-col sm:flex-row' : ''">
-                    <!-- Image Container (only if image exists) -->
-                    <div v-if="entry.image" class="relative w-full flex-shrink-0 sm:w-64 md:w-72">
-                      <div class="aspect-video w-full overflow-hidden rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none">
-                        <img 
-                          :src="`/storage/${entry.image}`" 
-                          :alt="entry.title"
-                          class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                        />
-                      </div>
-                      <!-- Status Badge on Image -->
-                      <span v-if="entry.status === 'draft'" class="absolute top-2 right-2 rounded-md bg-yellow-500/90 px-1.5 py-0.5 text-xs font-medium text-yellow-900">
-                        Taslak
-                      </span>
-                    </div>
+                <!-- Timeline for this year -->
+                <div class="relative">
+                  <!-- Vertical dashed line -->
+                  <div class="absolute bottom-0 left-2 top-0 w-px border-l-2 border-dashed border-border/60 sm:left-3"></div>
 
-                    <!-- Content -->
-                    <div :class="entry.image ? 'flex min-w-0 flex-1 flex-col p-4' : 'p-4'">
-                      <!-- Date and Status -->
-                      <div class="flex items-center gap-2 text-xs text-muted-foreground">
-                        <svg class="h-3 w-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <span>{{ formatDate(entry.entry_date) }}</span>
-                        <span v-if="entry.status === 'draft'" class="rounded-md bg-yellow-500/20 px-1.5 py-0.5 text-xs font-medium text-yellow-600 dark:text-yellow-400">
-                          Taslak
-                        </span>
+                  <!-- Entries -->
+                  <div class="space-y-4">
+                    <div
+                      v-for="(entry, entryIndex) in yearGroup.entries"
+                      :key="entry.id"
+                      class="timeline-entry relative pl-8 sm:pl-10"
+                    >
+                      <!-- Dot -->
+                      <div 
+                        class="absolute left-0 top-3 flex h-4 w-4 items-center justify-center sm:left-1"
+                      >
+                        <div 
+                          v-if="yearIndex === 0 && entryIndex === 0" 
+                          class="absolute h-4 w-4 animate-ping rounded-full bg-primary/20"
+                        ></div>
+                        <div 
+                          class="relative h-2.5 w-2.5 rounded-full border-2 border-primary bg-background transition-all"
+                          :class="{ 'bg-primary scale-110': yearIndex === 0 && entryIndex === 0 }"
+                        ></div>
                       </div>
-                      
-                      <!-- Title -->
-                      <h3 class="mt-2 line-clamp-2 text-sm font-semibold text-foreground transition-colors group-hover:text-primary sm:text-base">
-                        {{ entry.title }}
-                      </h3>
-                      
-                      <!-- Description (if exists) -->
-                      <p v-if="entry.description" class="mt-2 line-clamp-2 text-xs text-muted-foreground sm:text-sm">
-                        {{ entry.description }}
-                      </p>
-                      
-                      <!-- Arrow indicator -->
-                      <div class="mt-3 flex items-center gap-1 text-xs text-muted-foreground transition-colors group-hover:text-primary">
-                        <span>Devamını oku</span>
-                        <svg class="h-3 w-3 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                        </svg>
-                      </div>
+
+                      <!-- Card -->
+                      <Link
+                        :href="`/journey/${entry.id}`"
+                        class="group block rounded-lg border border-border bg-card transition-all hover:border-primary/50 hover:shadow-md"
+                      >
+                        <!-- Layout: Image (if exists) + Content -->
+                        <div :class="entry.image ? 'flex flex-col sm:flex-row' : ''">
+                          <!-- Image Container (only if image exists) -->
+                          <div v-if="entry.image" class="relative w-full flex-shrink-0 sm:w-64 md:w-72">
+                            <div class="aspect-video w-full overflow-hidden rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none">
+                              <img 
+                                :src="`/storage/${entry.image}`" 
+                                :alt="entry.title"
+                                class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                              />
+                            </div>
+                            <!-- Status Badge on Image -->
+                            <span v-if="entry.status === 'draft'" class="absolute top-2 right-2 rounded-md bg-yellow-500/90 px-1.5 py-0.5 text-xs font-medium text-yellow-900">
+                              Taslak
+                            </span>
+                          </div>
+
+                          <!-- Content -->
+                          <div :class="entry.image ? 'flex min-w-0 flex-1 flex-col p-4' : 'p-4'">
+                            <!-- Date and Status -->
+                            <div class="flex items-center gap-2 text-xs text-muted-foreground">
+                              <svg class="h-3 w-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                              <span>{{ formatDate(entry.entry_date) }}</span>
+                              <span v-if="entry.status === 'draft'" class="rounded-md bg-yellow-500/20 px-1.5 py-0.5 text-xs font-medium text-yellow-600 dark:text-yellow-400">
+                                Taslak
+                              </span>
+                            </div>
+                            
+                            <!-- Title -->
+                            <h3 class="mt-2 line-clamp-2 text-sm font-semibold text-foreground transition-colors group-hover:text-primary sm:text-base">
+                              {{ entry.title }}
+                            </h3>
+                            
+                            <!-- Description (if exists) -->
+                            <p v-if="entry.description" class="mt-2 line-clamp-2 text-xs text-muted-foreground sm:text-sm">
+                              {{ entry.description }}
+                            </p>
+                            
+                            <!-- Arrow indicator -->
+                            <div class="mt-3 flex items-center gap-1 text-xs text-muted-foreground transition-colors group-hover:text-primary">
+                              <span>Devamını oku</span>
+                              <svg class="h-3 w-3 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
                     </div>
                   </div>
-                </Link>
+                </div>
               </div>
             </div>
 
             <!-- End Marker -->
-            <div class="relative mt-4 pl-8 sm:pl-10">
-              <div class="absolute left-0 top-0 flex h-4 w-4 items-center justify-center sm:left-1">
+            <div class="relative mt-8 flex items-center justify-center">
+              <div class="flex items-center gap-2 rounded-full border border-border/50 bg-muted/30 px-4 py-2 backdrop-blur-sm">
                 <div class="h-1.5 w-1.5 rounded-full bg-border"></div>
+                <p class="text-xs text-muted-foreground">Yolculuğun başlangıcı</p>
               </div>
-              <p class="text-xs text-muted-foreground">Yolculuğun başlangıcı</p>
             </div>
           </div>
 
@@ -292,6 +317,27 @@ const showYearFilter = computed(() => years.value.length > 1);
 const filteredEntries = computed(() => {
   if (!selectedYear.value) return props.entries;
   return props.entries.filter(entry => formatYear(entry.entry_date) === selectedYear.value);
+});
+
+const groupedByYear = computed(() => {
+  const entries = filteredEntries.value;
+  const groups = {};
+  
+  entries.forEach(entry => {
+    const year = formatYear(entry.entry_date);
+    if (!groups[year]) {
+      groups[year] = [];
+    }
+    groups[year].push(entry);
+  });
+  
+  // Convert to array and sort by year (newest first)
+  return Object.keys(groups)
+    .sort((a, b) => Number(b) - Number(a))
+    .map(year => ({
+      year,
+      entries: groups[year]
+    }));
 });
 
 const oldestYear = computed(() => years.value.length > 0 ? years.value[years.value.length - 1] : '-');

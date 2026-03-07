@@ -78,8 +78,14 @@ const savedTheme = localStorage.getItem('theme') || 'light';
 if (savedTheme === 'dark') {
   document.documentElement.classList.add('dark');
 } else {
-document.documentElement.classList.remove('dark');
+  document.documentElement.classList.remove('dark');
 }
+
+// Font preferences initialization - Apply immediately to prevent flash
+const savedHeadingFont = localStorage.getItem('headingFont') || 'inter';
+const savedBodyFont = localStorage.getItem('bodyFont') || 'inter';
+document.documentElement.setAttribute('data-heading-font', savedHeadingFont);
+document.documentElement.setAttribute('data-body-font', savedBodyFont);
 
 createInertiaApp({
   resolve: async (name) => {

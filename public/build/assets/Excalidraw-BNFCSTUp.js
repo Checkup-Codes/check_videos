@@ -1,0 +1,1 @@
+import{_ as e}from"./ExcalidrawComponent-D1Q0tTIB.js";import{c as r,f as a,o}from"./ssr-Bz0mgiCQ.js";import"./app-D0kLtLma.js";/* empty css            */const i={__name:"Excalidraw",setup(t){return(c,_)=>(o(),r("div",null,[a(e)]))}};export{i as default};

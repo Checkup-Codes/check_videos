@@ -1,0 +1,1 @@
+import{_ as e}from"./CheckScreen-3TR_yOX8.js";import{_ as t}from"./IntroScreen-BcfQJdDG.js";import{e as a,w as r,f as o,o as _}from"./ssr-Bz0mgiCQ.js";const l={__name:"Screen",setup(s){return(c,i)=>(_(),a(e,null,{default:r(()=>[o(t,{title:"Test Kategorileri"})]),_:1}))}};export{l as default};

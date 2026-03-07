@@ -1,64 +1,67 @@
 <template>
   <CheckScreen>
     <div class="mx-auto max-w-4xl">
-      <GoBackButton url="/services" />
-      <div class="mt-6">
+      <div class="mb-6">
         <h1 class="text-2xl font-bold text-foreground">{{ service.name }}</h1>
-        <div
-          v-if="service.description"
-          class="mt-4 whitespace-pre-wrap rounded-lg border border-border bg-muted/30 p-4 text-sm leading-relaxed text-foreground"
-          v-html="formatDescription(service.description)"
-        ></div>
+        <div v-if="service.price" class="mt-2 inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-primary/10 to-primary/5 px-4 py-2">
+          <svg class="h-4 w-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="text-sm font-semibold text-primary">{{ formatPrice(service.price) }}</span>
+        </div>
       </div>
 
-      <div class="mt-6 space-y-6 rounded-lg border border-border bg-card p-6 shadow-sm">
-        <div>
-          <h4 class="text-xs font-medium text-muted-foreground">Fiyat</h4>
-          <p class="mt-1 text-sm font-semibold text-foreground">
-            <span v-if="service.price">{{ formatPrice(service.price) }}</span>
-            <span v-else class="text-muted-foreground">Uygun Değil</span>
-          </p>
-        </div>
+      <!-- Description with Quill Content -->
+      <div
+        v-if="service.description"
+        class="quill-content prose prose-sm dark:prose-invert mb-6 rounded-lg border border-border bg-card p-6"
+        v-html="service.description"
+      ></div>
 
-        <div v-if="service.parentCategory" class="border-t border-border pt-6">
-          <h3 class="mb-4 text-sm font-semibold text-foreground">Üst Kategori</h3>
-          <div class="rounded-md border border-border bg-muted/30 p-4">
-            <h4 class="text-sm font-semibold text-foreground">{{ service.parentCategory.name }}</h4>
-            <div
-              v-if="service.parentCategory.description"
-              class="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground"
-              v-html="formatDescription(service.parentCategory.description)"
-            ></div>
-            <p class="mt-3 text-sm font-semibold text-foreground">
-              Fiyat:
-              <span v-if="service.parentCategory.price">{{ formatPrice(service.parentCategory.price) }}</span>
-              <span v-else class="text-muted-foreground">Uygun Değil</span>
-            </p>
+      <!-- Parent Category -->
+      <div v-if="service.parentCategory" class="mb-6">
+        <h3 class="mb-3 text-sm font-semibold text-foreground">Üst Kategori</h3>
+        <div class="rounded-lg border border-border bg-card p-4">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex-1">
+              <h4 class="text-sm font-semibold text-foreground">{{ service.parentCategory.name }}</h4>
+              <div
+                v-if="service.parentCategory.description"
+                class="quill-content prose prose-sm dark:prose-invert mt-2"
+                v-html="service.parentCategory.description"
+              ></div>
+            </div>
+            <div v-if="service.parentCategory.price" class="shrink-0 rounded-md bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary">
+              {{ formatPrice(service.parentCategory.price) }}
+            </div>
           </div>
         </div>
+      </div>
 
-        <div v-if="service.subCategories && service.subCategories.length" class="border-t border-border pt-6">
-          <h3 class="mb-4 text-sm font-semibold text-foreground">Alt Kategoriler</h3>
-          <ul class="space-y-3">
-            <li
-              v-for="subCategory in service.subCategories"
-              :key="subCategory.id"
-              class="rounded-md border-l-4 border-l-primary border border-border bg-card p-4"
-            >
-              <h4 class="text-sm font-semibold text-foreground">{{ subCategory.name }}</h4>
-              <div
-                v-if="subCategory.description"
-                class="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground"
-                v-html="formatDescription(subCategory.description)"
-              ></div>
-              <p class="mt-3 text-sm font-semibold text-foreground">
-                Fiyat:
-                <span v-if="subCategory.price">{{ formatPrice(subCategory.price) }}</span>
-                <span v-else class="text-muted-foreground">Uygun Değil</span>
-              </p>
-            </li>
-          </ul>
-        </div>
+      <!-- Sub Categories -->
+      <div v-if="service.subCategories && service.subCategories.length" class="mb-6">
+        <h3 class="mb-3 text-sm font-semibold text-foreground">Alt Hizmetler</h3>
+        <ul class="space-y-2">
+          <li
+            v-for="subCategory in service.subCategories"
+            :key="subCategory.id"
+            class="group rounded-lg border border-border bg-card p-4 transition-all hover:border-primary/40 hover:shadow-sm"
+          >
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex-1">
+                <h4 class="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{{ subCategory.name }}</h4>
+                <div
+                  v-if="subCategory.description"
+                  class="quill-content prose prose-sm dark:prose-invert mt-2"
+                  v-html="subCategory.description"
+                ></div>
+              </div>
+              <div v-if="subCategory.price" class="shrink-0 rounded-md bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary">
+                {{ formatPrice(subCategory.price) }}
+              </div>
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
   </CheckScreen>
@@ -67,21 +70,13 @@
 <script setup>
 import { usePage } from '@inertiajs/vue3';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
-import GoBackButton from '@/Components/GoBackButton.vue';
+import '@/Shared/Css/quill-styles.css';
 
 const { props } = usePage();
 const service = props.service;
 
 const formatPrice = (price) => {
-  if (!price) return 'Uygun Değil';
-  return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2 }).format(price);
-};
-
-const formatDescription = (text) => {
-  if (!text) return '';
-  // Convert newlines to <br> tags and preserve whitespace
-  return text
-    .replace(/\n/g, '<br>')
-    .replace(/  /g, ' &nbsp;'); // Preserve double spaces
+  if (!price) return '₺0';
+  return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 0 }).format(price);
 };
 </script>

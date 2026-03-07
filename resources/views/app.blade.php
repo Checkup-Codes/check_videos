@@ -110,6 +110,12 @@
         document.documentElement.style.backgroundColor = savedTheme === 'dark' 
             ? 'hsl(0, 0%, 3.9%)' 
             : 'hsl(0, 0%, 100%)';
+        
+        // Font preferences initialization - Apply immediately to prevent flash
+        const savedHeadingFont = localStorage.getItem('headingFont') || 'inter';
+        const savedBodyFont = localStorage.getItem('bodyFont') || 'inter';
+        document.documentElement.setAttribute('data-heading-font', savedHeadingFont);
+        document.documentElement.setAttribute('data-body-font', savedBodyFont);
     </script>
 
     @routes

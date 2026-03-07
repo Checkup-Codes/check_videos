@@ -100,24 +100,24 @@
             <label
               v-for="status in statusOptions"
               :key="status.value"
-              class="relative flex cursor-pointer items-center gap-3 rounded-lg border-2 p-4 transition-all hover:bg-accent/50"
+              class="relative flex cursor-pointer items-center gap-3 rounded-lg border-2 p-4 transition-all duration-200"
               :class="{
-                'border-primary bg-primary/5': form.status === status.value,
-                'border-border': form.status !== status.value,
+                'border-primary bg-primary/10 ring-2 ring-primary/20 dark:bg-primary/20': form.status === status.value,
+                'border-border bg-background hover:border-primary/50 hover:bg-accent': form.status !== status.value,
               }"
             >
               <input
                 type="radio"
                 :value="status.value"
                 v-model="form.status"
-                class="h-4 w-4 border-input text-primary ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                class="h-5 w-5 cursor-pointer border-2 border-muted-foreground/30 text-primary ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:border-muted-foreground/50 dark:bg-background dark:checked:bg-primary dark:checked:border-primary"
               />
               <div class="flex-1">
                 <div class="flex items-center gap-2">
                   <svg
                     v-if="status.value === 'published'"
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 text-green-500"
+                    class="h-5 w-5 text-green-500 dark:text-green-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -128,7 +128,7 @@
                   <svg
                     v-else-if="status.value === 'private'"
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 text-amber-500"
+                    class="h-5 w-5 text-amber-500 dark:text-amber-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -139,7 +139,7 @@
                   <svg
                     v-else
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 text-blue-500"
+                    class="h-5 w-5 text-blue-500 dark:text-blue-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -147,9 +147,19 @@
                   >
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                   </svg>
-                  <span class="text-sm font-semibold text-foreground">{{ status.label }}</span>
+                  <span 
+                    class="text-sm font-semibold transition-colors"
+                    :class="form.status === status.value ? 'text-foreground' : 'text-foreground/80'"
+                  >
+                    {{ status.label }}
+                  </span>
                 </div>
-                <p class="mt-1 text-xs text-muted-foreground">{{ status.description }}</p>
+                <p 
+                  class="mt-1 text-xs transition-colors"
+                  :class="form.status === status.value ? 'text-muted-foreground' : 'text-muted-foreground/70'"
+                >
+                  {{ status.description }}
+                </p>
               </div>
             </label>
           </div>
@@ -278,17 +288,17 @@
 
           <!-- Çizim İçerir -->
           <label
-            class="group relative flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all"
+            class="group relative flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all duration-200"
             :class="
               form.hasDraw
-                ? 'border-primary bg-primary/10 shadow-sm'
-                : 'border-border bg-background hover:border-primary/50 hover:bg-accent/50'
+                ? 'border-primary bg-primary/10 ring-2 ring-primary/20 dark:bg-primary/20'
+                : 'border-border bg-background hover:border-primary/50 hover:bg-accent'
             "
           >
             <input
               type="checkbox"
               v-model="form.hasDraw"
-              class="mt-0.5 h-4 w-4 rounded border-2 border-input bg-background text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:border-muted-foreground"
+              class="mt-0.5 h-5 w-5 cursor-pointer rounded border-2 border-muted-foreground/30 bg-background text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:border-muted-foreground/50 dark:bg-background dark:checked:bg-primary dark:checked:border-primary"
             />
             <div class="flex-1">
               <div class="flex items-center gap-2">

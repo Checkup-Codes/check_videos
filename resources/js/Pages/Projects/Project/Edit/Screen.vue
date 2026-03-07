@@ -1,16 +1,18 @@
 <template>
   <CheckScreen>
-    <GoBackButton :url="`/projects/${project.id}`" />
-    <TopScreen title="Projeyi Düzenle" />
+    <div class="mx-auto max-w-4xl">
+      <div class="mb-6">
+        <h1 class="text-xl font-semibold text-foreground">Projeyi Düzenle</h1>
+        <p class="mt-1 text-xs text-muted-foreground">{{ project.project_name }}</p>
+      </div>
 
-    <div class="rounded-lg border border-border bg-card shadow-sm">
-      <div class="p-6">
-        <form @submit.prevent="handleSubmit" class="space-y-6">
+      <form @submit.prevent="handleSubmit" class="space-y-4">
+        <div class="rounded-lg border border-border bg-card p-5 shadow-sm">
           <div class="space-y-4">
-            <h3 class="text-sm font-semibold text-foreground">Proje Bilgileri</h3>
+            <h3 class="text-xs font-semibold text-foreground">Proje Bilgileri</h3>
 
             <div ref="projectNameRef">
-              <label class="mb-1 block text-sm font-medium text-foreground">Proje Adı</label>
+              <label class="mb-1.5 block text-xs font-medium text-foreground">Proje Adı</label>
               <input
                 v-model="form.project_name"
                 type="text"
@@ -22,10 +24,10 @@
               <p v-if="errors.project_name || form.errors.project_name" class="mt-1 text-xs text-destructive">
                 {{ errors.project_name || form.errors.project_name }}
               </p>
-          </div>
+            </div>
 
             <div ref="customerIdRef">
-              <label class="mb-1 block text-sm font-medium text-foreground">Müşteri Seçin</label>
+              <label class="mb-1.5 block text-xs font-medium text-foreground">Müşteri Seçin</label>
               <select
                 v-model="form.customer_id"
                 class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -43,7 +45,7 @@
             </div>
 
             <div ref="categoryIdRef">
-              <label class="mb-1 block text-sm font-medium text-foreground">Kategori/Yazı Bağlantısı (Opsiyonel)</label>
+              <label class="mb-1.5 block text-xs font-medium text-foreground">Kategori/Yazı Bağlantısı (Opsiyonel)</label>
               <select
                 v-model="form.category_id"
                 class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -58,13 +60,13 @@
                 {{ errors.category_id || form.errors.category_id }}
               </p>
               <p class="mt-1 text-xs text-muted-foreground">
-                Bu projeye ait yazıların bulunduğu kategoriyi seçin. Bu kategori altındaki tüm yazılar bu projeyle ilişkilendirilir.
+                Bu projeye ait yazıların bulunduğu kategoriyi seçin.
               </p>
             </div>
           </div>
 
-          <div class="space-y-4 border-t border-border pt-6">
-            <h3 class="text-sm font-semibold text-foreground">Servisler</h3>
+          <div class="space-y-4 border-t border-border mt-4 pt-4">
+            <h3 class="text-xs font-semibold text-foreground">Hizmetler</h3>
 
             <div v-if="!services || services.length === 0" class="flex items-center gap-3 rounded-md border border-border bg-muted/50 p-4 text-sm text-muted-foreground">
               <svg
@@ -249,18 +251,18 @@
           <div class="flex justify-end gap-2 border-t border-border pt-4">
             <Link
               :href="`/projects/${project.id}`"
-              class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-xs font-medium text-foreground ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               İptal
             </Link>
             <button
               type="submit"
-              class="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+              class="inline-flex h-9 items-center justify-center gap-1.5 rounded-md bg-primary px-5 text-xs font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
               :disabled="form.processing"
             >
               <svg
                 v-if="form.processing"
-                class="h-4 w-4 animate-spin"
+                class="h-3.5 w-3.5 animate-spin"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -274,8 +276,7 @@
               </svg>
               <svg
                 v-else
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
+                class="h-3.5 w-3.5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -286,8 +287,8 @@
               {{ form.processing ? 'Güncelleniyor...' : 'Projeyi Güncelle' }}
             </button>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   </CheckScreen>
 </template>
@@ -297,8 +298,6 @@ import { computed, ref, onMounted, watch } from 'vue';
 import { useForm, usePage, Link, router } from '@inertiajs/vue3';
 import axios from 'axios';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
-import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
-import GoBackButton from '@/Components/GoBackButton.vue';
 
 const { props } = usePage();
 const services = computed(() => props.services || []);

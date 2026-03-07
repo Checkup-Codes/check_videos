@@ -1,16 +1,18 @@
 <template>
   <CheckScreen>
-    <GoBackButton url="/projects" />
-    <TopScreen title="Yeni Proje Oluştur" />
+    <div class="mx-auto max-w-4xl">
+      <div class="mb-6">
+        <h1 class="text-xl font-semibold text-foreground">Yeni Proje</h1>
+        <p class="mt-1 text-xs text-muted-foreground">Yeni bir proje oluşturun</p>
+      </div>
 
-    <div class="rounded-lg border border-border bg-card shadow-sm">
-      <div class="p-6">
-        <form @submit.prevent="handleSubmit" class="space-y-6">
+      <form @submit.prevent="handleSubmit" class="space-y-4">
+        <div class="rounded-lg border border-border bg-card p-5 shadow-sm">
           <div class="space-y-4">
-            <h3 class="text-sm font-semibold text-foreground">Proje Bilgileri</h3>
+            <h3 class="text-xs font-semibold text-foreground">Proje Bilgileri</h3>
 
             <div ref="projectNameRef">
-              <label class="mb-1 block text-sm font-medium text-foreground">Proje Adı</label>
+              <label class="mb-1.5 block text-xs font-medium text-foreground">Proje Adı</label>
               <input
                 v-model="form.project_name"
                 type="text"
@@ -22,28 +24,28 @@
               <p v-if="errors.project_name || form.errors.project_name" class="mt-1 text-xs text-destructive">
                 {{ errors.project_name || form.errors.project_name }}
               </p>
-          </div>
+            </div>
 
             <div ref="customerIdRef">
-              <label class="mb-1 block text-sm font-medium text-foreground">Müşteri Seçin</label>
+              <label class="mb-1.5 block text-xs font-medium text-foreground">Müşteri Seçin</label>
               <select
                 v-model="form.customer_id"
                 class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 :class="{ 'border-destructive focus-visible:ring-destructive': errors.customer_id || form.errors.customer_id }"
                 required
               >
-              <option disabled value="">Bir müşteri seçin</option>
-              <option v-for="customer in customers" :key="customer.id" :value="customer.id">
-                {{ customer.first_name }} {{ customer.last_name }}
-              </option>
-            </select>
+                <option disabled value="">Bir müşteri seçin</option>
+                <option v-for="customer in customers" :key="customer.id" :value="customer.id">
+                  {{ customer.first_name }} {{ customer.last_name }}
+                </option>
+              </select>
               <p v-if="errors.customer_id || form.errors.customer_id" class="mt-1 text-xs text-destructive">
                 {{ errors.customer_id || form.errors.customer_id }}
               </p>
             </div>
 
             <div ref="categoryIdRef">
-              <label class="mb-1 block text-sm font-medium text-foreground">Kategori/Yazı Bağlantısı (Opsiyonel)</label>
+              <label class="mb-1.5 block text-xs font-medium text-foreground">Kategori/Yazı Bağlantısı (Opsiyonel)</label>
               <select
                 v-model="form.category_id"
                 class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -58,15 +60,18 @@
                 {{ errors.category_id || form.errors.category_id }}
               </p>
               <p class="mt-1 text-xs text-muted-foreground">
-                Bu projeye ait yazıların bulunduğu kategoriyi seçin. Bu kategori altındaki tüm yazılar bu projeyle ilişkilendirilir.
+                Bu projeye ait yazıların bulunduğu kategoriyi seçin.
               </p>
             </div>
           </div>
 
-          <div class="space-y-4 border-t border-border pt-6">
-            <h3 class="text-sm font-semibold text-foreground">Servisler</h3>
+          <div class="space-y-4 border-t border-border pt-4">
+            <h3 class="text-xs font-semibold text-foreground">Hizmetler</h3>
 
-            <div v-if="!services || services.length === 0" class="flex items-center gap-3 rounded-md border border-border bg-muted/50 p-4 text-sm text-muted-foreground">
+            <div
+              v-if="!services || services.length === 0"
+              class="flex items-center gap-3 rounded-md border border-border bg-muted/50 p-4 text-sm text-muted-foreground"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -181,7 +186,7 @@
                         Tamamlanma: {{ getCompletionPercentage(service.id) }}%
                       </span>
                     </div>
-                    
+
                     <div class="space-y-2">
                       <div
                         v-for="(todo, index) in getServiceTodos(service.id)"
@@ -199,7 +204,6 @@
                           type="text"
                           placeholder="Todo başlığı..."
                           class="flex-1 border-none bg-transparent px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-0"
-                          @blur="updateTodoTitle(service.id, index)"
                         />
                         <button
                           type="button"
@@ -241,6 +245,7 @@
                 </div>
               </div>
             </div>
+
             <p v-if="errors.services || form.errors.services" class="text-xs text-destructive">
               {{ errors.services || form.errors.services }}
             </p>
@@ -249,18 +254,19 @@
           <div class="flex justify-end gap-2 border-t border-border pt-4">
             <Link
               href="/projects"
-              class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-xs font-medium text-foreground ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               İptal
             </Link>
+
             <button
               type="submit"
-              class="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+              class="inline-flex h-9 items-center justify-center gap-1.5 rounded-md bg-primary px-5 text-xs font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
               :disabled="form.processing"
             >
               <svg
                 v-if="form.processing"
-                class="h-4 w-4 animate-spin"
+                class="h-3.5 w-3.5 animate-spin"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -272,10 +278,10 @@
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 ></path>
               </svg>
+
               <svg
                 v-else
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
+                class="h-3.5 w-3.5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -283,24 +289,23 @@
               >
                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
               </svg>
+
               {{ form.processing ? 'Kaydediliyor...' : 'Projeyi Kaydet' }}
             </button>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   </CheckScreen>
 </template>
 
 <script setup>
 import { computed, ref } from 'vue';
-import { useForm, usePage, Link, router } from '@inertiajs/vue3';
-import axios from 'axios';
+import { useForm, usePage, Link } from '@inertiajs/vue3';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
-import TopScreen from '@/Components/CekapUI/Typography/TopScreen.vue';
-import GoBackButton from '@/Components/GoBackButton.vue';
 
 const { props } = usePage();
+
 const services = computed(() => props.services || []);
 const customers = computed(() => props.customers || []);
 const categories = computed(() => props.categories || []);
@@ -330,7 +335,14 @@ const form = useForm({
   services: [],
 });
 
-form.processing = false;
+const resetFrontendErrors = () => {
+  errors.value = {
+    project_name: '',
+    customer_id: '',
+    category_id: '',
+    services: '',
+  };
+};
 
 const getServiceData = (serviceId) => {
   if (!servicesData.value[serviceId]) {
@@ -340,10 +352,11 @@ const getServiceData = (serviceId) => {
       status: 'pending',
       payment_status: 'unpaid',
       notes: '',
-      service_start_date: null,
-      service_end_date: null,
+      service_start_date: '',
+      service_end_date: '',
     };
   }
+
   return servicesData.value[serviceId];
 };
 
@@ -351,6 +364,7 @@ const getServiceTodos = (serviceId) => {
   if (!servicesTodos.value[serviceId]) {
     servicesTodos.value[serviceId] = [];
   }
+
   return servicesTodos.value[serviceId];
 };
 
@@ -358,6 +372,7 @@ const addTodo = (serviceId) => {
   if (!servicesTodos.value[serviceId]) {
     servicesTodos.value[serviceId] = [];
   }
+
   servicesTodos.value[serviceId].push({
     id: null,
     title: '',
@@ -367,83 +382,81 @@ const addTodo = (serviceId) => {
 };
 
 const removeTodo = (serviceId, index) => {
+  if (!servicesTodos.value[serviceId]) return;
   servicesTodos.value[serviceId].splice(index, 1);
 };
 
 const toggleTodo = (serviceId, index) => {
-  const todo = servicesTodos.value[serviceId][index];
+  const todo = servicesTodos.value[serviceId]?.[index];
+  if (!todo) return;
+
   todo.is_completed = !todo.is_completed;
   todo.completed_at = todo.is_completed ? new Date().toISOString() : null;
 };
 
-const updateTodoTitle = (serviceId, index) => {
-  // Title is already updated via v-model
-};
-
 const getCompletionPercentage = (serviceId) => {
   const todos = getServiceTodos(serviceId);
+
   if (todos.length === 0) return 0;
+
   const completed = todos.filter((t) => t.is_completed).length;
   return Math.round((completed / todos.length) * 100);
 };
 
 const handleServiceToggle = (serviceId) => {
   if (!selectedServices.value.includes(serviceId)) {
-    // Service removed, clean up data
     delete servicesData.value[serviceId];
+    delete servicesTodos.value[serviceId];
+  } else {
+    getServiceData(serviceId);
+    getServiceTodos(serviceId);
+  }
+};
+
+const scrollToFirstError = (serverErrors = {}) => {
+  if (serverErrors.project_name && projectNameRef.value) {
+    projectNameRef.value.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  if (serverErrors.customer_id && customerIdRef.value) {
+    customerIdRef.value.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  if (serverErrors.category_id && categoryIdRef.value) {
+    categoryIdRef.value.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
   }
 };
 
 const handleSubmit = () => {
-  // Build services array with data
-  form.services = selectedServices.value.map((serviceId) => getServiceData(serviceId));
+  resetFrontendErrors();
 
-  form.post('/projects', {
-    onSuccess: (page) => {
-      // Get project ID from the response
-      const projectId = page.props.project?.id || page.url.split('/').pop();
-      if (projectId) {
-        createTodos(projectId);
-      }
-    },
-    onError: (serverErrors) => {
-      if (serverErrors) {
-        Object.keys(serverErrors).forEach((key) => {
-          if (errors.value.hasOwnProperty(key)) {
+  form
+    .transform((data) => ({
+      ...data,
+      services: selectedServices.value.map((serviceId) => ({
+        ...getServiceData(serviceId),
+        todos: getServiceTodos(serviceId)
+          .filter((todo) => todo.title && todo.title.trim())
+          .map((todo) => ({
+            title: todo.title.trim(),
+            is_completed: !!todo.is_completed,
+          })),
+      })),
+    }))
+    .post('/projects', {
+      preserveScroll: true,
+      onError: (serverErrors) => {
+        Object.keys(serverErrors || {}).forEach((key) => {
+          if (key in errors.value) {
             errors.value[key] = serverErrors[key];
           }
         });
-      }
-    },
-  });
-};
 
-const createTodos = async (projectId) => {
-  const todoPromises = [];
-  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-  
-  selectedServices.value.forEach((serviceId) => {
-    const todos = getServiceTodos(serviceId);
-    todos.forEach((todo) => {
-      if (todo.title && todo.title.trim()) {
-        todoPromises.push(
-          axios.post('/project-service-todos', {
-            project_id: projectId,
-            service_id: serviceId,
-            title: todo.title,
-            is_completed: todo.is_completed || false,
-          }, {
-            headers: {
-              'X-CSRF-TOKEN': csrfToken,
-            },
-          }).catch((error) => {
-            console.error('Todo oluşturulurken hata oluştu:', error);
-          })
-        );
-      }
+        scrollToFirstError(serverErrors);
+      },
     });
-  });
-  
-  await Promise.all(todoPromises);
 };
 </script>

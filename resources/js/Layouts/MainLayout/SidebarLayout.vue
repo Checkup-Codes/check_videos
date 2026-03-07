@@ -264,7 +264,6 @@
               class="inline-flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
               :class="{ 'bg-primary/90': showCreateDropdown }"
               title="Yeni içerik oluştur"
-              style="font-family: 'Clash Display', system-ui, sans-serif; font-weight: 500;"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -281,7 +280,6 @@
             <div
               v-if="showCreateDropdown"
               class="absolute right-0 top-full z-50 mt-1 w-52 rounded-md border border-border bg-popover shadow-md"
-              style="font-family: 'Clash Display', system-ui, sans-serif; font-weight: 500;"
             >
               <div class="flex flex-col p-1.5">
                 <!-- Yazılar Grubu -->
@@ -673,7 +671,6 @@
               @click="showAdminPanelDropdown = !showAdminPanelDropdown"
               class="inline-flex h-7 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-2 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
               :class="{ 'bg-accent text-accent-foreground': showAdminPanelDropdown }"
-              style="font-family: 'Clash Display', system-ui, sans-serif; font-weight: 500;"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -706,7 +703,6 @@
             <div
               v-if="showAdminPanelDropdown"
               class="absolute right-0 top-full z-50 mt-1 w-44 rounded-md border border-border bg-popover shadow-md"
-              style="font-family: 'Clash Display', system-ui, sans-serif; font-weight: 500;"
             >
               <div class="flex flex-col p-1">
                 <Link
@@ -1217,18 +1213,18 @@ defineProps({
 </script>
 
 <style scoped>
-/* Clash Display font for all sidebar elements - medium weight */
+/* Sidebar font styling - lighter weight for better readability */
 nav *,
 .create-dropdown-container *,
 .admin-panel-dropdown-container * {
-  font-family: 'Clash Display', system-ui, sans-serif !important;
-  font-weight: 450 !important;
+  font-family: var(--font-heading) !important;
+  font-weight: 500 !important;
 }
 
 /* Apply to all header action buttons and links */
 nav .inline-flex {
-  font-family: 'Clash Display', system-ui, sans-serif !important;
-  font-weight: 450 !important;
+  font-family: var(--font-heading) !important;
+  font-weight: 500 !important;
 }
 
 /* Modern button hover effects */
@@ -1250,21 +1246,6 @@ nav .inline-flex {
 
 .btn:hover::before {
   left: 100%;
-}
-
-/* Theme-specific enhancements */
-html[data-theme='lotr-light'] .btn,
-html[data-theme='lotr-dark'] .btn {
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 6px -1px rgba(139, 69, 19, 0.3);
-  border: 2px solid #d4af37;
-}
-
-html[data-theme='lotr-light'] .btn:hover,
-html[data-theme='lotr-dark'] .btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px -2px rgba(139, 69, 19, 0.4);
-  transition: all 0.3s ease-in-out;
 }
 
 /* Smooth transitions for all interactive elements */
