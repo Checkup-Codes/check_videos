@@ -2,46 +2,49 @@
   <LayoutCertificates>
     <template #screen>
       <CheckScreen>
-        <div class="p-6 pt-12 sm:p-8 sm:pt-16">
-        <div class="mx-auto max-w-3xl">
-          <h1 class="mb-8 text-2xl font-bold text-foreground">Sertifika Düzenle</h1>
+        <div class="space-y-4 py-6">
+          <h1 class="text-2xl font-bold text-foreground">Sertifika Düzenle</h1>
 
-          <form @submit.prevent="submit" class="space-y-6">
+          <form @submit.prevent="submit" class="space-y-4">
             <!-- Title -->
             <div>
-              <label class="mb-2 block text-sm font-medium text-foreground">Başlık <span class="text-destructive">*</span></label>
+              <label class="mb-1 block text-sm font-medium text-foreground">Başlık <span class="text-destructive">*</span></label>
               <input
                 v-model="form.title"
                 type="text"
                 required
-                class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                :class="{ 'border-destructive focus-visible:ring-destructive': form.errors.title }"
                 placeholder="Sertifika adı"
               />
-              <p v-if="form.errors.title" class="mt-1 text-sm text-destructive">{{ form.errors.title }}</p>
+              <p v-if="form.errors.title" class="mt-1 text-xs text-destructive">{{ form.errors.title }}</p>
             </div>
 
             <!-- Issuer -->
             <div>
-              <label class="mb-2 block text-sm font-medium text-foreground">Veren Kurum <span class="text-destructive">*</span></label>
+              <label class="mb-1 block text-sm font-medium text-foreground">Veren Kurum <span class="text-destructive">*</span></label>
               <input
                 v-model="form.issuer"
                 type="text"
                 required
-                class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                :class="{ 'border-destructive focus-visible:ring-destructive': form.errors.issuer }"
                 placeholder="Örn: Coursera, Udemy, Microsoft"
               />
-              <p v-if="form.errors.issuer" class="mt-1 text-sm text-destructive">{{ form.errors.issuer }}</p>
+              <p v-if="form.errors.issuer" class="mt-1 text-xs text-destructive">{{ form.errors.issuer }}</p>
             </div>
 
             <!-- Description -->
             <div>
-              <label class="mb-2 block text-sm font-medium text-foreground">Açıklama</label>
+              <label class="mb-1 block text-sm font-medium text-foreground">Açıklama</label>
               <textarea
                 v-model="form.description"
                 rows="4"
-                class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                :class="{ 'border-destructive focus-visible:ring-destructive': form.errors.description }"
                 placeholder="Sertifika hakkında detaylar..."
               />
+              <p v-if="form.errors.description" class="mt-1 text-xs text-destructive">{{ form.errors.description }}</p>
             </div>
 
             <!-- Image Upload -->
@@ -167,18 +170,31 @@
             </div>
 
             <!-- Actions -->
-            <div class="flex items-center justify-end gap-3 border-t border-border pt-6">
+            <div class="flex justify-end gap-2 pt-2">
               <button
                 type="submit"
                 :disabled="form.processing"
-                class="rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                class="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
               >
+                <svg
+                  v-if="form.processing"
+                  class="mr-2 h-4 w-4 animate-spin"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
                 {{ form.processing ? 'Kaydediliyor...' : 'Kaydet' }}
               </button>
             </div>
           </form>
         </div>
-      </div>
     </CheckScreen>
     </template>
   </LayoutCertificates>

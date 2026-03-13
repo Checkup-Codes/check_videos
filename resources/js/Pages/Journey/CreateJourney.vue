@@ -1,18 +1,19 @@
 <template>
   <LayoutJourney>
     <template #screen>
-      <div class="mx-auto max-w-2xl px-4 py-6 sm:px-6">
-        <form @submit.prevent="submit" class="space-y-5">
+      <CheckScreen>
+        <div class="space-y-4 py-6">
+          <form @submit.prevent="submit" class="space-y-4">
           <!-- Title -->
           <div>
-            <label class="mb-1.5 block text-sm font-medium text-foreground">
+            <label class="mb-1 block text-sm font-medium text-foreground">
               Başlık <span class="text-destructive">*</span>
             </label>
             <input
               v-model="form.title"
               type="text"
-              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              :class="{ 'border-destructive': form.errors.title }"
+              class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              :class="{ 'border-destructive focus-visible:ring-destructive': form.errors.title }"
               placeholder="Bu günün başlığı..."
               required
             />
@@ -21,14 +22,14 @@
 
           <!-- Date -->
           <div>
-            <label class="mb-1.5 block text-sm font-medium text-foreground">
+            <label class="mb-1 block text-sm font-medium text-foreground">
               Tarih <span class="text-destructive">*</span>
             </label>
             <input
               v-model="form.entry_date"
               type="date"
-              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              :class="{ 'border-destructive': form.errors.entry_date }"
+              class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              :class="{ 'border-destructive focus-visible:ring-destructive': form.errors.entry_date }"
               required
             />
             <p v-if="form.errors.entry_date" class="mt-1 text-xs text-destructive">{{ form.errors.entry_date }}</p>
@@ -36,12 +37,12 @@
 
           <!-- Description -->
           <div>
-            <label class="mb-1.5 block text-sm font-medium text-foreground">Açıklama</label>
+            <label class="mb-1 block text-sm font-medium text-foreground">Açıklama</label>
             <textarea
               v-model="form.description"
               rows="5"
-              class="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              :class="{ 'border-destructive': form.errors.description }"
+              class="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              :class="{ 'border-destructive focus-visible:ring-destructive': form.errors.description }"
               placeholder="Bu gün hakkında notlarınız..."
             ></textarea>
             <p v-if="form.errors.description" class="mt-1 text-xs text-destructive">{{ form.errors.description }}</p>
@@ -108,19 +109,19 @@
           </div>
 
           <!-- Actions -->
-          <div class="flex items-center justify-end gap-3 pt-2">
+          <div class="flex justify-end gap-2 pt-2">
             <Link
               href="/journey"
-              class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground"
+              class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
             >
               İptal
             </Link>
             <button
               type="submit"
               :disabled="form.processing"
-              class="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
+              class="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
             >
-              <svg v-if="form.processing" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <svg v-if="form.processing" class="mr-2 h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
@@ -129,6 +130,7 @@
           </div>
         </form>
       </div>
+    </CheckScreen>
     </template>
   </LayoutJourney>
 </template>
@@ -137,6 +139,7 @@
 import { ref } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import LayoutJourney from '@/Pages/Journey/_layouts/LayoutJourney.vue';
+import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 
 const today = new Date().toISOString().split('T')[0];
 
