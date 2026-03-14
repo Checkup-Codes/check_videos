@@ -18,7 +18,14 @@ class SitemapController extends Controller
     {
         $this->sitemapGenerator->generate();
 
-        return response()->file(public_path('sitemap.xml'), [
+        // Serve domain-specific sitemap
+        $sitemapPath = $this->sitemapGenerator->getSitemapPath();
+        
+        if (!file_exists($sitemapPath)) {
+            abort(404, 'Sitemap not found for this domain');
+        }
+
+        return response()->file($sitemapPath, [
             'Content-Type' => 'application/xml'
         ]);
     }

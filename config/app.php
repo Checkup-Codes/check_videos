@@ -56,6 +56,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Application Domains
+    |--------------------------------------------------------------------------
+    |
+    | List of domains that this application serves. Used for generating
+    | domain-specific sitemaps and SEO configurations.
+    |
+    */
+
+    'domains' => [
+        'checkupcodes.com',
+        'elselif.com',
+        'localhost',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |
