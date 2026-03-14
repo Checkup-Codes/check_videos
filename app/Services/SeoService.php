@@ -57,6 +57,15 @@ class SeoService
             }
             
             $logo = WriteImage::where('category', 'logo')->first();
+            
+            // Safely get logo - handle case where column might not exist yet
+            $logoPath = '/images/checkup_codes_logo.png'; // default
+            try {
+                $logoPath = $seo->logo ?? ($logo?->image_path ?? $logoPath);
+            } catch (\Exception $e) {
+                // Column might not exist yet, use fallback
+                $logoPath = $logo?->image_path ?? $logoPath;
+            }
 
             return [
                 // Site Identity
@@ -69,7 +78,7 @@ class SeoService
                 'locale' => $seo->locale ?? 'tr_TR',
                 
                 // Images
-                'logo' => $seo->logo ?? ($logo->image_path ?? '/images/checkup_codes_logo.png'),
+                'logo' => $logoPath,
                 'favicon' => $seo->favicon ?? '/favicon.ico',
                 'appleTouchIcon' => $seo->apple_touch_icon ?? null,
                 'ogImage' => $seo->og_image ?? null,
