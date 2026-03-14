@@ -105,6 +105,152 @@
             </div>
           </div>
 
+          <!-- Logo ve Simgeler -->
+          <div class="rounded-lg border border-border bg-card p-6">
+            <div class="mb-4 flex items-center gap-2">
+              <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                <svg class="h-4 w-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div>
+                <h2 class="text-lg font-semibold text-foreground">Logo ve Simgeler</h2>
+                <p class="text-xs text-muted-foreground">Sitenizin her yerinde kullanılacak logo ve simgeler</p>
+              </div>
+            </div>
+
+            <div class="space-y-6">
+              <!-- Logo -->
+              <div>
+                <label class="mb-2 block text-sm font-medium text-foreground">
+                  Site Logosu <span class="text-destructive">*</span>
+                </label>
+                <div v-if="form.logo" class="relative mb-3 inline-block">
+                  <img :src="form.logo" class="h-20 rounded-lg border border-border bg-white p-2 object-contain" alt="Logo" />
+                  <button 
+                    type="button" 
+                    @click="form.logo = ''" 
+                    class="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <div class="flex items-center gap-3">
+                  <input type="file" ref="logoInput" @change="uploadLogo" accept=".jpg,.jpeg,.png,.svg,.webp" class="hidden" />
+                  <button
+                    type="button"
+                    @click="$refs.logoInput.click()"
+                    :disabled="uploading.logo"
+                    class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent hover:text-accent-foreground disabled:opacity-50"
+                  >
+                    <svg v-if="!uploading.logo" class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span v-if="uploading.logo">Yükleniyor...</span>
+                    <span v-else>Logo Yükle</span>
+                  </button>
+                  <span class="text-xs text-muted-foreground">veya</span>
+                  <input
+                    v-model="form.logo"
+                    type="text"
+                    placeholder="/storage/logo.png"
+                    class="flex h-9 flex-1 rounded-md border border-input bg-background px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  />
+                </div>
+                <p class="mt-1 text-xs text-muted-foreground">Navbar, footer ve tüm sayfalarda kullanılacak (PNG veya SVG önerilir)</p>
+                <InputError :message="form.errors.logo" class="mt-1" />
+              </div>
+
+              <!-- Favicon -->
+              <div>
+                <label class="mb-2 block text-sm font-medium text-foreground">
+                  Favicon (Tarayıcı Simgesi)
+                </label>
+                <div v-if="form.favicon" class="relative mb-3 inline-block">
+                  <img :src="form.favicon" class="h-16 w-16 rounded-lg border border-border bg-white p-1 object-contain" alt="Favicon" />
+                  <button 
+                    type="button" 
+                    @click="form.favicon = ''" 
+                    class="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <div class="flex items-center gap-3">
+                  <input type="file" ref="faviconInput" @change="uploadFavicon" accept=".ico,.png,.svg" class="hidden" />
+                  <button
+                    type="button"
+                    @click="$refs.faviconInput.click()"
+                    :disabled="uploading.favicon"
+                    class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent hover:text-accent-foreground disabled:opacity-50"
+                  >
+                    <svg v-if="!uploading.favicon" class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span v-if="uploading.favicon">Yükleniyor...</span>
+                    <span v-else>Favicon Yükle</span>
+                  </button>
+                  <span class="text-xs text-muted-foreground">veya</span>
+                  <input
+                    v-model="form.favicon"
+                    type="text"
+                    placeholder="/storage/favicon.ico"
+                    class="flex h-9 flex-1 rounded-md border border-input bg-background px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  />
+                </div>
+                <p class="mt-1 text-xs text-muted-foreground">Tarayıcı sekmesinde görünecek küçük simge (32x32 veya 64x64 önerilir)</p>
+                <InputError :message="form.errors.favicon" class="mt-1" />
+              </div>
+
+              <!-- Apple Touch Icon -->
+              <div>
+                <label class="mb-2 block text-sm font-medium text-foreground">
+                  Apple Touch Icon
+                </label>
+                <div v-if="form.apple_touch_icon" class="relative mb-3 inline-block">
+                  <img :src="form.apple_touch_icon" class="h-20 w-20 rounded-lg border border-border bg-white p-1 object-contain" alt="Apple Touch Icon" />
+                  <button 
+                    type="button" 
+                    @click="form.apple_touch_icon = ''" 
+                    class="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <div class="flex items-center gap-3">
+                  <input type="file" ref="appleTouchIconInput" @change="uploadAppleTouchIcon" accept=".png" class="hidden" />
+                  <button
+                    type="button"
+                    @click="$refs.appleTouchIconInput.click()"
+                    :disabled="uploading.appleTouchIcon"
+                    class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent hover:text-accent-foreground disabled:opacity-50"
+                  >
+                    <svg v-if="!uploading.appleTouchIcon" class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span v-if="uploading.appleTouchIcon">Yükleniyor...</span>
+                    <span v-else>Apple Icon Yükle</span>
+                  </button>
+                  <span class="text-xs text-muted-foreground">veya</span>
+                  <input
+                    v-model="form.apple_touch_icon"
+                    type="text"
+                    placeholder="/storage/apple-touch-icon.png"
+                    class="flex h-9 flex-1 rounded-md border border-input bg-background px-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  />
+                </div>
+                <p class="mt-1 text-xs text-muted-foreground">iPhone/iPad ana ekrana eklendiğinde görünecek (180x180 önerilir)</p>
+                <InputError :message="form.errors.apple_touch_icon" class="mt-1" />
+              </div>
+            </div>
+          </div>
+
           <!-- Sosyal Medya Paylaşımı -->
           <div class="rounded-lg border border-border bg-card p-6">
             <div class="mb-4 flex items-center gap-2">
@@ -315,13 +461,20 @@ const props = defineProps({
 });
 
 const uploading = ref({
+  logo: false,
+  favicon: false,
+  appleTouchIcon: false,
   ogImage: false,
 });
 
+const logoInput = ref(null);
+const faviconInput = ref(null);
+const appleTouchIconInput = ref(null);
 const ogImageInput = ref(null);
 
 const form = useForm({
   site_name: props.seo.site_name || '',
+  logo: props.seo.logo || '',
   tagline: props.seo.tagline || '',
   title: props.seo.title || '',
   description: props.seo.description || '',
@@ -350,6 +503,75 @@ const form = useForm({
 
 const submit = () => {
   form.put(route('seo.update'));
+};
+
+const uploadLogo = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  uploading.value.logo = true;
+  const formData = new FormData();
+  formData.append('logo', file);
+  
+  try {
+    const response = await fetch(route('seo.upload-logo'), {
+      method: 'POST',
+      body: formData,
+      headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+    });
+    const data = await response.json();
+    form.logo = data.path;
+  } catch (error) {
+    console.error('Logo upload failed:', error);
+  } finally {
+    uploading.value.logo = false;
+  }
+};
+
+const uploadFavicon = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  uploading.value.favicon = true;
+  const formData = new FormData();
+  formData.append('favicon', file);
+  
+  try {
+    const response = await fetch(route('seo.upload-favicon'), {
+      method: 'POST',
+      body: formData,
+      headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+    });
+    const data = await response.json();
+    form.favicon = data.path;
+  } catch (error) {
+    console.error('Favicon upload failed:', error);
+  } finally {
+    uploading.value.favicon = false;
+  }
+};
+
+const uploadAppleTouchIcon = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  uploading.value.appleTouchIcon = true;
+  const formData = new FormData();
+  formData.append('apple_touch_icon', file);
+  
+  try {
+    const response = await fetch(route('seo.upload-apple-touch-icon'), {
+      method: 'POST',
+      body: formData,
+      headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+    });
+    const data = await response.json();
+    form.apple_touch_icon = data.path;
+  } catch (error) {
+    console.error('Apple Touch Icon upload failed:', error);
+  } finally {
+    uploading.value.appleTouchIcon = false;
+  }
 };
 
 const uploadOgImage = async (event) => {

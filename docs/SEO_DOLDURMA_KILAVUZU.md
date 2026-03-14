@@ -34,6 +34,26 @@ tarih, osmanlı, kültür, sanat, akademisyen, yazar, röportaj, video
 ```
 ✅ Virgülle ayırın, 5-10 kelime yeterli
 
+### Logo ve Simgeler
+
+**Site Logosu:**
+- Profesyonel bir logo veya imza
+- PNG veya SVG formatı önerilir
+- Şeffaf arka plan tercih edilir
+- Navbar, footer ve tüm sayfalarda görünecek
+- Örnek boyut: 200x60 piksel (genişlik x yükseklik)
+
+**Favicon (Tarayıcı Simgesi):**
+- Küçük, basit bir simge
+- 32x32 veya 64x64 piksel
+- ICO, PNG veya SVG formatı
+- Tarayıcı sekmesinde görünecek
+
+**Apple Touch Icon:**
+- iPhone/iPad ana ekran simgesi
+- 180x180 piksel PNG
+- Köşeler otomatik yuvarlanır
+
 ### Sosyal Medya
 
 **Twitter Hesabı:**
@@ -86,6 +106,24 @@ Laravel, Vue.js, React ve modern web teknolojileri üzerine Türkçe içerikler.
 ```
 yazılım, laravel, vue, react, javascript, php, tutorial, kod, web geliştirme
 ```
+
+### Logo ve Simgeler
+
+**Site Logosu:**
+- Marka logosu (Check-up Codes yazısı + simge)
+- SVG formatı (ölçeklenebilir)
+- Koyu ve açık tema için iki versiyon hazırlanabilir
+- Örnek: `/storage/logo.svg`
+
+**Favicon:**
+- "C" harfi veya kod simgesi
+- 32x32 piksel
+- Basit, tanınabilir
+
+**Apple Touch Icon:**
+- Tam logo veya simge
+- 180x180 piksel
+- Renkli, dikkat çekici
 
 ### Sosyal Medya
 

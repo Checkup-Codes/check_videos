@@ -30,6 +30,7 @@ class Seo extends Model
         'domain', // Multi-tenancy support
         // Site Identity
         'site_name',
+        'logo',
         'tagline',
         'title',
         'description',

@@ -69,7 +69,7 @@ class SeoService
                 'locale' => $seo->locale ?? 'tr_TR',
                 
                 // Images
-                'logo' => $logo->image_path ?? '/images/checkup_codes_logo.png',
+                'logo' => $seo->logo ?? ($logo->image_path ?? '/images/checkup_codes_logo.png'),
                 'favicon' => $seo->favicon ?? '/favicon.ico',
                 'appleTouchIcon' => $seo->apple_touch_icon ?? null,
                 'ogImage' => $seo->og_image ?? null,
@@ -179,6 +179,9 @@ class SeoService
             'robots' => $global['robots'],
             'language' => $global['language'],
             'locale' => $global['locale'],
+            
+            // Images
+            'logo' => $global['logo'],
             
             // Open Graph
             'og' => [

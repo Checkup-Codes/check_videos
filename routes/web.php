@@ -163,6 +163,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // SEO Management
     Route::get('/seo', [SeoController::class, 'edit'])->name('seo.edit');
     Route::put('/seo', [SeoController::class, 'update'])->name('seo.update');
+    Route::post('/seo/logo', [SeoController::class, 'uploadLogo'])->name('seo.upload-logo');
     Route::post('/seo/favicon', [SeoController::class, 'uploadFavicon'])->name('seo.upload-favicon');
     Route::post('/seo/og-image', [SeoController::class, 'uploadOgImage'])->name('seo.upload-og-image');
     Route::post('/seo/apple-touch-icon', [SeoController::class, 'uploadAppleTouchIcon'])->name('seo.upload-apple-touch-icon');

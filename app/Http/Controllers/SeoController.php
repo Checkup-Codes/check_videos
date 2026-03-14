@@ -68,6 +68,7 @@ class SeoController extends Controller
         $validated = $request->validate([
             // Site Identity
             'site_name' => 'required|string|max:100',
+            'logo' => 'nullable|string|max:500',
             'tagline' => 'nullable|string|max:255',
             'title' => 'required|string|max:70',
             'description' => 'required|string|max:160',
@@ -118,6 +119,31 @@ class SeoController extends Controller
         app(SeoService::class)->clearCache();
 
         return redirect()->back()->with('success', 'SEO ayarları başarıyla güncellendi.');
+    }
+
+    /**
+     * Upload logo
+     */
+    public function uploadLogo(Request $request)
+    {
+        $request->validate([
+            'logo' => 'required|image|mimes:jpg,jpeg,png,svg,webp|max:2048',
+        ]);
+
+        $path = $request->file('logo')->store('seo', 'public');
+        
+        $domain = request()->getHost();
+        $seo = Seo::where('domain', $domain)->first();
+        
+        if (!$seo) {
+            $seo = Seo::whereNull('domain')->orWhere('domain', '')->first();
+        }
+        
+        $seo->update(['logo' => '/storage/' . $path]);
+
+        app(SeoService::class)->clearCache();
+
+        return response()->json(['path' => '/storage/' . $path]);
     }
 
     /**
