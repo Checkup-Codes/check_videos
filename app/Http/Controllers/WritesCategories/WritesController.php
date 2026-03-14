@@ -163,13 +163,45 @@ class WritesController extends Controller
         // Increment view count asynchronously (doesn't block page load)
         $this->writeService->incrementViewCount($writeBasic['data']);
 
+        // Generate structured data for article
+        $seoService = app(\App\Services\SeoService::class);
+        $write = $writeBasic['data'];
+        
+        $structuredData = [
+            $seoService->getArticleSchema([
+                'title' => $write->title,
+                'description' => $write->summary ?? strip_tags(substr($write->content ?? '', 0, 160)),
+                'url' => route('writes.show', $write->slug),
+                'published_at' => $write->published_at?->toIso8601String(),
+                'created_at' => $write->created_at->toIso8601String(),
+                'updated_at' => $write->updated_at->toIso8601String(),
+                'author_name' => $write->author->name ?? null,
+                'image' => $write->featured_image ? url($write->featured_image) : null,
+            ]),
+        ];
+
+        // Add breadcrumb schema
+        $breadcrumbs = [
+            ['name' => 'Ana Sayfa', 'url' => url('/')],
+            ['name' => 'Yazılar', 'url' => route('writes.index')],
+        ];
+        
+        if ($write->category) {
+            $breadcrumbs[] = ['name' => $write->category->name, 'url' => route('writes.category', $write->category->slug)];
+        }
+        
+        $breadcrumbs[] = ['name' => $write->title, 'url' => route('writes.show', $write->slug)];
+        
+        $structuredData[] = $seoService->getBreadcrumbSchema($breadcrumbs);
+
         return inertia('WritesCategories/Writes/ShowWrite', [
             'writes'     => $writesResult['data'], // Sidebar data
-            'write'      => $writeBasic['data'],
+            'write'      => $write,
             'categories' => $categoriesResult['data'], // All categories for breadcrumb and sidebar
-            'screen'     => $this->writeService->getScreenData($writeBasic['data']->title),
+            'screen'     => $this->writeService->getScreenData($write->title),
             'showDraw'   => filter_var(request()->query('showDraw', false), FILTER_VALIDATE_BOOLEAN),
-            'isAdmin'    => $isAdmin
+            'isAdmin'    => $isAdmin,
+            'structuredData' => $structuredData,
         ]);
     }
 

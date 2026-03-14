@@ -24,6 +24,7 @@ class TestAnswer extends Model
         'result_id',
         'question_id',
         'option_id',
+        'answer_text',
         'is_correct',
     ];
 

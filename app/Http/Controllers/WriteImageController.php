@@ -31,11 +31,19 @@ class WriteImageController extends Controller
     public function store(Request $request)
     {
         try {
+            // Debug: Request içeriğini logla
+            Log::info('Write image upload request', [
+                'has_files' => $request->hasFile('images'),
+                'files_count' => $request->hasFile('images') ? count($request->file('images')) : 0,
+                'category' => $request->category,
+                'related_id' => $request->related_id,
+            ]);
+
             $request->validate([
                 'category' => 'required|string|in:' . implode(',', array_keys(WriteImage::getCategories())),
                 'related_id' => 'nullable|uuid',
                 'images' => 'required|array',
-                'images.*' => 'required|image|max:5120', // 5MB limit
+                'images.*' => 'required|file|mimes:jpeg,jpg,png,gif,webp,svg|max:2048', // 2MB limit (PHP upload_max_filesize)
                 'titles' => 'array',
                 'titles.*' => 'nullable|string|max:255',
                 'alt_texts' => 'array',
@@ -156,6 +164,53 @@ class WriteImageController extends Controller
             Log::error('Write image update failed: ' . $e->getMessage());
             return response()->json([
                 'message' => 'Resim bilgileri güncellenirken bir hata oluştu'
+            ], 500);
+        }
+    }
+
+    /**
+     * Kullanılmayan resimleri temizle
+     * İçerikte olmayan resimleri sil
+     */
+    public function cleanup(Request $request)
+    {
+        try {
+            $request->validate([
+                'write_id' => 'required|uuid',
+                'used_images' => 'required|array',
+                'used_images.*' => 'string',
+            ]);
+
+            // Bu write'a ait tüm resimleri al
+            $allImages = WriteImage::where('related_id', $request->write_id)
+                ->where('category', 'writes')
+                ->get();
+
+            $deletedCount = 0;
+
+            foreach ($allImages as $image) {
+                // Eğer resim kullanılmıyorsa sil
+                if (!in_array($image->image_path, $request->used_images)) {
+                    // Dosyayı storage'dan sil
+                    $path = str_replace('/storage/', 'public/', $image->image_path);
+                    if (Storage::exists($path)) {
+                        Storage::delete($path);
+                    }
+
+                    // Veritabanından sil
+                    $image->delete();
+                    $deletedCount++;
+                }
+            }
+
+            return response()->json([
+                'message' => 'Temizlik tamamlandı',
+                'deleted_count' => $deletedCount
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Write image cleanup failed: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Temizlik sırasında bir hata oluştu'
             ], 500);
         }
     }

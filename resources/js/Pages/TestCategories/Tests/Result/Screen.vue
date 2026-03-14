@@ -208,9 +208,9 @@
                 :class="{
                   'border-green-500 bg-green-100 dark:bg-green-900': option.is_correct,
                   'border-red-500 bg-red-100 dark:bg-red-900':
-                    !option.is_correct && (answer.option_id === option.id || answer.option?.id === option.id),
+                    !option.is_correct && answer.selected_option_ids && answer.selected_option_ids.includes(option.id),
                   'border-border bg-background':
-                    !option.is_correct && answer.option_id !== option.id && answer.option?.id !== option.id,
+                    !option.is_correct && (!answer.selected_option_ids || !answer.selected_option_ids.includes(option.id)),
                 }"
               >
                 <span class="font-medium text-muted-foreground">{{ String.fromCharCode(65 + optIndex) }}.</span>
@@ -223,7 +223,7 @@
                     Doğru Cevap
                   </span>
                   <span
-                    v-if="!option.is_correct && (answer.option_id === option.id || answer.option?.id === option.id)"
+                    v-if="!option.is_correct && answer.selected_option_ids && answer.selected_option_ids.includes(option.id)"
                     class="rounded-md bg-red-500 px-2 py-1 text-xs font-medium text-white"
                   >
                     Sizin Cevabınız
@@ -296,16 +296,48 @@ const copyButtonText = ref('Mesajı Kopyala');
 // Handle different result structures for logged in vs guest
 const resultAnswers = computed(() => {
   if (isGuest && result.answers) {
-    // For guests, answers is an array of objects with question, option, is_correct
-    return result.answers.map((answer, index) => ({
-      id: `guest-answer-${index}`,
-      question: answer.question,
-      option: answer.option,
-      is_correct: answer.is_correct,
-    }));
+    // For guests, group answers by question_id since multiple options can be selected
+    const groupedAnswers = {};
+    result.answers.forEach((answer) => {
+      const questionId = answer.question.id;
+      if (!groupedAnswers[questionId]) {
+        groupedAnswers[questionId] = {
+          id: `guest-answer-${questionId}`,
+          question: answer.question,
+          selected_option_ids: [],
+          is_correct: answer.is_correct,
+          answer_text: answer.answer_text,
+        };
+      }
+      if (answer.option_id) {
+        groupedAnswers[questionId].selected_option_ids.push(answer.option_id);
+      }
+    });
+    return Object.values(groupedAnswers);
   }
-  // For logged in users, answers comes from DB
-  return result.answers || [];
+  
+  // For logged in users, group answers by question_id
+  if (result.answers) {
+    const groupedAnswers = {};
+    result.answers.forEach((answer) => {
+      const questionId = answer.question?.id || answer.question_id;
+      if (!groupedAnswers[questionId]) {
+        groupedAnswers[questionId] = {
+          id: answer.id,
+          question: answer.question,
+          selected_option_ids: [],
+          is_correct: answer.is_correct,
+          answer_text: answer.answer_text,
+        };
+      }
+      if (answer.option_id) {
+        groupedAnswers[questionId].selected_option_ids.push(answer.option_id);
+      }
+    });
+    return Object.values(groupedAnswers);
+  }
+  
+  return [];
 });
 
 // Score color based on percentage

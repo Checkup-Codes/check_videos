@@ -16,13 +16,21 @@ class SeoController extends Controller
      */
     public function edit()
     {
-        $seo = Seo::first();
-        $logo = WriteImage::where('category', 'logo')->first();
-
-        // If no SEO record exists, create default one
+        $domain = request()->getHost();
+        
+        // Get SEO data for current domain
+        $seo = Seo::where('domain', $domain)->first();
+        
+        // Fallback to default domain if not found
+        if (!$seo) {
+            $seo = Seo::whereNull('domain')->orWhere('domain', '')->first();
+        }
+        
+        // If no SEO record exists, create default one for this domain
         if (!$seo) {
             $seo = Seo::create([
                 'route' => 'home',
+                'domain' => $domain,
                 'site_name' => config('app.name'),
                 'title' => config('app.name'),
                 'description' => 'Site açıklaması',
@@ -31,11 +39,14 @@ class SeoController extends Controller
                 'robots' => 'index, follow',
             ]);
         }
+        
+        $logo = WriteImage::where('category', 'logo')->first();
 
         return Inertia::render('Seo/Edit', [
             'seo' => $seo,
             'logo' => $logo,
             'screen' => $this->getScreenData('SEO Ayarları'),
+            'currentDomain' => $domain,
         ]);
     }
 
@@ -44,7 +55,15 @@ class SeoController extends Controller
      */
     public function update(Request $request)
     {
-        $seo = Seo::first();
+        $domain = request()->getHost();
+        
+        // Get SEO data for current domain
+        $seo = Seo::where('domain', $domain)->first();
+        
+        // Fallback to default domain if not found
+        if (!$seo) {
+            $seo = Seo::whereNull('domain')->orWhere('domain', '')->first();
+        }
 
         $validated = $request->validate([
             // Site Identity
@@ -90,6 +109,9 @@ class SeoController extends Controller
             $validated['schema_org'] = json_decode($validated['schema_org'], true);
         }
 
+        // Ensure domain is set
+        $validated['domain'] = $domain;
+
         $seo->update($validated);
 
         // Clear SEO cache
@@ -109,7 +131,13 @@ class SeoController extends Controller
 
         $path = $request->file('favicon')->store('seo', 'public');
         
-        $seo = Seo::first();
+        $domain = request()->getHost();
+        $seo = Seo::where('domain', $domain)->first();
+        
+        if (!$seo) {
+            $seo = Seo::whereNull('domain')->orWhere('domain', '')->first();
+        }
+        
         $seo->update(['favicon' => '/storage/' . $path]);
 
         app(SeoService::class)->clearCache();
@@ -128,7 +156,13 @@ class SeoController extends Controller
 
         $path = $request->file('og_image')->store('seo', 'public');
         
-        $seo = Seo::first();
+        $domain = request()->getHost();
+        $seo = Seo::where('domain', $domain)->first();
+        
+        if (!$seo) {
+            $seo = Seo::whereNull('domain')->orWhere('domain', '')->first();
+        }
+        
         $seo->update(['og_image' => '/storage/' . $path]);
 
         app(SeoService::class)->clearCache();
@@ -147,7 +181,13 @@ class SeoController extends Controller
 
         $path = $request->file('apple_touch_icon')->store('seo', 'public');
         
-        $seo = Seo::first();
+        $domain = request()->getHost();
+        $seo = Seo::where('domain', $domain)->first();
+        
+        if (!$seo) {
+            $seo = Seo::whereNull('domain')->orWhere('domain', '')->first();
+        }
+        
         $seo->update(['apple_touch_icon' => '/storage/' . $path]);
 
         app(SeoService::class)->clearCache();

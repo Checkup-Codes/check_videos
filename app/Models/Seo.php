@@ -27,6 +27,7 @@ class Seo extends Model
 
     protected $fillable = [
         'route',
+        'domain', // Multi-tenancy support
         // Site Identity
         'site_name',
         'tagline',

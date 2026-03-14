@@ -208,16 +208,17 @@ class TestService
             foreach ($questions as $questionData) {
                 $question = $test->questions()->create([
                     'question_text' => $questionData['question_text'],
-                    'question_type' => $questionData['question_type'] ?? 'multiple_choice',
+                    'question_type' => $questionData['question_type'] ?? 'single_choice',
                     'order' => $questionData['order'] ?? $totalQuestions,
                     'points' => $questionData['points'] ?? 20,
                     'explanation' => $questionData['explanation'] ?? null,
+                    'correct_answer' => $questionData['correct_answer'] ?? null, // For true_false questions
                 ]);
                 
                 $totalPoints += $question->points;
                 $totalQuestions++;
                 
-                // Save options
+                // Save options for single_choice and multiple_choice
                 if (isset($questionData['options']) && is_array($questionData['options'])) {
                     foreach ($questionData['options'] as $index => $optionData) {
                         $question->options()->create([
@@ -255,19 +256,44 @@ class TestService
         $processedAnswers = [];
         foreach ($answers as $answerData) {
             $question = TestQuestion::findOrFail($answerData['question_id']);
-            $selectedOption = isset($answerData['option_id']) ? TestOption::find($answerData['option_id']) : null;
             
             $isCorrect = false;
-            if ($selectedOption) {
-                $isCorrect = $selectedOption->is_correct;
+            $selectedOptions = [];
+            
+            // Handle single choice and multiple choice with option IDs
+            if (isset($answerData['option_ids']) && is_array($answerData['option_ids'])) {
+                $selectedOptions = TestOption::whereIn('id', $answerData['option_ids'])->get();
+                
+                // Get all correct options for this question
+                $correctOptions = $question->options()->where('is_correct', true)->pluck('id')->toArray();
+                $selectedOptionIds = collect($selectedOptions)->pluck('id')->toArray();
+                
+                // Check if selected options match correct options exactly
+                sort($correctOptions);
+                sort($selectedOptionIds);
+                $isCorrect = $correctOptions === $selectedOptionIds;
+                
                 if ($isCorrect) {
                     $correctAnswers++;
+                }
+            }
+            // Handle true/false questions
+            elseif (isset($answerData['answer_text'])) {
+                if ($question->question_type === 'true_false') {
+                    $userAnswer = $answerData['answer_text'] === 'true' || $answerData['answer_text'] === true;
+                    $correctAnswer = $question->correct_answer === true || $question->correct_answer === 'true' || $question->correct_answer === 1;
+                    $isCorrect = $userAnswer === $correctAnswer;
+                    
+                    if ($isCorrect) {
+                        $correctAnswers++;
+                    }
                 }
             }
             
             $processedAnswers[] = [
                 'question' => $question,
-                'option' => $selectedOption,
+                'options' => $selectedOptions,
+                'answer_text' => $answerData['answer_text'] ?? null,
                 'is_correct' => $isCorrect,
             ];
         }
@@ -295,12 +321,28 @@ class TestService
                 
                 // Process answers and save to DB
                 foreach ($processedAnswers as $answerData) {
-                    TestAnswer::create([
-                        'result_id' => $result->id,
-                        'question_id' => $answerData['question']->id,
-                        'option_id' => $answerData['option'] ? $answerData['option']->id : null,
-                        'is_correct' => $answerData['is_correct'],
-                    ]);
+                    // For multiple choice with multiple answers, save each selected option
+                    if (!empty($answerData['options'])) {
+                        foreach ($answerData['options'] as $option) {
+                            TestAnswer::create([
+                                'result_id' => $result->id,
+                                'question_id' => $answerData['question']->id,
+                                'option_id' => $option->id,
+                                'answer_text' => null,
+                                'is_correct' => $answerData['is_correct'],
+                            ]);
+                        }
+                    }
+                    // For text-based answers
+                    else {
+                        TestAnswer::create([
+                            'result_id' => $result->id,
+                            'question_id' => $answerData['question']->id,
+                            'option_id' => null,
+                            'answer_text' => $answerData['answer_text'],
+                            'is_correct' => $answerData['is_correct'],
+                        ]);
+                    }
                 }
                 
                 DB::commit();
@@ -317,13 +359,29 @@ class TestService
         // For guests, return result data without saving to DB
         $guestAnswers = [];
         foreach ($processedAnswers as $index => $answerData) {
-            $guestAnswers[] = (object)[
-                'id' => 'guest-answer-' . $index,
-                'question' => $answerData['question']->load('options'),
-                'option' => $answerData['option'],
-                'option_id' => $answerData['option'] ? $answerData['option']->id : null,
-                'is_correct' => $answerData['is_correct'],
-            ];
+            if (!empty($answerData['options'])) {
+                // Multiple choice with multiple answers
+                foreach ($answerData['options'] as $optIndex => $option) {
+                    $guestAnswers[] = (object)[
+                        'id' => 'guest-answer-' . $index . '-' . $optIndex,
+                        'question' => $answerData['question']->load('options'),
+                        'option' => $option,
+                        'option_id' => $option->id,
+                        'answer_text' => null,
+                        'is_correct' => $answerData['is_correct'],
+                    ];
+                }
+            } else {
+                // Text-based answers
+                $guestAnswers[] = (object)[
+                    'id' => 'guest-answer-' . $index,
+                    'question' => $answerData['question']->load('options'),
+                    'option' => null,
+                    'option_id' => null,
+                    'answer_text' => $answerData['answer_text'],
+                    'is_correct' => $answerData['is_correct'],
+                ];
+            }
         }
         
         return [
@@ -363,6 +421,68 @@ class TestService
             null,
             $isMobile
         );
+    }
+
+    /**
+     * Bulk create test from JSON data
+     */
+    public function bulkCreateTest(array $data)
+    {
+        $startTime = microtime(true);
+
+        DB::beginTransaction();
+        try {
+            // Create test
+            $test = Test::create([
+                'title' => $data['title'],
+                'slug' => $data['slug'],
+                'description' => $data['description'] ?? null,
+                'status' => $data['status'] ?? 'draft',
+                'category_id' => $data['category_id'] ?? null,
+                'author_id' => Auth::id() ?? 1, // Add author_id
+                'published_at' => $data['status'] === 'published' ? now() : null,
+                'total_questions' => count($data['questions']),
+                'total_points' => array_sum(array_column($data['questions'], 'points')),
+            ]);
+
+            // Create questions and options
+            foreach ($data['questions'] as $index => $questionData) {
+                $question = TestQuestion::create([
+                    'test_id' => $test->id,
+                    'question_text' => $questionData['question_text'],
+                    'question_type' => $questionData['question_type'],
+                    'points' => $questionData['points'] ?? 10,
+                    'order' => $questionData['order'] ?? ($index + 1),
+                    'explanation' => $questionData['explanation'] ?? null,
+                    'correct_answer' => $questionData['correct_answer'] ?? null,
+                ]);
+
+                // Create options for single_choice and multiple_choice questions
+                if (($questionData['question_type'] === 'single_choice' || $questionData['question_type'] === 'multiple_choice') && isset($questionData['options'])) {
+                    foreach ($questionData['options'] as $optionIndex => $optionData) {
+                        TestOption::create([
+                            'question_id' => $question->id,
+                            'option_text' => $optionData['option_text'],
+                            'is_correct' => $optionData['is_correct'] ?? false,
+                            'order' => $optionIndex + 1,
+                        ]);
+                    }
+                }
+            }
+
+            DB::commit();
+
+            $executionTime = microtime(true) - $startTime;
+
+            return [
+                'success' => true,
+                'data' => $test->fresh()->load(['questions.options']),
+                'execution_time' => $this->formatExecutionTime($executionTime),
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 }
 

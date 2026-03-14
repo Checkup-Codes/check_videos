@@ -89,6 +89,21 @@
     </script>
     @endif
 
+    <!-- Dynamic Page Schema (from Inertia props) -->
+    @if(isset($page['props']['structuredData']))
+        @if(is_array($page['props']['structuredData']) && isset($page['props']['structuredData'][0]))
+            @foreach($page['props']['structuredData'] as $schema)
+            <script type="application/ld+json">
+                {!! json_encode($schema) !!}
+            </script>
+            @endforeach
+        @else
+            <script type="application/ld+json">
+                {!! json_encode($page['props']['structuredData']) !!}
+            </script>
+        @endif
+    @endif
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

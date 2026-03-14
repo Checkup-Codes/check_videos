@@ -85,15 +85,6 @@
           />
         </div>
 
-        <!-- Resim Yükleme Paneli -->
-        <div class="md:col-span-2">
-          <WriteImageUploader
-            :write-id="writeData.id"
-            category="writes"
-            @insert-image="handleInsertImage"
-          />
-        </div>
-
         <div ref="statusRef" class="md:col-span-2">
           <label class="mb-2 block text-sm font-medium text-foreground">Durumu</label>
           <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -228,34 +219,16 @@
         </div>
 
         <div>
-          <label class="mb-1 block text-sm font-medium text-foreground">Etiketler</label>
-          <input
-            type="text"
-            :value="form.tags"
-            @input="handleTagsInput"
-            @blur="formatTags"
-            placeholder="etiket1, etiket2, etiket3"
-            class="flex h-9 w-full rounded border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-            :class="{ 'border-destructive': errors.tags || form.errors.tags }"
-          />
-          <p class="mt-1 text-xs text-muted-foreground">Virgülle ayırın. Otomatik olarak # eklenecek.</p>
-          <p v-if="errors.tags || form.errors.tags" class="mt-1 text-xs text-destructive">
-            {{ errors.tags || form.errors.tags }}
-          </p>
-        </div>
-
-        <div>
           <label class="mb-1 block text-sm font-medium text-foreground">SEO Anahtar Kelimeleri</label>
           <input
             type="text"
             :value="form.seo_keywords"
-            @input="handleKeywordsInput"
-            @blur="formatKeywords"
+            @input="form.seo_keywords = $event.target.value"
             placeholder="anahtar1, anahtar2, anahtar3"
             class="flex h-9 w-full rounded border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             :class="{ 'border-destructive': errors.seo_keywords || form.errors.seo_keywords }"
           />
-          <p class="mt-1 text-xs text-muted-foreground">Virgülle ayırın. Otomatik olarak # eklenecek.</p>
+          <p class="mt-1 text-xs text-muted-foreground">Virgülle ayırın.</p>
           <p v-if="errors.seo_keywords || form.errors.seo_keywords" class="mt-1 text-xs text-destructive">
             {{ errors.seo_keywords || form.errors.seo_keywords }}
           </p>
@@ -400,21 +373,11 @@
         </div>
       </div>
 
-      <!-- Base64 Uyarısı -->
-      <div v-if="hasBase64Images" class="rounded-md border border-destructive bg-destructive/10 p-3">
-        <div class="flex items-center gap-2 text-sm text-destructive">
-          <svg class="h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-          </svg>
-          <span>İçerikte base64 formatında resim var. Lütfen resimleri yukarıdaki "Resim Yükle" panelinden yükleyin ve editöre ekleyin.</span>
-        </div>
-      </div>
-
       <div class="flex justify-end gap-2 pt-2">
         <button
           type="submit"
           class="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-          :disabled="form.processing || hasBase64Images"
+          :disabled="form.processing"
         >
           <svg
             v-if="form.processing"
@@ -441,7 +404,7 @@
 import { ref, onMounted, watch, onUnmounted, computed, nextTick } from 'vue';
 import { useForm, usePage, router } from '@inertiajs/vue3';
 import RichTextEditor from '@/Pages/WritesCategories/_components/RichTextEditor.vue';
-import WriteImageUploader from '@/Components/WriteImageUploader.vue';
+import axios from 'axios';
 import DiagramGeneratorModal from '@/Components/DiagramGeneratorModal.vue';
 
 // Field refs for scroll to error
@@ -460,20 +423,6 @@ const showDiagramModal = ref(false);
 const handleDiagramSuccess = () => {
   // Modal will handle page reload
   console.log('Diagram generated successfully');
-};
-
-// Base64 resim kontrolü
-const hasBase64Images = computed(() => {
-  if (!form.content) return false;
-  // data:image ile başlayan base64 resimleri kontrol et
-  return /data:image\/[^;]+;base64,/.test(form.content);
-});
-
-// Resim ekleme handler
-const handleInsertImage = (image) => {
-  if (richTextEditorRef.value) {
-    richTextEditorRef.value.insertImage(image.full_url, image.alt_text);
-  }
 };
 
 // Özet input handler - aynı zamanda meta_description'ı da günceller
@@ -532,56 +481,6 @@ const getInitials = (name) => {
     .map((word) => word[0])
     .join('')
     .toUpperCase();
-};
-
-/**
- * Format tags - add # prefix if not present
- * @param {String} tags - Comma separated tags
- * @returns {String} Formatted tags with # prefix
- */
-const formatTagsString = (tags) => {
-  if (!tags) return '';
-  return tags
-    .split(',')
-    .map((tag) => {
-      const trimmed = tag.trim();
-      if (!trimmed) return '';
-      return trimmed.startsWith('#') ? trimmed : `#${trimmed}`;
-    })
-    .filter(Boolean)
-    .join(', ');
-};
-
-/**
- * Handle tags input
- */
-const handleTagsInput = (event) => {
-  form.tags = event.target.value;
-};
-
-/**
- * Format tags on blur
- */
-const formatTags = () => {
-  if (form.tags) {
-    form.tags = formatTagsString(form.tags);
-  }
-};
-
-/**
- * Handle keywords input
- */
-const handleKeywordsInput = (event) => {
-  form.seo_keywords = event.target.value;
-};
-
-/**
- * Format keywords on blur
- */
-const formatKeywords = () => {
-  if (form.seo_keywords) {
-    form.seo_keywords = formatTagsString(form.seo_keywords);
-  }
 };
 
 defineOptions({
@@ -1016,7 +915,17 @@ watch(
     if (isInitialMount.value) {
       return;
     }
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newVal));
+    
+    // Content'i hariç tut (data URL'ler çok büyük)
+    const { content, processing, ...formDataToSave } = newVal;
+    
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(formDataToSave));
+    } catch (e) {
+      // QuotaExceededError - localStorage dolu, temizle
+      console.warn('localStorage quota exceeded, clearing old data');
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+    }
   },
   { deep: true }
 );
@@ -1069,9 +978,112 @@ onUnmounted(() => {
   }
 });
 
-const updateWrite = () => {
+const updateWrite = async () => {
   if (!validateForm()) {
     return;
+  }
+
+  // Editördeki pending image'ları al
+  const pendingImages = richTextEditorRef.value?.getPendingImages() || [];
+  
+  if (pendingImages.length > 0) {
+    form.processing = true;
+    
+    try {
+      // Önce resimleri yükle
+      const formData = new FormData();
+      formData.append('category', 'writes');
+      formData.append('related_id', writeData.value.id);
+      
+      pendingImages.forEach((img, index) => {
+        formData.append(`images[${index}]`, img.file);
+        formData.append(`titles[${index}]`, img.fileName);
+        formData.append(`alt_texts[${index}]`, img.fileName);
+      });
+      
+      const response = await axios.post('/write-images', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      // Blob URL'leri gerçek URL'lerle değiştir
+      const urlMapping = {};
+      response.data.images.forEach((uploadedImage, index) => {
+        const pendingImage = pendingImages[index];
+        if (pendingImage) {
+          urlMapping[pendingImage.dataUrl] = uploadedImage.image_path;
+        }
+      });
+      
+      // Editördeki blob URL'leri değiştir
+      richTextEditorRef.value?.replaceBlobUrls(urlMapping);
+      
+      // Güncellenmiş içeriği al
+      await nextTick();
+      
+      // Pending images'ı temizle
+      richTextEditorRef.value?.clearPendingImages();
+      
+    } catch (error) {
+      form.processing = false;
+      console.error('Image upload error:', error);
+      
+      // Daha detaylı hata mesajı
+      let errorMessage = 'Resimler yüklenirken bir hata oluştu.';
+      
+      if (error.response) {
+        // Server response error
+        if (error.response.status === 422) {
+          // Validation error
+          const validationErrors = error.response.data.errors;
+          if (validationErrors) {
+            const firstError = Object.values(validationErrors)[0];
+            if (Array.isArray(firstError)) {
+              errorMessage = firstError[0];
+            } else {
+              errorMessage = firstError;
+            }
+          } else if (error.response.data.message) {
+            errorMessage = error.response.data.message;
+          }
+        } else if (error.response.data?.message) {
+          errorMessage = error.response.data.message;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      errors.value.content = errorMessage;
+      scrollToError();
+      return;
+    }
+  }
+
+  // Kullanılmayan resimleri temizle
+  try {
+    // İçerikteki tüm resim URL'lerini al
+    const imagesInContent = richTextEditorRef.value?.getImagesInContent() || [];
+    
+    // Sadece bu write'a ait resimleri filtrele
+    const contentImagePaths = imagesInContent
+      .filter(url => url.includes('/storage/writes/'))
+      .map(url => {
+        // Full URL'den path'i çıkar
+        const urlObj = new URL(url, window.location.origin);
+        return urlObj.pathname;
+      });
+
+    // Kullanılmayan resimleri backend'e bildir
+    if (writeData.value.id) {
+      await axios.post('/write-images/cleanup', {
+        write_id: writeData.value.id,
+        used_images: contentImagePaths,
+      });
+    }
+  } catch (error) {
+    // Cleanup hatası kritik değil, sadece log'la
+    console.warn('Image cleanup failed:', error);
   }
 
   form.put(route('writes.update', { write: writeData.value.slug }), {

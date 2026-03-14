@@ -217,7 +217,19 @@
               </p>
             </div>
 
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <div>
+                <label class="mb-1 block text-sm font-medium text-foreground">Soru Tipi *</label>
+                <select
+                  v-model="question.question_type"
+                  @change="onQuestionTypeChange(questionIndex)"
+                  class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <option value="single_choice">Tek Doğru Cevap</option>
+                  <option value="multiple_choice">Birden Fazla Doğru Cevap</option>
+                  <option value="true_false">Doğru/Yanlış</option>
+                </select>
+              </div>
               <div>
                 <label class="mb-1 block text-sm font-medium text-foreground">Puan</label>
                 <input
@@ -239,10 +251,10 @@
               </div>
             </div>
 
-            <!-- Options -->
-            <div class="space-y-3">
+            <!-- Single Choice Options (Radio) -->
+            <div v-if="question.question_type === 'single_choice'" class="space-y-3">
               <div class="flex items-center justify-between">
-                <label class="block text-sm font-medium text-foreground">Şıklar *</label>
+                <label class="block text-sm font-medium text-foreground">Şıklar * (Tek doğru cevap seçin)</label>
                 <button
                   type="button"
                   @click="addOption(questionIndex)"
@@ -320,6 +332,124 @@
               >
                 {{ errors[`questions.${questionIndex}.options`] || form.errors[`questions.${questionIndex}.options`] }}
               </p>
+            </div>
+
+            <!-- Multiple Choice Options (Checkbox) -->
+            <div v-else-if="question.question_type === 'multiple_choice'" class="space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="block text-sm font-medium text-foreground">Şıklar * (Birden fazla doğru cevap seçebilirsiniz)</label>
+                <button
+                  type="button"
+                  @click="addOption(questionIndex)"
+                  class="inline-flex h-8 items-center justify-center gap-1 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground hover:bg-accent"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-3 w-3"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  Şık Ekle
+                </button>
+              </div>
+
+              <div
+                v-for="(option, optionIndex) in question.options"
+                :key="optionIndex"
+                class="flex items-start gap-3 rounded-lg border border-border bg-background p-3"
+              >
+                <div class="flex-1 space-y-2">
+                  <div class="flex items-center gap-2">
+                    <span class="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground">
+                      {{ String.fromCharCode(65 + optionIndex) }}
+                    </span>
+                    <input
+                      type="text"
+                      v-model="option.option_text"
+                      :placeholder="`Şık ${optionIndex + 1} metni`"
+                      class="flex-1 rounded-md border border-input bg-background px-3 py-1.5 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      :class="{
+                        'border-destructive focus-visible:ring-destructive':
+                          errors[`questions.${questionIndex}.options.${optionIndex}.option_text`] ||
+                          form.errors[`questions.${questionIndex}.options.${optionIndex}.option_text`],
+                      }"
+                    />
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <label class="flex cursor-pointer items-center gap-2">
+                    <input
+                      type="checkbox"
+                      v-model="option.is_correct"
+                      class="h-4 w-4 cursor-pointer rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <span class="text-xs text-muted-foreground">Doğru</span>
+                  </label>
+                  <button
+                    v-if="question.options.length > 2"
+                    type="button"
+                    @click="removeOption(questionIndex, optionIndex)"
+                    class="inline-flex h-8 w-8 items-center justify-center rounded-md text-destructive hover:bg-destructive/10"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <p
+                v-if="errors[`questions.${questionIndex}.options`] || form.errors[`questions.${questionIndex}.options`]"
+                class="text-xs text-destructive"
+              >
+                {{ errors[`questions.${questionIndex}.options`] || form.errors[`questions.${questionIndex}.options`] }}
+              </p>
+            </div>
+
+            <!-- True/False Answer -->
+            <div v-else-if="question.question_type === 'true_false'" class="space-y-3">
+              <label class="block text-sm font-medium text-foreground">Doğru Cevap *</label>
+              <div class="flex gap-4">
+                <label class="flex cursor-pointer items-center gap-2 rounded-lg border-2 p-4 transition-all"
+                  :class="{
+                    'border-primary bg-primary/10': question.correct_answer === true,
+                    'border-border hover:border-primary/50': question.correct_answer !== true
+                  }"
+                >
+                  <input
+                    type="radio"
+                    :name="`question-${questionIndex}-tf`"
+                    :value="true"
+                    v-model="question.correct_answer"
+                    class="h-4 w-4 cursor-pointer text-primary focus:ring-primary"
+                  />
+                  <span class="font-medium">Doğru</span>
+                </label>
+                <label class="flex cursor-pointer items-center gap-2 rounded-lg border-2 p-4 transition-all"
+                  :class="{
+                    'border-primary bg-primary/10': question.correct_answer === false,
+                    'border-border hover:border-primary/50': question.correct_answer !== false
+                  }"
+                >
+                  <input
+                    type="radio"
+                    :name="`question-${questionIndex}-tf`"
+                    :value="false"
+                    v-model="question.correct_answer"
+                    class="h-4 w-4 cursor-pointer text-primary focus:ring-primary"
+                  />
+                  <span class="font-medium">Yanlış</span>
+                </label>
+              </div>
             </div>
           </div>
         </div>
@@ -465,6 +595,7 @@ onMounted(() => {
       points: q.points || 10,
       explanation: q.explanation || '',
       order: q.order || 0,
+      correct_answer: q.correct_answer !== undefined ? q.correct_answer : null, // For true_false and short_answer
       options: (q.options || []).map((opt, optIndex) => ({
         option_text: opt.option_text || '',
         is_correct: opt.is_correct || false,
@@ -501,16 +632,47 @@ watch(
 const addQuestion = () => {
   form.questions.push({
     question_text: '',
-    question_type: 'multiple_choice',
+    question_type: 'single_choice',
     points: 10,
     explanation: '',
     order: form.questions.length,
+    correct_answer: null, // For true_false
     options: [
       { option_text: '', is_correct: false, order: 0 },
       { option_text: '', is_correct: false, order: 1 },
       { option_text: '', is_correct: false, order: 2 },
       { option_text: '', is_correct: false, order: 3 },
     ],
+  });
+};
+
+const onQuestionTypeChange = (questionIndex) => {
+  const question = form.questions[questionIndex];
+  
+  // Reset based on question type
+  if (question.question_type === 'single_choice' || question.question_type === 'multiple_choice') {
+    // Ensure options exist
+    if (!question.options || question.options.length === 0) {
+      question.options = [
+        { option_text: '', is_correct: false, order: 0 },
+        { option_text: '', is_correct: false, order: 1 },
+        { option_text: '', is_correct: false, order: 2 },
+        { option_text: '', is_correct: false, order: 3 },
+      ];
+    }
+    question.correct_answer = null;
+  } else if (question.question_type === 'true_false') {
+    // Clear options, set correct_answer to null
+    question.options = [];
+    question.correct_answer = null;
+  }
+};
+
+const setCorrectAnswer = (questionIndex, optionIndex) => {
+  const question = form.questions[questionIndex];
+  // For single_choice, only one option can be correct
+  question.options.forEach((opt, i) => {
+    opt.is_correct = i === optionIndex;
   });
 };
 
@@ -542,13 +704,6 @@ const removeOption = (questionIndex, optionIndex) => {
   }
 };
 
-const setCorrectAnswer = (questionIndex, optionIndex) => {
-  const question = form.questions[questionIndex];
-  question.options.forEach((opt, i) => {
-    opt.is_correct = i === optionIndex;
-  });
-};
-
 // Errors
 const errors = ref({});
 
@@ -573,20 +728,27 @@ const validateForm = () => {
       errors.value[`questions.${qIndex}.question_text`] = 'Soru metni zorunludur.';
     }
 
-    if (!question.options || question.options.length < 2) {
-      errors.value[`questions.${qIndex}.options`] = 'En az 2 şık eklenmelidir.';
-    }
-
-    const hasCorrectAnswer = question.options.some((opt) => opt.is_correct);
-    if (!hasCorrectAnswer) {
-      errors.value[`questions.${qIndex}.options`] = 'En az bir doğru cevap seçilmelidir.';
-    }
-
-    question.options.forEach((option, oIndex) => {
-      if (!option.option_text || option.option_text.trim() === '') {
-        errors.value[`questions.${qIndex}.options.${oIndex}.option_text`] = 'Şık metni zorunludur.';
+    // Validate based on question type
+    if (question.question_type === 'single_choice' || question.question_type === 'multiple_choice') {
+      if (!question.options || question.options.length < 2) {
+        errors.value[`questions.${qIndex}.options`] = 'En az 2 şık eklenmelidir.';
       }
-    });
+
+      const hasCorrectAnswer = question.options.some((opt) => opt.is_correct);
+      if (!hasCorrectAnswer) {
+        errors.value[`questions.${qIndex}.options`] = 'En az bir doğru cevap seçilmelidir.';
+      }
+
+      question.options.forEach((option, oIndex) => {
+        if (!option.option_text || option.option_text.trim() === '') {
+          errors.value[`questions.${qIndex}.options.${oIndex}.option_text`] = 'Şık metni zorunludur.';
+        }
+      });
+    } else if (question.question_type === 'true_false') {
+      if (question.correct_answer === null || question.correct_answer === undefined) {
+        errors.value[`questions.${qIndex}.correct_answer`] = 'Doğru cevap seçilmelidir.';
+      }
+    }
   });
 
   return Object.keys(errors.value).length === 0;
@@ -606,18 +768,33 @@ const updateTest = () => {
   }
 
   // Prepare questions data
-  const questionsData = form.questions.map((q, index) => ({
-    question_text: q.question_text,
-    question_type: q.question_type || 'multiple_choice',
-    points: q.points || 10,
-    explanation: q.explanation || null,
-    order: index,
-    options: q.options.map((opt, optIndex) => ({
-      option_text: opt.option_text,
-      is_correct: opt.is_correct || false,
-      order: optIndex,
-    })),
-  }));
+  const questionsData = form.questions.map((q, index) => {
+    const baseQuestion = {
+      question_text: q.question_text,
+      question_type: q.question_type || 'single_choice',
+      points: q.points || 10,
+      explanation: q.explanation || null,
+      order: index,
+    };
+
+    if (q.question_type === 'single_choice' || q.question_type === 'multiple_choice') {
+      return {
+        ...baseQuestion,
+        options: q.options.map((opt, optIndex) => ({
+          option_text: opt.option_text,
+          is_correct: opt.is_correct || false,
+          order: optIndex,
+        })),
+      };
+    } else if (q.question_type === 'true_false') {
+      return {
+        ...baseQuestion,
+        correct_answer: q.correct_answer,
+      };
+    }
+    
+    return baseQuestion;
+  });
 
   form.questions = questionsData;
 

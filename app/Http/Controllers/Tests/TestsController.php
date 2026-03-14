@@ -53,12 +53,44 @@ class TestsController extends Controller
         $testResult = $this->testService->getTestBySlug($slug);
         $isAdmin = Auth::check();
 
+        // Generate structured data for quiz
+        $seoService = app(\App\Services\SeoService::class);
+        $test = $testResult['data'];
+        
+        $structuredData = [
+            $seoService->getQuizSchema([
+                'title' => $test->title,
+                'description' => $test->description ?? '',
+                'url' => route('tests.show', $test->slug),
+                'published_at' => $test->published_at?->toIso8601String(),
+                'created_at' => $test->created_at->toIso8601String(),
+                'updated_at' => $test->updated_at->toIso8601String(),
+                'total_questions' => $test->total_questions,
+                'time_limit' => $test->time_limit,
+            ]),
+        ];
+
+        // Add breadcrumb schema
+        $breadcrumbs = [
+            ['name' => 'Ana Sayfa', 'url' => url('/')],
+            ['name' => 'Testler', 'url' => route('tests.index')],
+        ];
+        
+        if ($test->category) {
+            $breadcrumbs[] = ['name' => $test->category->name, 'url' => route('test-categories.show', $test->category->slug)];
+        }
+        
+        $breadcrumbs[] = ['name' => $test->title, 'url' => route('tests.show', $test->slug)];
+        
+        $structuredData[] = $seoService->getBreadcrumbSchema($breadcrumbs);
+
         return inertia('TestCategories/Tests/ShowTest', [
             'tests'     => $testsResult['data'],
-            'test'      => $testResult['data'],
+            'test'      => $test,
             'categories' => $categoriesResult['data'],
-            'screen'     => $this->testService->getScreenData($testResult['data']->title),
-            'isAdmin'    => $isAdmin
+            'screen'     => $this->testService->getScreenData($test->title),
+            'isAdmin'    => $isAdmin,
+            'structuredData' => $structuredData,
         ]);
     }
 
@@ -98,12 +130,13 @@ class TestsController extends Controller
             'time_limit'   => 'nullable|integer|min:0',
             'questions'    => 'required|array|min:1',
             'questions.*.question_text' => 'required|string',
-            'questions.*.question_type' => 'required|string|in:multiple_choice',
+            'questions.*.question_type' => 'required|string|in:single_choice,multiple_choice,true_false',
             'questions.*.points' => 'nullable|integer|min:1',
             'questions.*.explanation' => 'nullable|string',
-            'questions.*.options' => 'required|array|min:2',
-            'questions.*.options.*.option_text' => 'required|string',
-            'questions.*.options.*.is_correct' => 'required|boolean',
+            'questions.*.correct_answer' => 'nullable', // For true_false questions
+            'questions.*.options' => 'required_if:questions.*.question_type,single_choice,multiple_choice|array|min:2',
+            'questions.*.options.*.option_text' => 'required_with:questions.*.options|string',
+            'questions.*.options.*.is_correct' => 'required_with:questions.*.options|boolean',
         ]);
 
         $data = $request->all();
@@ -133,12 +166,13 @@ class TestsController extends Controller
             'time_limit'   => 'nullable|integer|min:0',
             'questions'    => 'required|array|min:1',
             'questions.*.question_text' => 'required|string',
-            'questions.*.question_type' => 'required|string|in:multiple_choice',
+            'questions.*.question_type' => 'required|string|in:single_choice,multiple_choice,true_false',
             'questions.*.points' => 'nullable|integer|min:1',
             'questions.*.explanation' => 'nullable|string',
-            'questions.*.options' => 'required|array|min:2',
-            'questions.*.options.*.option_text' => 'required|string',
-            'questions.*.options.*.is_correct' => 'required|boolean',
+            'questions.*.correct_answer' => 'nullable', // For true_false questions
+            'questions.*.options' => 'required_if:questions.*.question_type,single_choice,multiple_choice|array|min:2',
+            'questions.*.options.*.option_text' => 'required_with:questions.*.options|string',
+            'questions.*.options.*.is_correct' => 'required_with:questions.*.options|boolean',
         ]);
 
         try {
@@ -182,7 +216,9 @@ class TestsController extends Controller
         $validated = $request->validate([
             'answers' => 'required|array',
             'answers.*.question_id' => 'required|exists:test_questions,id',
-            'answers.*.option_id' => 'nullable|exists:test_options,id',
+            'answers.*.option_ids' => 'nullable|array',
+            'answers.*.option_ids.*' => 'exists:test_options,id',
+            'answers.*.answer_text' => 'nullable|string',
             'participant_name' => 'nullable|string|max:255',
             'time_taken' => 'nullable|integer|min:0',
         ]);
@@ -221,6 +257,45 @@ class TestsController extends Controller
             'screen'     => $this->testService->getScreenData('Test Sonucu'),
             'isAdmin'    => $isAdmin
         ]);
+    }
+
+    /**
+     * Bulk store tests from JSON
+     */
+    public function bulkStore(Request $request)
+    {
+        $request->validate([
+            'title'        => 'required|string|max:255',
+            'slug'         => 'required|string|max:255|unique:tests,slug',
+            'description'  => 'nullable|string',
+            'status'       => 'nullable|in:draft,published,private',
+            'category_id'  => 'nullable|exists:test_categories,id',
+            'questions'    => 'required|array|min:1',
+            'questions.*.question_text' => 'required|string',
+            'questions.*.question_type' => 'required|in:single_choice,multiple_choice,true_false',
+            'questions.*.points' => 'nullable|integer|min:0',
+            'questions.*.order' => 'nullable|integer|min:0',
+            'questions.*.explanation' => 'nullable|string',
+            'questions.*.options' => 'required_if:questions.*.question_type,single_choice,multiple_choice|array',
+            'questions.*.options.*.option_text' => 'required_with:questions.*.options|string',
+            'questions.*.options.*.is_correct' => 'required_with:questions.*.options|boolean',
+            'questions.*.correct_answer' => 'required_if:questions.*.question_type,true_false',
+        ]);
+
+        try {
+            $result = $this->testService->bulkCreateTest($request->all());
+
+            return redirect()
+                ->route('tests.show', $result['data']->slug)
+                ->with('success', 'Test başarıyla oluşturuldu!');
+        } catch (\Exception $e) {
+            Log::error('Bulk test creation failed: ' . $e->getMessage());
+            
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors(['error' => 'Test oluşturulurken bir hata oluştu: ' . $e->getMessage()]);
+        }
     }
 }
 

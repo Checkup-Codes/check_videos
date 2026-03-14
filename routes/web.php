@@ -50,6 +50,7 @@ Route::get('/categories/{category}/{slug}', [CategoriesController::class, 'showB
 
 // Tests & Test Categories Routes (Public)
 Route::resource('/tests', TestsController::class);
+Route::post('/tests/bulk-store', [TestsController::class, 'bulkStore'])->name('tests.bulk-store');
 Route::get('/tests/{test}/take', [TestsController::class, 'take'])->name('tests.take');
 Route::post('/tests/{test}/submit', [TestsController::class, 'submit'])->name('tests.submit');
 Route::get('/tests/result/{result}', [TestsController::class, 'result'])->name('tests.result');
@@ -98,6 +99,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/media', [MediaController::class, 'index'])->name('media.index');
     Route::post('/image-upload', [ImageUploadController::class, 'upload'])->name('image.upload');
     Route::post('/write-images', [WriteImageController::class, 'store'])->name('write-images.store');
+    Route::post('/write-images/cleanup', [WriteImageController::class, 'cleanup'])->name('write-images.cleanup');
     Route::post('/write-images/order', [WriteImageController::class, 'updateOrder'])->name('write-images.updateOrder');
     Route::delete('/write-images/{writeImage}', [WriteImageController::class, 'destroy'])->name('write-images.destroy');
     Route::put('/write-images/{writeImage}', [WriteImageController::class, 'update'])->name('write-images.update');

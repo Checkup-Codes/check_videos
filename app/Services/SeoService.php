@@ -32,7 +32,30 @@ class SeoService
 
         // Laravel cache ile DB sorgularını minimize et
         self::$cachedData = Cache::remember($this->getCacheKey(), self::CACHE_TTL, function () {
-            $seo = Seo::first();
+            $domain = request()->getHost();
+            
+            // Get SEO data for current domain
+            $seo = Seo::where('domain', $domain)->first();
+            
+            // Fallback to default domain if not found
+            if (!$seo) {
+                $seo = Seo::whereNull('domain')->orWhere('domain', '')->first();
+            }
+            
+            // Create default if still not found
+            if (!$seo) {
+                $seo = Seo::create([
+                    'route' => 'home',
+                    'domain' => $domain,
+                    'site_name' => config('app.name'),
+                    'title' => config('app.name'),
+                    'description' => 'Site açıklaması',
+                    'language' => 'tr',
+                    'locale' => 'tr_TR',
+                    'robots' => 'index, follow',
+                ]);
+            }
+            
             $logo = WriteImage::where('category', 'logo')->first();
 
             return [
@@ -202,15 +225,12 @@ class SeoService
 
     /**
      * Cache key oluştur
-     * Multi-tenancy için tenant_id eklenebilir
+     * Multi-tenancy için domain kullan
      */
     private function getCacheKey(): string
     {
-        // TODO: Multi-tenancy için tenant context ekle
-        // $tenantId = app('tenant')->id ?? 'default';
-        // return "seo_data_{$tenantId}";
-        
-        return 'seo_data_global';
+        $domain = request()->getHost();
+        return "seo_data_{$domain}";
     }
 
     /**
@@ -228,5 +248,232 @@ class SeoService
     public static function resetRequestCache(): void
     {
         self::$cachedData = null;
+    }
+
+    /**
+     * Generate Organization Schema for the site
+     */
+    public function getOrganizationSchema(): array
+    {
+        $global = $this->getGlobalSeo();
+        $baseUrl = url('/');
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'Organization',
+            'name' => $global['siteName'],
+            'url' => $baseUrl,
+            'logo' => url($global['logo']),
+            'description' => $global['siteDescription'],
+            'sameAs' => array_filter([
+                $global['twitterSite'] ? 'https://twitter.com/' . ltrim($global['twitterSite'], '@') : null,
+            ]),
+        ];
+    }
+
+    /**
+     * Generate WebSite Schema with SearchAction
+     */
+    public function getWebSiteSchema(): array
+    {
+        $global = $this->getGlobalSeo();
+        $baseUrl = url('/');
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebSite',
+            'name' => $global['siteName'],
+            'url' => $baseUrl,
+            'description' => $global['siteDescription'],
+            'potentialAction' => [
+                '@type' => 'SearchAction',
+                'target' => [
+                    '@type' => 'EntryPoint',
+                    'urlTemplate' => $baseUrl . '/search?q={search_term_string}',
+                ],
+                'query-input' => 'required name=search_term_string',
+            ],
+        ];
+    }
+
+    /**
+     * Generate ItemList Schema for content collections
+     * 
+     * @param string $listName Name of the list (e.g., "Yazılar", "Testler")
+     * @param array $items Array of items with 'name', 'url', 'description', 'image'
+     */
+    public function getItemListSchema(string $listName, array $items): array
+    {
+        $listItems = [];
+        foreach ($items as $index => $item) {
+            $listItem = [
+                '@type' => 'ListItem',
+                'position' => $index + 1,
+                'item' => [
+                    '@type' => 'Thing',
+                    'name' => $item['name'],
+                    'url' => $item['url'],
+                ],
+            ];
+
+            if (!empty($item['description'])) {
+                $listItem['item']['description'] = $item['description'];
+            }
+
+            if (!empty($item['image'])) {
+                $listItem['item']['image'] = $item['image'];
+            }
+
+            $listItems[] = $listItem;
+        }
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'ItemList',
+            'name' => $listName,
+            'numberOfItems' => count($items),
+            'itemListElement' => $listItems,
+        ];
+    }
+
+    /**
+     * Generate Article Schema for blog posts/writes
+     */
+    public function getArticleSchema(array $article): array
+    {
+        $global = $this->getGlobalSeo();
+        
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Article',
+            'headline' => $article['title'],
+            'description' => $article['description'] ?? '',
+            'url' => $article['url'],
+            'datePublished' => $article['published_at'] ?? $article['created_at'],
+            'dateModified' => $article['updated_at'] ?? $article['created_at'],
+            'author' => [
+                '@type' => 'Person',
+                'name' => $article['author_name'] ?? $global['author'] ?? $global['siteName'],
+            ],
+            'publisher' => [
+                '@type' => 'Organization',
+                'name' => $global['siteName'],
+                'logo' => [
+                    '@type' => 'ImageObject',
+                    'url' => url($global['logo']),
+                ],
+            ],
+        ];
+
+        if (!empty($article['image'])) {
+            $schema['image'] = $article['image'];
+        }
+
+        return $schema;
+    }
+
+    /**
+     * Generate Course/Quiz Schema for tests
+     */
+    public function getQuizSchema(array $quiz): array
+    {
+        $global = $this->getGlobalSeo();
+
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Quiz',
+            'name' => $quiz['title'],
+            'description' => $quiz['description'] ?? '',
+            'url' => $quiz['url'],
+            'datePublished' => $quiz['published_at'] ?? $quiz['created_at'],
+            'dateModified' => $quiz['updated_at'] ?? $quiz['created_at'],
+            'author' => [
+                '@type' => 'Organization',
+                'name' => $global['siteName'],
+            ],
+        ];
+
+        if (!empty($quiz['total_questions'])) {
+            $schema['numberOfQuestions'] = $quiz['total_questions'];
+        }
+
+        if (!empty($quiz['time_limit'])) {
+            $schema['timeRequired'] = 'PT' . $quiz['time_limit'] . 'M';
+        }
+
+        return $schema;
+    }
+
+    /**
+     * Generate EducationalOccupationalCredential Schema for certificates
+     */
+    public function getCertificateSchema(array $certificate): array
+    {
+        $global = $this->getGlobalSeo();
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'EducationalOccupationalCredential',
+            'name' => $certificate['title'],
+            'description' => $certificate['description'] ?? '',
+            'url' => $certificate['url'],
+            'credentialCategory' => 'certificate',
+            'recognizedBy' => [
+                '@type' => 'Organization',
+                'name' => $global['siteName'],
+            ],
+        ];
+    }
+
+    /**
+     * Generate BreadcrumbList Schema
+     */
+    public function getBreadcrumbSchema(array $breadcrumbs): array
+    {
+        $listItems = [];
+        foreach ($breadcrumbs as $index => $crumb) {
+            $listItems[] = [
+                '@type' => 'ListItem',
+                'position' => $index + 1,
+                'name' => $crumb['name'],
+                'item' => $crumb['url'],
+            ];
+        }
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => $listItems,
+        ];
+    }
+
+    /**
+     * Generate combined schema for homepage with all content types
+     */
+    public function getHomepageSchema(array $contentSummary = []): array
+    {
+        $schemas = [
+            $this->getOrganizationSchema(),
+            $this->getWebSiteSchema(),
+        ];
+
+        // Add ItemList for each content type if provided
+        if (!empty($contentSummary['writes'])) {
+            $schemas[] = $this->getItemListSchema('Yazılar', $contentSummary['writes']);
+        }
+
+        if (!empty($contentSummary['tests'])) {
+            $schemas[] = $this->getItemListSchema('Testler', $contentSummary['tests']);
+        }
+
+        if (!empty($contentSummary['certificates'])) {
+            $schemas[] = $this->getItemListSchema('Sertifikalar', $contentSummary['certificates']);
+        }
+
+        if (!empty($contentSummary['workspaces'])) {
+            $schemas[] = $this->getItemListSchema('Çalışma Alanları', $contentSummary['workspaces']);
+        }
+
+        return $schemas;
     }
 }

@@ -105,7 +105,7 @@
               <p class="whitespace-pre-wrap text-lg font-medium text-foreground">{{ question.question_text }}</p>
             </div>
             <div
-              v-if="answers[question.id]"
+              v-if="isQuestionAnswered(question.id)"
               class="ml-4 flex h-8 w-8 items-center justify-center rounded-full bg-green-500 text-white"
             >
               <svg
@@ -121,42 +121,141 @@
           </div>
 
           <div class="space-y-2">
-            <label
-              v-for="(option, optIndex) in question.options"
-              :key="option.id"
-              :for="`question-${question.id}-option-${option.id}`"
-              class="flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all duration-200"
-              :class="{
-                'border-primary bg-primary/10 ring-2 ring-primary/20 dark:bg-primary/20': answers[question.id] === option.id,
-                'border-border bg-background hover:border-primary/50 hover:bg-accent': answers[question.id] !== option.id,
-              }"
-            >
-              <input
-                :id="`question-${question.id}-option-${option.id}`"
-                type="radio"
-                :name="`question-${question.id}`"
-                :value="option.id"
-                v-model="answers[question.id]"
-                class="mt-1 h-5 w-5 cursor-pointer border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/50 dark:bg-background dark:checked:bg-primary dark:checked:border-primary"
-                @change="updateAnsweredCount"
-              />
-              <div class="flex-1">
-                <div class="flex items-center gap-2">
+            <!-- Single Choice Questions (Radio) -->
+            <template v-if="question.question_type === 'single_choice' || (question.question_type === 'multiple_choice' && hasOnlyOneCorrectAnswer(question))">
+              <label
+                v-for="(option, optIndex) in question.options"
+                :key="option.id"
+                :for="`question-${question.id}-option-${option.id}`"
+                class="flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all duration-200"
+                :class="{
+                  'border-primary bg-primary/10 ring-2 ring-primary/20 dark:bg-primary/20': answers[question.id] === option.id,
+                  'border-border bg-background hover:border-primary/50 hover:bg-accent': answers[question.id] !== option.id,
+                }"
+              >
+                <input
+                  :id="`question-${question.id}-option-${option.id}`"
+                  type="radio"
+                  :name="`question-${question.id}`"
+                  :value="option.id"
+                  v-model="answers[question.id]"
+                  class="mt-1 h-5 w-5 cursor-pointer border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/50 dark:bg-background dark:checked:bg-primary dark:checked:border-primary"
+                  @change="updateAnsweredCount"
+                />
+                <div class="flex-1">
+                  <div class="flex items-center gap-2">
+                    <span 
+                      class="font-semibold transition-colors"
+                      :class="answers[question.id] === option.id ? 'text-primary' : 'text-muted-foreground'"
+                    >
+                      {{ String.fromCharCode(65 + optIndex) }}.
+                    </span>
+                    <span 
+                      class="whitespace-pre-wrap transition-colors"
+                      :class="answers[question.id] === option.id ? 'font-medium text-foreground' : 'text-foreground'"
+                    >
+                      {{ option.option_text }}
+                    </span>
+                  </div>
+                </div>
+              </label>
+            </template>
+
+            <!-- Multiple Choice Questions (Checkbox) - Only if more than one correct answer -->
+            <template v-else-if="question.question_type === 'multiple_choice' && !hasOnlyOneCorrectAnswer(question)">
+              <label
+                v-for="(option, optIndex) in question.options"
+                :key="option.id"
+                :for="`question-${question.id}-option-${option.id}`"
+                class="flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all duration-200"
+                :class="{
+                  'border-primary bg-primary/10 ring-2 ring-primary/20 dark:bg-primary/20': isOptionSelected(question.id, option.id),
+                  'border-border bg-background hover:border-primary/50 hover:bg-accent': !isOptionSelected(question.id, option.id),
+                }"
+              >
+                <input
+                  :id="`question-${question.id}-option-${option.id}`"
+                  type="checkbox"
+                  :value="option.id"
+                  v-model="answers[question.id]"
+                  class="mt-1 h-5 w-5 cursor-pointer rounded border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/50 dark:bg-background dark:checked:bg-primary dark:checked:border-primary"
+                  @change="updateAnsweredCount"
+                />
+                <div class="flex-1">
+                  <div class="flex items-center gap-2">
+                    <span 
+                      class="font-semibold transition-colors"
+                      :class="isOptionSelected(question.id, option.id) ? 'text-primary' : 'text-muted-foreground'"
+                    >
+                      {{ String.fromCharCode(65 + optIndex) }}.
+                    </span>
+                    <span 
+                      class="whitespace-pre-wrap transition-colors"
+                      :class="isOptionSelected(question.id, option.id) ? 'font-medium text-foreground' : 'text-foreground'"
+                    >
+                      {{ option.option_text }}
+                    </span>
+                  </div>
+                </div>
+              </label>
+            </template>
+
+            <!-- True/False Questions -->
+            <template v-else-if="question.question_type === 'true_false'">
+              <label
+                :for="`question-${question.id}-true`"
+                class="flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all duration-200"
+                :class="{
+                  'border-primary bg-primary/10 ring-2 ring-primary/20 dark:bg-primary/20': answers[question.id] === true,
+                  'border-border bg-background hover:border-primary/50 hover:bg-accent': answers[question.id] !== true,
+                }"
+              >
+                <input
+                  :id="`question-${question.id}-true`"
+                  type="radio"
+                  :name="`question-${question.id}`"
+                  :value="true"
+                  v-model="answers[question.id]"
+                  class="mt-1 h-5 w-5 cursor-pointer border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/50 dark:bg-background dark:checked:bg-primary dark:checked:border-primary"
+                  @change="updateAnsweredCount"
+                />
+                <div class="flex-1">
                   <span 
-                    class="font-semibold transition-colors"
-                    :class="answers[question.id] === option.id ? 'text-primary' : 'text-muted-foreground'"
+                    class="whitespace-pre-wrap font-medium transition-colors"
+                    :class="answers[question.id] === true ? 'text-primary' : 'text-foreground'"
                   >
-                    {{ String.fromCharCode(65 + optIndex) }}.
-                  </span>
-                  <span 
-                    class="whitespace-pre-wrap transition-colors"
-                    :class="answers[question.id] === option.id ? 'font-medium text-foreground' : 'text-foreground'"
-                  >
-                    {{ option.option_text }}
+                    Doğru
                   </span>
                 </div>
-              </div>
-            </label>
+              </label>
+
+              <label
+                :for="`question-${question.id}-false`"
+                class="flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all duration-200"
+                :class="{
+                  'border-primary bg-primary/10 ring-2 ring-primary/20 dark:bg-primary/20': answers[question.id] === false,
+                  'border-border bg-background hover:border-primary/50 hover:bg-accent': answers[question.id] !== false,
+                }"
+              >
+                <input
+                  :id="`question-${question.id}-false`"
+                  type="radio"
+                  :name="`question-${question.id}`"
+                  :value="false"
+                  v-model="answers[question.id]"
+                  class="mt-1 h-5 w-5 cursor-pointer border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/50 dark:bg-background dark:checked:bg-primary dark:checked:border-primary"
+                  @change="updateAnsweredCount"
+                />
+                <div class="flex-1">
+                  <span 
+                    class="whitespace-pre-wrap font-medium transition-colors"
+                    :class="answers[question.id] === false ? 'text-primary' : 'text-foreground'"
+                  >
+                    Yanlış
+                  </span>
+                </div>
+              </label>
+            </template>
           </div>
         </div>
 
@@ -256,7 +355,7 @@
               </div>
               <div class="flex items-center gap-2">
                 <span
-                  v-if="answers[question.id]"
+                  v-if="isQuestionAnswered(question.id)"
                   class="flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-white"
                   title="Cevaplandı"
                 >
@@ -338,7 +437,7 @@
               </div>
               <div class="flex items-center gap-2">
                 <span
-                  v-if="answers[question.id]"
+                  v-if="isQuestionAnswered(question.id)"
                   class="flex h-4 w-4 items-center justify-center rounded-full bg-green-500 text-white"
                   title="Cevaplandı"
                 >
@@ -382,6 +481,32 @@ const participantName = ref('');
 const questionRefs = ref({});
 const startTime = ref(Date.now());
 
+// Helper function to check if an option is selected
+const isOptionSelected = (questionId, optionId) => {
+  const answer = answers.value[questionId];
+  if (!answer) return false;
+  if (Array.isArray(answer)) {
+    return answer.includes(optionId);
+  }
+  return answer === optionId;
+};
+
+// Helper function to check if a question is answered
+const isQuestionAnswered = (questionId) => {
+  const answer = answers.value[questionId];
+  if (Array.isArray(answer)) {
+    return answer.length > 0;
+  }
+  return answer !== null && answer !== undefined && answer !== '';
+};
+
+// Helper function to check if a question has only one correct answer
+const hasOnlyOneCorrectAnswer = (question) => {
+  if (!question || !question.options) return true;
+  const correctCount = question.options.filter(opt => opt.is_correct).length;
+  return correctCount === 1;
+};
+
 // Question Navigation State
 const isQuestionNavigationOpen = ref(false);
 const showQuestionNavigation = computed(() => test.questions && test.questions.length > 0);
@@ -407,8 +532,13 @@ const formattedTime = computed(() => {
 
 // Progress
 const answeredCount = computed(() => {
-  return Object.keys(answers.value).filter((key) => answers.value[key] !== null && answers.value[key] !== undefined)
-    .length;
+  return Object.keys(answers.value).filter((key) => {
+    const answer = answers.value[key];
+    if (Array.isArray(answer)) {
+      return answer.length > 0;
+    }
+    return answer !== null && answer !== undefined && answer !== '';
+  }).length;
 });
 
 const progressPercentage = computed(() => {
@@ -635,11 +765,49 @@ const submitTest = (autoSubmit = false) => {
     }
   }
 
-  // Prepare answers array
-  const answersArray = test.questions.map((question) => ({
-    question_id: question.id,
-    option_id: answers.value[question.id] || null,
-  }));
+  // Prepare answers array based on question type
+  const answersArray = test.questions.map((question) => {
+    const answer = answers.value[question.id];
+    
+    if (question.question_type === 'single_choice') {
+      // For single choice, answer is a single option ID
+      return {
+        question_id: question.id,
+        option_ids: answer ? [answer] : null,
+        answer_text: null,
+      };
+    } else if (question.question_type === 'multiple_choice') {
+      // Check if this question has only one correct answer (should use radio)
+      if (hasOnlyOneCorrectAnswer(question)) {
+        // Treat like single choice
+        return {
+          question_id: question.id,
+          option_ids: answer ? [answer] : null,
+          answer_text: null,
+        };
+      } else {
+        // For multiple choice with multiple correct answers, answer is an array
+        const selectedOptions = Array.isArray(answer) ? answer : (answer ? [answer] : []);
+        return {
+          question_id: question.id,
+          option_ids: selectedOptions.length > 0 ? selectedOptions : null,
+          answer_text: null,
+        };
+      }
+    } else if (question.question_type === 'true_false') {
+      return {
+        question_id: question.id,
+        option_ids: null,
+        answer_text: answer !== undefined && answer !== null ? String(answer) : null,
+      };
+    }
+    
+    return {
+      question_id: question.id,
+      option_ids: null,
+      answer_text: null,
+    };
+  });
 
   // Calculate time taken
   const timeTaken = Math.floor((Date.now() - startTime.value) / 1000); // in seconds
@@ -662,6 +830,15 @@ const submitTest = (autoSubmit = false) => {
 
 // Lifecycle
 onMounted(() => {
+  // Initialize answers - only multiple_choice with multiple correct answers uses arrays
+  if (test.questions) {
+    test.questions.forEach((question) => {
+      if (question.question_type === 'multiple_choice' && !hasOnlyOneCorrectAnswer(question)) {
+        answers.value[question.id] = [];
+      }
+    });
+  }
+  
   startTimer();
   initializeQuestionNavigationState();
   

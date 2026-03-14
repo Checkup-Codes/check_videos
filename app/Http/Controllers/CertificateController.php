@@ -88,10 +88,31 @@ class CertificateController extends Controller
         $certificate = Certificate::where('slug', $slug)->firstOrFail();
         $certificates = Certificate::ordered()->get();
 
+        // Generate structured data for certificate
+        $seoService = app(\App\Services\SeoService::class);
+        
+        $structuredData = [
+            $seoService->getCertificateSchema([
+                'title' => $certificate->title,
+                'description' => $certificate->description ?? '',
+                'url' => route('certificates.show', $certificate->slug),
+            ]),
+        ];
+
+        // Add breadcrumb schema
+        $breadcrumbs = [
+            ['name' => 'Ana Sayfa', 'url' => url('/')],
+            ['name' => 'Sertifikalar', 'url' => route('certificates.index')],
+            ['name' => $certificate->title, 'url' => route('certificates.show', $certificate->slug)],
+        ];
+        
+        $structuredData[] = $seoService->getBreadcrumbSchema($breadcrumbs);
+
         return Inertia::render('Certificates/ShowCertificate', [
             'certificate' => $certificate,
             'certificates' => $certificates,
-            'screen' => $this->getScreenData($certificate->title, true)
+            'screen' => $this->getScreenData($certificate->title, true),
+            'structuredData' => $structuredData,
         ]);
     }
 
