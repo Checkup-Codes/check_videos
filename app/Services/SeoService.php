@@ -34,27 +34,18 @@ class SeoService
         self::$cachedData = Cache::remember($this->getCacheKey(), self::CACHE_TTL, function () {
             $domain = request()->getHost();
             
-            // Get SEO data for current domain
-            $seo = Seo::where('domain', $domain)->first();
-            
-            // Fallback to default domain if not found
-            if (!$seo) {
-                $seo = Seo::whereNull('domain')->orWhere('domain', '')->first();
-            }
-            
-            // Create default if still not found
-            if (!$seo) {
-                $seo = Seo::create([
-                    'route' => 'home',
-                    'domain' => $domain,
+            // Get or create SEO data for current domain
+            $seo = Seo::firstOrCreate(
+                ['domain' => $domain, 'route' => 'home'],
+                [
                     'site_name' => config('app.name'),
                     'title' => config('app.name'),
                     'description' => 'Site açıklaması',
                     'language' => 'tr',
                     'locale' => 'tr_TR',
                     'robots' => 'index, follow',
-                ]);
-            }
+                ]
+            );
             
             $logo = WriteImage::where('category', 'logo')->first();
             
