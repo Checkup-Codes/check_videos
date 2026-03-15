@@ -47,6 +47,15 @@ return [
             'description' => 'Park edilmiş domain - frontend/UI odaklı',
         ],
 
+        'candundarli.com' => [
+            'name' => 'Can Dündarlı',
+            'type' => 'tenant',
+            'index_in_google' => false,
+            'features' => ['all'],
+            'hidden_features' => ['workspaces', 'projects', 'journey'],
+            'description' => 'Tenant domain',
+        ],
+
         // Localhost için
         'localhost' => [
             'name' => 'Local Development',
