@@ -30,6 +30,12 @@ class Write extends Model
         'youtube_url',
     ];
 
+    protected $casts = [
+        'published_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     const STATUS_DRAFT = 'draft';
     const STATUS_PUBLISHED = 'published';
     const STATUS_PRIVATE = 'private';

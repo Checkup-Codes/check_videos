@@ -187,7 +187,7 @@ class WritesController extends Controller
         ];
         
         if ($write->category) {
-            $breadcrumbs[] = ['name' => $write->category->name, 'url' => route('writes.category', $write->category->slug)];
+            $breadcrumbs[] = ['name' => $write->category->name, 'url' => route('categories.show', $write->category->slug)];
         }
         
         $breadcrumbs[] = ['name' => $write->title, 'url' => route('writes.show', $write->slug)];
