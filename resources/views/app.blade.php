@@ -11,7 +11,11 @@
     @php
         $seoService = app(\App\Services\SeoService::class);
         $meta = $seoService->getFullMeta();
+        $canonicalUrl = $seoService->getCanonicalUrl();
     @endphp
+
+    <!-- Canonical URL (prevents duplicate content penalty) -->
+    <link rel="canonical" href="{{ $canonicalUrl }}" />
 
     <!-- Primary Meta Tags -->
     <meta name="description" content="{{ $meta['description'] }}">
@@ -21,6 +25,7 @@
     <meta name="language" content="{{ $meta['language'] }}">
 
     <!-- Open Graph / Facebook -->
+    <meta property="og:url" content="{{ $canonicalUrl }}">
     <meta property="og:type" content="{{ $meta['og']['type'] }}">
     <meta property="og:locale" content="{{ $meta['og']['locale'] }}">
     <meta property="og:site_name" content="{{ $meta['og']['site_name'] }}">

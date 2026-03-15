@@ -479,4 +479,70 @@ class SeoService
 
         return $schemas;
     }
+
+    /**
+     * Get canonical URL for current page
+     * 
+     * Park edilmiş domainler ana domain'e işaret eder.
+     * Bu duplicate content cezasını önler.
+     * 
+     * @param string|null $path Custom path (opsiyonel, default: current path)
+     * @return string Full canonical URL
+     */
+    public function getCanonicalUrl(?string $path = null): string
+    {
+        $currentDomain = request()->getHost();
+        $mainDomain = config('domains.main_domain', 'checkupcodes.com');
+        $domainConfig = config("domains.domains.{$currentDomain}", []);
+        
+        // Eğer bu domain Google'da indexlenecekse, kendi URL'ini kullan
+        // Değilse (parked domain), ana domain'e yönlendir
+        $shouldUseMainDomain = !($domainConfig['index_in_google'] ?? false);
+        
+        $targetDomain = $shouldUseMainDomain ? $mainDomain : $currentDomain;
+        
+        // Path belirtilmemişse, mevcut path'i kullan
+        if ($path === null) {
+            $path = request()->path();
+        }
+        
+        // Path'i temizle
+        $path = ltrim($path, '/');
+        
+        // Eğer path boşsa (homepage), sadece domain döndür
+        if (empty($path) || $path === '/') {
+            return "https://{$targetDomain}";
+        }
+        
+        return "https://{$targetDomain}/{$path}";
+    }
+
+    /**
+     * Check if current domain should be indexed by Google
+     * 
+     * @return bool
+     */
+    public function shouldIndexInGoogle(): bool
+    {
+        $currentDomain = request()->getHost();
+        $domainConfig = config("domains.domains.{$currentDomain}", []);
+        
+        return $domainConfig['index_in_google'] ?? false;
+    }
+
+    /**
+     * Get domain configuration
+     * 
+     * @return array
+     */
+    public function getDomainConfig(): array
+    {
+        $currentDomain = request()->getHost();
+        return config("domains.domains.{$currentDomain}", [
+            'name' => config('app.name'),
+            'type' => 'unknown',
+            'index_in_google' => true,
+            'features' => ['all'],
+        ]);
+    }
 }
