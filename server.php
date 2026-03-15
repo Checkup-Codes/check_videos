@@ -15,6 +15,12 @@ $uri = urldecode(
 $host = $_SERVER['HTTP_HOST'] ?? '';
 $host = preg_replace('/^www\./', '', $host);
 
+// Remove trailing dots (fixes the dot folder issue)
+$host = rtrim($host, '.');
+
+// Remove port number
+$host = preg_replace('/:\d+$/', '', $host);
+
 // Get port information
 $port = $_SERVER['SERVER_PORT'] ?? '8000';
 

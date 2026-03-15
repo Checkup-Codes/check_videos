@@ -27,6 +27,9 @@ if (php_sapi_name() === 'cli') {
     // Remove www. prefix
     $host = preg_replace('/^www\./', '', $host);
     
+    // Remove trailing dots (fixes the dot folder issue)
+    $host = rtrim($host, '.');
+    
     // Remove port number if present (e.g., checkupcodes.com:80 -> checkupcodes.com)
     $host = preg_replace('/:\d+$/', '', $host);
 

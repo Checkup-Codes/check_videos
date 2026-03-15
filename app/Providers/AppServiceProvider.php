@@ -13,9 +13,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Get the current host and remove www. prefix if exists
+        // Get the current host and sanitize it
         $host = request()->getHost();
+        
+        // Remove www. prefix
         $host = preg_replace('/^www\./', '', $host);
+        
+        // Remove trailing dots (fixes the dot folder issue)
+        $host = rtrim($host, '.');
+        
+        // Remove port number if present
+        $host = preg_replace('/:\d+$/', '', $host);
 
         // Check if we're on localhost - use normal storage for localhost, multi-tenancy for production
         $isLocalhost = strpos($host, 'localhost') === 0 || 

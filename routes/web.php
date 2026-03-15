@@ -111,6 +111,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/social-media/{socialMedia}', [SocialMediaController::class, 'update'])->name('social-media.update');
     Route::delete('/social-media/{socialMedia}', [SocialMediaController::class, 'destroy'])->name('social-media.destroy');
 
+    // Tenant Management (Only on main domain)
+    Route::get('/tenants', [\App\Http\Controllers\TenantController::class, 'index'])->name('tenants.index');
+    Route::post('/tenants', [\App\Http\Controllers\TenantController::class, 'store'])->name('tenants.store');
+    Route::delete('/tenants/{domain}', [\App\Http\Controllers\TenantController::class, 'destroy'])->name('tenants.destroy');
+    Route::post('/tenants/cleanup-dots', [\App\Http\Controllers\TenantController::class, 'cleanupDots'])->name('tenants.cleanup-dots');
+
     // Project Management
     Route::resource('/projects', ProjectsController::class);
     Route::resource('/services', ServicesController::class);
