@@ -11,20 +11,13 @@ use Inertia\Inertia;
 class TenantController extends Controller
 {
     /**
-     * Show tenant management page (only on main domain)
+     * Show tenant management page
      */
     public function index()
     {
-        // Only accessible on main domain
-        $currentDomain = request()->getHost();
-        $mainDomain = config('domains.main_domain', 'checkupcodes.com');
-        
-        if ($currentDomain !== $mainDomain && !str_contains($currentDomain, 'localhost')) {
-            abort(404);
-        }
-
         $tenants = $this->getAllTenants();
         $stats = $this->getSystemStats();
+        $mainDomain = config('domains.main_domain', 'checkupcodes.com');
 
         return Inertia::render('Tenants/Index', [
             'tenants' => $tenants,
