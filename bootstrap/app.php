@@ -7,6 +7,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 
 // Determine environment file based on context (CLI or Web)
 $basePath = dirname(__DIR__);
+$envPath = $basePath . '/config/tenants';
 $envFile = null;
 
 if (php_sapi_name() === 'cli') {
@@ -40,9 +41,9 @@ if (php_sapi_name() === 'cli') {
 
 // Load environment file if specified and exists, otherwise use default .env
 $resolvedEnvFile = '.env';
-if ($envFile && file_exists($basePath . '/' . $envFile)) {
+if ($envFile && file_exists($envPath . '/' . $envFile)) {
     $resolvedEnvFile = $envFile;
-} elseif (!file_exists($basePath . '/' . $resolvedEnvFile)) {
+} elseif (!file_exists($envPath . '/' . $resolvedEnvFile)) {
     // If default .env doesn't exist, try the determined env file anyway
     $resolvedEnvFile = $envFile ?? '.env';
 }
@@ -50,17 +51,17 @@ if ($envFile && file_exists($basePath . '/' . $envFile)) {
 // Debug logging for troubleshooting (can be removed in production)
 if (php_sapi_name() !== 'cli') {
     $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'unknown';
-    error_log("[ENV] Host: {$host}, Determined env file: {$envFile}, Resolved: {$resolvedEnvFile}, Exists: " . (file_exists($basePath . '/' . $resolvedEnvFile) ? 'yes' : 'no'));
+    error_log("[ENV] Host: {$host}, Determined env file: {$envFile}, Resolved: {$resolvedEnvFile}, Exists: " . (file_exists($envPath . '/' . $resolvedEnvFile) ? 'yes' : 'no'));
 }
 
 // Load environment variables before Application::configure()
 // Only load if file exists, otherwise Dotenv will throw an exception
-if (file_exists($basePath . '/' . $resolvedEnvFile)) {
-    Dotenv::createMutable($basePath, $resolvedEnvFile)->load();
+if (file_exists($envPath . '/' . $resolvedEnvFile)) {
+    Dotenv::createMutable($envPath, $resolvedEnvFile)->load();
 } else {
     // If no env file exists, log warning but don't fail
     // Environment variables may be set externally (e.g., via server config)
-    error_log("Warning: Environment file not found: {$resolvedEnvFile} at {$basePath}. Using system environment variables.");
+    error_log("Warning: Environment file not found: {$resolvedEnvFile} at {$envPath}. Using system environment variables.");
 }
 
 $app = Application::configure(basePath: $basePath);
