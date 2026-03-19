@@ -89,7 +89,15 @@ class SetupNewTenant extends Command
     {
         $this->info("📝 Step 1: Creating .env file...");
         
-        $envFile = base_path(".env.{$domain}");
+        // Use new path: config/tenants/
+        $envFile = base_path("config/tenants/.env.{$domain}");
+        
+        // Ensure directory exists
+        $envDir = dirname($envFile);
+        if (!File::exists($envDir)) {
+            File::makeDirectory($envDir, 0755, true);
+            $this->line("   Created directory: {$envDir}");
+        }
         
         if (File::exists($envFile)) {
             if (!$this->confirm("⚠️  .env.{$domain} already exists. Overwrite?", false)) {
@@ -103,8 +111,16 @@ class SetupNewTenant extends Command
         $dbUser = $this->option('db-user') ?? env('DB_USERNAME', 'root');
         $dbPass = $this->option('db-pass') ?? env('DB_PASSWORD', '');
 
-        // Read main .env as template
-        $mainEnv = File::get(base_path('.env'));
+        // Read main .env as template (check both paths)
+        $mainEnvPath = base_path('config/tenants/.env.example');
+        if (!File::exists($mainEnvPath)) {
+            $mainEnvPath = base_path('.env.example');
+        }
+        if (!File::exists($mainEnvPath)) {
+            $mainEnvPath = base_path('.env');
+        }
+        
+        $mainEnv = File::get($mainEnvPath);
         
         // Replace database settings
         $newEnv = preg_replace('/DB_DATABASE=.*/', "DB_DATABASE={$dbName}", $mainEnv);
@@ -124,7 +140,7 @@ class SetupNewTenant extends Command
 
         File::put($envFile, $newEnv);
         
-        $this->info("✅ Created: .env.{$domain}");
+        $this->info("✅ Created: config/tenants/.env.{$domain}");
         $this->line("   Database: {$dbName}");
         $this->line("   User: {$dbUser}");
         
@@ -325,7 +341,7 @@ class SetupNewTenant extends Command
         $this->newLine();
         
         $this->line("2. 🔧 Server Configuration:");
-        $this->line("   - Ensure .env.{$domain} is readable");
+        $this->line("   - Ensure config/tenants/.env.{$domain} is readable");
         $this->line("   - Test: http://{$domain}");
         $this->newLine();
         

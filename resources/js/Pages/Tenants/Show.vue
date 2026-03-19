@@ -14,6 +14,9 @@
                         <h1 class="text-3xl font-bold text-slate-900 dark:text-white">
                             📊 {{ tenant.name }}
                         </h1>
+                        <span v-if="tenant.type === 'main'" class="px-3 py-1 bg-blue-600 text-white rounded-full text-sm font-semibold">
+                            ANA DOMAIN
+                        </span>
                     </div>
                     <div class="flex items-center gap-4">
                         <a

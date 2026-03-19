@@ -5,10 +5,10 @@
                 <!-- Header -->
                 <div class="mb-8">
                     <h1 class="text-3xl font-bold text-slate-900 dark:text-white">
-                        🏢 Tenant Yönetimi
+                        🏢 Domain Yönetimi
                     </h1>
                     <p class="mt-2 text-slate-600 dark:text-slate-400">
-                        Tüm tenantlarınızı buradan yönetin
+                        Tüm domain'lerinizi buradan yönetin (ana domain dahil)
                     </p>
                 </div>
 
@@ -17,9 +17,12 @@
                     <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm p-6 border border-slate-200 dark:border-slate-700">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm font-medium text-slate-600 dark:text-slate-400">Toplam Tenant</p>
+                                <p class="text-sm font-medium text-slate-600 dark:text-slate-400">Toplam Domain</p>
                                 <p class="text-3xl font-bold text-slate-900 dark:text-white mt-2">
                                     {{ stats.total_tenants }}
+                                </p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                    Ana domain dahil
                                 </p>
                             </div>
                             <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
@@ -163,11 +166,17 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr v-for="tenant in tenants" :key="tenant.domain" class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                                <tr v-for="tenant in tenants" :key="tenant.domain" class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+                                    :class="{ 'bg-blue-50 dark:bg-blue-900/20': tenant.type === 'main' }">
                                     <td class="px-6 py-4">
-                                        <a :href="`https://${tenant.domain}`" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">
-                                            {{ tenant.domain }}
-                                        </a>
+                                        <div class="flex items-center gap-2">
+                                            <a :href="`https://${tenant.domain}`" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">
+                                                {{ tenant.domain }}
+                                            </a>
+                                            <span v-if="tenant.type === 'main'" class="px-2 py-0.5 bg-blue-600 text-white text-xs font-semibold rounded">
+                                                ANA DOMAIN
+                                            </span>
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4 text-slate-900 dark:text-white">
                                         {{ tenant.name }}
@@ -204,11 +213,19 @@
                                                 📊 Detay
                                             </a>
                                             <button
+                                                v-if="tenant.type !== 'main'"
                                                 @click="confirmDelete(tenant)"
                                                 class="px-4 py-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-700 dark:text-red-400 rounded-lg text-sm font-medium transition-colors"
                                             >
                                                 🗑️ Sil
                                             </button>
+                                            <span
+                                                v-else
+                                                class="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 rounded-lg text-sm font-medium cursor-not-allowed"
+                                                title="Ana domain silinemez"
+                                            >
+                                                🔒 Korumalı
+                                            </span>
                                         </div>
                                     </td>
                                 </tr>

@@ -56,8 +56,8 @@ class TenantController extends Controller
         $domains = config('domains.domains', []);
         
         foreach ($domains as $domain => $config) {
-            // Skip main domain and localhost
-            if ($config['type'] === 'main' || $config['type'] === 'development') {
+            // Skip only localhost/development
+            if ($config['type'] === 'development') {
                 continue;
             }
 
@@ -537,10 +537,17 @@ class TenantController extends Controller
             $deleted = [];
             $errors = [];
 
-            // Delete .env file
-            $envFile = base_path(".env.{$domain}");
+            // Delete .env file (check both paths)
+            $envFile = base_path("config/tenants/.env.{$domain}");
             if (File::exists($envFile)) {
                 File::delete($envFile);
+                $deleted[] = "config/tenants/.env.{$domain}";
+            }
+            
+            // Also check old location
+            $envFileOld = base_path(".env.{$domain}");
+            if (File::exists($envFileOld)) {
+                File::delete($envFileOld);
                 $deleted[] = ".env.{$domain}";
             }
 
