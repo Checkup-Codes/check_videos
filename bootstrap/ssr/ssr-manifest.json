@@ -107,9 +107,9 @@
   ],
   "resources/js/Layouts/MainLayout.vue": [],
   "resources/js/Layouts/MainLayout/HeaderLayout.vue": [],
-  "resources/js/Layouts/MainLayout/HeaderLayout.vue?vue&type=style&index=0&scoped=67fa88f3&lang.css": [],
+  "resources/js/Layouts/MainLayout/HeaderLayout.vue?vue&type=style&index=0&scoped=7b41d687&lang.css": [],
   "resources/js/Layouts/MainLayout/SidebarLayout.vue": [],
-  "resources/js/Layouts/MainLayout/SidebarLayout.vue?vue&type=style&index=0&scoped=670170ed&lang.css": [],
+  "resources/js/Layouts/MainLayout/SidebarLayout.vue?vue&type=style&index=0&scoped=7f841a57&lang.css": [],
   "resources/js/Layouts/_components/NavItem.vue": [],
   "resources/js/Layouts/_components/NavItem.vue?vue&type=style&index=0&scoped=408a9067&lang.css": [],
   "resources/js/Layouts/_components/SocialLink.vue": [],
@@ -733,10 +733,16 @@
     "/build/assets/Show-C4u6lUfx.js"
   ],
   "resources/js/Pages/Tenants/Index.vue": [
-    "/build/assets/Index-DFlJsQiA.js"
+    "/build/assets/Index-96c8Jaaz.js"
   ],
   "resources/js/Pages/Tenants/Index.vue?vue&type=script&setup=true&lang.ts": [
-    "/build/assets/Index-DFlJsQiA.js"
+    "/build/assets/Index-96c8Jaaz.js"
+  ],
+  "resources/js/Pages/Tenants/Show.vue": [
+    "/build/assets/Show-CII21_Zg.js"
+  ],
+  "resources/js/Pages/Tenants/Show.vue?vue&type=script&setup=true&lang.ts": [
+    "/build/assets/Show-CII21_Zg.js"
   ],
   "resources/js/Pages/TestCategories/Categories/Create/Screen.vue": [
     "/build/assets/Screen-oA6Dpjd5.js"
