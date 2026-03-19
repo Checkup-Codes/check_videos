@@ -220,6 +220,9 @@ Route::group(['prefix' => 'rendition', 'as' => 'rendition.'], function () {
 
 // Public API Routes
 Route::get('/api/social-media', [SocialMediaController::class, 'getAll'])->name('social-media.all');
+Route::get('/api/social-feeds', [\App\Http\Controllers\SocialFeedController::class, 'index'])->name('social-feeds.index');
+Route::get('/api/social-feeds/{platform}', [\App\Http\Controllers\SocialFeedController::class, 'show'])->name('social-feeds.show');
+Route::post('/api/social-feeds/clear-cache', [\App\Http\Controllers\SocialFeedController::class, 'clearCache'])->name('social-feeds.clear-cache')->middleware('auth');
 Route::get('/api/logo', [MediaController::class, 'getLogo'])->name('api.logo');
 Route::get('/api/categories/{category}/writes', [CategoriesController::class, 'getWrites'])->name('api.categories.writes');
 Route::get('/api/search', [WritesController::class, 'search'])->name('api.search');

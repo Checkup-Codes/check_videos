@@ -1,34 +1,34 @@
 <template>
   <CheckSubsidebar :isNarrow="isNarrow">
-    <!-- View Toggle - Always visible -->
-    <div class="relative z-10 shrink-0 border-b border-border bg-background p-2">
+    <!-- View Toggle - Modern Header -->
+    <div class="relative z-10 shrink-0 border-b border-border/50 bg-background/95 p-2.5 backdrop-blur-sm">
       <div class="flex items-center justify-between gap-2">
         <!-- View Toggle (Left) -->
-        <div class="flex items-center gap-1">
+        <div class="flex items-center gap-1 rounded-lg bg-muted/50 p-0.5">
           <Link
             :href="route('writes.index')"
-            class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs transition-colors"
+            class="inline-flex h-7 items-center gap-1.5 rounded-md px-2.5 text-xs font-medium transition-all duration-200"
             :class="
               isListView
-                ? 'bg-accent text-accent-foreground'
-                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                ? 'bg-background text-foreground shadow-sm'
+                : 'text-muted-foreground hover:bg-background/50 hover:text-foreground'
             "
             title="Liste görünümü"
           >
-            <IconMenu class="h-3 w-3" />
+            <IconMenu class="h-3.5 w-3.5" />
             <span v-if="!isNarrow">Liste</span>
           </Link>
           <Link
             :href="route('categories.index')"
-            class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs transition-colors"
+            class="inline-flex h-7 items-center gap-1.5 rounded-md px-2.5 text-xs font-medium transition-all duration-200"
             :class="
               !isListView
-                ? 'bg-accent text-accent-foreground'
-                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                ? 'bg-background text-foreground shadow-sm'
+                : 'text-muted-foreground hover:bg-background/50 hover:text-foreground'
             "
             title="Kategori görünümü"
           >
-            <IconFolder class="h-3 w-3" />
+            <IconFolder class="h-3.5 w-3.5" />
             <span v-if="!isNarrow">Kategori</span>
           </Link>
         </div>
@@ -36,12 +36,16 @@
         <div class="flex items-center gap-1">
           <button
             @click="toggleAllCategories"
-            class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-            :class="{ 'bg-accent text-accent-foreground': areAllCategoriesExpanded }"
+            class="inline-flex h-7 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium transition-all duration-200"
+            :class="
+              areAllCategoriesExpanded
+                ? 'bg-accent text-accent-foreground shadow-sm'
+                : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
+            "
             :title="areAllCategoriesExpanded ? 'Tümünü Daralt' : 'Tümünü Genişlet'"
           >
             <IconChevronDown
-              class="h-3 w-3 transition-transform duration-200"
+              class="h-3.5 w-3.5 transition-transform duration-200"
               :class="{ 'rotate-180': areAllCategoriesExpanded }"
             />
             <span class="text-xs">{{ areAllCategoriesExpanded ? 'Daralt' : 'Genişlet' }}</span>

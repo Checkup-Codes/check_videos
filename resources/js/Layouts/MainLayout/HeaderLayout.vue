@@ -14,7 +14,7 @@
 
   <!-- Full Width Header -->
   <header
-    class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur transition-all duration-300 supports-[backdrop-filter]:bg-background/60"
+    class="sticky top-0 z-50 w-full backdrop-blur-xl transition-all duration-300 bg-[rgb(243,243,243)]/95 dark:bg-background/70 dark:border-b dark:border-border/50 supports-[backdrop-filter]:bg-[rgb(243,243,243)]/85 dark:supports-[backdrop-filter]:bg-background/50"
   >
     <!-- Mobile Header -->
     <div class="flex h-12 items-center justify-between gap-2 px-3 sm:px-4 lg:hidden">

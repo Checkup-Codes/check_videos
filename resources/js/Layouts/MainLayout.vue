@@ -2,15 +2,18 @@
   <Head>
     <title>{{ title }}</title>
   </Head>
-  <div class="flex h-screen flex-col bg-background text-foreground transition-colors duration-300 px-3">
+  <div class="relative flex h-screen flex-col bg-background text-foreground transition-colors duration-300 px-3">
+    <!-- Animated Background - Global -->
+    <AnimatedBackground />
+
     <!-- Header - En üstte -->
-    <HeaderLayout @toggle-sidebar="toggleSidebar" />
+    <HeaderLayout class="relative z-10" @toggle-sidebar="toggleSidebar" />
 
     <!-- Tab Navigation - Header altında -->
-    <SidebarLayout :is-compact="isCompactMode" @link-clicked="toggleSidebar" />
+    <SidebarLayout class="relative z-10" :is-compact="isCompactMode" @link-clicked="toggleSidebar" />
 
     <!-- Content Area -->
-    <div :class="contentWrapperClass">
+    <div :class="contentWrapperClass" class="relative z-10">
       <slot />
     </div>
   </div>
@@ -21,6 +24,7 @@ import { ref, provide, computed } from 'vue';
 import { usePage, Head } from '@inertiajs/vue3';
 import HeaderLayout from './MainLayout/HeaderLayout.vue';
 import SidebarLayout from './MainLayout/SidebarLayout.vue';
+import AnimatedBackground from '@/Components/AnimatedBackground.vue';
 
 const page = usePage();
 

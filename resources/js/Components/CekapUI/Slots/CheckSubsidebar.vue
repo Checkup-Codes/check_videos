@@ -1,5 +1,5 @@
 <template>
-  <div :class="computedClass" class="flex flex-col h-full">
+  <div :class="computedClass" class="relative z-10 flex flex-col h-full">
     <slot />
   </div>
 </template>

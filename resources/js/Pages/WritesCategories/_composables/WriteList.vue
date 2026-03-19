@@ -1,55 +1,89 @@
 <template>
-  <div class="space-y-1 p-2">
+  <div class="space-y-1.5 p-3">
     <Link
       v-for="write in filteredWrites"
       :key="write.id"
       :href="getWriteRoute(write)"
-      class="block rounded-lg border border-transparent p-3"
+      class="group relative block overflow-hidden rounded-xl border transition-all duration-200"
       :class="[
         activeWrite === getActiveWritePath(write)
-          ? 'bg-primary text-primary-foreground'
-          : 'border-border bg-card hover:bg-accent',
+          ? 'border-primary/50 bg-primary shadow-sm shadow-primary/10'
+          : 'border-border/50 bg-card/50 hover:border-border hover:bg-accent/50 hover:shadow-sm',
       ]"
     >
-      <h4
-        class="line-clamp-2 text-[11px] font-medium leading-tight"
-        :class="activeWrite === getActiveWritePath(write) ? 'text-primary-foreground' : 'text-foreground'"
-      >
-        {{ write.title }}
-      </h4>
-
+      <!-- Active indicator -->
       <div
-        class="flex flex-col gap-1 text-[10px] sm:flex-row sm:items-center sm:justify-between"
-        :class="activeWrite === getActiveWritePath(write) ? 'text-primary-foreground/70' : 'text-muted-foreground'"
-      >
-        <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
-          <span class="flex items-center gap-1">
-            <IconCalendar class="h-3 w-3 flex-shrink-0" />
-            <span class="truncate">{{ formatDate(write.created_at) }}</span>
-          </span>
+        v-if="activeWrite === getActiveWritePath(write)"
+        class="absolute left-0 top-0 h-full w-1 bg-primary"
+      ></div>
 
-          <span class="flex items-center gap-1">
-            <IconEye class="h-3 w-3 flex-shrink-0" />
-            <span class="truncate">{{ formatNumber(write.views_count) }} görüntülenme</span>
-          </span>
+      <div class="p-3.5" :class="{ 'pl-4': activeWrite === getActiveWritePath(write) }">
+        <!-- Title with status icons -->
+        <div class="mb-2 flex items-start gap-2">
+          <h4
+            class="line-clamp-2 flex-1 text-xs font-semibold leading-snug tracking-tight"
+            :class="activeWrite === getActiveWritePath(write) ? 'text-primary-foreground' : 'text-foreground'"
+          >
+            {{ write.title }}
+          </h4>
+          <div class="flex shrink-0 items-center gap-1">
+            <span
+              v-if="write.status === 'private'"
+              class="flex h-5 w-5 items-center justify-center rounded-md bg-yellow-500/10 text-yellow-600 dark:text-yellow-400"
+              title="Gizli yazı"
+            >
+              <IconLock class="h-3 w-3" />
+            </span>
+            <span
+              v-if="write.status === 'link_only'"
+              class="flex h-5 w-5 items-center justify-center rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400"
+              title="Sadece link"
+            >
+              <IconLink class="h-3 w-3" />
+            </span>
+          </div>
         </div>
 
-        <div class="flex items-center gap-1 self-start sm:self-center">
-          <span v-if="write.status === 'private'" class="text-yellow-500 dark:text-yellow-400" title="Gizli yazı">
-            <IconLock class="h-3 w-3" />
+        <!-- Meta information -->
+        <div
+          class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] font-medium"
+          :class="activeWrite === getActiveWritePath(write) ? 'text-primary-foreground/80' : 'text-muted-foreground'"
+        >
+          <span class="flex items-center gap-1.5">
+            <IconCalendar class="h-3 w-3 flex-shrink-0 opacity-70" />
+            <span>{{ formatDate(write.created_at) }}</span>
           </span>
-          <span v-if="write.status === 'link_only'" class="text-blue-500 dark:text-blue-400" title="Sadece link">
-            <IconLink class="h-3 w-3" />
+
+          <span class="flex items-center gap-1.5">
+            <IconEye class="h-3 w-3 flex-shrink-0 opacity-70" />
+            <span>{{ formatNumber(write.views_count) }}</span>
           </span>
         </div>
       </div>
+
+      <!-- Hover effect overlay -->
+      <div
+        class="pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+        :class="activeWrite === getActiveWritePath(write) ? 'bg-primary/5' : 'bg-accent/30'"
+      ></div>
     </Link>
 
+    <!-- Empty state -->
     <div
       v-if="filteredWrites.length === 0"
-      class="flex h-32 items-center justify-center text-center text-muted-foreground"
+      class="flex h-40 flex-col items-center justify-center gap-2 text-center"
     >
-      <div>Henüz yazı bulunmuyor</div>
+      <div class="rounded-full bg-muted/50 p-3">
+        <svg class="h-6 w-6 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
+        </svg>
+      </div>
+      <p class="text-xs font-medium text-muted-foreground">Henüz yazı bulunmuyor</p>
     </div>
   </div>
 </template>

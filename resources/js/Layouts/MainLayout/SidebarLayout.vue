@@ -1,9 +1,9 @@
 <template>
   <!-- Horizontal Tab Navigation - Hidden on mobile, shown on desktop -->
   <nav
-    class="sticky top-12 z-40 hidden w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 lg:block"
+    class="sticky top-12 z-40 hidden w-full backdrop-blur-xl bg-[rgb(243,243,243)]/95 dark:bg-background/70 dark:border-b dark:border-border/50 supports-[backdrop-filter]:bg-[rgb(243,243,243)]/85 dark:supports-[backdrop-filter]:bg-background/50 lg:block"
   >
-    <div class="flex h-9 items-center justify-between px-3">
+    <div class="flex h-10 items-center justify-between px-4">
       <!-- Tab Navigation Links -->
       <div class="flex items-center gap-0.5">
         <TabNavItem href="/" icon="home" label="Ana Sayfa" :is-active="isActiveRoute('/')" />

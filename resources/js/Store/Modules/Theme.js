@@ -5,9 +5,8 @@ export default {
 
   state: {
     currentTheme: localStorage.getItem('theme') || 'light',
-    // Font preferences - Default to Inter for best readability
-    headingFont: localStorage.getItem('headingFont') || 'inter', // 'inter' = Inter (recommended), 'new' = Clash Display, 'classic' = System fonts
-    bodyFont: localStorage.getItem('bodyFont') || 'inter', // 'inter' = Inter (recommended), 'new' = Satoshi, 'classic' = System fonts
+    // Font preference - Single unified font choice for entire site
+    font: localStorage.getItem('font') || 'inter', // 'inter' = Inter (default), 'geist' = Geist (minimalist)
   },
 
   mutations: {
@@ -24,17 +23,11 @@ export default {
       }
     },
 
-    // Font preferences mutations
-    setHeadingFont(state, font) {
-      state.headingFont = font;
-      localStorage.setItem('headingFont', font);
-      document.documentElement.setAttribute('data-heading-font', font);
-    },
-
-    setBodyFont(state, font) {
-      state.bodyFont = font;
-      localStorage.setItem('bodyFont', font);
-      document.documentElement.setAttribute('data-body-font', font);
+    // Font preference mutation - applies to entire site
+    setFont(state, font) {
+      state.font = font;
+      localStorage.setItem('font', font);
+      document.documentElement.setAttribute('data-font', font);
     },
   },
 
@@ -45,29 +38,23 @@ export default {
 
     initTheme({ commit, state }) {
       commit('setTheme', state.currentTheme);
-      // Initialize font preferences
-      commit('setHeadingFont', state.headingFont);
-      commit('setBodyFont', state.bodyFont);
+      // Initialize font preference
+      commit('setFont', state.font);
     },
 
     toggleTheme({ commit, state }) {
       commit('setTheme', state.currentTheme === 'light' ? 'dark' : 'light');
     },
 
-    // Font preference actions
-    changeHeadingFont({ commit }, font) {
-      commit('setHeadingFont', font);
-    },
-
-    changeBodyFont({ commit }, font) {
-      commit('setBodyFont', font);
+    // Font preference action
+    changeFont({ commit }, font) {
+      commit('setFont', font);
     },
   },
 
   getters: {
     getCurrentTheme: (state) => state.currentTheme,
     isDarkTheme: (state) => state.currentTheme === 'dark',
-    getHeadingFont: (state) => state.headingFont,
-    getBodyFont: (state) => state.bodyFont,
+    getFont: (state) => state.font,
   },
 };

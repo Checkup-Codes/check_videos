@@ -14,6 +14,7 @@ class IndexController extends Controller
     public function index()
     {
         $seoService = app(\App\Services\SeoService::class);
+        $socialFeedService = app(\App\Services\SocialFeedService::class);
         
         // Get recent content for structured data
         $contentSummary = $this->getRecentContentForSchema();
@@ -21,11 +22,23 @@ class IndexController extends Controller
         // Generate homepage schema with all content types
         $schemas = $seoService->getHomepageSchema($contentSummary);
 
+        // Get social media feeds and stats
+        $socialFeeds = $socialFeedService->getAllFeeds();
+        $socialStats = $socialFeedService->getAllStats();
+
+        // Get user's social media links from database
+        $socialMediaLinks = \App\Models\UserSocialMedia::where('is_active', true)
+            ->orderBy('order')
+            ->get();
+
         return inertia(
             'Index/Index',
             [
                 'screen' => $this->screenDefault,
-                'structuredData' => $schemas, // Pass to frontend for rendering
+                'structuredData' => $schemas,
+                'socialFeeds' => $socialFeeds,
+                'socialStats' => $socialStats,
+                'socialMediaLinks' => $socialMediaLinks,
             ]
         );
     }

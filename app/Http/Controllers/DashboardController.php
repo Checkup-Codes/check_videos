@@ -6,6 +6,14 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\WritesCategories\Write;
 use App\Models\WritesCategories\Category;
+use App\Models\Journey;
+use App\Models\Certificate;
+use App\Models\Workspace;
+use App\Models\Bookmark;
+use App\Models\Tests\Test;
+use App\Models\Rendition\Word;
+use App\Models\Projects\Service;
+use App\Models\FBVersions\Version;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -16,75 +24,99 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        // User's writes count
-        $writes_count = Write::where('author_id', $user->id)->count();
-        $public_writes_count = Write::where('author_id', $user->id)->where('status', 'public')->count();
-        $private_writes_count = Write::where('author_id', $user->id)->where('status', 'private')->count();
-
-        // Get categories that have writes by this user
-        $user_categories_ids = DB::table('content_category_write')
-            ->join('content_writes', 'content_category_write.write_id', '=', 'content_writes.id')
-            ->where('content_writes.author_id', $user->id)
-            ->pluck('content_category_write.category_id')
-            ->unique();
-
-        $categories_count = count($user_categories_ids);
-
-        // User's content statistics
-        $stats = [
-            'categories_count' => $categories_count,
-            'writes_count' => $writes_count,
-            'public_writes_count' => $public_writes_count,
-            'private_writes_count' => $private_writes_count,
+        // Collect all module statistics
+        $modules = [
+            'writes' => [
+                'count' => Write::where('author_id', $user->id)->count(),
+                'recent' => Write::where('author_id', $user->id)
+                    ->orderBy('updated_at', 'desc')
+                    ->take(3)
+                    ->get(['id', 'title', 'status', 'updated_at']),
+                'icon' => 'pencil',
+                'route' => 'writes.index',
+                'color' => 'blue',
+            ],
+            'journeys' => [
+                'count' => Journey::where('user_id', $user->id)->count(),
+                'recent' => Journey::where('user_id', $user->id)
+                    ->latest()
+                    ->take(3)
+                    ->get(['id', 'title', 'entry_date', 'status']),
+                'icon' => 'map',
+                'route' => 'journey.index',
+                'color' => 'purple',
+            ],
+            'certificates' => [
+                'count' => Certificate::count(),
+                'recent' => Certificate::active()
+                    ->ordered()
+                    ->take(3)
+                    ->get(['id', 'title', 'issuer', 'issue_date']),
+                'icon' => 'award',
+                'route' => 'certificates.index',
+                'color' => 'green',
+            ],
+            'workspaces' => [
+                'count' => Workspace::where('user_id', $user->id)->count(),
+                'recent' => Workspace::where('user_id', $user->id)
+                    ->orderBy('created_at', 'desc')
+                    ->take(3)
+                    ->get(['id', 'status', 'created_at']),
+                'icon' => 'briefcase',
+                'route' => 'workspace.index',
+                'color' => 'orange',
+            ],
+            'bookmarks' => [
+                'count' => Bookmark::where('user_id', $user->id)->count(),
+                'recent' => Bookmark::where('user_id', $user->id)
+                    ->orderBy('created_at', 'desc')
+                    ->take(3)
+                    ->get(['id', 'name', 'link', 'created_at']),
+                'icon' => 'bookmark',
+                'route' => 'bookmarks.index',
+                'color' => 'yellow',
+            ],
+            'tests' => [
+                'count' => Test::where('author_id', $user->id)->count(),
+                'recent' => Test::where('author_id', $user->id)
+                    ->orderBy('created_at', 'desc')
+                    ->take(3)
+                    ->get(['id', 'title', 'status', 'total_questions']),
+                'icon' => 'clipboard',
+                'route' => 'test-categories.index',
+                'color' => 'red',
+            ],
+            'words' => [
+                'count' => Word::count(),
+                'recent' => Word::orderBy('created_at', 'desc')
+                    ->take(3)
+                    ->get(['id', 'word', 'language', 'is_complete']),
+                'icon' => 'book',
+                'route' => 'rendition.words.index',
+                'color' => 'indigo',
+            ],
+            'services' => [
+                'count' => Service::count(),
+                'recent' => Service::orderBy('created_at', 'desc')
+                    ->take(3)
+                    ->get(['id', 'name', 'description']),
+                'icon' => 'cog',
+                'route' => 'services.index',
+                'color' => 'gray',
+            ],
+            'versions' => [
+                'count' => Version::count(),
+                'recent' => Version::orderBy('created_at', 'desc')
+                    ->take(3)
+                    ->get(['id', 'version', 'release_date']),
+                'icon' => 'code',
+                'route' => 'versions.index',
+                'color' => 'pink',
+            ],
         ];
 
-        // Recent writes
-        $recentWrites = Write::where('author_id', $user->id)
-            ->orderBy('updated_at', 'desc')
-            ->take(5)
-            ->get();
-
-        // Popular categories (based on number of writes by this user)
-        $popularCategories = Category::whereIn('id', $user_categories_ids)
-            ->withCount(['writes' => function ($query) use ($user) {
-                $query->where('author_id', $user->id);
-            }])
-            ->orderBy('writes_count', 'desc')
-            ->take(5)
-            ->get();
-
-        // Monthly writes statistics
-        $monthlyStats = Write::where('author_id', $user->id)
-            ->whereYear('created_at', date('Y'))
-            ->select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as count'))
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get()
-            ->keyBy('month')
-            ->map(function ($item) {
-                return $item->count;
-            })
-            ->toArray();
-
-        // Fill in missing months with zero counts
-        for ($i = 1; $i <= 12; $i++) {
-            if (!isset($monthlyStats[$i])) {
-                $monthlyStats[$i] = 0;
-            }
-        }
-        ksort($monthlyStats);
-
-        // Tüm yazıları getir
-        $allWrites = Write::select('id', 'title')
-            ->orderBy('title')
-            ->get();
-
         return Inertia::render('Dashboard', [
-            'stats' => $stats,
-            'recentWrites' => $recentWrites,
-            'popularCategories' => $popularCategories,
-            'monthlyStats' => $monthlyStats,
-            'allWrites' => $allWrites,
+            'modules' => $modules,
             'screen' => $this->getScreenData(false),
         ]);
     }
