@@ -13,21 +13,6 @@ class RobotsController extends Controller
         $domainConfig = config("domains.domains.{$domain}", []);
         $indexInGoogle = $domainConfig['index_in_google'] ?? false;
         $mainDomain = config('domains.main_domain', 'checkupcodes.com');
-        
-        // Park edilmiş domainler için (Google'da indexlenmeyecek)
-        if (!$indexInGoogle) {
-            $content = "# This is a parked domain\n";
-            $content .= "# Main site: https://{$mainDomain}\n";
-            $content .= "# All content uses canonical URLs pointing to main domain\n\n";
-            $content .= "User-agent: *\n";
-            $content .= "Disallow: /\n\n";
-            $content .= "# If you want to visit the main site, go to:\n";
-            $content .= "# https://{$mainDomain}\n";
-            
-            return response($content)->header('Content-Type', 'text/plain');
-        }
-        
-        // Ana domain için (Google'da indexlenecek)
         $baseUrl = rtrim(request()->getSchemeAndHttpHost(), '/');
         
         // Sanitize domain for filename
@@ -37,7 +22,27 @@ class RobotsController extends Controller
         $sitemapFilename = in_array($domain, ['localhost', '127.0.0.1', '::1']) 
             ? 'sitemap.xml' 
             : "sitemap_{$safeDomain}.xml";
-
+        
+        // Park edilmiş domainler için (Google'da indexlenmeyecek AMA crawl edilecek)
+        // Strateji: noindex, follow - Link juice ana domain'e akar
+        if (!$indexInGoogle) {
+            $content = "# Parked domain - Content visible but not indexed\n";
+            $content .= "# Main site: https://{$mainDomain}\n";
+            $content .= "# All pages use canonical URLs pointing to main domain\n";
+            $content .= "# This allows link equity to flow to main domain\n\n";
+            $content .= "User-agent: *\n";
+            $content .= "Allow: /\n\n";
+            $content .= "# Sitemap for crawling (pages have noindex meta tag)\n";
+            $content .= "Sitemap: {$baseUrl}/{$sitemapFilename}\n\n";
+            $content .= "# Disallow admin and private routes\n";
+            $content .= "Disallow: /admin/\n";
+            $content .= "Disallow: /private/\n";
+            $content .= "Disallow: /api/\n";
+            
+            return response($content)->header('Content-Type', 'text/plain');
+        }
+        
+        // Ana domain için (Google'da indexlenecek)
         $content = "# Main domain - indexed by search engines\n\n";
         $content .= "User-agent: *\n";
         $content .= "Allow: /\n\n";

@@ -176,7 +176,7 @@ class SeoService
             'description' => $pageDescription ?? $global['siteDescription'],
             'keywords' => $global['keywords'],
             'author' => $global['author'],
-            'robots' => $global['robots'],
+            'robots' => $this->getRobotsMetaTag(),
             'language' => $global['language'],
             'locale' => $global['locale'],
             
@@ -544,5 +544,30 @@ class SeoService
             'index_in_google' => true,
             'features' => ['all'],
         ]);
+    }
+
+    /**
+     * Get robots meta tag based on domain configuration
+     * 
+     * Park edilmiş domainler için: noindex, follow
+     * Ana domain için: index, follow (veya veritabanından gelen değer)
+     * 
+     * @return string
+     */
+    public function getRobotsMetaTag(): string
+    {
+        $currentDomain = request()->getHost();
+        $domainConfig = config("domains.domains.{$currentDomain}", []);
+        $indexInGoogle = $domainConfig['index_in_google'] ?? false;
+        
+        // Park edilmiş domainler: noindex, follow
+        // Bu sayede Google içeriği indexlemez ama link juice ana domain'e akar
+        if (!$indexInGoogle) {
+            return 'noindex, follow';
+        }
+        
+        // Ana domain: Veritabanından gelen robots ayarı varsa kullan
+        $global = $this->getGlobalSeo();
+        return $global['robots'] ?? 'index, follow';
     }
 }
