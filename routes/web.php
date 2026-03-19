@@ -115,6 +115,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['main.domain'])->group(function () {
         Route::get('/tenants', [\App\Http\Controllers\TenantController::class, 'index'])->name('tenants.index');
         Route::get('/tenants/{domain}', [\App\Http\Controllers\TenantController::class, 'show'])->name('tenants.show');
+        Route::get('/tenants/{domain}/debug', [\App\Http\Controllers\TenantController::class, 'debug'])->name('tenants.debug');
         Route::post('/tenants', [\App\Http\Controllers\TenantController::class, 'store'])->name('tenants.store');
         Route::delete('/tenants/{domain}', [\App\Http\Controllers\TenantController::class, 'destroy'])->name('tenants.destroy');
         Route::post('/tenants/cleanup-dots', [\App\Http\Controllers\TenantController::class, 'cleanupDots'])->name('tenants.cleanup-dots');

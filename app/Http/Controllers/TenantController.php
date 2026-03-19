@@ -48,6 +48,98 @@ class TenantController extends Controller
     }
 
     /**
+     * Debug tenant database connection
+     */
+    public function debug(string $domain)
+    {
+        $domain = $this->sanitizeDomain($domain);
+        
+        $debug = [
+            'domain' => $domain,
+            'timestamp' => now()->toDateTimeString(),
+        ];
+        
+        try {
+            // Get .env file path
+            $envFile = base_path("config/tenants/.env.{$domain}");
+            if (!File::exists($envFile)) {
+                $envFile = base_path(".env.{$domain}");
+            }
+            
+            $debug['env_file'] = [
+                'path' => $envFile,
+                'exists' => File::exists($envFile),
+            ];
+            
+            if (File::exists($envFile)) {
+                $envContent = File::get($envFile);
+                
+                // Extract DB credentials
+                preg_match('/DB_DATABASE=(.*)/', $envContent, $dbMatches);
+                preg_match('/DB_USERNAME=(.*)/', $envContent, $userMatches);
+                preg_match('/DB_HOST=(.*)/', $envContent, $hostMatches);
+                
+                $dbName = trim($dbMatches[1] ?? 'not_found', '"\'');
+                $dbUser = trim($userMatches[1] ?? 'not_found', '"\'');
+                $dbHost = trim($hostMatches[1] ?? 'not_found', '"\'');
+                
+                $debug['env_config'] = [
+                    'DB_DATABASE' => $dbName,
+                    'DB_USERNAME' => $dbUser,
+                    'DB_HOST' => $dbHost,
+                ];
+                
+                // Test database connection
+                try {
+                    $connectionName = 'debug_' . $domain;
+                    $currentConfig = config('database.connections.mysql');
+                    
+                    config([
+                        "database.connections.{$connectionName}" => array_merge($currentConfig, [
+                            'database' => $dbName,
+                        ])
+                    ]);
+                    
+                    // Try to connect
+                    $pdo = DB::connection($connectionName)->getPdo();
+                    $debug['connection'] = [
+                        'success' => true,
+                        'message' => 'Connection successful',
+                    ];
+                    
+                    // Get tables
+                    $tables = DB::connection($connectionName)->select("
+                        SELECT table_name, table_rows
+                        FROM information_schema.TABLES 
+                        WHERE table_schema = ?
+                        LIMIT 10
+                    ", [$dbName]);
+                    
+                    $debug['tables'] = array_map(function($table) {
+                        return [
+                            'name' => $table->table_name,
+                            'rows' => $table->table_rows,
+                        ];
+                    }, $tables);
+                    
+                    DB::purge($connectionName);
+                    
+                } catch (\Exception $e) {
+                    $debug['connection'] = [
+                        'success' => false,
+                        'error' => $e->getMessage(),
+                    ];
+                }
+            }
+            
+        } catch (\Exception $e) {
+            $debug['error'] = $e->getMessage();
+        }
+        
+        return response()->json($debug, 200, [], JSON_PRETTY_PRINT);
+    }
+
+    /**
      * Get all tenants with their stats
      */
     private function getAllTenants(): array
@@ -115,7 +207,10 @@ class TenantController extends Controller
             $envContent = File::get($envFile);
             
             preg_match('/DB_DATABASE=(.*)/', $envContent, $matches);
-            $dbName = $matches[1] ?? str_replace(['.', '-'], '_', $domain);
+            $dbName = trim($matches[1] ?? str_replace(['.', '-'], '_', $domain));
+            
+            // Remove quotes if present
+            $dbName = trim($dbName, '"\'');
             
             // Check if database exists
             $result = DB::select("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", [$dbName]);
@@ -129,7 +224,7 @@ class TenantController extends Controller
                 ];
             }
 
-            // Get database size
+            // Get database size using information_schema
             $sizeResult = DB::select("
                 SELECT 
                     SUM(data_length + index_length) as size,
@@ -174,8 +269,21 @@ class TenantController extends Controller
         try {
             $dbName = $basicInfo['name'];
             
-            // Get table details
-            $tables = DB::select("
+            // Create a temporary connection to the tenant's database
+            $connectionName = 'tenant_temp_' . $domain;
+            
+            // Get current connection config
+            $currentConfig = config('database.connections.mysql');
+            
+            // Create new connection config for tenant database
+            config([
+                "database.connections.{$connectionName}" => array_merge($currentConfig, [
+                    'database' => $dbName,
+                ])
+            ]);
+            
+            // Get table details from tenant's database
+            $tables = DB::connection($connectionName)->select("
                 SELECT 
                     table_name,
                     table_rows,
@@ -197,6 +305,9 @@ class TenantController extends Controller
                     'total_size_formatted' => $this->formatBytes($table->total_size),
                 ];
             }, $tables);
+            
+            // Purge the temporary connection
+            DB::purge($connectionName);
 
             return array_merge($basicInfo, [
                 'table_details' => $tableDetails,
@@ -205,6 +316,7 @@ class TenantController extends Controller
         } catch (\Exception $e) {
             return array_merge($basicInfo, [
                 'error' => $e->getMessage(),
+                'table_details' => [],
             ]);
         }
     }

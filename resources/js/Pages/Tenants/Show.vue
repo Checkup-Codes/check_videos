@@ -96,17 +96,36 @@
                 </div>
 
                 <!-- Database Tables -->
-                <div v-if="tenant.database.exists && tenant.database.table_details" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden mb-8">
+                <div v-if="tenant.database.exists" class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden mb-8">
                     <div class="p-6 border-b border-slate-200 dark:border-slate-700">
                         <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                             <span>💾</span>
                             Database Tabloları
                         </h2>
                         <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                            Toplam {{ tenant.database.tables }} tablo
+                            {{ tenant.database.name }} - Toplam {{ tenant.database.tables }} tablo
                         </p>
                     </div>
-                    <div class="overflow-x-auto">
+                    
+                    <!-- Error State -->
+                    <div v-if="tenant.database.error && !tenant.database.table_details?.length" class="p-6">
+                        <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                            <div class="flex items-start gap-3">
+                                <span class="text-2xl">⚠️</span>
+                                <div>
+                                    <p class="text-sm font-semibold text-yellow-800 dark:text-yellow-400 mb-1">
+                                        Tablo detayları yüklenemedi
+                                    </p>
+                                    <p class="text-xs text-yellow-700 dark:text-yellow-500">
+                                        {{ tenant.database.error }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Table List -->
+                    <div v-else-if="tenant.database.table_details?.length" class="overflow-x-auto">
                         <table class="w-full">
                             <thead class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
                                 <tr>
@@ -141,6 +160,16 @@
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                    
+                    <!-- Empty State -->
+                    <div v-else class="p-12 text-center">
+                        <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-3xl">📊</span>
+                        </div>
+                        <p class="text-slate-500 dark:text-slate-400">
+                            Bu database'de henüz tablo yok
+                        </p>
                     </div>
                 </div>
 
