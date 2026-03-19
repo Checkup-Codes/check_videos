@@ -27,6 +27,27 @@ class TenantController extends Controller
     }
 
     /**
+     * Show detailed tenant information
+     */
+    public function show(string $domain)
+    {
+        $domain = $this->sanitizeDomain($domain);
+        
+        $tenant = [
+            'domain' => $domain,
+            'name' => config("domains.domains.{$domain}.name", $domain),
+            'type' => config("domains.domains.{$domain}.type", 'unknown'),
+            'database' => $this->getDetailedDatabaseInfo($domain),
+            'storage' => $this->getDetailedStorageInfo($domain),
+            'env' => $this->getEnvInfo($domain),
+        ];
+
+        return Inertia::render('Tenants/Show', [
+            'tenant' => $tenant,
+        ]);
+    }
+
+    /**
      * Get all tenants with their stats
      */
     private function getAllTenants(): array
@@ -72,7 +93,20 @@ class TenantController extends Controller
     {
         try {
             // Get database name from .env file
-            $envFile = base_path(".env.{$domain}");
+            $envFile = base_path("config/tenants/.env.{$domain}");
+            if (!File::exists($envFile)) {
+                $envFile = base_path(".env.{$domain}"); // Fallback to old location
+            }
+            
+            if (!File::exists($envFile)) {
+                return [
+                    'name' => 'unknown',
+                    'exists' => false,
+                    'size' => 0,
+                    'tables' => 0,
+                ];
+            }
+            
             $envContent = File::get($envFile);
             
             preg_match('/DB_DATABASE=(.*)/', $envContent, $matches);
@@ -122,6 +156,55 @@ class TenantController extends Controller
     }
 
     /**
+     * Get detailed database information with table breakdown
+     */
+    private function getDetailedDatabaseInfo(string $domain): array
+    {
+        $basicInfo = $this->getDatabaseInfo($domain);
+        
+        if (!$basicInfo['exists']) {
+            return $basicInfo;
+        }
+
+        try {
+            $dbName = $basicInfo['name'];
+            
+            // Get table details
+            $tables = DB::select("
+                SELECT 
+                    table_name,
+                    table_rows,
+                    data_length,
+                    index_length,
+                    (data_length + index_length) as total_size
+                FROM information_schema.TABLES 
+                WHERE table_schema = ?
+                ORDER BY total_size DESC
+            ", [$dbName]);
+
+            $tableDetails = array_map(function($table) {
+                return [
+                    'name' => $table->table_name,
+                    'rows' => (int) $table->table_rows,
+                    'data_size' => (int) $table->data_length,
+                    'index_size' => (int) $table->index_length,
+                    'total_size' => (int) $table->total_size,
+                    'total_size_formatted' => $this->formatBytes($table->total_size),
+                ];
+            }, $tables);
+
+            return array_merge($basicInfo, [
+                'table_details' => $tableDetails,
+            ]);
+
+        } catch (\Exception $e) {
+            return array_merge($basicInfo, [
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
      * Get storage information for a tenant
      */
     private function getStorageInfo(string $domain): array
@@ -164,6 +247,151 @@ class TenantController extends Controller
                 'exists' => true,
                 'size' => 0,
                 'files' => 0,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Get detailed storage information with folder breakdown
+     */
+    private function getDetailedStorageInfo(string $domain): array
+    {
+        $basicInfo = $this->getStorageInfo($domain);
+        
+        if (!$basicInfo['exists']) {
+            return $basicInfo;
+        }
+
+        try {
+            $storagePath = storage_path("multi/{$domain}");
+            $folders = [];
+            
+            // Get public folder structure
+            $publicPath = $storagePath . '/public';
+            if (File::exists($publicPath)) {
+                $directories = File::directories($publicPath);
+                
+                foreach ($directories as $dir) {
+                    $folderName = basename($dir);
+                    $folderInfo = $this->getFolderInfo($dir);
+                    
+                    $folders[] = [
+                        'name' => $folderName,
+                        'path' => str_replace(storage_path(), '', $dir),
+                        'size' => $folderInfo['size'],
+                        'size_formatted' => $this->formatBytes($folderInfo['size']),
+                        'files' => $folderInfo['files'],
+                        'images' => $folderInfo['images'],
+                    ];
+                }
+            }
+
+            // Sort by size
+            usort($folders, fn($a, $b) => $b['size'] <=> $a['size']);
+
+            return array_merge($basicInfo, [
+                'folders' => $folders,
+            ]);
+
+        } catch (\Exception $e) {
+            return array_merge($basicInfo, [
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Get folder information (size, files, images)
+     */
+    private function getFolderInfo(string $path): array
+    {
+        $size = 0;
+        $files = 0;
+        $images = 0;
+        
+        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'];
+
+        try {
+            $iterator = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS)
+            );
+
+            foreach ($iterator as $file) {
+                if ($file->isFile()) {
+                    $size += $file->getSize();
+                    $files++;
+                    
+                    $extension = strtolower($file->getExtension());
+                    if (in_array($extension, $imageExtensions)) {
+                        $images++;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            // Ignore errors
+        }
+
+        return [
+            'size' => $size,
+            'files' => $files,
+            'images' => $images,
+        ];
+    }
+
+    /**
+     * Get .env file information
+     */
+    private function getEnvInfo(string $domain): array
+    {
+        $envFile = base_path("config/tenants/.env.{$domain}");
+        if (!File::exists($envFile)) {
+            $envFile = base_path(".env.{$domain}"); // Fallback
+        }
+        
+        if (!File::exists($envFile)) {
+            return [
+                'exists' => false,
+            ];
+        }
+
+        try {
+            $content = File::get($envFile);
+            $lines = explode("\n", $content);
+            
+            $config = [];
+            foreach ($lines as $line) {
+                $line = trim($line);
+                if (empty($line) || str_starts_with($line, '#')) {
+                    continue;
+                }
+                
+                if (strpos($line, '=') !== false) {
+                    [$key, $value] = explode('=', $line, 2);
+                    $key = trim($key);
+                    $value = trim($value);
+                    
+                    // Mask sensitive values
+                    if (in_array($key, ['DB_PASSWORD', 'APP_KEY', 'MAIL_PASSWORD'])) {
+                        $value = '••••••••';
+                    }
+                    
+                    $config[$key] = $value;
+                }
+            }
+
+            return [
+                'exists' => true,
+                'path' => str_replace(base_path(), '', $envFile),
+                'size' => File::size($envFile),
+                'size_formatted' => $this->formatBytes(File::size($envFile)),
+                'modified_at' => File::lastModified($envFile),
+                'config' => $config,
+            ];
+
+        } catch (\Exception $e) {
+            return [
+                'exists' => true,
                 'error' => $e->getMessage(),
             ];
         }

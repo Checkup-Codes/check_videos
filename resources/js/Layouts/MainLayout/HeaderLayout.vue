@@ -1290,6 +1290,33 @@
                       </svg>
                       <span>SEO Yönetimi</span>
                     </Link>
+                    <Link
+                      v-if="isMainDomain"
+                      :href="route('tenants.index')"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors"
+                      :class="
+                        isActiveRoute('/tenants')
+                          ? 'bg-accent text-accent-foreground'
+                          : 'text-foreground hover:bg-accent/50'
+                      "
+                      @click="closeMenu"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                        />
+                      </svg>
+                      <span>Tenant Yönetimi</span>
+                    </Link>
                   </div>
                 </div>
               </template>
@@ -1371,6 +1398,14 @@ const props = defineProps({
 });
 
 const page = usePage();
+
+// Check if current domain is main domain (for tenant management access)
+const isMainDomain = computed(() => {
+  const mainDomain = 'checkupcodes.com';
+  const currentHost = window.location.hostname;
+  const cleanHost = currentHost.replace(/^www\./, '');
+  return cleanHost === mainDomain;
+});
 
 // Header'da gösterilecek site adı (sadece siteName, pageTitle değil)
 const seoTitle = computed(() => {
@@ -1536,7 +1571,8 @@ const isAdminPanelPage = computed(() => {
     url.startsWith('/dashboard') ||
     url.startsWith('/media') ||
     url.startsWith('/social-media') ||
-    url.startsWith('/seo')
+    url.startsWith('/seo') ||
+    url.startsWith('/tenants')
   );
 });
 

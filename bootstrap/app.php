@@ -79,7 +79,10 @@ return $app
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
-        //
+        // Alias middleware for route usage
+        $middleware->alias([
+            'main.domain' => \App\Http\Middleware\CheckMainDomain::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

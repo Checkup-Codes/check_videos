@@ -146,6 +146,23 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+                                <tr v-if="tenants.length === 0" class="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                                    <td colspan="6" class="px-6 py-12 text-center">
+                                        <div class="flex flex-col items-center gap-4">
+                                            <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center">
+                                                <span class="text-3xl">📦</span>
+                                            </div>
+                                            <div>
+                                                <p class="text-lg font-medium text-slate-900 dark:text-white mb-1">
+                                                    Henüz tenant eklenmemiş
+                                                </p>
+                                                <p class="text-sm text-slate-500 dark:text-slate-400">
+                                                    Yeni bir tenant eklemek için yukarıdaki butonu kullanın
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
                                 <tr v-for="tenant in tenants" :key="tenant.domain" class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                                     <td class="px-6 py-4">
                                         <a :href="`https://${tenant.domain}`" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">
@@ -179,22 +196,24 @@
                                         {{ formatDate(tenant.created_at) }}
                                     </td>
                                     <td class="px-6 py-4 text-right">
-                                        <button
-                                            @click="confirmDelete(tenant)"
-                                            class="px-4 py-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-700 dark:text-red-400 rounded-lg text-sm font-medium transition-colors"
-                                        >
-                                            🗑️ Sil
-                                        </button>
+                                        <div class="flex items-center justify-end gap-2">
+                                            <a
+                                                :href="`/tenants/${tenant.domain}`"
+                                                class="px-4 py-2 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-400 rounded-lg text-sm font-medium transition-colors"
+                                            >
+                                                📊 Detay
+                                            </a>
+                                            <button
+                                                @click="confirmDelete(tenant)"
+                                                class="px-4 py-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-700 dark:text-red-400 rounded-lg text-sm font-medium transition-colors"
+                                            >
+                                                🗑️ Sil
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
-
-                        <div v-if="tenants.length === 0" class="text-center py-12">
-                            <p class="text-slate-500 dark:text-slate-400 text-lg">
-                                Henüz tenant eklenmemiş
-                            </p>
-                        </div>
                     </div>
                 </div>
 
