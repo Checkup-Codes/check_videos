@@ -61,7 +61,12 @@ class TenantController extends Controller
                 continue;
             }
 
-            $envFile = base_path(".env.{$domain}");
+            // Check new path first, then fallback to old path
+            $envFile = base_path("config/tenants/.env.{$domain}");
+            if (!File::exists($envFile)) {
+                $envFile = base_path(".env.{$domain}"); // Fallback to old location
+            }
+            
             $exists = File::exists($envFile);
             
             if (!$exists) {
@@ -458,9 +463,11 @@ class TenantController extends Controller
         try {
             $domain = $this->sanitizeDomain($request->domain);
             
-            // Check if tenant already exists
-            $envFile = base_path(".env.{$domain}");
-            if (File::exists($envFile)) {
+            // Check if tenant already exists (check both paths)
+            $envFile = base_path("config/tenants/.env.{$domain}");
+            $envFileOld = base_path(".env.{$domain}");
+            
+            if (File::exists($envFile) || File::exists($envFileOld)) {
                 return response()->json([
                     'success' => false,
                     'message' => "Tenant {$domain} already exists",
