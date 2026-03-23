@@ -3,7 +3,8 @@
     <!-- Quiz Tamamlandıysa -->
     <div
       v-if="!gameState.isPlaying && gameState.userResponses.length > 0"
-      class="w-full max-w-2xl rounded-lg border border-border bg-card p-6 shadow-sm"
+      class="rounded-lg border border-border bg-card p-6 shadow-sm"
+      style="width: 700px; max-width: 90vw; max-height: 80vh; overflow-y-auto"
     >
       <!-- Başlık ve Puan -->
       <div class="mb-4 text-center">
@@ -70,56 +71,44 @@
       </div>
 
       <!-- Butonlar -->
-      <div class="space-y-2">
-        <!-- İstatistik Güncelleme Butonu -->
+      <div class="flex gap-2">
         <button
-          v-if="hasUser"
-          @click="updateWordStats"
-          class="inline-flex w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90"
-          :disabled="isUpdating"
+          @click="emit('game-completed', getGameResults())"
+          class="flex-1 inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90"
         >
-          {{ isUpdating ? 'Güncelleniyor...' : 'İstatistikleri Güncelle' }}
+          Pakete Dön
         </button>
-
-        <div class="flex gap-2">
-          <button
-            @click="emit('game-completed')"
-            class="flex-1 inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90"
-          >
-            Pakete Dön
-          </button>
-          <button
-            @click="restartGame"
-            class="flex-1 inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
-          >
-            Tekrar Başla
-          </button>
-        </div>
+        <button
+          @click="restartGame"
+          class="flex-1 inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
+        >
+          Tekrar Başla
+        </button>
       </div>
     </div>
 
     <!-- Quiz Devam Ediyorsa -->
-    <div v-else class="w-full max-w-4xl rounded-lg border border-border bg-card p-6 shadow-sm">
+    <div v-else class="rounded-lg border border-border bg-card p-5 shadow-sm" style="width: 700px; max-width: 90vw; max-height: 80vh; overflow-y-auto">
       <!-- Progress Bar -->
-      <div class="mb-4 h-1 w-full overflow-hidden rounded-full bg-muted">
+      <div class="mb-3 h-1 w-full overflow-hidden rounded-full bg-muted">
         <div ref="progressBar" class="h-full w-0 bg-primary transition-all duration-500"></div>
       </div>
 
       <!-- Soru Sayacı -->
-      <div class="mb-6 text-right">
-        <span class="text-muted-foreground text-sm">
+      <div class="mb-4 text-right">
+        <span class="text-muted-foreground text-xs">
           Soru {{ gameState.currentIndex + 1 }} / {{ gameState.totalQuestions }}
         </span>
       </div>
 
       <!-- Soru -->
-      <div v-if="gameState.currentQuestion" class="space-y-4" ref="questionContainer">
+      <div v-if="gameState.currentQuestion" class="space-y-3" ref="questionContainer">
         <!-- Ana Soru -->
         <div>
-          <h2 class="mb-2 text-2xl font-semibold text-foreground">"{{ gameState.currentQuestion.word }}"</h2>
-          <p class="text-muted-foreground mb-3">Bu kelimenin anlamı nedir?</p>
+          <h2 class="mb-1.5 text-xl font-semibold text-foreground">"{{ gameState.currentQuestion.word }}"</h2>
+          <p class="text-muted-foreground mb-2 text-sm">Bu kelimenin anlamı nedir?</p>
           <span
-            class="inline-flex items-center rounded border border-border bg-muted px-2 py-1 text-xs text-foreground"
+            class="inline-flex items-center rounded border border-border bg-muted px-2 py-0.5 text-xs text-foreground"
           >
             {{ getWordType(gameState.currentQuestion.type) }}
           </span>
@@ -128,10 +117,10 @@
         <!-- İpucu Gösterimi (Varsa otomatik göster) -->
         <div
           v-if="gameState.currentQuestion.example_sentences && gameState.currentQuestion.example_sentences.length > 0"
-          class="rounded border border-border bg-muted p-3"
+          class="rounded border border-border bg-muted p-2.5"
         >
-          <div class="mb-2 flex items-center justify-between">
-            <p class="text-sm font-medium text-foreground">Örnek Cümle</p>
+          <div class="mb-1.5 flex items-center justify-between">
+            <p class="text-xs font-medium text-foreground">Örnek Cümle</p>
             <button
               v-if="gameState.currentQuestion.example_sentences.length > 1"
               @click="showHint"
@@ -140,7 +129,7 @@
               Sonraki ({{ gameState.currentHintIndex + 1 }}/{{ gameState.currentQuestion.example_sentences.length }})
             </button>
           </div>
-          <p class="text-sm text-foreground">
+          <p class="text-xs text-foreground">
             {{ gameState.currentQuestion.example_sentences[gameState.currentHintIndex].sentence }}
           </p>
         </div>
@@ -152,12 +141,12 @@
             :key="`${gameState.currentIndex}-${index}`"
             @click="selectAnswer(option)"
             :disabled="gameState.showAnswer"
-            class="w-full rounded border border-border bg-background p-3 text-left text-base text-foreground transition-all duration-200 hover:bg-muted disabled:cursor-not-allowed"
+            class="w-full rounded border border-border bg-background p-2.5 text-left text-sm text-foreground transition-all duration-200 hover:bg-muted disabled:cursor-not-allowed"
             :class="getOptionClasses(option, index)"
           >
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2.5">
               <span
-                class="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground"
+                class="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground"
               >
                 {{ String.fromCharCode(65 + index) }}
               </span>
@@ -168,7 +157,7 @@
 
         <!-- Cevap Sonucu -->
         <div v-if="gameState.showAnswer" class="text-center">
-          <p class="text-lg font-medium" :class="gameState.isCorrect ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
+          <p class="text-base font-medium" :class="gameState.isCorrect ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
             {{ gameState.isCorrect ? 'Doğru!' : 'Yanlış!' }}
           </p>
         </div>
@@ -503,6 +492,22 @@ const endGame = () => {
   gameState.value.isPlaying = false;
 };
 
+// Oyun sonuçlarını hazırla
+const getGameResults = () => {
+  const updateData = gameState.value.userResponses.map((response) => ({
+    word_id: response.word_id,
+    review_count: 1,
+    incorrect_count: response.correct ? 0 : 1,
+  }));
+
+  return {
+    totalQuestions: gameState.value.totalQuestions,
+    correctAnswers: correctCount.value,
+    incorrectAnswers: incorrectCount.value,
+    results: updateData,
+  };
+};
+
 // Oyunu yeniden başlat
 const restartGame = () => {
   gameState.value = {
@@ -521,36 +526,6 @@ const restartGame = () => {
     currentHintIndex: 0,
   };
   startGameWithConfig();
-};
-
-// API'ye verileri gönder
-const updateWordStats = () => {
-  if (!hasUser.value || !gameState.value.userResponses.length || isUpdating.value) return;
-
-  isUpdating.value = true;
-  const updateData = gameState.value.userResponses.map((response) => ({
-    word_id: response.word_id,
-    review_count: 1,
-    incorrect_count: response.correct ? 0 : 1,
-  }));
-
-  router.post(
-    '/update-words',
-    { words: updateData },
-    {
-      preserveState: true,
-      onSuccess: () => {
-        console.log('İstatistikler başarıyla güncellendi');
-        isUpdating.value = false;
-        // İstatistikler güncellendikten sonra pakete dön
-        emit('game-completed');
-      },
-      onError: (error) => {
-        console.error('İstatistik güncelleme hatası:', error);
-        isUpdating.value = false;
-      },
-    }
-  );
 };
 
 // İpucu göster

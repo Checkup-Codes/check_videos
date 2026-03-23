@@ -3,7 +3,8 @@
     <!-- Quiz Tamamlandıysa -->
     <div
       v-if="!gameState.isPlaying && gameState.userResponses.length > 0"
-      class="w-full max-w-2xl rounded-lg border border-border bg-card p-6 shadow-sm"
+      class="rounded-lg border border-border bg-card p-6 shadow-sm"
+      style="width: 700px; max-width: 90vw; max-height: 80vh; overflow-y-auto"
     >
       <!-- Başlık ve Puan -->
       <div class="mb-4 text-center">
@@ -82,38 +83,27 @@
       </div>
 
       <!-- Butonlar -->
-      <div class="space-y-2">
-        <!-- İstatistik Güncelleme Butonu -->
+      <div class="flex gap-2">
         <button
-          v-if="hasUser"
-          @click="updateWordStats"
-          class="inline-flex w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90"
-          :disabled="isUpdating"
+          @click="emit('game-completed', getGameResults())"
+          class="flex-1 inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90"
         >
-          {{ isUpdating ? 'Güncelleniyor...' : 'İstatistikleri Güncelle' }}
+          Pakete Dön
         </button>
-
-        <div class="flex gap-2">
-          <button
-            @click="emit('game-completed')"
-            class="flex-1 inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90"
-          >
-            Pakete Dön
-          </button>
-          <button
-            @click="restartGame"
-            class="flex-1 inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
-          >
-            Tekrar Başla
-          </button>
-        </div>
+        <button
+          @click="restartGame"
+          class="flex-1 inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
+        >
+          Tekrar Başla
+        </button>
       </div>
     </div>
 
     <!-- Quiz Devam Ediyorsa -->
     <div
       v-else
-      class="relative w-full max-w-2xl rounded-lg border border-border bg-card p-6 shadow-sm transition-colors duration-500"
+      class="relative rounded-lg border border-border bg-card p-5 shadow-sm transition-colors duration-500"
+      style="width: 700px; max-width: 90vw; max-height: 80vh; overflow-y-auto"
       :class="{
         'bg-card': !gameState.showAnswer,
         'bg-green-50 dark:bg-green-900/10': gameState.showAnswer && gameState.isCorrect,
@@ -121,7 +111,7 @@
       }"
     >
       <!-- Progress Bar -->
-      <div class="relative mb-4 h-1 w-full overflow-hidden rounded-full bg-muted">
+      <div class="relative mb-3 h-1 w-full overflow-hidden rounded-full bg-muted">
         <div ref="progressBar" class="h-full w-0 bg-primary"></div>
         <div
           ref="progressBarGlow"
@@ -130,14 +120,14 @@
       </div>
 
       <!-- Soru Sayacı ve Puan -->
-      <div class="text-muted-foreground mb-4 flex items-center justify-between text-sm">
+      <div class="text-muted-foreground mb-3 flex items-center justify-between text-xs">
         <div>Soru {{ gameState.currentIndex + 1 }} / {{ gameState.totalQuestions }}</div>
-        <div class="flex flex-col items-end gap-1">
-          <div class="flex items-center gap-2">
+        <div class="flex flex-col items-end gap-0.5">
+          <div class="flex items-center gap-1.5">
             <span class="font-medium text-foreground">{{ gameState.totalPoints }}</span>
             <span>toplam puan</span>
           </div>
-          <div class="flex items-center gap-2 text-xs">
+          <div class="flex items-center gap-1.5 text-[10px]">
             <span class="text-muted-foreground font-medium">{{ currentQuestionPoints }}</span>
             <span>mevcut soru puanı</span>
           </div>
@@ -145,13 +135,13 @@
       </div>
 
       <!-- Soru -->
-      <div v-if="gameState.currentQuestion" class="space-y-4" ref="questionContainer">
+      <div v-if="gameState.currentQuestion" class="space-y-3" ref="questionContainer">
         <div>
-          <h2 class="mb-2 text-2xl font-semibold text-foreground">"{{ gameState.currentQuestion.meaning }}"</h2>
-          <p class="text-muted-foreground mb-3">Bu kelimenin İngilizce anlamını yazın</p>
+          <h2 class="mb-1.5 text-xl font-semibold text-foreground">"{{ gameState.currentQuestion.meaning }}"</h2>
+          <p class="text-muted-foreground mb-2 text-sm">Bu kelimenin İngilizce anlamını yazın</p>
           <div class="flex items-center justify-between">
             <span
-              class="inline-flex items-center rounded border border-border bg-muted px-2 py-1 text-xs text-foreground"
+              class="inline-flex items-center rounded border border-border bg-muted px-2 py-0.5 text-xs text-foreground"
             >
               {{ getWordType(gameState.currentQuestion.type) }}
             </span>
@@ -162,13 +152,13 @@
         <div class="space-y-2">
           <div
             v-if="gameState.currentQuestion && gameState.currentQuestion.word"
-            class="flex justify-center space-x-2"
+            class="flex justify-center space-x-1.5"
             ref="selectedLettersContainer"
           >
             <div
               v-for="(letter, index) in gameState.currentQuestion.word.split('')"
               :key="`${gameState.currentIndex}-${index}`"
-              class="letter-box flex h-12 w-12 items-center justify-center rounded border text-xl font-semibold transition-all"
+              class="letter-box flex h-10 w-10 items-center justify-center rounded border text-lg font-semibold transition-all"
               :class="{
                 'border-border bg-background': !gameState.selectedLetters[index],
                 'border-primary bg-muted': !gameState.selectedLetters[index] && index === getNextEmptyIndex(),
@@ -194,11 +184,11 @@
           </div>
 
           <!-- Doğru Cevap Önizlemesi -->
-          <div v-if="gameState.showAnswer && !gameState.isCorrect" class="flex justify-center space-x-2">
+          <div v-if="gameState.showAnswer && !gameState.isCorrect" class="flex justify-center space-x-1.5">
             <div
               v-for="(letter, index) in gameState.currentQuestion.word.split('')"
               :key="index"
-              class="letter-box bg-green-100 dark:bg-green-900/30 flex h-8 w-8 items-center justify-center rounded border border-green-500 text-sm font-medium text-green-600 dark:text-green-400"
+              class="letter-box bg-green-100 dark:bg-green-900/30 flex h-7 w-7 items-center justify-center rounded border border-green-500 text-xs font-medium text-green-600 dark:text-green-400"
             >
               {{ letter.toLowerCase() }}
             </div>
@@ -216,7 +206,7 @@
       </div>
 
       <!-- Sanal Klavye -->
-      <div v-if="showVirtualKeyboard" class="virtual-keyboard mt-4">
+      <div v-if="showVirtualKeyboard" class="virtual-keyboard mt-3">
         <div class="flex flex-col gap-1 rounded border border-border bg-muted p-2">
           <!-- Üst Sıra -->
           <div class="flex gap-1">
@@ -973,36 +963,20 @@ const restartGame = () => {
   startGameWithConfig();
 };
 
-// Kelime istatistiklerini güncelle
-const updateWordStats = () => {
-  if (!hasUser.value || !gameState.value.userResponses.length || isUpdating.value) return;
-
-  isUpdating.value = true;
+// Oyun sonuçlarını hazırla
+const getGameResults = () => {
   const updateData = gameState.value.userResponses.map((response) => ({
     word_id: response.word_id,
     review_count: 1,
     incorrect_count: response.correct ? 0 : 1,
   }));
 
-  router.post(
-    '/update-words',
-    { words: updateData },
-    {
-      preserveState: true,
-      onSuccess: () => {
-        console.log('İstatistikler başarıyla güncellendi');
-        isUpdating.value = false;
-        // İstatistikler güncellendikten sonra pakete dön
-        setTimeout(() => {
-          emit('game-completed');
-        }, 1000); // 1 saniye bekle
-      },
-      onError: (error) => {
-        console.error('İstatistik güncelleme hatası:', error);
-        isUpdating.value = false;
-      },
-    }
-  );
+  return {
+    totalQuestions: gameState.value.totalQuestions,
+    correctAnswers: correctCount.value,
+    incorrectAnswers: incorrectCount.value,
+    results: updateData,
+  };
 };
 
 // Add keyboard event listener

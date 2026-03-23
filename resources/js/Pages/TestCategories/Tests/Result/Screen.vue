@@ -199,23 +199,17 @@
               </div>
             </div>
 
-            <!-- Options -->
-            <div class="space-y-2">
+            <!-- Options for Multiple Choice Questions -->
+            <div v-if="getQuestionOptions(answer.question).length > 0" class="space-y-2">
               <div
                 v-for="(option, optIndex) in getQuestionOptions(answer.question)"
                 :key="option.id"
                 class="flex items-start gap-3 rounded-lg border p-3"
-                :class="{
-                  'border-green-500 bg-green-100 dark:bg-green-900': option.is_correct,
-                  'border-red-500 bg-red-100 dark:bg-red-900':
-                    !option.is_correct && answer.selected_option_ids && answer.selected_option_ids.includes(option.id),
-                  'border-border bg-background':
-                    !option.is_correct && (!answer.selected_option_ids || !answer.selected_option_ids.includes(option.id)),
-                }"
+                :class="getOptionClass(option, answer)"
               >
                 <span class="font-medium text-muted-foreground">{{ String.fromCharCode(65 + optIndex) }}.</span>
                 <span class="flex-1 whitespace-pre-wrap text-foreground">{{ option.option_text }}</span>
-                <div class="flex gap-2">
+                <div class="flex flex-wrap gap-2">
                   <span
                     v-if="option.is_correct"
                     class="rounded-md bg-green-500 px-2 py-1 text-xs font-medium text-white"
@@ -223,11 +217,32 @@
                     Doğru Cevap
                   </span>
                   <span
-                    v-if="!option.is_correct && answer.selected_option_ids && answer.selected_option_ids.includes(option.id)"
-                    class="rounded-md bg-red-500 px-2 py-1 text-xs font-medium text-white"
+                    v-if="answer.selected_option_ids && answer.selected_option_ids.includes(option.id)"
+                    class="rounded-md px-2 py-1 text-xs font-medium text-white"
+                    :class="option.is_correct ? 'bg-green-600' : 'bg-red-500'"
                   >
-                    Sizin Cevabınız
+                    Sizin Seçiminiz
                   </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- True/False Answer Display -->
+            <div v-else-if="answer.answer_text !== null && answer.answer_text !== undefined" class="space-y-2">
+              <div class="rounded-lg border p-4" :class="answer.is_correct ? 'border-green-500 bg-green-50 dark:bg-green-950' : 'border-red-500 bg-red-50 dark:bg-red-950'">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-sm text-muted-foreground mb-1">Sizin Cevabınız:</p>
+                    <p class="text-lg font-semibold" :class="answer.is_correct ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'">
+                      {{ answer.answer_text === 'true' || answer.answer_text === true ? 'Doğru' : 'Yanlış' }}
+                    </p>
+                  </div>
+                  <div v-if="!answer.is_correct">
+                    <p class="text-sm text-muted-foreground mb-1">Doğru Cevap:</p>
+                    <p class="text-lg font-semibold text-green-700 dark:text-green-300">
+                      {{ answer.question?.correct_answer === 'true' || answer.question?.correct_answer === true || answer.question?.correct_answer === 1 ? 'Doğru' : 'Yanlış' }}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -264,6 +279,63 @@
         </div>
       </div>
 
+      <!-- Detailed Summary Section -->
+      <div class="space-y-4 rounded-lg border border-border bg-card p-6">
+        <h2 class="text-xl font-semibold text-foreground">Detaylı Özet</h2>
+        <p class="text-sm text-muted-foreground">
+          Test sonuçlarınızın detaylı özetini oluşturun ve paylaşın.
+        </p>
+        <div class="flex gap-2">
+          <button
+            @click="generateDetailedSummary"
+            class="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            Detaylı Özet Çıkar
+          </button>
+          <button
+            v-if="detailedSummary"
+            @click="copyDetailedSummary"
+            class="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+              />
+            </svg>
+            {{ detailedSummaryCopyText }}
+          </button>
+        </div>
+        <div
+          v-if="detailedSummary"
+          class="mt-4 max-h-96 overflow-y-auto rounded-md border border-input bg-background p-4"
+        >
+          <pre class="whitespace-pre-wrap text-sm text-foreground">{{ detailedSummary }}</pre>
+        </div>
+      </div>
+
       <!-- Actions (for logged in users) -->
       <div v-if="!isGuest" class="flex gap-4">
         <Link
@@ -292,6 +364,8 @@ const { props } = usePage();
 const result = props.result || {};
 const isGuest = props.isGuest || false;
 const copyButtonText = ref('Mesajı Kopyala');
+const detailedSummary = ref('');
+const detailedSummaryCopyText = ref('Özeti Kopyala');
 
 // Handle different result structures for logged in vs guest
 const resultAnswers = computed(() => {
@@ -362,6 +436,30 @@ const scoreCircumference = computed(() => {
 const getQuestionOptions = (question) => {
   if (!question || !question.options) return [];
   return question.options.sort((a, b) => (a.order || 0) - (b.order || 0));
+};
+
+// Get option class based on correctness and selection
+const getOptionClass = (option, answer) => {
+  const isSelected = answer.selected_option_ids && answer.selected_option_ids.includes(option.id);
+  const isCorrect = option.is_correct;
+  
+  // If option is correct and selected - green
+  if (isCorrect && isSelected) {
+    return 'border-green-500 bg-green-100 dark:bg-green-900';
+  }
+  
+  // If option is correct but not selected - light green (show what should have been selected)
+  if (isCorrect && !isSelected) {
+    return 'border-green-300 bg-green-50 dark:bg-green-950';
+  }
+  
+  // If option is incorrect but selected - red
+  if (!isCorrect && isSelected) {
+    return 'border-red-500 bg-red-100 dark:bg-red-900';
+  }
+  
+  // Default - not selected and not correct
+  return 'border-border bg-background';
 };
 
 // Format time
@@ -468,6 +566,252 @@ const shareResult = async () => {
     if (err.name !== 'AbortError') {
       console.error('Paylaşım hatası:', err);
     }
+  }
+};
+
+// Generate detailed summary
+const generateDetailedSummary = () => {
+  const testTitle = result.test?.title || 'Test';
+  const participantName = result.participant_name || 'Katılımcı';
+  const score = Math.round(result.score || 0);
+  const correctAnswers = result.correct_answers || 0;
+  const totalQuestions = result.total_questions || 0;
+  const wrongAnswers = totalQuestions - correctAnswers;
+  const timeTaken = result.time_taken ? formatTime(result.time_taken) : 'Belirtilmemiş';
+  const completedAt = result.completed_at ? formatDate(result.completed_at) : 'Belirtilmemiş';
+
+  let summary = `═══════════════════════════════════════════════════════════
+TEST SONUÇ RAPORU
+═══════════════════════════════════════════════════════════
+
+📋 TEST BİLGİLERİ
+─────────────────────────────────────────────────────────
+Test Adı: ${testTitle}
+Katılımcı: ${participantName}
+Tamamlanma Tarihi: ${completedAt}
+Süre: ${timeTaken}
+
+📊 GENEL SONUÇ
+─────────────────────────────────────────────────────────
+Toplam Puan: ${score}/100
+Doğru Cevap: ${correctAnswers}
+Yanlış Cevap: ${wrongAnswers}
+Toplam Soru: ${totalQuestions}
+Başarı Oranı: %${score}
+
+`;
+
+  // Performance evaluation
+  if (score >= 80) {
+    summary += `🎉 DEĞERLENDİRME: Mükemmel! Çok başarılı bir performans sergiledınız.\n`;
+  } else if (score >= 60) {
+    summary += `👍 DEĞERLENDİRME: İyi! Başarılı bir performans, ancak geliştirilecek alanlar var.\n`;
+  } else if (score >= 40) {
+    summary += `📚 DEĞERLENDİRME: Orta seviye. Konuları tekrar gözden geçirmeniz önerilir.\n`;
+  } else {
+    summary += `💪 DEĞERLENDİRME: Geliştirilmeli. Konuları detaylı çalışmanız gerekiyor.\n`;
+  }
+
+  summary += `\n═══════════════════════════════════════════════════════════
+SORU DETAYLARI
+═══════════════════════════════════════════════════════════\n\n`;
+
+  // Add each question detail
+  resultAnswers.value.forEach((answer, index) => {
+    const questionNumber = index + 1;
+    const questionText = answer.question?.question_text || 'Soru metni bulunamadı';
+    const isCorrect = answer.is_correct;
+    const explanation = answer.question?.explanation || '';
+    const options = getQuestionOptions(answer.question);
+    const questionType = answer.question?.question_type || 'multiple_choice';
+    
+    // Determine question type and format accordingly
+    if (questionType === 'true_false' || (options.length === 0 && answer.answer_text !== null)) {
+      // True/False question
+      const userAnswer = answer.answer_text === 'true' || answer.answer_text === true ? 'Doğru' : 'Yanlış';
+      const correctAnswer = answer.question?.correct_answer === 'true' || answer.question?.correct_answer === true || answer.question?.correct_answer === 1 ? 'Doğru' : 'Yanlış';
+      
+      summary += `SORU ${questionNumber} (Doğru/Yanlış):\n`;
+      summary += `${questionText}\n\n`;
+      summary += `Sizin Cevabınız: ${userAnswer}\n`;
+      summary += `Doğru Cevap: ${correctAnswer}\n`;
+      summary += `Sonuç: ${isCorrect ? '✅ DOĞRU' : '❌ YANLIŞ'}\n`;
+    } else {
+      // Multiple choice question (single or multiple correct answers)
+      const correctOptions = options.filter(opt => opt.is_correct);
+      const selectedOptions = options.filter(opt => answer.selected_option_ids && answer.selected_option_ids.includes(opt.id));
+      const isMultipleChoice = correctOptions.length > 1;
+
+      summary += `SORU ${questionNumber}${isMultipleChoice ? ' (Çoktan Seçmeli - Birden Fazla Doğru Cevap)' : ' (Çoktan Seçmeli)'}:\n`;
+      summary += `${questionText}\n\n`;
+
+      // Add options
+      options.forEach((option, optIndex) => {
+        const optionLetter = String.fromCharCode(65 + optIndex);
+        const optionText = option.option_text;
+        const isCorrectOption = option.is_correct;
+        const isSelectedOption = answer.selected_option_ids && answer.selected_option_ids.includes(option.id);
+
+        let prefix = `${optionLetter}) `;
+        
+        if (isCorrectOption && isSelectedOption) {
+          prefix = `✅ ${optionLetter}) `;
+          summary += `${prefix}${optionText} [DOĞRU CEVAP - SİZİN SEÇİMİNİZ]\n`;
+        } else if (isCorrectOption) {
+          prefix = `✅ ${optionLetter}) `;
+          summary += `${prefix}${optionText} [DOĞRU CEVAP]\n`;
+        } else if (isSelectedOption) {
+          prefix = `❌ ${optionLetter}) `;
+          summary += `${prefix}${optionText} [SİZİN SEÇİMİNİZ - YANLIŞ]\n`;
+        } else {
+          summary += `${prefix}${optionText}\n`;
+        }
+      });
+
+      summary += `\n`;
+      
+      // Show detailed result for multiple choice
+      if (isMultipleChoice) {
+        const correctlySelected = selectedOptions.filter(opt => opt.is_correct).length;
+        const incorrectlySelected = selectedOptions.filter(opt => !opt.is_correct).length;
+        const missedCorrect = correctOptions.filter(opt => !answer.selected_option_ids || !answer.selected_option_ids.includes(opt.id)).length;
+        
+        summary += `Sonuç: ${isCorrect ? '✅ DOĞRU' : '❌ YANLIŞ'}\n`;
+        summary += `Detay: ${correctlySelected}/${correctOptions.length} doğru seçenek işaretlendi`;
+        if (incorrectlySelected > 0) {
+          summary += `, ${incorrectlySelected} yanlış seçenek işaretlendi`;
+        }
+        if (missedCorrect > 0) {
+          summary += `, ${missedCorrect} doğru seçenek kaçırıldı`;
+        }
+        summary += `\n`;
+      } else {
+        summary += `Sonuç: ${isCorrect ? '✅ DOĞRU' : '❌ YANLIŞ'}\n`;
+      }
+    }
+
+    if (explanation) {
+      summary += `\n💡 Açıklama: ${explanation}\n`;
+    }
+
+    summary += `\n─────────────────────────────────────────────────────────\n\n`;
+  });
+
+  summary += `═══════════════════════════════════════════════════════════
+YANLIŞ CEVAPLANAN SORULAR
+═══════════════════════════════════════════════════════════\n\n`;
+
+  const wrongAnsweredQuestions = resultAnswers.value.filter((answer) => !answer.is_correct);
+
+  if (wrongAnsweredQuestions.length === 0) {
+    summary += `🎉 Tebrikler! Tüm soruları doğru cevapladınız.\n\n`;
+  } else {
+    wrongAnsweredQuestions.forEach((answer, index) => {
+      const originalIndex = resultAnswers.value.indexOf(answer) + 1;
+      const questionText = answer.question?.question_text || 'Soru metni bulunamadı';
+      const options = getQuestionOptions(answer.question);
+      const questionType = answer.question?.question_type || 'multiple_choice';
+
+      summary += `${index + 1}. Soru ${originalIndex}`;
+      
+      if (questionType === 'true_false' || (options.length === 0 && answer.answer_text !== null)) {
+        // True/False question
+        const userAnswer = answer.answer_text === 'true' || answer.answer_text === true ? 'Doğru' : 'Yanlış';
+        const correctAnswer = answer.question?.correct_answer === 'true' || answer.question?.correct_answer === true || answer.question?.correct_answer === 1 ? 'Doğru' : 'Yanlış';
+        
+        summary += ` (Doğru/Yanlış):\n`;
+        summary += `${questionText}\n\n`;
+        summary += `Sizin Cevabınız: ${userAnswer}\n`;
+        summary += `Doğru Cevap: ${correctAnswer}\n`;
+      } else {
+        // Multiple choice question
+        const correctOptions = options.filter((opt) => opt.is_correct);
+        const selectedOptions = options.filter(
+          (opt) => answer.selected_option_ids && answer.selected_option_ids.includes(opt.id)
+        );
+        const isMultipleChoice = correctOptions.length > 1;
+
+        summary += `${isMultipleChoice ? ' (Çoktan Seçmeli)' : ''}:\n`;
+        summary += `${questionText}\n\n`;
+        summary += `Sizin Seçimleriniz: ${selectedOptions.map((opt) => opt.option_text).join(', ') || 'Cevap verilmedi'}\n`;
+        
+        if (isMultipleChoice) {
+          summary += `Doğru Cevaplar: ${correctOptions.map((opt) => opt.option_text).join(', ')}\n`;
+          
+          // Show what went wrong
+          const correctlySelected = selectedOptions.filter(opt => opt.is_correct);
+          const incorrectlySelected = selectedOptions.filter(opt => !opt.is_correct);
+          const missedCorrect = correctOptions.filter(opt => !answer.selected_option_ids || !answer.selected_option_ids.includes(opt.id));
+          
+          if (incorrectlySelected.length > 0) {
+            summary += `Yanlış Seçilenler: ${incorrectlySelected.map((opt) => opt.option_text).join(', ')}\n`;
+          }
+          if (missedCorrect.length > 0) {
+            summary += `Kaçırılan Doğru Cevaplar: ${missedCorrect.map((opt) => opt.option_text).join(', ')}\n`;
+          }
+        } else {
+          summary += `Doğru Cevap: ${correctOptions[0]?.option_text || 'Belirtilmemiş'}\n`;
+        }
+      }
+
+      if (answer.question?.explanation) {
+        summary += `Açıklama: ${answer.question.explanation}\n`;
+      }
+
+      summary += `\n`;
+    });
+  }
+
+  summary += `═══════════════════════════════════════════════════════════
+ÖNERİLER
+═══════════════════════════════════════════════════════════\n\n`;
+
+  if (wrongAnswers > 0) {
+    summary += `• Yanlış cevapladığınız ${wrongAnswers} soruyu tekrar gözden geçirin.\n`;
+    summary += `• Açıklamaları dikkatlice okuyarak konuları pekiştirin.\n`;
+  }
+
+  if (score < 80) {
+    summary += `• Test konularını tekrar çalışmanız önerilir.\n`;
+    summary += `• Benzer testleri çözerek pratik yapabilirsiniz.\n`;
+  }
+
+  summary += `• Güçlü yönlerinizi koruyun ve zayıf yönlerinizi geliştirin.\n`;
+
+  summary += `\n═══════════════════════════════════════════════════════════\n`;
+  summary += `Bu rapor Checkupcodes tarafından otomatik olarak oluşturulmuştur.\n`;
+  summary += `${window.location.origin}\n`;
+  summary += `═══════════════════════════════════════════════════════════\n`;
+
+  detailedSummary.value = summary;
+};
+
+// Copy detailed summary to clipboard
+const copyDetailedSummary = async () => {
+  try {
+    await navigator.clipboard.writeText(detailedSummary.value);
+    detailedSummaryCopyText.value = 'Kopyalandı!';
+    setTimeout(() => {
+      detailedSummaryCopyText.value = 'Özeti Kopyala';
+    }, 2000);
+  } catch (err) {
+    // Fallback for older browsers
+    const textArea = document.createElement('textarea');
+    textArea.value = detailedSummary.value;
+    textArea.style.position = 'fixed';
+    textArea.style.opacity = '0';
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      detailedSummaryCopyText.value = 'Kopyalandı!';
+      setTimeout(() => {
+        detailedSummaryCopyText.value = 'Özeti Kopyala';
+      }, 2000);
+    } catch (err) {
+      console.error('Kopyalama hatası:', err);
+    }
+    document.body.removeChild(textArea);
   }
 };
 </script>

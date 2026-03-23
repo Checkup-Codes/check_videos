@@ -618,40 +618,48 @@
   "resources/js/Pages/Rendition/Words/IndexWord.vue": [
     "/build/assets/IndexWord-CUqX8BdN.js"
   ],
-  "resources/js/Pages/Rendition/Words/Show/Screen.vue": [
-    "/build/assets/Screen-CfR9tmo5.js",
-    "/build/assets/Screen-dMneVSzA.css"
+  "resources/js/Pages/Rendition/Words/Show/Games/SwipeCards.vue": [
+    "/build/assets/SwipeCards-D7eZevbD.js",
+    "/build/assets/SwipeCards-ByXVo3zp.css"
   ],
-  "resources/js/Pages/Rendition/Words/Show/Screen.vue?vue&type=style&index=0&scoped=50aea41e&lang.css": [
-    "/build/assets/Screen-CfR9tmo5.js",
-    "/build/assets/Screen-dMneVSzA.css"
+  "resources/js/Pages/Rendition/Words/Show/Games/SwipeCards.vue?vue&type=style&index=0&scoped=be309836&lang.css": [
+    "/build/assets/SwipeCards-D7eZevbD.js",
+    "/build/assets/SwipeCards-ByXVo3zp.css"
+  ],
+  "resources/js/Pages/Rendition/Words/Show/Screen.vue": [
+    "/build/assets/Screen-BXyy7yql.js",
+    "/build/assets/Screen-DQaq0aBz.css"
+  ],
+  "resources/js/Pages/Rendition/Words/Show/Screen.vue?vue&type=style&index=0&scoped=c2f4aad7&lang.css": [
+    "/build/assets/Screen-BXyy7yql.js",
+    "/build/assets/Screen-DQaq0aBz.css"
   ],
   "resources/js/Pages/Rendition/Words/ShowWord.vue": [
-    "/build/assets/ShowWord-CXSeZjUo.js"
+    "/build/assets/ShowWord-DtGG4frt.js"
   ],
   "resources/js/Pages/Rendition/_components/MultipleChoice.vue": [
-    "/build/assets/MultipleChoice-u5pTSo_A.js",
-    "/build/assets/MultipleChoice-CGS1KNUh.css"
+    "/build/assets/MultipleChoice-CrTfix-Z.js",
+    "/build/assets/MultipleChoice-3NXj_QGU.css"
   ],
-  "resources/js/Pages/Rendition/_components/MultipleChoice.vue?vue&type=style&index=0&scoped=04ba64c3&lang.css": [
-    "/build/assets/MultipleChoice-u5pTSo_A.js",
-    "/build/assets/MultipleChoice-CGS1KNUh.css"
+  "resources/js/Pages/Rendition/_components/MultipleChoice.vue?vue&type=style&index=0&scoped=b1c6b0e3&lang.css": [
+    "/build/assets/MultipleChoice-CrTfix-Z.js",
+    "/build/assets/MultipleChoice-3NXj_QGU.css"
   ],
   "resources/js/Pages/Rendition/_components/TranslateWord.vue": [
-    "/build/assets/TranslateWord-CGHthvW-.js",
-    "/build/assets/TranslateWord-Bqz2b1DP.css"
+    "/build/assets/TranslateWord-Dyax3-iw.js",
+    "/build/assets/TranslateWord-DsXlJOvP.css"
   ],
-  "resources/js/Pages/Rendition/_components/TranslateWord.vue?vue&type=style&index=0&scoped=77f344b1&lang.css": [
-    "/build/assets/TranslateWord-CGHthvW-.js",
-    "/build/assets/TranslateWord-Bqz2b1DP.css"
+  "resources/js/Pages/Rendition/_components/TranslateWord.vue?vue&type=style&index=0&scoped=a4b3ee29&lang.css": [
+    "/build/assets/TranslateWord-Dyax3-iw.js",
+    "/build/assets/TranslateWord-DsXlJOvP.css"
   ],
   "resources/js/Pages/Rendition/_components/WordCompletion.vue": [
-    "/build/assets/WordCompletion-CSmlEb1_.js",
-    "/build/assets/WordCompletion-BZGJC-ZN.css"
+    "/build/assets/WordCompletion-BtVywQFX.js",
+    "/build/assets/WordCompletion-Dr0fxlCQ.css"
   ],
-  "resources/js/Pages/Rendition/_components/WordCompletion.vue?vue&type=style&index=0&scoped=a8f8a9f1&lang.css": [
-    "/build/assets/WordCompletion-CSmlEb1_.js",
-    "/build/assets/WordCompletion-BZGJC-ZN.css"
+  "resources/js/Pages/Rendition/_components/WordCompletion.vue?vue&type=style&index=0&scoped=a750cb30&lang.css": [
+    "/build/assets/WordCompletion-BtVywQFX.js",
+    "/build/assets/WordCompletion-Dr0fxlCQ.css"
   ],
   "resources/js/Pages/Rendition/_components/WordsTable.vue": [
     "/build/assets/WordsTable-D4oJJB5N.js"
@@ -798,7 +806,7 @@
     "/build/assets/IndexTest-DM2Gglyu.js"
   ],
   "resources/js/Pages/TestCategories/Tests/Result/Screen.vue": [
-    "/build/assets/Screen-J8VelNsx.js"
+    "/build/assets/Screen-CgcW-d4J.js"
   ],
   "resources/js/Pages/TestCategories/Tests/Show/Screen.vue": [
     "/build/assets/Screen-B9817LIe.js"
@@ -813,7 +821,7 @@
     "/build/assets/TakeTest-BXLa4lHg.js"
   ],
   "resources/js/Pages/TestCategories/Tests/TestResult.vue": [
-    "/build/assets/TestResult-fb5PsCfi.js"
+    "/build/assets/TestResult-DP0H5x9l.js"
   ],
   "resources/js/Pages/TestCategories/_components/icons/IconChevronDown.vue": [
     "/build/assets/IconChevronDown-phZsUDO_.js"

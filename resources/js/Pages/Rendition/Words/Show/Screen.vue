@@ -31,7 +31,7 @@
 
         <!-- Game Buttons -->
         <div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <!-- Çoktan Seçmeli -->
             <button 
               @click="startGame('multiple-choice')" 
@@ -88,6 +88,25 @@
                 </div>
               </div>
             </button>
+
+            <!-- Swipe Cards (Tinder Style) -->
+            <button 
+              @click="startGame('swipe-cards')" 
+              :disabled="!hasEnoughWords"
+              class="group relative rounded-lg border-2 border-pink-500/20 bg-pink-500/5 p-4 text-left transition-all hover:border-pink-500/40 hover:bg-pink-500/10 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <div class="flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-pink-500/10">
+                  <svg class="h-5 w-5 text-pink-600 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" />
+                  </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-sm font-semibold text-foreground">Kaydır & Öğren</h3>
+                  <p class="text-xs text-muted-foreground mt-0.5">Tinder tarzı öğrenme</p>
+                </div>
+              </div>
+            </button>
           </div>
           
           <!-- Yetersiz Kelime Uyarısı -->
@@ -114,6 +133,10 @@
             >
               <option value="all">Tüm Kelimeler</option>
               <option value="never-answered">Hiç Cevaplanmamış</option>
+              <option value="lowest-success">En Başarısız (%0-40)</option>
+              <option value="low-success">Düşük Başarı (%40-60)</option>
+              <option value="medium-success">Orta Başarı (%60-80)</option>
+              <option value="high-success">Yüksek Başarı (%80-100)</option>
               <option value="most-mistakes">Çok Hata Yapılan</option>
               <option value="flagged">İşaretlenen</option>
               <option value="unlearned">Öğrenilmemiş</option>
@@ -185,53 +208,65 @@
         </div>
       </div>
 
-      <!-- Game Interface -->
+      <!-- Game Interface - Full Screen -->
       <transition name="game-transition" mode="out-in">
-        <div v-if="showGameInterface" key="game" class="my-8">
-          <!-- Oyun Kontrol Butonu -->
-          <div class="mb-4 flex justify-end">
-            <button 
-              @click="stopGame" 
-              class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-            >
-              <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              Durdur
-            </button>
-          </div>
-
-          <div v-if="loadingGame" class="flex h-60 items-center justify-center">
-            <svg class="h-8 w-8 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        <div v-if="showGameInterface" key="game" class="fixed inset-0 z-50 flex items-center justify-center bg-background">
+          <!-- Close Button - Fixed Top Right -->
+          <button 
+            @click="confirmStopGame" 
+            class="fixed right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-lg transition-all hover:scale-110 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
+          </button>
+
+          <!-- Loading State -->
+          <div v-if="loadingGame" class="flex items-center justify-center">
+            <div class="text-center">
+              <svg class="mx-auto h-12 w-12 animate-spin text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <p class="mt-4 text-sm text-muted-foreground">Oyun yükleniyor...</p>
+            </div>
           </div>
 
-          <MultipleChoice
-            v-else-if="currentGame === 'multiple-choice'"
-            :gameType="currentGame"
-            :packSlug="props.pack?.slug || getPackSlugFromUrl()"
-            :words="filteredWords"
-            :gameConfig="gameConfig"
-            @game-completed="handleGameComplete"
-          />
-          <TranslateWord
-            v-else-if="currentGame === 'fill-in-the-blank'"
-            :gameType="currentGame"
-            :packSlug="props.pack?.slug || getPackSlugFromUrl()"
-            :words="filteredWords"
-            :gameConfig="gameConfig"
-            @game-completed="handleGameComplete"
-          />
-          <WordCompletion
-            v-else-if="currentGame === 'word-completion'"
-            :gameType="currentGame"
-            :packSlug="props.pack?.slug || getPackSlugFromUrl()"
-            :words="filteredWords"
-            :gameConfig="gameConfig"
-            @game-completed="handleGameComplete"
-          />
+          <!-- Game Components - Centered -->
+          <div v-else class="flex h-full w-full items-center justify-center overflow-hidden p-4">
+            <MultipleChoice
+              v-if="currentGame === 'multiple-choice'"
+              :gameType="currentGame"
+              :packSlug="props.pack?.slug || getPackSlugFromUrl()"
+              :words="filteredWords"
+              :gameConfig="gameConfig"
+              @game-completed="handleGameComplete"
+            />
+            <TranslateWord
+              v-else-if="currentGame === 'fill-in-the-blank'"
+              :gameType="currentGame"
+              :packSlug="props.pack?.slug || getPackSlugFromUrl()"
+              :words="filteredWords"
+              :gameConfig="gameConfig"
+              @game-completed="handleGameComplete"
+            />
+            <WordCompletion
+              v-else-if="currentGame === 'word-completion'"
+              :gameType="currentGame"
+              :packSlug="props.pack?.slug || getPackSlugFromUrl()"
+              :words="filteredWords"
+              :gameConfig="gameConfig"
+              @game-completed="handleGameComplete"
+            />
+            <SwipeCards
+              v-else-if="currentGame === 'swipe-cards'"
+              :gameType="currentGame"
+              :packSlug="props.pack?.slug || getPackSlugFromUrl()"
+              :words="filteredWords"
+              :gameConfig="gameConfig"
+              @game-completed="handleGameComplete"
+            />
+          </div>
         </div>
 
         <!-- Words Table (Oyun başlamadığında göster) -->
@@ -254,13 +289,18 @@
                     <th
                       class="text-muted-foreground h-10 px-2 text-left align-middle font-medium [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
                     >
+                      Başarı Oranı
+                    </th>
+                    <th
+                      class="text-muted-foreground h-10 px-2 text-left align-middle font-medium [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]"
+                    >
                       İşlem
                     </th>
                   </tr>
                 </thead>
                 <tbody class="[&_tr:last-child]:border-0">
                   <tr v-if="isLoading" class="border-b border-border transition-colors hover:bg-muted/50">
-                    <td colspan="3" class="p-4 text-center">
+                    <td colspan="4" class="p-4 text-center">
                       <svg class="mx-auto h-6 w-6 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -271,7 +311,7 @@
                     v-else-if="displayedWords.length === 0"
                     class="border-b border-border transition-colors hover:bg-muted/50"
                   >
-                    <td colspan="3" class="text-muted-foreground p-4 text-center">Sonuç bulunamadı</td>
+                    <td colspan="4" class="text-muted-foreground p-4 text-center">Sonuç bulunamadı</td>
                   </tr>
                   <tr
                     v-for="word in displayedWords"
@@ -284,6 +324,38 @@
                     </td>
                     <td class="p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
                       <div class="text-muted-foreground">{{ getPrimaryMeaning(word) }}</div>
+                    </td>
+                    <td class="p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                      <div class="flex items-center gap-2">
+                        <!-- Success Rate Progress Bar -->
+                        <div v-if="word.review_count >= 5" class="flex-1 min-w-0">
+                          <div class="flex items-center gap-2">
+                            <div class="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                              <div
+                                class="h-full transition-all duration-300"
+                                :class="{
+                                  'bg-red-500': calculateSuccessRate(word).rate < 40,
+                                  'bg-orange-500': calculateSuccessRate(word).rate >= 40 && calculateSuccessRate(word).rate < 60,
+                                  'bg-yellow-500': calculateSuccessRate(word).rate >= 60 && calculateSuccessRate(word).rate < 80,
+                                  'bg-green-500': calculateSuccessRate(word).rate >= 80
+                                }"
+                                :style="{ width: calculateSuccessRate(word).rate + '%' }"
+                              ></div>
+                            </div>
+                            <span class="text-xs font-medium text-foreground whitespace-nowrap">
+                              {{ calculateSuccessRate(word).label }}
+                            </span>
+                          </div>
+                          <div class="text-[10px] text-muted-foreground mt-0.5">
+                            {{ word.review_count - word.incorrect_count }}/{{ word.review_count }} doğru
+                          </div>
+                        </div>
+                        <div v-else class="flex-1">
+                          <span class="text-xs text-muted-foreground">
+                            {{ word.review_count > 0 ? `${word.review_count}/5 gösterim` : 'Henüz gösterilmedi' }}
+                          </span>
+                        </div>
+                      </div>
                     </td>
                     <td class="p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
                       <div class="flex items-center gap-2">
@@ -680,6 +752,7 @@ import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 import MultipleChoice from '@/Pages/Rendition/_components/MultipleChoice.vue';
 import TranslateWord from '@/Pages/Rendition/_components/TranslateWord.vue';
 import WordCompletion from '@/Pages/Rendition/_components/WordCompletion.vue';
+import SwipeCards from './Games/SwipeCards.vue';
 
 const props = defineProps({
   words: Array,
@@ -892,16 +965,12 @@ const filteredWordsForGame = computed(() => {
     case 'never-answered':
       wordsToUse = wordsToUse.filter((word) => !word.review_count || word.review_count === 0);
       break;
-    case 'most-mistakes':
-      wordsToUse = wordsToUse.filter((word) => word.incorrect_count && word.incorrect_count >= 3);
-      // En çok hata yapılanlar en üstte
-      wordsToUse.sort((a, b) => (b.incorrect_count || 0) - (a.incorrect_count || 0));
-      break;
-    case 'success-rate':
+    case 'lowest-success':
+      // En az 5 kez gösterilmiş ve %0-40 başarı oranına sahip kelimeler
       wordsToUse = wordsToUse.filter((word) => {
-        if (!word.review_count || word.review_count === 0) return false;
+        if (!word.review_count || word.review_count < 5) return false;
         const successRate = ((word.review_count - (word.incorrect_count || 0)) / word.review_count) * 100;
-        return successRate < gameConfig.value.successRateThreshold;
+        return successRate < 40;
       });
       // En düşük başarı oranı en üstte
       wordsToUse.sort((a, b) => {
@@ -909,6 +978,50 @@ const filteredWordsForGame = computed(() => {
         const bRate = ((b.review_count - (b.incorrect_count || 0)) / b.review_count) * 100;
         return aRate - bRate;
       });
+      break;
+    case 'low-success':
+      // En az 5 kez gösterilmiş ve %40-60 başarı oranına sahip kelimeler
+      wordsToUse = wordsToUse.filter((word) => {
+        if (!word.review_count || word.review_count < 5) return false;
+        const successRate = ((word.review_count - (word.incorrect_count || 0)) / word.review_count) * 100;
+        return successRate >= 40 && successRate < 60;
+      });
+      wordsToUse.sort((a, b) => {
+        const aRate = ((a.review_count - (a.incorrect_count || 0)) / a.review_count) * 100;
+        const bRate = ((b.review_count - (b.incorrect_count || 0)) / b.review_count) * 100;
+        return aRate - bRate;
+      });
+      break;
+    case 'medium-success':
+      // En az 5 kez gösterilmiş ve %60-80 başarı oranına sahip kelimeler
+      wordsToUse = wordsToUse.filter((word) => {
+        if (!word.review_count || word.review_count < 5) return false;
+        const successRate = ((word.review_count - (word.incorrect_count || 0)) / word.review_count) * 100;
+        return successRate >= 60 && successRate < 80;
+      });
+      wordsToUse.sort((a, b) => {
+        const aRate = ((a.review_count - (a.incorrect_count || 0)) / a.review_count) * 100;
+        const bRate = ((b.review_count - (b.incorrect_count || 0)) / b.review_count) * 100;
+        return aRate - bRate;
+      });
+      break;
+    case 'high-success':
+      // En az 5 kez gösterilmiş ve %80-100 başarı oranına sahip kelimeler
+      wordsToUse = wordsToUse.filter((word) => {
+        if (!word.review_count || word.review_count < 5) return false;
+        const successRate = ((word.review_count - (word.incorrect_count || 0)) / word.review_count) * 100;
+        return successRate >= 80;
+      });
+      wordsToUse.sort((a, b) => {
+        const aRate = ((a.review_count - (a.incorrect_count || 0)) / a.review_count) * 100;
+        const bRate = ((b.review_count - (b.incorrect_count || 0)) / b.review_count) * 100;
+        return aRate - bRate;
+      });
+      break;
+    case 'most-mistakes':
+      wordsToUse = wordsToUse.filter((word) => word.incorrect_count && word.incorrect_count >= 3);
+      // En çok hata yapılanlar en üstte
+      wordsToUse.sort((a, b) => (b.incorrect_count || 0) - (a.incorrect_count || 0));
       break;
     case 'flagged':
       wordsToUse = wordsToUse.filter((word) => word.is_flagged);
@@ -1158,9 +1271,46 @@ const startGame = (gameType) => {
 };
 
 // Oyun tamamlandığında
-const handleGameComplete = () => {
-  showGameInterface.value = false;
-  currentGame.value = '';
+const handleGameComplete = (gameResults) => {
+  // Eğer kullanıcı giriş yaptıysa ve sonuçlar varsa otomatik kaydet
+  if (isLoggedIn.value && gameResults && gameResults.results && gameResults.results.length > 0) {
+    // Sonuçları DB'ye kaydet
+    router.post(
+      route('rendition.words.update-words'),
+      {
+        words: gameResults.results,
+      },
+      {
+        preserveState: true,
+        preserveScroll: true,
+        onSuccess: () => {
+          // Başarılı kaydedildikten sonra oyunu kapat ve kelime listesine dön
+          showGameInterface.value = false;
+          currentGame.value = '';
+          loadingGame.value = false;
+        },
+        onError: (error) => {
+          console.error('İstatistik güncelleme hatası:', error);
+          // Hata olsa bile oyunu kapat
+          showGameInterface.value = false;
+          currentGame.value = '';
+          loadingGame.value = false;
+        },
+      }
+    );
+  } else {
+    // Kullanıcı giriş yapmamışsa veya sonuç yoksa sadece oyunu kapat
+    showGameInterface.value = false;
+    currentGame.value = '';
+    loadingGame.value = false;
+  }
+};
+
+// Oyunu durdurmadan önce onay iste
+const confirmStopGame = () => {
+  if (confirm('Oyundan çıkmak istediğinize emin misiniz? İlerlemeniz kaydedilmeyecek.')) {
+    stopGame();
+  }
 };
 
 // Oyunu durdur
