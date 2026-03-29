@@ -816,20 +816,13 @@ const updateTest = () => {
 
   form.questions = questionsData;
 
-  console.log('Submitting form...', {
-    route: route('tests.update', { test: test.value.slug }),
-    data: form.data()
-  });
-
   form.put(route('tests.update', { test: test.value.slug }), {
     onSuccess: (page) => {
-      console.log('Update success:', page);
       if (page?.props?.test?.slug || form.slug) {
         router.visit(route('tests.show', { test: form.slug || test.value.slug }));
       }
     },
     onError: (serverErrors) => {
-      console.log('Update error:', serverErrors);
       if (serverErrors) {
         Object.keys(serverErrors).forEach((key) => {
           if (errors.value.hasOwnProperty(key)) {
