@@ -590,19 +590,36 @@ onMounted(() => {
   window.dispatchEvent(new CustomEvent('formProcessingState', { detail: { processing: false } }));
 
   if (test.value.questions && test.value.questions.length > 0) {
-    form.questions = test.value.questions.map((q) => ({
-      question_text: q.question_text || '',
-      question_type: q.question_type || 'multiple_choice',
-      points: q.points || 10,
-      explanation: q.explanation || '',
-      order: q.order || 0,
-      correct_answer: q.correct_answer !== undefined ? q.correct_answer : null, // For true_false and short_answer
-      options: (q.options || []).map((opt, optIndex) => ({
-        option_text: opt.option_text || '',
-        is_correct: opt.is_correct || false,
-        order: optIndex,
-      })),
-    }));
+    form.questions = test.value.questions.map((q) => {
+      // For true_false questions, convert string/number to boolean
+      let correctAnswer = null;
+      if (q.question_type === 'true_false' && q.correct_answer !== undefined && q.correct_answer !== null) {
+        // Handle string "true"/"false", boolean true/false, or number 1/0
+        if (typeof q.correct_answer === 'string') {
+          correctAnswer = q.correct_answer.toLowerCase() === 'true' || q.correct_answer === '1';
+        } else if (typeof q.correct_answer === 'number') {
+          correctAnswer = q.correct_answer === 1;
+        } else {
+          correctAnswer = Boolean(q.correct_answer);
+        }
+      } else if (q.correct_answer !== undefined) {
+        correctAnswer = q.correct_answer;
+      }
+
+      return {
+        question_text: q.question_text || '',
+        question_type: q.question_type || 'multiple_choice',
+        points: q.points || 10,
+        explanation: q.explanation || '',
+        order: q.order || 0,
+        correct_answer: correctAnswer,
+        options: (q.options || []).map((opt, optIndex) => ({
+          option_text: opt.option_text || '',
+          is_correct: opt.is_correct || false,
+          order: optIndex,
+        })),
+      };
+    });
   } else {
     // If no questions, add one empty question
     addQuestion();
@@ -757,14 +774,9 @@ const validateForm = () => {
 
 // Update
 const updateTest = () => {
-  console.log('updateTest called');
-  
   if (!validateForm()) {
-    console.log('Validation failed:', errors.value);
     return;
   }
-
-  console.log('Validation passed, preparing data...');
 
   // Handle published_at
   if (publishDateObj.value.date && publishDateObj.value.time) {
