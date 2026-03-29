@@ -649,7 +649,7 @@ const submitForm = () => {
   if (!hasErrors) {
     // Use slug for route model binding
     const slug = currentCategory.value.slug || currentCategory.value.id;
-    form.put(route('test-categories.update', { category: slug }), {
+    form.put(route('test-categories.update', { test_category: slug }), {
       onSuccess: () => {
         router.visit(route('test-categories.index'));
       },
@@ -693,7 +693,7 @@ const deleteCategory = (categoryId) => {
   if (confirm('Bu kategoriyi silmek istediğinize emin misiniz?')) {
     // Use slug for route model binding
     const slug = currentCategory.value.slug || categoryId;
-    router.delete(route('test-categories.destroy', { category: slug }), {
+    router.delete(route('test-categories.destroy', { test_category: slug }), {
       onSuccess: () => {
         router.visit(route('test-categories.index'));
       },

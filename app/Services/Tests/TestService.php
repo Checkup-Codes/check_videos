@@ -212,13 +212,30 @@ class TestService
             $totalPoints = 0;
             
             foreach ($questions as $questionData) {
+                // Handle correct_answer for true_false questions
+                $correctAnswer = null;
+                if (isset($questionData['correct_answer'])) {
+                    if (($questionData['question_type'] ?? 'single_choice') === 'true_false') {
+                        // Convert string "true"/"false" to boolean
+                        if (is_string($questionData['correct_answer'])) {
+                            $correctAnswer = $questionData['correct_answer'] === 'true' || $questionData['correct_answer'] === '1';
+                        } elseif (is_numeric($questionData['correct_answer'])) {
+                            $correctAnswer = (int)$questionData['correct_answer'] === 1;
+                        } else {
+                            $correctAnswer = (bool)$questionData['correct_answer'];
+                        }
+                    } else {
+                        $correctAnswer = $questionData['correct_answer'];
+                    }
+                }
+
                 $question = $test->questions()->create([
                     'question_text' => $questionData['question_text'],
                     'question_type' => $questionData['question_type'] ?? 'single_choice',
                     'order' => $questionData['order'] ?? $totalQuestions,
                     'points' => $questionData['points'] ?? 20,
                     'explanation' => $questionData['explanation'] ?? null,
-                    'correct_answer' => $questionData['correct_answer'] ?? null, // For true_false questions
+                    'correct_answer' => $correctAnswer,
                 ]);
                 
                 $totalPoints += $question->points;
@@ -453,6 +470,23 @@ class TestService
 
             // Create questions and options
             foreach ($data['questions'] as $index => $questionData) {
+                // Handle correct_answer for true_false questions
+                $correctAnswer = null;
+                if (isset($questionData['correct_answer'])) {
+                    if ($questionData['question_type'] === 'true_false') {
+                        // Convert string "true"/"false" to boolean
+                        if (is_string($questionData['correct_answer'])) {
+                            $correctAnswer = $questionData['correct_answer'] === 'true' || $questionData['correct_answer'] === '1';
+                        } elseif (is_numeric($questionData['correct_answer'])) {
+                            $correctAnswer = (int)$questionData['correct_answer'] === 1;
+                        } else {
+                            $correctAnswer = (bool)$questionData['correct_answer'];
+                        }
+                    } else {
+                        $correctAnswer = $questionData['correct_answer'];
+                    }
+                }
+
                 $question = TestQuestion::create([
                     'test_id' => $test->id,
                     'question_text' => $questionData['question_text'],
@@ -460,7 +494,7 @@ class TestService
                     'points' => $questionData['points'] ?? 10,
                     'order' => $questionData['order'] ?? ($index + 1),
                     'explanation' => $questionData['explanation'] ?? null,
-                    'correct_answer' => $questionData['correct_answer'] ?? null,
+                    'correct_answer' => $correctAnswer,
                 ]);
 
                 // Create options for single_choice and multiple_choice questions

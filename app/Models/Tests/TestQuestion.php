@@ -27,6 +27,7 @@ class TestQuestion extends Model
         'order',
         'points',
         'explanation',
+        'correct_answer',
     ];
 
     public $incrementing = false;
@@ -35,6 +36,7 @@ class TestQuestion extends Model
     protected $casts = [
         'order' => 'integer',
         'points' => 'integer',
+        'correct_answer' => 'boolean',
     ];
 
     protected static function boot()
