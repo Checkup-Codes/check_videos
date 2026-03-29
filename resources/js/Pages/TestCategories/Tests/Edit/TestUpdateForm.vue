@@ -460,6 +460,7 @@
         <button
           type="submit"
           :disabled="form.processing"
+          @click="console.log('Button clicked, form.processing:', form.processing)"
           class="inline-flex h-11 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <span v-if="form.processing">Güncelleniyor...</span>
@@ -756,9 +757,14 @@ const validateForm = () => {
 
 // Update
 const updateTest = () => {
+  console.log('updateTest called');
+  
   if (!validateForm()) {
+    console.log('Validation failed:', errors.value);
     return;
   }
+
+  console.log('Validation passed, preparing data...');
 
   // Handle published_at
   if (publishDateObj.value.date && publishDateObj.value.time) {
@@ -798,13 +804,20 @@ const updateTest = () => {
 
   form.questions = questionsData;
 
+  console.log('Submitting form...', {
+    route: route('tests.update', { test: test.value.slug }),
+    data: form.data()
+  });
+
   form.put(route('tests.update', { test: test.value.slug }), {
     onSuccess: (page) => {
+      console.log('Update success:', page);
       if (page?.props?.test?.slug || form.slug) {
         router.visit(route('tests.show', { test: form.slug || test.value.slug }));
       }
     },
     onError: (serverErrors) => {
+      console.log('Update error:', serverErrors);
       if (serverErrors) {
         Object.keys(serverErrors).forEach((key) => {
           if (errors.value.hasOwnProperty(key)) {
