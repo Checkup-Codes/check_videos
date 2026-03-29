@@ -1,5 +1,79 @@
 <template>
   <div class="space-y-6">
+    <!-- Test Bilgileri Formu -->
+    <div class="rounded-xl border border-border bg-card p-6 space-y-4">
+      <h3 class="text-lg font-semibold text-foreground">Test Bilgileri</h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Title -->
+        <div class="space-y-2">
+          <label class="text-sm font-medium text-foreground">
+            Test Başlığı <span class="text-destructive">*</span>
+          </label>
+          <input
+            v-model="testInfo.title"
+            type="text"
+            placeholder="Örn: JavaScript Temelleri"
+            class="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </div>
+
+        <!-- Slug -->
+        <div class="space-y-2">
+          <label class="text-sm font-medium text-foreground">
+            Slug <span class="text-destructive">*</span>
+          </label>
+          <input
+            v-model="testInfo.slug"
+            type="text"
+            placeholder="javascript-temelleri"
+            class="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </div>
+
+        <!-- Category -->
+        <div class="space-y-2">
+          <label class="text-sm font-medium text-foreground">
+            Kategori <span class="text-destructive">*</span>
+          </label>
+          <select
+            v-model="testInfo.category_id"
+            class="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            <option :value="null">Kategori Seçin</option>
+            <option v-for="category in categories" :key="category.id" :value="category.id">
+              {{ category.name }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Status -->
+        <div class="space-y-2">
+          <label class="text-sm font-medium text-foreground">
+            Durum <span class="text-destructive">*</span>
+          </label>
+          <select
+            v-model="testInfo.status"
+            class="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            <option value="draft">Taslak</option>
+            <option value="published">Yayınlandı</option>
+            <option value="private">Özel</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="space-y-2">
+        <label class="text-sm font-medium text-foreground">Açıklama</label>
+        <textarea
+          v-model="testInfo.description"
+          rows="3"
+          placeholder="Test hakkında kısa bir açıklama..."
+          class="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+      </div>
+    </div>
     <!-- Info Card -->
     <div class="rounded-xl border border-primary/20 bg-primary/5 p-4">
       <div class="flex items-start gap-3">
@@ -7,9 +81,9 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <div class="flex-1">
-          <h3 class="font-medium text-foreground">Toplu Test Ekleme</h3>
+          <h3 class="font-medium text-foreground">Toplu Soru Ekleme</h3>
           <p class="mt-1 text-sm text-muted-foreground">
-            JSON formatında test ve sorularını ekleyebilirsiniz. Format örneği için bilgi butonuna tıklayın.
+            Sadece soruları JSON formatında ekleyin. Test bilgileri yukarıdaki formdan alınacak.
           </p>
           <button
             @click="showFormatInfo = !showFormatInfo"
@@ -196,18 +270,18 @@
     <!-- JSON Input -->
     <div class="space-y-2">
       <label class="text-sm font-medium text-foreground">
-        JSON Verisi <span class="text-destructive">*</span>
+        Sorular (JSON) <span class="text-destructive">*</span>
       </label>
       <textarea
         v-model="jsonInput"
         rows="20"
-        placeholder='{"title": "Test Başlığı", "slug": "test-basligi", "questions": [...]}'
+        placeholder='[{"question_text": "Soru metni?", "question_type": "single_choice", "options": [...]}]'
         class="w-full rounded-lg border border-input bg-background p-3 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         :class="{ 'border-destructive': jsonError }"
       />
       <p v-if="jsonError" class="text-xs text-destructive">{{ jsonError }}</p>
-      <p v-else-if="parsedTest" class="text-xs text-green-600 dark:text-green-400">
-        ✓ Test geçerli: {{ parsedTest.questions?.length || 0 }} soru tespit edildi
+      <p v-else-if="parsedQuestions" class="text-xs text-green-600 dark:text-green-400">
+        ✓ {{ parsedQuestions.length }} soru tespit edildi
       </p>
     </div>
 
@@ -223,10 +297,10 @@
       <button
         type="button"
         @click="submitBulk"
-        :disabled="processing || !jsonInput.trim() || jsonError || !parsedTest"
+        :disabled="processing || !testInfo.title || !testInfo.slug || !testInfo.category_id || !jsonInput.trim() || jsonError || !parsedQuestions"
         class="rounded-lg bg-primary px-6 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
       >
-        {{ processing ? 'Ekleniyor...' : 'Test Oluştur' }}
+        {{ processing ? 'Oluşturuluyor...' : 'Test Oluştur' }}
       </button>
     </div>
   </div>
@@ -234,9 +308,20 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 
 defineEmits(['cancel']);
+
+const { props } = usePage();
+const categories = props.categories || [];
+
+const testInfo = ref({
+  title: '',
+  slug: '',
+  description: '',
+  status: 'draft',
+  category_id: null,
+});
 
 const jsonInput = ref('');
 const jsonError = ref('');
@@ -244,7 +329,7 @@ const processing = ref(false);
 const showFormatInfo = ref(false);
 
 // Parse JSON and validate
-const parsedTest = computed(() => {
+const parsedQuestions = computed(() => {
   if (!jsonInput.value.trim()) {
     jsonError.value = '';
     return null;
@@ -253,30 +338,22 @@ const parsedTest = computed(() => {
   try {
     const parsed = JSON.parse(jsonInput.value);
     
-    // Validate test structure
-    if (!parsed.title) {
-      jsonError.value = "'title' alanı zorunludur";
+    // Check if it's an array of questions
+    const questions = Array.isArray(parsed) ? parsed : (parsed.questions || []);
+    
+    if (!Array.isArray(questions)) {
+      jsonError.value = "Sorular bir dizi olmalıdır";
       return null;
     }
     
-    if (!parsed.slug) {
-      jsonError.value = "'slug' alanı zorunludur";
-      return null;
-    }
-    
-    if (!parsed.questions || !Array.isArray(parsed.questions)) {
-      jsonError.value = "'questions' alanı zorunludur ve bir dizi olmalıdır";
-      return null;
-    }
-    
-    if (parsed.questions.length === 0) {
+    if (questions.length === 0) {
       jsonError.value = "En az 1 soru eklenmelidir";
       return null;
     }
 
     // Validate each question
-    for (let i = 0; i < parsed.questions.length; i++) {
-      const q = parsed.questions[i];
+    for (let i = 0; i < questions.length; i++) {
+      const q = questions[i];
       
       if (!q.question_text) {
         jsonError.value = `${i + 1}. soruda 'question_text' alanı zorunludur`;
@@ -317,7 +394,7 @@ const parsedTest = computed(() => {
     }
 
     jsonError.value = '';
-    return parsed;
+    return questions;
   } catch (e) {
     jsonError.value = 'Geçersiz JSON formatı: ' + e.message;
     return null;
@@ -326,100 +403,104 @@ const parsedTest = computed(() => {
 
 const loadTemplate = (type) => {
   if (type === 'simple') {
-    jsonInput.value = `{
-  "title": "JavaScript Temelleri Testi",
-  "slug": "javascript-temelleri-testi",
-  "description": "JavaScript temel konularını test edin",
-  "status": "published",
-  "questions": [
-    {
-      "question_text": "JavaScript hangi tür bir dildir?",
-      "question_type": "single_choice",
-      "points": 10,
-      "options": [
-        { "option_text": "Derlenmiş dil", "is_correct": false },
-        { "option_text": "Yorumlanmış dil", "is_correct": true },
-        { "option_text": "Makine dili", "is_correct": false },
-        { "option_text": "Assembly dili", "is_correct": false }
-      ]
-    },
-    {
-      "question_text": "let ve const arasındaki fark nedir?",
-      "question_type": "single_choice",
-      "points": 10,
-      "options": [
-        { "option_text": "let yeniden atanabilir, const atanamaz", "is_correct": true },
-        { "option_text": "Fark yoktur", "is_correct": false },
-        { "option_text": "const daha hızlıdır", "is_correct": false }
-      ]
-    }
-  ]
-}`;
+    jsonInput.value = `[
+  {
+    "question_text": "JavaScript hangi tür bir dildir?",
+    "question_type": "single_choice",
+    "points": 10,
+    "options": [
+      { "option_text": "Derlenmiş dil", "is_correct": false },
+      { "option_text": "Yorumlanmış dil", "is_correct": true },
+      { "option_text": "Makine dili", "is_correct": false },
+      { "option_text": "Assembly dili", "is_correct": false }
+    ]
+  },
+  {
+    "question_text": "let ve const arasındaki fark nedir?",
+    "question_type": "single_choice",
+    "points": 10,
+    "options": [
+      { "option_text": "let yeniden atanabilir, const atanamaz", "is_correct": true },
+      { "option_text": "Fark yoktur", "is_correct": false },
+      { "option_text": "const daha hızlıdır", "is_correct": false }
+    ]
+  }
+]`;
   } else {
-    jsonInput.value = `{
-  "title": "Web Geliştirme Quiz",
-  "slug": "web-gelistirme-quiz",
-  "description": "HTML, CSS ve JavaScript bilginizi test edin",
-  "status": "published",
-  "category_id": null,
-  "questions": [
-    {
-      "question_text": "HTML'de başlık etiketi hangisidir?",
-      "question_type": "single_choice",
-      "points": 10,
-      "order": 1,
-      "explanation": "h1-h6 etiketleri başlık için kullanılır",
-      "options": [
-        { "option_text": "<title>", "is_correct": false },
-        { "option_text": "<h1>", "is_correct": true },
-        { "option_text": "<header>", "is_correct": false },
-        { "option_text": "<head>", "is_correct": false }
-      ]
-    },
-    {
-      "question_text": "CSS'de renk tanımlamak için kullanılabilecek formatlar nelerdir?",
-      "question_type": "multiple_choice",
-      "points": 15,
-      "order": 2,
-      "explanation": "Birden fazla doğru cevap var",
-      "options": [
-        { "option_text": "HEX (#FF0000)", "is_correct": true },
-        { "option_text": "RGB (rgb(255,0,0))", "is_correct": true },
-        { "option_text": "HSL (hsl(0,100%,50%))", "is_correct": true },
-        { "option_text": "BIN (bin(11111111))", "is_correct": false }
-      ]
-    },
-    {
-      "question_text": "JavaScript'te değişken tanımlamak için var, let ve const kullanılır",
-      "question_type": "true_false",
-      "points": 5,
-      "order": 3,
-      "correct_answer": true,
-      "explanation": "var, let ve const kullanılır"
-    }
-  ]
-}`;
+    jsonInput.value = `[
+  {
+    "question_text": "HTML'de başlık etiketi hangisidir?",
+    "question_type": "single_choice",
+    "points": 10,
+    "order": 1,
+    "explanation": "h1-h6 etiketleri başlık için kullanılır",
+    "options": [
+      { "option_text": "<title>", "is_correct": false },
+      { "option_text": "<h1>", "is_correct": true },
+      { "option_text": "<header>", "is_correct": false },
+      { "option_text": "<head>", "is_correct": false }
+    ]
+  },
+  {
+    "question_text": "CSS'de renk tanımlamak için kullanılabilecek formatlar nelerdir?",
+    "question_type": "multiple_choice",
+    "points": 15,
+    "order": 2,
+    "explanation": "Birden fazla doğru cevap var",
+    "options": [
+      { "option_text": "HEX (#FF0000)", "is_correct": true },
+      { "option_text": "RGB (rgb(255,0,0))", "is_correct": true },
+      { "option_text": "HSL (hsl(0,100%,50%))", "is_correct": true },
+      { "option_text": "BIN (bin(11111111))", "is_correct": false }
+    ]
+  },
+  {
+    "question_text": "JavaScript'te değişken tanımlamak için var, let ve const kullanılır",
+    "question_type": "true_false",
+    "points": 5,
+    "order": 3,
+    "correct_answer": true,
+    "explanation": "var, let ve const kullanılır"
+  }
+]`;
   }
 };
 
 const submitBulk = () => {
-  if (!parsedTest.value) return;
+  // Validate test info
+  if (!testInfo.value.title.trim()) {
+    jsonError.value = 'Test başlığı zorunludur';
+    return;
+  }
+  
+  if (!testInfo.value.slug.trim()) {
+    jsonError.value = 'Slug zorunludur';
+    return;
+  }
+  
+  if (!testInfo.value.category_id) {
+    jsonError.value = 'Kategori seçimi zorunludur';
+    return;
+  }
+  
+  if (!parsedQuestions.value) return;
 
   processing.value = true;
   
-  console.log('Submitting test:', parsedTest.value);
+  const payload = {
+    ...testInfo.value,
+    questions: parsedQuestions.value,
+  };
 
   router.post(
     route('tests.bulk-store'),
-    parsedTest.value,
+    payload,
     {
       onSuccess: (page) => {
         processing.value = false;
-        console.log('Success:', page);
       },
       onError: (errors) => {
         processing.value = false;
-        console.error('Error:', errors);
         
         // Show error message
         if (errors && typeof errors === 'object') {
