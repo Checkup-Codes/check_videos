@@ -84,10 +84,15 @@ class TestService
         ];
     }
 
-    public function getTestsByCategory(TestCategory $category)
+    public function getTestsByCategory(TestCategory $category, array $categoryIds = null)
     {
         $isAdmin = Auth::check();
-        $tests = Test::where('category_id', $category->id)
+        
+        // If category IDs are provided, use them (includes children)
+        // Otherwise, just use the single category ID
+        $ids = $categoryIds ?? [$category->id];
+        
+        $tests = Test::whereIn('category_id', $ids)
             ->when(!$isAdmin, function ($query) {
                 $query->where('status', 'published');
             })
@@ -101,7 +106,8 @@ class TestService
                 'updated_at',
                 'description',
                 'total_questions',
-                'total_points'
+                'total_points',
+                'category_id'
             )
             ->orderByDesc('published_at')
             ->get();

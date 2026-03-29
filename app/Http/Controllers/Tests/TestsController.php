@@ -238,24 +238,47 @@ class TestsController extends Controller
                 ->with('success', 'Test tamamlandı!');
         }
 
-        // For guests, show result page with shareable message
-        return inertia('TestCategories/Tests/TestResult', [
+        // For guests, save to session and redirect to result page with session ID
+        $sessionId = 'guest_test_' . uniqid();
+        session()->put($sessionId, [
             'result' => $result['data'],
-            'screen' => $this->testService->getScreenData('Test Sonucu'),
-            'isAdmin' => $isLoggedIn,
-            'isGuest' => true,
+            'test_slug' => $test->slug,
+            'created_at' => now()->toDateTimeString(),
         ]);
+
+        return redirect()
+            ->route('tests.result', ['result' => $sessionId])
+            ->with('success', 'Test tamamlandı!');
     }
 
     public function result($resultId)
     {
-        $result = $this->testService->getTestResult($resultId);
         $isAdmin = Auth::check();
+        
+        // Check if it's a guest session result
+        if (str_starts_with($resultId, 'guest_test_')) {
+            $sessionData = session()->get($resultId);
+            
+            if (!$sessionData) {
+                abort(404, 'Test sonucu bulunamadı veya süresi dolmuş.');
+            }
+            
+            return inertia('TestCategories/Tests/TestResult', [
+                'result'     => $sessionData['result'],
+                'screen'     => $this->testService->getScreenData('Test Sonucu'),
+                'isAdmin'    => $isAdmin,
+                'isGuest'    => true,
+            ]);
+        }
+        
+        // For logged in users, get from database
+        $result = $this->testService->getTestResult($resultId);
 
         return inertia('TestCategories/Tests/TestResult', [
             'result'     => $result['data'],
             'screen'     => $this->testService->getScreenData('Test Sonucu'),
-            'isAdmin'    => $isAdmin
+            'isAdmin'    => $isAdmin,
+            'isGuest'    => false,
         ]);
     }
 

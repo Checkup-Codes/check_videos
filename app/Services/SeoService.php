@@ -32,7 +32,7 @@ class SeoService
 
         // Laravel cache ile DB sorgularını minimize et
         self::$cachedData = Cache::remember($this->getCacheKey(), self::CACHE_TTL, function () {
-            $domain = request()->getHost();
+            $domain = $this->normalizeDomain(request()->getHost());
             
             // Get or create SEO data for current domain
             $seo = Seo::firstOrCreate(
@@ -232,8 +232,24 @@ class SeoService
      */
     private function getCacheKey(): string
     {
-        $domain = request()->getHost();
+        $domain = $this->normalizeDomain(request()->getHost());
         return "seo_data_{$domain}";
+    }
+
+    /**
+     * Normalize domain (www. prefix'ini kaldır)
+     * 
+     * @param string $domain
+     * @return string
+     */
+    private function normalizeDomain(string $domain): string
+    {
+        // www. prefix'ini kaldır
+        if (str_starts_with($domain, 'www.')) {
+            return substr($domain, 4);
+        }
+        
+        return $domain;
     }
 
     /**
@@ -491,7 +507,7 @@ class SeoService
      */
     public function getCanonicalUrl(?string $path = null): string
     {
-        $currentDomain = request()->getHost();
+        $currentDomain = $this->normalizeDomain(request()->getHost());
         $mainDomain = config('domains.main_domain', 'checkupcodes.com');
         $domainConfig = config("domains.domains.{$currentDomain}", []);
         
@@ -524,7 +540,7 @@ class SeoService
      */
     public function shouldIndexInGoogle(): bool
     {
-        $currentDomain = request()->getHost();
+        $currentDomain = $this->normalizeDomain(request()->getHost());
         $domainConfig = config("domains.domains.{$currentDomain}", []);
         
         return $domainConfig['index_in_google'] ?? false;
@@ -537,7 +553,7 @@ class SeoService
      */
     public function getDomainConfig(): array
     {
-        $currentDomain = request()->getHost();
+        $currentDomain = $this->normalizeDomain(request()->getHost());
         return config("domains.domains.{$currentDomain}", [
             'name' => config('app.name'),
             'type' => 'unknown',
@@ -556,7 +572,7 @@ class SeoService
      */
     public function getRobotsMetaTag(): string
     {
-        $currentDomain = request()->getHost();
+        $currentDomain = $this->normalizeDomain(request()->getHost());
         $domainConfig = config("domains.domains.{$currentDomain}", []);
         $indexInGoogle = $domainConfig['index_in_google'] ?? false;
         

@@ -48,10 +48,12 @@ class TestCategoriesController extends Controller
         $categoriesResult = $this->categoryService->getCategories();
         $isAdmin = Auth::check();
 
+        // Collect all category IDs (current + children)
         $categoryIds = collect([$category->id]);
         $this->getChildCategoryIds($category, $categoryIds);
 
-        $testsResult = $this->testService->getTestsByCategory($category);
+        // Pass category IDs to get tests from all categories
+        $testsResult = $this->testService->getTestsByCategory($category, $categoryIds->toArray());
 
         return inertia('TestCategories/Categories/ShowCategory', [
             'categories' => $categoriesResult['data'],
