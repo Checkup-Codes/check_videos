@@ -123,7 +123,7 @@ const shouldShowSidebarOnMobile = computed(() => {
 
 const shouldShowMainContentOnMobile = computed(() => {
   if (!isMobile.value) return true; // Desktop: always show main content
-  return isNonIndexPage.value; // Mobile: show main content on non-index pages (show, create, edit)
+  return isNonIndexPage.value || shouldHideSidebarContent.value; // Mobile: show main content on non-index and full-screen test pages
 });
 
 // Determine which sidebar component to display based on screen name
@@ -152,8 +152,8 @@ const mainContentClass = computed(() => {
     'lg:ml-0': shouldHideSidebarContent.value,
   };
 
-  // Mobil non-index sayfalarında (show, create, edit) tam genişlik
-  if (isMobile.value && isNonIndexPage.value) {
+  // Mobil non-index ve full-screen test sayfalarında tam genişlik
+  if (isMobile.value && (isNonIndexPage.value || shouldHideSidebarContent.value)) {
     classes['w-full'] = true;
   }
 

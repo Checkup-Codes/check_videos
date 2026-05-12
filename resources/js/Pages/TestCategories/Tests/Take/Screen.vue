@@ -1,7 +1,7 @@
 <template>
   <CheckScreen>
     <div
-      class="mx-auto max-w-4xl space-y-6 p-6 transition-all duration-300"
+      class="mx-auto max-w-4xl space-y-6 p-4 pb-28 transition-all duration-300 lg:p-6 lg:pb-6"
       :class="{
         'xl:-translate-x-[100px]': showQuestionNavigation && isQuestionNavigationOpen,
       }"
@@ -274,18 +274,21 @@
         </div>
 
         <!-- Submit Button -->
-        <div class="flex gap-4">
+        <div
+          class="fixed inset-x-0 bottom-0 z-40 flex flex-col gap-3 border-t border-border bg-background/95 px-4 py-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur lg:static lg:flex-row lg:border-0 lg:bg-transparent lg:px-0 lg:py-0 lg:shadow-none lg:backdrop-blur-0"
+          style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom));"
+        >
           <button
             type="submit"
             :disabled="form.processing || !canSubmit"
-            class="inline-flex h-11 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+            class="inline-flex h-11 w-full items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50 lg:w-auto"
           >
             <span v-if="form.processing">Gönderiliyor...</span>
             <span v-else>Testi Tamamla</span>
           </button>
           <Link
             :href="`/tests/${test.slug}`"
-            class="inline-flex h-11 items-center justify-center rounded-md border border-input bg-background px-8 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
+            class="inline-flex h-11 w-full items-center justify-center rounded-md border border-input bg-background px-8 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground lg:w-auto"
           >
             İptal
           </Link>
