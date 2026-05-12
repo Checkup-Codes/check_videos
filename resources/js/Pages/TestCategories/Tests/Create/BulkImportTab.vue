@@ -61,6 +61,18 @@
             <option value="private">Özel</option>
           </select>
         </div>
+
+        <!-- Time Limit -->
+        <div class="space-y-2">
+          <label class="text-sm font-medium text-foreground">Süre Limiti (dakika)</label>
+          <input
+            v-model.number="testInfo.time_limit"
+            type="number"
+            min="0"
+            placeholder="Boş bırakılabilir"
+            class="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </div>
       </div>
 
       <!-- Description -->
@@ -321,6 +333,7 @@ const testInfo = ref({
   description: '',
   status: 'draft',
   category_id: null,
+  time_limit: null,
 });
 
 const jsonInput = ref('');

@@ -293,6 +293,7 @@ class TestsController extends Controller
             'description'  => 'nullable|string',
             'status'       => 'nullable|in:draft,published,private',
             'category_id'  => 'nullable|exists:test_categories,id',
+            'time_limit'   => 'nullable|integer|min:0',
             'questions'    => 'required|array|min:1',
             'questions.*.question_text' => 'required|string',
             'questions.*.question_type' => 'required|in:single_choice,multiple_choice,true_false',
@@ -321,4 +322,3 @@ class TestsController extends Controller
         }
     }
 }
-

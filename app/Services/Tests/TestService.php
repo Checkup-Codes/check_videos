@@ -462,6 +462,7 @@ class TestService
                 'description' => $data['description'] ?? null,
                 'status' => $data['status'] ?? 'draft',
                 'category_id' => $data['category_id'] ?? null,
+                'time_limit' => $data['time_limit'] ?? null,
                 'author_id' => Auth::id() ?? 1, // Add author_id
                 'published_at' => $data['status'] === 'published' ? now() : null,
                 'total_questions' => count($data['questions']),
@@ -525,4 +526,3 @@ class TestService
         }
     }
 }
-
