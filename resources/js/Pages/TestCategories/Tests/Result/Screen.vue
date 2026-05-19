@@ -1,206 +1,163 @@
 <template>
-  <CheckScreen>
-    <div class="mx-auto max-w-4xl space-y-6 p-6">
-      <!-- Result Summary -->
-      <div class="space-y-4 rounded-lg border border-border bg-card p-6">
-        <div class="text-center">
-          <h1 class="mb-2 text-3xl font-bold text-foreground">Test Sonucu</h1>
-          <p class="text-muted-foreground">{{ result.test?.title }}</p>
-        </div>
-
-        <!-- Score Circle -->
-        <div class="flex justify-center">
-          <div class="relative h-32 w-32">
-            <svg class="h-32 w-32 -rotate-90 transform">
-              <circle cx="64" cy="64" r="56" stroke="currentColor" stroke-width="8" fill="none" class="text-muted" />
-              <circle
-                cx="64"
-                cy="64"
-                r="56"
-                stroke="currentColor"
-                stroke-width="8"
-                fill="none"
-                :stroke-dasharray="`${scoreCircumference} ${totalCircumference}`"
-                class="text-primary transition-all duration-500"
-                :class="scoreColor"
-              />
-            </svg>
-            <div class="absolute inset-0 flex flex-col items-center justify-center">
-              <span class="text-3xl font-bold" :class="scoreColor">{{ Math.round(result.score) }}</span>
-              <span class="text-xs text-muted-foreground">puan</span>
+  <CheckScreen infoClass="test-result-screen">
+    <div class="mx-auto max-w-5xl space-y-5 px-3 py-4 pb-24 sm:px-4 sm:py-6 lg:pb-10">
+      <section class="rounded-lg border border-border/70 bg-card p-4 sm:p-6">
+        <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+          <div class="min-w-0">
+            <p class="text-xs font-medium text-muted-foreground">Test sonucu</p>
+            <h1 class="mt-2 text-2xl font-semibold leading-tight text-foreground sm:text-3xl">
+              {{ result.test?.title || 'Test' }}
+            </h1>
+            <div class="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
+              <span v-if="result.completed_at">{{ formatDate(result.completed_at) }}</span>
+              <span v-if="result.time_taken">{{ formatTime(result.time_taken) }}</span>
             </div>
           </div>
-        </div>
 
-        <!-- Stats -->
-        <div class="grid grid-cols-3 gap-4">
-          <div class="rounded-lg border border-border bg-background p-4 text-center">
-            <div class="text-2xl font-bold text-foreground">{{ result.correct_answers }}</div>
-            <div class="text-sm text-muted-foreground">Doğru</div>
-          </div>
-          <div class="rounded-lg border border-border bg-background p-4 text-center">
-            <div class="text-2xl font-bold text-foreground">
-              {{ result.total_questions - result.correct_answers }}
-            </div>
-            <div class="text-sm text-muted-foreground">Yanlış</div>
-          </div>
-          <div class="rounded-lg border border-border bg-background p-4 text-center">
-            <div class="text-2xl font-bold text-foreground">{{ result.total_questions }}</div>
-            <div class="text-sm text-muted-foreground">Toplam</div>
-          </div>
-        </div>
-
-        <!-- Additional Info -->
-        <div class="flex flex-wrap justify-center gap-4 text-sm text-muted-foreground">
-          <div v-if="result.time_taken" class="flex items-center gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span>{{ formatTime(result.time_taken) }}</span>
-          </div>
-          <div v-if="result.completed_at" class="flex items-center gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-            <span>{{ formatDate(result.completed_at) }}</span>
-          </div>
-        </div>
-
-        <!-- Share Section (for guests) -->
-        <div v-if="isGuest" class="border-t border-border pt-4">
-          <h3 class="mb-4 text-lg font-semibold text-foreground">Sonucunu Paylaş</h3>
-          <div class="space-y-4">
-            <div class="rounded-md border border-input bg-background p-4">
-              <p class="mb-2 text-sm text-muted-foreground">Paylaşılabilir mesaj:</p>
-              <p class="whitespace-pre-wrap font-medium text-foreground" id="shareMessage">{{ shareMessage }}</p>
-            </div>
-            <div class="flex gap-2">
-              <button
-                @click="copyToClipboard"
-                class="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
+          <div class="flex items-center gap-4 rounded-md border border-border bg-background p-3">
+            <div class="relative h-20 w-20">
+              <svg class="h-20 w-20 -rotate-90 transform" viewBox="0 0 128 128">
+                <circle cx="64" cy="64" r="54" stroke="currentColor" stroke-width="8" fill="none" class="text-muted" />
+                <circle
+                  cx="64"
+                  cy="64"
+                  r="54"
                   stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                  />
-                </svg>
-                {{ copyButtonText }}
-              </button>
-              <button
-                v-if="canShare"
-                @click="shareResult"
-                class="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4"
+                  stroke-width="8"
                   fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M8.684 13.342C8.885 12.938 9 12.482 9 12c0-.482-.115-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
-                  />
-                </svg>
-                Paylaş
-              </button>
+                  :stroke-dasharray="`${scoreCircumference} ${totalCircumference}`"
+                  class="transition-all duration-500"
+                  :class="scoreColor"
+                />
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span class="text-2xl font-semibold" :class="scoreColor">{{ scoreValue }}</span>
+                <span class="text-[10px] text-muted-foreground">puan</span>
+              </div>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-foreground">{{ scoreLabel }}</p>
+              <p class="mt-1 text-xs text-muted-foreground">
+                {{ result.correct_answers || 0 }} doğru, {{ wrongAnswers }} yanlış
+              </p>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Questions Review -->
-      <div class="space-y-4">
-        <h2 class="text-xl font-semibold text-foreground">Sorular ve Cevaplar</h2>
-        <div class="space-y-6">
+        <div class="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <div
+            v-for="stat in resultStats"
+            :key="stat.label"
+            class="rounded-md border border-border/70 bg-background p-3"
+          >
+            <p class="text-xl font-semibold text-foreground">{{ stat.value }}</p>
+            <p class="mt-1 text-xs text-muted-foreground">{{ stat.label }}</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="rounded-lg border border-border/70 bg-card p-4 sm:p-5">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 class="text-base font-semibold text-foreground">Detaylı özet</h2>
+            <p class="mt-1 text-sm text-muted-foreground">Kısa, okunabilir ve paylaşılabilir bir sonuç metni üretir.</p>
+          </div>
+          <div class="grid gap-2 sm:flex sm:items-center">
+            <button
+              @click="generateDetailedSummary"
+              class="inline-flex h-10 w-full items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 sm:w-auto"
+            >
+              Detaylı Özet Çıkar
+            </button>
+            <button
+              v-if="detailedSummary"
+              @click="copyDetailedSummary"
+              class="inline-flex h-10 w-full items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground transition-colors hover:bg-accent sm:w-auto"
+            >
+              {{ detailedSummaryCopyText }}
+            </button>
+          </div>
+        </div>
+
+        <div v-if="detailedSummary" class="mt-4 rounded-md border border-border bg-background p-4">
+          <pre class="whitespace-pre-wrap break-words text-sm leading-6 text-foreground">{{ detailedSummary }}</pre>
+        </div>
+      </section>
+
+      <section v-if="isGuest" class="rounded-lg border border-border/70 bg-card p-4 sm:p-5">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div class="min-w-0">
+            <h2 class="text-base font-semibold text-foreground">Paylaş</h2>
+            <p id="shareMessage" class="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-muted-foreground">
+              {{ shareMessage }}
+            </p>
+          </div>
+          <div class="grid shrink-0 gap-2 sm:min-w-36">
+            <button
+              @click="copyToClipboard"
+              class="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              {{ copyButtonText }}
+            </button>
+            <button
+              v-if="canShare"
+              @click="shareResult"
+              class="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            >
+              Paylaş
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <div class="flex items-center justify-between gap-3">
+          <h2 class="text-lg font-semibold text-foreground">Sorular ve Cevaplar</h2>
+          <span class="text-xs text-muted-foreground">{{ resultAnswers.length }} soru</span>
+        </div>
+        <div class="space-y-3">
           <div
             v-for="(answer, index) in resultAnswers"
             :key="answer.id || index"
-            class="space-y-3 rounded-lg border border-border bg-card p-4"
+            class="space-y-3 rounded-lg border border-border/70 bg-card p-4"
           >
-            <div class="flex items-start justify-between gap-4">
-              <div class="flex items-center gap-3">
-                <span class="text-sm font-medium text-muted-foreground">
-                  Soru {{ index + 1 }}
-                </span>
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs font-medium text-muted-foreground">Soru {{ index + 1 }}</span>
                 <span
                   v-if="answer.is_correct"
-                  class="flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-sm font-medium text-green-700 dark:bg-green-950 dark:text-green-300"
+                  class="rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700 dark:bg-green-950 dark:text-green-300"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2.5"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
                   Doğru
                 </span>
                 <span
                   v-else
-                  class="flex items-center gap-1.5 rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-700 dark:bg-red-900 dark:text-red-200"
+                  class="rounded-full bg-red-50 px-2.5 py-1 text-xs font-medium text-red-700 dark:bg-red-950 dark:text-red-300"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2.5"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
                   Yanlış
                 </span>
               </div>
-              
-              <!-- Correct Answer Badge (only for wrong answers) -->
-              <div v-if="!answer.is_correct" class="flex items-center gap-2">
-                <div class="text-right">
-                  <p class="text-xs text-muted-foreground mb-0.5">Doğru Cevap</p>
+
+              <div v-if="!answer.is_correct" class="rounded-md bg-green-50 px-3 py-2 dark:bg-green-950/60">
+                <div class="sm:text-right">
+                  <p class="mb-0.5 text-xs text-green-700/80 dark:text-green-300/80">Doğru cevap</p>
                   <p class="text-sm font-semibold text-green-700 dark:text-green-400">
                     <span v-if="getQuestionOptions(answer.question).length > 0">
-                      {{ getQuestionOptions(answer.question).filter(opt => opt.is_correct).map(opt => opt.option_text).join(', ') }}
+                      {{
+                        getQuestionOptions(answer.question)
+                          .filter((opt) => opt.is_correct)
+                          .map((opt) => opt.option_text)
+                          .join(', ')
+                      }}
                     </span>
                     <span v-else>
-                      {{ answer.question?.correct_answer === 'true' || answer.question?.correct_answer === true || answer.question?.correct_answer === 1 ? 'Doğru' : 'Yanlış' }}
+                      {{
+                        answer.question?.correct_answer === 'true' ||
+                        answer.question?.correct_answer === true ||
+                        answer.question?.correct_answer === 1
+                          ? 'Doğru'
+                          : 'Yanlış'
+                      }}
                     </span>
                   </p>
                 </div>
@@ -217,177 +174,84 @@
                 v-for="(option, optIndex) in getQuestionOptions(answer.question)"
                 :key="option.id"
                 class="flex items-start gap-2 rounded-md border p-2.5 transition-colors"
-                :class="answer.selected_option_ids && answer.selected_option_ids.includes(option.id) 
-                  ? 'border-primary bg-primary/5' 
-                  : 'border-border bg-background'"
+                :class="
+                  answer.selected_option_ids && answer.selected_option_ids.includes(option.id)
+                    ? 'border-primary bg-primary/5'
+                    : 'border-border bg-background'
+                "
               >
                 <span class="text-sm font-medium text-muted-foreground">{{ String.fromCharCode(65 + optIndex) }}.</span>
                 <span class="flex-1 whitespace-pre-wrap text-sm text-foreground">{{ option.option_text }}</span>
-                <div v-if="answer.selected_option_ids && answer.selected_option_ids.includes(option.id)" class="flex items-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-4 w-4 text-primary"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
+                <span
+                  v-if="answer.selected_option_ids && answer.selected_option_ids.includes(option.id)"
+                  class="text-xs font-medium text-primary"
+                >
+                  Seçildi
+                </span>
               </div>
             </div>
 
             <!-- True/False Answer Display -->
             <div v-else-if="answer.answer_text !== null && answer.answer_text !== undefined" class="flex gap-2">
-              <div 
+              <div
                 class="flex-1 rounded-md border p-3 transition-colors"
-                :class="(answer.answer_text === 'true' || answer.answer_text === true) 
-                  ? 'border-primary bg-primary/5' 
-                  : 'border-border bg-background'"
+                :class="
+                  answer.answer_text === 'true' || answer.answer_text === true
+                    ? 'border-primary bg-primary/5'
+                    : 'border-border bg-background'
+                "
               >
                 <div class="flex items-center justify-between">
                   <p class="text-sm font-medium text-foreground">Doğru</p>
-                  <svg
+                  <span
                     v-if="answer.answer_text === 'true' || answer.answer_text === true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-4 w-4 text-primary"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2"
+                    class="text-xs text-primary"
                   >
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                    Seçildi
+                  </span>
                 </div>
               </div>
-              <div 
+              <div
                 class="flex-1 rounded-md border p-3 transition-colors"
-                :class="(answer.answer_text === 'false' || answer.answer_text === false) 
-                  ? 'border-primary bg-primary/5' 
-                  : 'border-border bg-background'"
+                :class="
+                  answer.answer_text === 'false' || answer.answer_text === false
+                    ? 'border-primary bg-primary/5'
+                    : 'border-border bg-background'
+                "
               >
                 <div class="flex items-center justify-between">
                   <p class="text-sm font-medium text-foreground">Yanlış</p>
-                  <svg
+                  <span
                     v-if="answer.answer_text === 'false' || answer.answer_text === false"
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-4 w-4 text-primary"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2"
+                    class="text-xs text-primary"
                   >
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                    Seçildi
+                  </span>
                 </div>
               </div>
             </div>
 
-            <!-- Explanation with Popover -->
-            <div
-              v-if="answer.question?.explanation"
-              class="group relative"
-            >
-              <button
-                type="button"
-                class="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                Açıklamayı göster
-              </button>
-              <div class="invisible group-hover:visible absolute left-0 top-full mt-2 z-10 w-full max-w-md rounded-lg border border-border bg-popover p-3 shadow-lg">
-                <p class="text-xs font-medium text-popover-foreground mb-1">Açıklama</p>
-                <p class="whitespace-pre-wrap text-xs text-muted-foreground leading-relaxed">
-                  {{ answer.question.explanation }}
-                </p>
-              </div>
-            </div>
+            <details v-if="answer.question?.explanation" class="rounded-md border border-border bg-background p-3">
+              <summary class="cursor-pointer text-xs font-medium text-muted-foreground">Açıklama</summary>
+              <p class="mt-2 whitespace-pre-wrap text-sm leading-6 text-foreground">
+                {{ answer.question.explanation }}
+              </p>
+            </details>
           </div>
         </div>
-      </div>
-
-      <!-- Detailed Summary Section -->
-      <div class="space-y-4 rounded-lg border border-border bg-card p-6">
-        <h2 class="text-xl font-semibold text-foreground">Detaylı Özet</h2>
-        <p class="text-sm text-muted-foreground">
-          Test sonuçlarınızın detaylı özetini oluşturun ve paylaşın.
-        </p>
-        <div class="flex gap-2">
-          <button
-            @click="generateDetailedSummary"
-            class="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            Detaylı Özet Çıkar
-          </button>
-          <button
-            v-if="detailedSummary"
-            @click="copyDetailedSummary"
-            class="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-              />
-            </svg>
-            {{ detailedSummaryCopyText }}
-          </button>
-        </div>
-        <div
-          v-if="detailedSummary"
-          class="mt-4 max-h-96 overflow-y-auto rounded-md border border-input bg-background p-4"
-        >
-          <pre class="whitespace-pre-wrap text-sm text-foreground">{{ detailedSummary }}</pre>
-        </div>
-      </div>
+      </section>
 
       <!-- Actions (for logged in users) -->
-      <div v-if="!isGuest" class="flex gap-4">
+      <div v-if="!isGuest" class="grid gap-2 sm:flex">
         <Link
           :href="`/tests/${result.test?.slug}`"
-          class="inline-flex h-11 items-center justify-center rounded-md border border-input bg-background px-6 text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
+          class="inline-flex h-11 items-center justify-center rounded-md border border-input bg-background px-6 text-sm font-medium text-foreground transition-colors hover:bg-accent"
         >
           Teste Geri Dön
         </Link>
         <Link
           href="/tests"
-          class="inline-flex h-11 items-center justify-center rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          class="inline-flex h-11 items-center justify-center rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
         >
           Diğer Testler
         </Link>
@@ -407,6 +271,21 @@ const isGuest = props.isGuest || false;
 const copyButtonText = ref('Mesajı Kopyala');
 const detailedSummary = ref('');
 const detailedSummaryCopyText = ref('Özeti Kopyala');
+
+const scoreValue = computed(() => Math.round(result.score || 0));
+const wrongAnswers = computed(() => Math.max((result.total_questions || 0) - (result.correct_answers || 0), 0));
+const resultStats = computed(() => [
+  { label: 'Doğru', value: result.correct_answers || 0 },
+  { label: 'Yanlış', value: wrongAnswers.value },
+  { label: 'Toplam', value: result.total_questions || 0 },
+  { label: 'Başarı', value: `%${scoreValue.value}` },
+]);
+
+const scoreLabel = computed(() => {
+  if (scoreValue.value >= 80) return 'Güçlü sonuç';
+  if (scoreValue.value >= 60) return 'Geliştirilebilir sonuç';
+  return 'Tekrar gerektiren sonuç';
+});
 
 // Handle different result structures for logged in vs guest
 const resultAnswers = computed(() => {
@@ -430,7 +309,7 @@ const resultAnswers = computed(() => {
     });
     return Object.values(groupedAnswers);
   }
-  
+
   // For logged in users, group answers by question_id
   if (result.answers) {
     const groupedAnswers = {};
@@ -451,7 +330,7 @@ const resultAnswers = computed(() => {
     });
     return Object.values(groupedAnswers);
   }
-  
+
   return [];
 });
 
@@ -465,7 +344,7 @@ const scoreColor = computed(() => {
 
 // Circle progress
 const totalCircumference = computed(() => {
-  return 2 * Math.PI * 56; // radius = 56
+  return 2 * Math.PI * 54; // radius = 54
 });
 
 const scoreCircumference = computed(() => {
@@ -590,40 +469,30 @@ const shareResult = async () => {
 const generateDetailedSummary = () => {
   const testTitle = result.test?.title || 'Test';
   const participantName = result.participant_name || 'Katılımcı';
-  const score = Math.round(result.score || 0);
+  const score = scoreValue.value;
   const correctAnswers = result.correct_answers || 0;
   const totalQuestions = result.total_questions || 0;
-  const wrongAnswers = totalQuestions - correctAnswers;
+  const wrongAnswerCount = wrongAnswers.value;
   const timeTaken = result.time_taken ? formatTime(result.time_taken) : 'Belirtilmemiş';
   const completedAt = result.completed_at ? formatDate(result.completed_at) : 'Belirtilmemiş';
+  const wrongAnsweredQuestions = resultAnswers.value.filter((answer) => !answer.is_correct);
 
-  let summary = `TEST SONUÇ RAPORU
-================================================================================
+  let summary = `${testTitle} - Sonuç Özeti\n\n`;
+  summary += `Katılımcı: ${participantName}\n`;
+  summary += `Puan: ${score}/100\n`;
+  summary += `Sonuç: ${correctAnswers}/${totalQuestions} doğru, ${wrongAnswerCount} yanlış\n`;
+  summary += `Süre: ${timeTaken}\n`;
+  summary += `Tarih: ${completedAt}\n\n`;
 
-TEST BİLGİLERİ
---------------------------------------------------------------------------------
-Test Adı          : ${testTitle}
-Katılımcı         : ${participantName}
-Tamamlanma Tarihi : ${completedAt}
-Tamamlanma Süresi : ${timeTaken}
+  if (score >= 80) {
+    summary += `Genel değerlendirme: Konuya hakimiyet güçlü görünüyor. Yanlış veya boş kalan sorular kısa tekrar için yeterli olabilir.\n\n`;
+  } else if (score >= 60) {
+    summary += `Genel değerlendirme: Temel bilgi var, ancak bazı başlıklar tekrar edilmeli. Özellikle yanlış yapılan sorular üzerinden ilerlemek faydalı olur.\n\n`;
+  } else {
+    summary += `Genel değerlendirme: Konu tekrarına ihtiyaç var. Önce yanlış yapılan soruların açıklamalarını, ardından temel kavramları yeniden gözden geçirmek iyi olur.\n\n`;
+  }
 
-GENEL SONUÇ
---------------------------------------------------------------------------------
-Toplam Puan       : ${score}/100
-Doğru Cevap       : ${correctAnswers}
-Yanlış Cevap      : ${wrongAnswers}
-Toplam Soru       : ${totalQuestions}
-Başarı Oranı      : %${score}
-
-`;
-
-  summary += `================================================================================
-SORU DETAYLARI
-================================================================================
-
-`;
-
-  // Add each question detail
+  summary += `Soru Notları\n`;
   resultAnswers.value.forEach((answer, index) => {
     const questionNumber = index + 1;
     const questionText = answer.question?.question_text || 'Soru metni bulunamadı';
@@ -631,138 +500,39 @@ SORU DETAYLARI
     const explanation = answer.question?.explanation || '';
     const options = getQuestionOptions(answer.question);
     const questionType = answer.question?.question_type || 'multiple_choice';
-    
-    summary += `SORU ${questionNumber}\n`;
-    summary += `${questionText}\n\n`;
-    
-    // Determine question type and format accordingly
+
+    summary += `\n${questionNumber}. ${isCorrect ? 'Doğru' : 'Yanlış'} - ${questionText}\n`;
+
     if (questionType === 'true_false' || (options.length === 0 && answer.answer_text !== null)) {
-      // True/False question
       const userAnswer = answer.answer_text === 'true' || answer.answer_text === true ? 'Doğru' : 'Yanlış';
-      const correctAnswer = answer.question?.correct_answer === 'true' || answer.question?.correct_answer === true || answer.question?.correct_answer === 1 ? 'Doğru' : 'Yanlış';
-      
-      summary += `Soru Tipi         : Doğru/Yanlış\n`;
-      summary += `Sizin Cevabınız   : ${userAnswer}\n`;
-      summary += `Doğru Cevap       : ${correctAnswer}\n`;
-      summary += `Sonuç             : ${isCorrect ? 'DOĞRU' : 'YANLIŞ'}\n`;
+      const correctAnswer =
+        answer.question?.correct_answer === 'true' ||
+        answer.question?.correct_answer === true ||
+        answer.question?.correct_answer === 1
+          ? 'Doğru'
+          : 'Yanlış';
+
+      summary += `Verilen cevap: ${userAnswer}\n`;
+      if (!isCorrect) summary += `Doğru cevap: ${correctAnswer}\n`;
     } else {
-      // Multiple choice question (single or multiple correct answers)
-      const correctOptions = options.filter(opt => opt.is_correct);
-      const selectedOptions = options.filter(opt => answer.selected_option_ids && answer.selected_option_ids.includes(opt.id));
-      const isMultipleChoice = correctOptions.length > 1;
+      const correctOptions = options.filter((opt) => opt.is_correct);
+      const selectedOptions = options.filter(
+        (opt) => answer.selected_option_ids && answer.selected_option_ids.includes(opt.id)
+      );
 
-      summary += `Soru Tipi         : ${isMultipleChoice ? 'Çoktan Seçmeli (Birden Fazla Doğru)' : 'Çoktan Seçmeli (Tek Doğru)'}\n\n`;
-
-      // Add options
-      summary += `Seçenekler:\n`;
-      options.forEach((option, optIndex) => {
-        const optionLetter = String.fromCharCode(65 + optIndex);
-        const optionText = option.option_text;
-        const isCorrectOption = option.is_correct;
-        const isSelectedOption = answer.selected_option_ids && answer.selected_option_ids.includes(option.id);
-
-        summary += `  ${optionLetter}) ${optionText}`;
-        
-        if (isCorrectOption && isSelectedOption) {
-          summary += ` [DOĞRU - SEÇİLDİ]`;
-        } else if (isCorrectOption) {
-          summary += ` [DOĞRU CEVAP]`;
-        } else if (isSelectedOption) {
-          summary += ` [SEÇİLDİ - YANLIŞ]`;
-        }
-        summary += `\n`;
-      });
-
-      summary += `\n`;
-      summary += `Sizin Seçiminiz   : ${selectedOptions.map(opt => opt.option_text).join(', ') || 'Cevap verilmedi'}\n`;
-      summary += `Doğru Cevap       : ${correctOptions.map(opt => opt.option_text).join(', ')}\n`;
-      summary += `Sonuç             : ${isCorrect ? 'DOĞRU' : 'YANLIŞ'}\n`;
-      
-      // Show detailed result for multiple choice
-      if (isMultipleChoice && !isCorrect) {
-        const correctlySelected = selectedOptions.filter(opt => opt.is_correct).length;
-        const incorrectlySelected = selectedOptions.filter(opt => !opt.is_correct).length;
-        const missedCorrect = correctOptions.filter(opt => !answer.selected_option_ids || !answer.selected_option_ids.includes(opt.id)).length;
-        
-        summary += `Analiz            : ${correctlySelected}/${correctOptions.length} doğru seçenek işaretlendi`;
-        if (incorrectlySelected > 0) {
-          summary += `, ${incorrectlySelected} yanlış seçenek işaretlendi`;
-        }
-        if (missedCorrect > 0) {
-          summary += `, ${missedCorrect} doğru seçenek kaçırıldı`;
-        }
-        summary += `\n`;
-      }
+      summary += `Verilen cevap: ${selectedOptions.map((opt) => opt.option_text).join(', ') || 'Cevap verilmedi'}\n`;
+      if (!isCorrect) summary += `Doğru cevap: ${correctOptions.map((opt) => opt.option_text).join(', ')}\n`;
     }
 
     if (explanation) {
-      summary += `\nAçıklama:\n${explanation}\n`;
+      summary += `Açıklama: ${explanation}\n`;
     }
-
-    summary += `\n--------------------------------------------------------------------------------\n\n`;
   });
 
-  summary += `================================================================================
-YANLIŞ CEVAPLANAN SORULAR
-================================================================================\n\n`;
-
-  const wrongAnsweredQuestions = resultAnswers.value.filter((answer) => !answer.is_correct);
-
-  if (wrongAnsweredQuestions.length === 0) {
-    summary += `Tebrikler! Tüm soruları doğru cevapladınız.\n\n`;
-  } else {
-    wrongAnsweredQuestions.forEach((answer, index) => {
-      const originalIndex = resultAnswers.value.indexOf(answer) + 1;
-      const questionText = answer.question?.question_text || 'Soru metni bulunamadı';
-      const options = getQuestionOptions(answer.question);
-      const questionType = answer.question?.question_type || 'multiple_choice';
-
-      summary += `${index + 1}. SORU ${originalIndex}\n`;
-      summary += `${questionText}\n\n`;
-      
-      if (questionType === 'true_false' || (options.length === 0 && answer.answer_text !== null)) {
-        // True/False question
-        const userAnswer = answer.answer_text === 'true' || answer.answer_text === true ? 'Doğru' : 'Yanlış';
-        const correctAnswer = answer.question?.correct_answer === 'true' || answer.question?.correct_answer === true || answer.question?.correct_answer === 1 ? 'Doğru' : 'Yanlış';
-        
-        summary += `Sizin Cevabınız   : ${userAnswer}\n`;
-        summary += `Doğru Cevap       : ${correctAnswer}\n`;
-      } else {
-        // Multiple choice question
-        const correctOptions = options.filter((opt) => opt.is_correct);
-        const selectedOptions = options.filter(
-          (opt) => answer.selected_option_ids && answer.selected_option_ids.includes(opt.id)
-        );
-        const isMultipleChoice = correctOptions.length > 1;
-
-        summary += `Sizin Seçiminiz   : ${selectedOptions.map((opt) => opt.option_text).join(', ') || 'Cevap verilmedi'}\n`;
-        summary += `Doğru Cevap       : ${correctOptions.map((opt) => opt.option_text).join(', ')}\n`;
-        
-        if (isMultipleChoice) {
-          const incorrectlySelected = selectedOptions.filter(opt => !opt.is_correct);
-          const missedCorrect = correctOptions.filter(opt => !answer.selected_option_ids || !answer.selected_option_ids.includes(opt.id));
-          
-          if (incorrectlySelected.length > 0) {
-            summary += `Yanlış Seçilenler : ${incorrectlySelected.map((opt) => opt.option_text).join(', ')}\n`;
-          }
-          if (missedCorrect.length > 0) {
-            summary += `Kaçırılan Doğrular: ${missedCorrect.map((opt) => opt.option_text).join(', ')}\n`;
-          }
-        }
-      }
-
-      if (answer.question?.explanation) {
-        summary += `\nAçıklama:\n${answer.question.explanation}\n`;
-      }
-
-      summary += `\n`;
-    });
-  }
-
-  summary += `================================================================================\n`;
-  summary += `Rapor Tarihi: ${new Date().toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}\n`;
-  summary += `Kaynak: ${window.location.origin}\n`;
-  summary += `================================================================================\n`;
+  summary += `\nTekrar önerisi: `;
+  summary += wrongAnsweredQuestions.length
+    ? `${wrongAnsweredQuestions.length} yanlış soruyu açıklamalarıyla tekrar et ve benzer sorularla pekiştir.`
+    : `Tüm sorular doğru. Bilgiyi kalıcı yapmak için testi daha sonra tekrar çöz.`;
 
   detailedSummary.value = summary;
 };
