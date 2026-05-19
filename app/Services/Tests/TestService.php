@@ -84,7 +84,7 @@ class TestService
         ];
     }
 
-    public function getTestsByCategory(TestCategory $category, array $categoryIds = null)
+    public function getTestsByCategory(TestCategory $category, ?array $categoryIds = null)
     {
         $isAdmin = Auth::check();
         
@@ -133,6 +133,100 @@ class TestService
         $test = $query->firstOrFail();
         return [
             'data' => $test
+        ];
+    }
+
+    public function getUserTestAnalysis(Test $test, ?string $userId = null): ?array
+    {
+        $userId = $userId ?: Auth::id();
+
+        if (!$userId) {
+            return null;
+        }
+
+        $results = $test->results()
+            ->where('user_id', $userId)
+            ->with(['answers.question:id,question_text'])
+            ->orderByDesc('completed_at')
+            ->get();
+
+        if ($results->isEmpty()) {
+            return [
+                'attempts_count' => 0,
+                'has_results' => false,
+            ];
+        }
+
+        $latestResult = $results->first();
+        $scores = $results->pluck('score')->map(fn ($score) => (float) $score);
+        $timeValues = $results->pluck('time_taken')->filter(fn ($time) => $time !== null);
+        $questionStats = [];
+
+        foreach ($results as $result) {
+            $answersByQuestion = $result->answers->groupBy('question_id');
+
+            foreach ($answersByQuestion as $questionId => $answers) {
+                $firstAnswer = $answers->first();
+
+                if (!$firstAnswer || !$firstAnswer->question) {
+                    continue;
+                }
+
+                if (!isset($questionStats[$questionId])) {
+                    $questionStats[$questionId] = [
+                        'question_id' => $questionId,
+                        'question_text' => $firstAnswer->question->question_text,
+                        'wrong_count' => 0,
+                        'correct_count' => 0,
+                        'attempts_count' => 0,
+                    ];
+                }
+
+                $isCorrect = (bool) $answers->every(fn ($answer) => (bool) $answer->is_correct);
+
+                $questionStats[$questionId]['attempts_count']++;
+                if ($isCorrect) {
+                    $questionStats[$questionId]['correct_count']++;
+                } else {
+                    $questionStats[$questionId]['wrong_count']++;
+                }
+            }
+        }
+
+        $weakQuestions = collect($questionStats)
+            ->map(function ($stat) {
+                $stat['wrong_rate'] = $stat['attempts_count'] > 0
+                    ? round(($stat['wrong_count'] / $stat['attempts_count']) * 100)
+                    : 0;
+
+                return $stat;
+            })
+            ->filter(fn ($stat) => $stat['wrong_count'] > 0)
+            ->sortByDesc(fn ($stat) => ($stat['wrong_count'] * 1000) + $stat['wrong_rate'])
+            ->take(5)
+            ->values();
+
+        return [
+            'has_results' => true,
+            'attempts_count' => $results->count(),
+            'average_score' => round($scores->avg(), 1),
+            'best_score' => round($scores->max(), 1),
+            'latest_score' => round((float) $latestResult->score, 1),
+            'latest_result_id' => $latestResult->id,
+            'last_completed_at' => optional($latestResult->completed_at)->toIso8601String(),
+            'average_time_taken' => $timeValues->isNotEmpty() ? (int) round($timeValues->avg()) : null,
+            'weak_questions' => $weakQuestions,
+            'recent_attempts' => $results
+                ->take(5)
+                ->map(fn ($result) => [
+                    'id' => $result->id,
+                    'score' => round((float) $result->score, 1),
+                    'correct_answers' => $result->correct_answers,
+                    'total_questions' => $result->total_questions,
+                    'completed_at' => optional($result->completed_at)->toIso8601String(),
+                    'time_taken' => $result->time_taken,
+                ])
+                ->values(),
         ];
     }
 

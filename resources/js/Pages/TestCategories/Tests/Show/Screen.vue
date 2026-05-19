@@ -1,26 +1,29 @@
 <template>
   <CheckScreen>
     <div
-      class="space-y-6 p-3 pt-6 transition-all duration-300 max-w-full sm:p-6 sm:pt-12 lg:max-w-[800px] lg:pt-16"
+      class="max-w-full space-y-6 p-3 pt-6 transition-all duration-300 sm:p-6 sm:pt-12 lg:max-w-[920px] lg:pt-16"
       :class="{
         'xl:-translate-x-[100px]': showQuestionNavigation && isQuestionNavigationOpen,
       }"
     >
       <!-- Test Header -->
-      <div class="space-y-4">
-        <div class="flex items-center justify-between">
-          <h1 class="text-3xl font-bold text-foreground">{{ test.title }}</h1>
-          <div class="flex gap-2">
+      <div class="space-y-4 rounded-lg border border-border/70 bg-card p-4 sm:p-5">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div class="min-w-0">
+            <p class="text-xs font-medium text-muted-foreground">Test</p>
+            <h1 class="mt-2 text-2xl font-semibold leading-tight text-foreground sm:text-3xl">{{ test.title }}</h1>
+          </div>
+          <div class="grid gap-2 sm:flex sm:shrink-0">
             <Link
               :href="`/tests/${test.slug}/take`"
-              class="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+              class="inline-flex h-10 w-full items-center justify-center rounded-md bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 sm:w-auto"
             >
               Testi Çöz
             </Link>
           </div>
         </div>
 
-        <div v-if="test.description" class="text-muted-foreground">
+        <div v-if="test.description" class="text-sm leading-6 text-muted-foreground">
           {{ test.description }}
         </div>
 
@@ -79,6 +82,93 @@
         </div>
       </div>
 
+      <section v-if="isAdmin" class="space-y-3 rounded-lg border border-border/70 bg-card p-4 sm:p-5">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 class="text-base font-semibold text-foreground">Kişisel analiz</h2>
+            <p class="mt-1 text-sm text-muted-foreground">Bu test için giriş yaptığın sonuçlara göre hesaplanır.</p>
+          </div>
+          <Link
+            v-if="hasAnalysis && testAnalysis.latest_result_id"
+            :href="`/tests/result/${testAnalysis.latest_result_id}`"
+            class="inline-flex h-9 w-full items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground transition-colors hover:bg-accent sm:w-auto"
+          >
+            Son sonucu aç
+          </Link>
+        </div>
+
+        <div v-if="hasAnalysis" class="space-y-4">
+          <div class="grid grid-cols-2 gap-2 lg:grid-cols-5">
+            <div
+              v-for="item in analysisStats"
+              :key="item.label"
+              class="rounded-md border border-border/70 bg-background p-3"
+            >
+              <p class="text-xl font-semibold text-foreground">{{ item.value }}</p>
+              <p class="mt-1 text-xs text-muted-foreground">{{ item.label }}</p>
+            </div>
+          </div>
+
+          <div class="grid gap-3 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+            <div class="rounded-md border border-border/70 bg-background p-3">
+              <div class="flex items-center justify-between gap-3">
+                <h3 class="text-sm font-semibold text-foreground">En çok zorlandığın sorular</h3>
+                <span class="text-xs text-muted-foreground">{{ testAnalysis.weak_questions?.length || 0 }} kayıt</span>
+              </div>
+              <div v-if="testAnalysis.weak_questions?.length" class="mt-3 space-y-2">
+                <div
+                  v-for="(question, index) in testAnalysis.weak_questions"
+                  :key="question.question_id"
+                  class="rounded-md border border-border/60 bg-card p-3"
+                >
+                  <div class="flex items-start justify-between gap-3">
+                    <p class="min-w-0 text-sm font-medium leading-5 text-foreground">
+                      {{ index + 1 }}. {{ question.question_text }}
+                    </p>
+                    <span
+                      class="shrink-0 rounded-full bg-red-50 px-2 py-1 text-xs font-medium text-red-700 dark:bg-red-950 dark:text-red-300"
+                    >
+                      {{ question.wrong_count }} yanlış
+                    </span>
+                  </div>
+                  <p class="mt-2 text-xs text-muted-foreground">
+                    {{ question.attempts_count }} denemede %{{ question.wrong_rate }} hata oranı
+                  </p>
+                </div>
+              </div>
+              <p v-else class="mt-3 text-sm text-muted-foreground">Bu testte tekrar eden yanlış görünmüyor.</p>
+            </div>
+
+            <div class="rounded-md border border-border/70 bg-background p-3">
+              <h3 class="text-sm font-semibold text-foreground">Son denemeler</h3>
+              <div class="mt-3 space-y-2">
+                <Link
+                  v-for="attempt in testAnalysis.recent_attempts"
+                  :key="attempt.id"
+                  :href="`/tests/result/${attempt.id}`"
+                  class="flex items-center justify-between gap-3 rounded-md border border-border/60 bg-card px-3 py-2 transition-colors hover:bg-accent"
+                >
+                  <div class="min-w-0">
+                    <p class="text-sm font-medium text-foreground">{{ formatScore(attempt.score) }}</p>
+                    <p class="mt-0.5 truncate text-xs text-muted-foreground">{{ formatDate(attempt.completed_at) }}</p>
+                  </div>
+                  <span class="text-xs text-muted-foreground">
+                    {{ attempt.correct_answers }}/{{ attempt.total_questions }}
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div v-else class="rounded-md border border-dashed border-border bg-background p-4">
+          <p class="text-sm font-medium text-foreground">Henüz analiz yok</p>
+          <p class="mt-1 text-sm text-muted-foreground">
+            Giriş yapmış halde testi çözdükten sonra deneme sayısı, skor geçmişi ve zorlandığın sorular burada görünür.
+          </p>
+        </div>
+      </section>
+
       <!-- Test Questions Preview -->
       <div v-if="test.questions && test.questions.length > 0" class="space-y-4">
         <div class="flex items-center justify-between">
@@ -98,7 +188,10 @@
             Soruları Gizle
           </button>
         </div>
-        <div class="space-y-6 max-w-full lg:max-w-[800px]" :class="{ 'blur-sm select-none pointer-events-none': !showQuestions }">
+        <div
+          class="max-w-full space-y-6 lg:max-w-[800px]"
+          :class="{ 'pointer-events-none select-none blur-sm': !showQuestions }"
+        >
           <div
             v-for="(question, index) in test.questions"
             :key="question.id"
@@ -286,6 +379,49 @@ import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
 const { props } = usePage();
 const test = props.test || {};
 const isAdmin = props.isAdmin || false;
+const testAnalysis = props.testAnalysis || null;
+
+const hasAnalysis = computed(() => {
+  return !!testAnalysis?.has_results;
+});
+
+const analysisStats = computed(() => {
+  if (!hasAnalysis.value) return [];
+
+  return [
+    { label: 'Deneme', value: testAnalysis.attempts_count },
+    { label: 'Son Skor', value: formatScore(testAnalysis.latest_score) },
+    { label: 'Ortalama', value: formatScore(testAnalysis.average_score) },
+    { label: 'En İyi', value: formatScore(testAnalysis.best_score) },
+    { label: 'Ort. Süre', value: testAnalysis.average_time_taken ? formatTime(testAnalysis.average_time_taken) : '-' },
+  ];
+});
+
+const formatScore = (score) => {
+  if (score === null || score === undefined) return '-';
+  return `%${Math.round(Number(score))}`;
+};
+
+const formatTime = (seconds) => {
+  if (!seconds) return '-';
+  const minutes = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  if (minutes > 0) {
+    return `${minutes}dk ${secs}sn`;
+  }
+  return `${secs}sn`;
+};
+
+const formatDate = (dateString) => {
+  if (!dateString) return '-';
+  return new Intl.DateTimeFormat('tr-TR', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(dateString));
+};
 
 // Show questions state - default to false (blurred)
 const showQuestions = ref(false);

@@ -91,6 +91,7 @@ class TestsController extends Controller
             'screen'     => $this->testService->getScreenData($test->title),
             'isAdmin'    => $isAdmin,
             'structuredData' => $structuredData,
+            'testAnalysis' => Auth::check() ? $this->testService->getUserTestAnalysis($test, Auth::id()) : null,
         ]);
     }
 
