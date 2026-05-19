@@ -178,14 +178,20 @@ class TestService
                         'question_text' => $firstAnswer->question->question_text,
                         'wrong_count' => 0,
                         'correct_count' => 0,
+                        'blank_count' => 0,
                         'attempts_count' => 0,
                     ];
                 }
 
                 $isCorrect = (bool) $answers->every(fn ($answer) => (bool) $answer->is_correct);
+                $isBlank = (bool) $answers->every(fn ($answer) => empty($answer->option_id)
+                    && ($answer->answer_text === null || $answer->answer_text === ''));
 
                 $questionStats[$questionId]['attempts_count']++;
-                if ($isCorrect) {
+                if ($isBlank) {
+                    $questionStats[$questionId]['blank_count']++;
+                    $questionStats[$questionId]['wrong_count']++;
+                } elseif ($isCorrect) {
                     $questionStats[$questionId]['correct_count']++;
                 } else {
                     $questionStats[$questionId]['wrong_count']++;
@@ -206,6 +212,12 @@ class TestService
             ->take(5)
             ->values();
 
+        $blankQuestions = collect($questionStats)
+            ->filter(fn ($stat) => $stat['blank_count'] > 0)
+            ->sortByDesc('blank_count')
+            ->take(10)
+            ->values();
+
         return [
             'has_results' => true,
             'attempts_count' => $results->count(),
@@ -216,6 +228,8 @@ class TestService
             'last_completed_at' => optional($latestResult->completed_at)->toIso8601String(),
             'average_time_taken' => $timeValues->isNotEmpty() ? (int) round($timeValues->avg()) : null,
             'weak_questions' => $weakQuestions,
+            'blank_questions' => $blankQuestions,
+            'blank_answers_count' => collect($questionStats)->sum('blank_count'),
             'recent_attempts' => $results
                 ->take(5)
                 ->map(fn ($result) => [

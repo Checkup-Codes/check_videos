@@ -75,13 +75,12 @@
       <div class="space-y-2">
         <div class="flex items-center justify-between text-sm">
           <span class="text-muted-foreground">İlerleme</span>
-          <span class="font-medium text-foreground">{{ answeredCount }} / {{ test.total_questions }} soru cevaplandı</span>
+          <span class="font-medium text-foreground"
+            >{{ answeredCount }} / {{ test.total_questions }} soru cevaplandı</span
+          >
         </div>
         <div class="h-2 w-full overflow-hidden rounded-full bg-muted">
-          <div
-            class="h-full bg-primary transition-all duration-300"
-            :style="{ width: `${progressPercentage}%` }"
-          ></div>
+          <div class="h-full bg-primary transition-all duration-300" :style="{ width: `${progressPercentage}%` }"></div>
         </div>
       </div>
 
@@ -92,45 +91,46 @@
           :key="question.id"
           :id="`question-${question.id}`"
           :ref="(el) => setQuestionRef(el, question.id)"
-          class="space-y-4 rounded-lg border border-border bg-card p-6 scroll-mt-24"
+          class="scroll-mt-24 space-y-4 rounded-lg border border-border bg-card p-6"
         >
-          <div class="flex items-start justify-between">
-            <div class="flex-1">
-              <div class="mb-2 flex items-center gap-2">
+          <div>
+            <div>
+              <div class="mb-2 flex flex-wrap items-center gap-2">
                 <span class="rounded-md bg-primary px-2 py-1 text-sm font-semibold text-primary-foreground">
                   Soru {{ index + 1 }}
                 </span>
                 <span class="text-sm text-muted-foreground">({{ question.points }} puan)</span>
+                <button
+                  v-if="isQuestionAnswered(question.id)"
+                  type="button"
+                  @click="clearQuestionAnswer(question)"
+                  class="ml-auto inline-flex h-8 items-center justify-center rounded-md border border-border bg-background px-3 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                >
+                  Seçimi temizle
+                </button>
               </div>
               <p class="whitespace-pre-wrap text-lg font-medium text-foreground">{{ question.question_text }}</p>
-            </div>
-            <div
-              v-if="isQuestionAnswered(question.id)"
-              class="ml-4 flex h-8 w-8 items-center justify-center rounded-full bg-green-500 text-white"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-              </svg>
             </div>
           </div>
 
           <div class="space-y-2">
             <!-- Single Choice Questions (Radio) -->
-            <template v-if="question.question_type === 'single_choice' || (question.question_type === 'multiple_choice' && hasOnlyOneCorrectAnswer(question))">
+            <template
+              v-if="
+                question.question_type === 'single_choice' ||
+                (question.question_type === 'multiple_choice' && hasOnlyOneCorrectAnswer(question))
+              "
+            >
               <label
                 v-for="(option, optIndex) in question.options"
                 :key="option.id"
                 :for="`question-${question.id}-option-${option.id}`"
                 class="flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all duration-200"
                 :class="{
-                  'border-primary bg-primary/10 ring-2 ring-primary/20 dark:bg-primary/20': answers[question.id] === option.id,
-                  'border-border bg-background hover:border-primary/50 hover:bg-accent': answers[question.id] !== option.id,
+                  'border-primary bg-primary/10 ring-2 ring-primary/20 dark:bg-primary/20':
+                    answers[question.id] === option.id,
+                  'border-border bg-background hover:border-primary/50 hover:bg-accent':
+                    answers[question.id] !== option.id,
                 }"
               >
                 <input
@@ -139,18 +139,18 @@
                   :name="`question-${question.id}`"
                   :value="option.id"
                   v-model="answers[question.id]"
-                  class="mt-1 h-5 w-5 cursor-pointer border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/50 dark:bg-background dark:checked:bg-primary dark:checked:border-primary"
+                  class="mt-1 h-5 w-5 cursor-pointer border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/50 dark:bg-background dark:checked:border-primary dark:checked:bg-primary"
                   @change="updateAnsweredCount"
                 />
                 <div class="flex-1">
                   <div class="flex items-center gap-2">
-                    <span 
+                    <span
                       class="font-semibold transition-colors"
                       :class="answers[question.id] === option.id ? 'text-primary' : 'text-muted-foreground'"
                     >
                       {{ String.fromCharCode(65 + optIndex) }}.
                     </span>
-                    <span 
+                    <span
                       class="whitespace-pre-wrap transition-colors"
                       :class="answers[question.id] === option.id ? 'font-medium text-foreground' : 'text-foreground'"
                     >
@@ -169,8 +169,14 @@
                 :for="`question-${question.id}-option-${option.id}`"
                 class="flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all duration-200"
                 :class="{
-                  'border-primary bg-primary/10 ring-2 ring-primary/20 dark:bg-primary/20': isOptionSelected(question.id, option.id),
-                  'border-border bg-background hover:border-primary/50 hover:bg-accent': !isOptionSelected(question.id, option.id),
+                  'border-primary bg-primary/10 ring-2 ring-primary/20 dark:bg-primary/20': isOptionSelected(
+                    question.id,
+                    option.id
+                  ),
+                  'border-border bg-background hover:border-primary/50 hover:bg-accent': !isOptionSelected(
+                    question.id,
+                    option.id
+                  ),
                 }"
               >
                 <input
@@ -178,20 +184,22 @@
                   type="checkbox"
                   :value="option.id"
                   v-model="answers[question.id]"
-                  class="mt-1 h-5 w-5 cursor-pointer rounded border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/50 dark:bg-background dark:checked:bg-primary dark:checked:border-primary"
+                  class="mt-1 h-5 w-5 cursor-pointer rounded border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/50 dark:bg-background dark:checked:border-primary dark:checked:bg-primary"
                   @change="updateAnsweredCount"
                 />
                 <div class="flex-1">
                   <div class="flex items-center gap-2">
-                    <span 
+                    <span
                       class="font-semibold transition-colors"
                       :class="isOptionSelected(question.id, option.id) ? 'text-primary' : 'text-muted-foreground'"
                     >
                       {{ String.fromCharCode(65 + optIndex) }}.
                     </span>
-                    <span 
+                    <span
                       class="whitespace-pre-wrap transition-colors"
-                      :class="isOptionSelected(question.id, option.id) ? 'font-medium text-foreground' : 'text-foreground'"
+                      :class="
+                        isOptionSelected(question.id, option.id) ? 'font-medium text-foreground' : 'text-foreground'
+                      "
                     >
                       {{ option.option_text }}
                     </span>
@@ -206,7 +214,8 @@
                 :for="`question-${question.id}-true`"
                 class="flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all duration-200"
                 :class="{
-                  'border-primary bg-primary/10 ring-2 ring-primary/20 dark:bg-primary/20': answers[question.id] === true,
+                  'border-primary bg-primary/10 ring-2 ring-primary/20 dark:bg-primary/20':
+                    answers[question.id] === true,
                   'border-border bg-background hover:border-primary/50 hover:bg-accent': answers[question.id] !== true,
                 }"
               >
@@ -216,11 +225,11 @@
                   :name="`question-${question.id}`"
                   :value="true"
                   v-model="answers[question.id]"
-                  class="mt-1 h-5 w-5 cursor-pointer border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/50 dark:bg-background dark:checked:bg-primary dark:checked:border-primary"
+                  class="mt-1 h-5 w-5 cursor-pointer border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/50 dark:bg-background dark:checked:border-primary dark:checked:bg-primary"
                   @change="updateAnsweredCount"
                 />
                 <div class="flex-1">
-                  <span 
+                  <span
                     class="whitespace-pre-wrap font-medium transition-colors"
                     :class="answers[question.id] === true ? 'text-primary' : 'text-foreground'"
                   >
@@ -233,7 +242,8 @@
                 :for="`question-${question.id}-false`"
                 class="flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all duration-200"
                 :class="{
-                  'border-primary bg-primary/10 ring-2 ring-primary/20 dark:bg-primary/20': answers[question.id] === false,
+                  'border-primary bg-primary/10 ring-2 ring-primary/20 dark:bg-primary/20':
+                    answers[question.id] === false,
                   'border-border bg-background hover:border-primary/50 hover:bg-accent': answers[question.id] !== false,
                 }"
               >
@@ -243,11 +253,11 @@
                   :name="`question-${question.id}`"
                   :value="false"
                   v-model="answers[question.id]"
-                  class="mt-1 h-5 w-5 cursor-pointer border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/50 dark:bg-background dark:checked:bg-primary dark:checked:border-primary"
+                  class="mt-1 h-5 w-5 cursor-pointer border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/50 dark:bg-background dark:checked:border-primary dark:checked:bg-primary"
                   @change="updateAnsweredCount"
                 />
                 <div class="flex-1">
-                  <span 
+                  <span
                     class="whitespace-pre-wrap font-medium transition-colors"
                     :class="answers[question.id] === false ? 'text-primary' : 'text-foreground'"
                   >
@@ -276,7 +286,7 @@
         <!-- Submit Button -->
         <div
           class="fixed inset-x-0 bottom-0 z-40 flex flex-col gap-3 border-t border-border bg-background/95 px-4 py-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur lg:static lg:flex-row lg:border-0 lg:bg-transparent lg:px-0 lg:py-0 lg:shadow-none lg:backdrop-blur-0"
-          style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom));"
+          style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom))"
         >
           <button
             type="submit"
@@ -347,31 +357,10 @@
               :ref="(el) => setQuestionNavItemRef(el, question.id)"
               @click="scrollToQuestion(question.id)"
               class="flex w-full items-center justify-between rounded-md px-3 py-2 text-sm transition-colors"
-              :class="[
-                currentQuestionId === question.id
-                  ? 'bg-accent font-medium text-accent-foreground'
-                  : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground',
-              ]"
+              :class="getQuestionNavClasses(question.id)"
             >
-              <div class="flex items-center gap-2">
-                <span class="font-medium">Soru {{ index + 1 }}</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span
-                  v-if="isQuestionAnswered(question.id)"
-                  class="flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-white"
-                  title="Cevaplandı"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                </span>
-                <span
-                  v-else
-                  class="flex h-5 w-5 items-center justify-center rounded-full border-2 border-muted-foreground/30"
-                  title="Cevaplanmadı"
-                ></span>
-              </div>
+              <span class="font-medium">Soru {{ index + 1 }}</span>
+              <span v-if="isQuestionAnswered(question.id)" class="text-[11px] font-medium">Cevaplandı</span>
             </button>
           </nav>
         </div>
@@ -429,31 +418,10 @@
               :ref="(el) => setQuestionNavItemRef(el, question.id)"
               @click="scrollToQuestion(question.id)"
               class="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-xs transition-colors"
-              :class="[
-                currentQuestionId === question.id
-                  ? 'bg-accent font-medium text-accent-foreground'
-                  : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground',
-              ]"
+              :class="getQuestionNavClasses(question.id)"
             >
-              <div class="flex items-center gap-2">
-                <span class="font-medium">Soru {{ index + 1 }}</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span
-                  v-if="isQuestionAnswered(question.id)"
-                  class="flex h-4 w-4 items-center justify-center rounded-full bg-green-500 text-white"
-                  title="Cevaplandı"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                </span>
-                <span
-                  v-else
-                  class="flex h-4 w-4 items-center justify-center rounded-full border-2 border-muted-foreground/30"
-                  title="Cevaplanmadı"
-                ></span>
-              </div>
+              <span class="font-medium">Soru {{ index + 1 }}</span>
+              <span v-if="isQuestionAnswered(question.id)" class="text-[10px] font-medium">Cevaplandı</span>
             </button>
           </nav>
         </div>
@@ -506,8 +474,34 @@ const isQuestionAnswered = (questionId) => {
 // Helper function to check if a question has only one correct answer
 const hasOnlyOneCorrectAnswer = (question) => {
   if (!question || !question.options) return true;
-  const correctCount = question.options.filter(opt => opt.is_correct).length;
+  const correctCount = question.options.filter((opt) => opt.is_correct).length;
   return correctCount === 1;
+};
+
+const clearQuestionAnswer = (question) => {
+  if (question.question_type === 'multiple_choice' && !hasOnlyOneCorrectAnswer(question)) {
+    answers.value[question.id] = [];
+    return;
+  }
+
+  answers.value[question.id] = null;
+};
+
+const getQuestionNavClasses = (questionId) => {
+  const isActive = currentQuestionId.value === questionId;
+  const isAnswered = isQuestionAnswered(questionId);
+
+  if (isActive) {
+    return isAnswered
+      ? 'bg-green-600 font-medium text-white shadow-sm hover:bg-green-600'
+      : 'bg-accent font-medium text-accent-foreground';
+  }
+
+  if (isAnswered) {
+    return 'bg-green-50 text-green-700 hover:bg-green-100 dark:bg-green-950 dark:text-green-300 dark:hover:bg-green-900';
+  }
+
+  return 'text-muted-foreground hover:bg-accent/50 hover:text-foreground';
 };
 
 // Question Navigation State
@@ -550,7 +544,7 @@ const progressPercentage = computed(() => {
 });
 
 const canSubmit = computed(() => {
-  return answeredCount.value > 0;
+  return test.questions && test.questions.length > 0;
 });
 
 // Form
@@ -626,7 +620,8 @@ const scrollToActiveQuestionNavItem = () => {
   const activeItem = questionNavItemRefs.value.get(currentQuestionId.value);
   if (!activeItem) return;
 
-  const scrollContainer = window.innerWidth >= 1280 ? desktopQuestionNavScrollRef.value : mobileQuestionNavScrollRef.value;
+  const scrollContainer =
+    window.innerWidth >= 1280 ? desktopQuestionNavScrollRef.value : mobileQuestionNavScrollRef.value;
   if (!scrollContainer) return;
 
   const containerRect = scrollContainer.getBoundingClientRect();
@@ -771,7 +766,7 @@ const submitTest = (autoSubmit = false) => {
   // Prepare answers array based on question type
   const answersArray = test.questions.map((question) => {
     const answer = answers.value[question.id];
-    
+
     if (question.question_type === 'single_choice') {
       // For single choice, answer is a single option ID
       return {
@@ -790,7 +785,7 @@ const submitTest = (autoSubmit = false) => {
         };
       } else {
         // For multiple choice with multiple correct answers, answer is an array
-        const selectedOptions = Array.isArray(answer) ? answer : (answer ? [answer] : []);
+        const selectedOptions = Array.isArray(answer) ? answer : answer ? [answer] : [];
         return {
           question_id: question.id,
           option_ids: selectedOptions.length > 0 ? selectedOptions : null,
@@ -804,7 +799,7 @@ const submitTest = (autoSubmit = false) => {
         answer_text: answer !== undefined && answer !== null ? String(answer) : null,
       };
     }
-    
+
     return {
       question_id: question.id,
       option_ids: null,
@@ -841,10 +836,10 @@ onMounted(() => {
       }
     });
   }
-  
+
   startTimer();
   initializeQuestionNavigationState();
-  
+
   // Setup question navigation tracking
   nextTick(() => {
     if (showQuestionNavigation.value) {
@@ -857,7 +852,7 @@ onMounted(() => {
     initializeQuestionNavigationState();
   };
   window.addEventListener('resize', resizeHandler);
-  
+
   // Warn before leaving if there are answers
   window.addEventListener('beforeunload', handleBeforeUnload);
 });

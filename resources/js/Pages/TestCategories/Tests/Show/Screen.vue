@@ -98,7 +98,7 @@
         </div>
 
         <div v-if="hasAnalysis" class="space-y-4">
-          <div class="grid grid-cols-2 gap-2 lg:grid-cols-5">
+          <div class="grid grid-cols-2 gap-2 lg:grid-cols-6">
             <div
               v-for="item in analysisStats"
               :key="item.label"
@@ -156,6 +156,28 @@
                     {{ attempt.correct_answers }}/{{ attempt.total_questions }}
                   </span>
                 </Link>
+              </div>
+            </div>
+          </div>
+
+          <div
+            v-if="testAnalysis.blank_questions?.length"
+            class="rounded-md border border-amber-200 bg-amber-50/70 p-3 dark:border-amber-900/70 dark:bg-amber-950/30"
+          >
+            <div class="flex items-center justify-between gap-3">
+              <h3 class="text-sm font-semibold text-foreground">Boş bıraktığın sorular</h3>
+              <span class="text-xs text-muted-foreground">{{ testAnalysis.blank_answers_count }} boş kayıt</span>
+            </div>
+            <div class="mt-3 grid gap-2 lg:grid-cols-2">
+              <div
+                v-for="(question, index) in testAnalysis.blank_questions"
+                :key="question.question_id"
+                class="rounded-md border border-amber-200/80 bg-background p-3 dark:border-amber-900/60"
+              >
+                <p class="text-sm font-medium leading-5 text-foreground">
+                  {{ index + 1 }}. {{ question.question_text }}
+                </p>
+                <p class="mt-2 text-xs text-muted-foreground">{{ question.blank_count }} kez boş bırakıldı</p>
               </div>
             </div>
           </div>
@@ -394,6 +416,7 @@ const analysisStats = computed(() => {
     { label: 'Ortalama', value: formatScore(testAnalysis.average_score) },
     { label: 'En İyi', value: formatScore(testAnalysis.best_score) },
     { label: 'Ort. Süre', value: testAnalysis.average_time_taken ? formatTime(testAnalysis.average_time_taken) : '-' },
+    { label: 'Boş', value: testAnalysis.blank_answers_count || 0 },
   ];
 });
 

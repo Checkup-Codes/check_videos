@@ -38,13 +38,13 @@
             <div>
               <p class="text-sm font-medium text-foreground">{{ scoreLabel }}</p>
               <p class="mt-1 text-xs text-muted-foreground">
-                {{ result.correct_answers || 0 }} doğru, {{ wrongAnswers }} yanlış
+                {{ result.correct_answers || 0 }} doğru, {{ wrongAnswers }} yanlış, {{ blankAnswers.length }} boş
               </p>
             </div>
           </div>
         </div>
 
-        <div class="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <div class="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-5">
           <div
             v-for="stat in resultStats"
             :key="stat.label"
@@ -52,6 +52,27 @@
           >
             <p class="text-xl font-semibold text-foreground">{{ stat.value }}</p>
             <p class="mt-1 text-xs text-muted-foreground">{{ stat.label }}</p>
+          </div>
+        </div>
+      </section>
+
+      <section
+        v-if="blankAnswers.length"
+        class="rounded-lg border border-amber-200 bg-amber-50/70 p-4 dark:border-amber-900/70 dark:bg-amber-950/30 sm:p-5"
+      >
+        <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+          <h2 class="text-base font-semibold text-foreground">Boş bırakılan sorular</h2>
+          <span class="text-xs text-muted-foreground">{{ blankAnswers.length }} soru</span>
+        </div>
+        <div class="mt-3 grid gap-2 lg:grid-cols-2">
+          <div
+            v-for="blankAnswer in blankAnswers"
+            :key="blankAnswer.id"
+            class="rounded-md border border-amber-200/80 bg-background p-3 dark:border-amber-900/60"
+          >
+            <p class="whitespace-pre-wrap text-sm leading-5 text-foreground">
+              Soru {{ getAnswerNumber(blankAnswer) }}: {{ blankAnswer.question?.question_text }}
+            </p>
           </div>
         </div>
       </section>
@@ -125,7 +146,13 @@
               <div class="flex flex-wrap items-center gap-2">
                 <span class="text-xs font-medium text-muted-foreground">Soru {{ index + 1 }}</span>
                 <span
-                  v-if="answer.is_correct"
+                  v-if="isAnswerBlank(answer)"
+                  class="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 dark:bg-amber-950 dark:text-amber-300"
+                >
+                  Boş
+                </span>
+                <span
+                  v-else-if="answer.is_correct"
                   class="rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700 dark:bg-green-950 dark:text-green-300"
                 >
                   Doğru
@@ -230,6 +257,12 @@
                 </div>
               </div>
             </div>
+            <div
+              v-else
+              class="rounded-md border border-dashed border-amber-200 bg-amber-50/70 p-3 dark:border-amber-900/70 dark:bg-amber-950/30"
+            >
+              <p class="text-sm font-medium text-amber-800 dark:text-amber-200">Bu soru boş bırakıldı.</p>
+            </div>
 
             <details v-if="answer.question?.explanation" class="rounded-md border border-border bg-background p-3">
               <summary class="cursor-pointer text-xs font-medium text-muted-foreground">Açıklama</summary>
@@ -273,10 +306,13 @@ const detailedSummary = ref('');
 const detailedSummaryCopyText = ref('Özeti Kopyala');
 
 const scoreValue = computed(() => Math.round(result.score || 0));
-const wrongAnswers = computed(() => Math.max((result.total_questions || 0) - (result.correct_answers || 0), 0));
+const wrongAnswers = computed(() =>
+  Math.max((result.total_questions || 0) - (result.correct_answers || 0) - blankAnswers.value.length, 0)
+);
 const resultStats = computed(() => [
   { label: 'Doğru', value: result.correct_answers || 0 },
   { label: 'Yanlış', value: wrongAnswers.value },
+  { label: 'Boş', value: blankAnswers.value.length },
   { label: 'Toplam', value: result.total_questions || 0 },
   { label: 'Başarı', value: `%${scoreValue.value}` },
 ]);
@@ -333,6 +369,20 @@ const resultAnswers = computed(() => {
 
   return [];
 });
+
+const isAnswerBlank = (answer) => {
+  const hasSelectedOptions = Array.isArray(answer.selected_option_ids) && answer.selected_option_ids.length > 0;
+  const hasTextAnswer = answer.answer_text !== null && answer.answer_text !== undefined && answer.answer_text !== '';
+
+  return !hasSelectedOptions && !hasTextAnswer;
+};
+
+const blankAnswers = computed(() => resultAnswers.value.filter((answer) => isAnswerBlank(answer)));
+
+const getAnswerNumber = (answer) => {
+  const index = resultAnswers.value.findIndex((item) => item.id === answer.id);
+  return index >= 0 ? index + 1 : '-';
+};
 
 // Score color based on percentage
 const scoreColor = computed(() => {
@@ -473,14 +523,15 @@ const generateDetailedSummary = () => {
   const correctAnswers = result.correct_answers || 0;
   const totalQuestions = result.total_questions || 0;
   const wrongAnswerCount = wrongAnswers.value;
+  const blankAnswerCount = blankAnswers.value.length;
   const timeTaken = result.time_taken ? formatTime(result.time_taken) : 'Belirtilmemiş';
   const completedAt = result.completed_at ? formatDate(result.completed_at) : 'Belirtilmemiş';
-  const wrongAnsweredQuestions = resultAnswers.value.filter((answer) => !answer.is_correct);
+  const wrongAnsweredQuestions = resultAnswers.value.filter((answer) => !answer.is_correct && !isAnswerBlank(answer));
 
   let summary = `${testTitle} - Sonuç Özeti\n\n`;
   summary += `Katılımcı: ${participantName}\n`;
   summary += `Puan: ${score}/100\n`;
-  summary += `Sonuç: ${correctAnswers}/${totalQuestions} doğru, ${wrongAnswerCount} yanlış\n`;
+  summary += `Sonuç: ${correctAnswers}/${totalQuestions} doğru, ${wrongAnswerCount} yanlış, ${blankAnswerCount} boş\n`;
   summary += `Süre: ${timeTaken}\n`;
   summary += `Tarih: ${completedAt}\n\n`;
 
@@ -501,9 +552,13 @@ const generateDetailedSummary = () => {
     const options = getQuestionOptions(answer.question);
     const questionType = answer.question?.question_type || 'multiple_choice';
 
-    summary += `\n${questionNumber}. ${isCorrect ? 'Doğru' : 'Yanlış'} - ${questionText}\n`;
+    const isBlank = isAnswerBlank(answer);
 
-    if (questionType === 'true_false' || (options.length === 0 && answer.answer_text !== null)) {
+    summary += `\n${questionNumber}. ${isBlank ? 'Boş' : isCorrect ? 'Doğru' : 'Yanlış'} - ${questionText}\n`;
+
+    if (isBlank) {
+      summary += `Verilen cevap: Cevap verilmedi\n`;
+    } else if (questionType === 'true_false' || (options.length === 0 && answer.answer_text !== null)) {
       const userAnswer = answer.answer_text === 'true' || answer.answer_text === true ? 'Doğru' : 'Yanlış';
       const correctAnswer =
         answer.question?.correct_answer === 'true' ||
@@ -530,9 +585,10 @@ const generateDetailedSummary = () => {
   });
 
   summary += `\nTekrar önerisi: `;
-  summary += wrongAnsweredQuestions.length
-    ? `${wrongAnsweredQuestions.length} yanlış soruyu açıklamalarıyla tekrar et ve benzer sorularla pekiştir.`
-    : `Tüm sorular doğru. Bilgiyi kalıcı yapmak için testi daha sonra tekrar çöz.`;
+  summary +=
+    wrongAnsweredQuestions.length || blankAnswerCount
+      ? `${wrongAnsweredQuestions.length} yanlış ve ${blankAnswerCount} boş soruyu açıklamalarıyla tekrar et ve benzer sorularla pekiştir.`
+      : `Tüm sorular doğru. Bilgiyi kalıcı yapmak için testi daha sonra tekrar çöz.`;
 
   detailedSummary.value = summary;
 };
