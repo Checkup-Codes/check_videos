@@ -94,8 +94,8 @@
       style="width: 650px; max-width: 90vw; max-height: 80vh; overflow-y-auto"
       :class="{
         'bg-card': !gameState.showAnswer,
-        'bg-green-50 dark:bg-green-900/10': gameState.showAnswer && gameState.isCorrect,
-        'bg-red-50 dark:bg-red-900/10': gameState.showAnswer && !gameState.isCorrect,
+        'bg-green-500/5 dark:bg-green-500/10': gameState.showAnswer && gameState.isCorrect,
+        'bg-red-500/5 dark:bg-red-500/10': gameState.showAnswer && !gameState.isCorrect,
       }"
     >
       <!-- Progress Bar -->
@@ -175,8 +175,8 @@
           v-if="gameState.showAnswer"
           class="mt-3 rounded border border-border p-3"
           :class="{
-            'bg-red-50 dark:bg-red-900/20': !gameState.isCorrect,
-            'bg-green-50 dark:bg-green-900/20': gameState.isCorrect,
+            'border-red-500/40 bg-red-500/10 dark:border-red-400/40 dark:bg-red-500/15': !gameState.isCorrect,
+            'border-green-500/40 bg-green-500/10 dark:border-green-400/40 dark:bg-green-500/15': gameState.isCorrect,
           }"
         >
           <p
@@ -199,6 +199,15 @@
               </li>
             </ul>
           </div>
+
+          <button
+            v-if="!gameState.isCorrect"
+            type="button"
+            @click="advanceToNextQuestion"
+            class="mt-3 inline-flex h-9 w-full items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            Devam Et
+          </button>
         </div>
       </div>
     </div>
@@ -244,6 +253,7 @@ const gameState = ref({
   hintShown: false,
   currentHintIndex: 0,
 });
+let nextQuestionTimer = null;
 
 // Kelimeleri kullan
 const words = ref([]);
@@ -283,8 +293,6 @@ const animateCorrectAnswer = () => {
     .to(answerInput.value, {
       scale: 1.05,
       duration: 0.2,
-      backgroundColor: '#ecfdf5',
-      borderColor: '#34d399',
       ease: 'power2.out',
     })
     .to(answerInput.value, {
@@ -294,7 +302,7 @@ const animateCorrectAnswer = () => {
     });
 
   // Konfeti efekti
-  const confettiCount = 50;
+  const confettiCount = 18;
   const colors = ['#34d399', '#10b981', '#059669'];
 
   for (let i = 0; i < confettiCount; i++) {
@@ -336,8 +344,6 @@ const animateWrongAnswer = () => {
     .to(answerInput.value, {
       scale: 1.05,
       duration: 0.2,
-      backgroundColor: '#fef2f2',
-      borderColor: '#f87171',
       ease: 'power2.out',
     })
     .to(answerInput.value, {
@@ -502,8 +508,30 @@ const loadNextQuestion = () => {
   });
 };
 
+const advanceToNextQuestion = () => {
+  if (nextQuestionTimer) {
+    clearTimeout(nextQuestionTimer);
+    nextQuestionTimer = null;
+  }
+
+  if (answerInput.value) {
+    gsap.set(answerInput.value, {
+      clearProps: 'all',
+    });
+    answerInput.value.style.backgroundColor = '';
+    answerInput.value.style.borderColor = '';
+  }
+
+  gameState.value.currentIndex++;
+  gameState.value.userInput = '';
+  gameState.value.showAnswer = false;
+  gameState.value.progress = 0;
+  loadNextQuestion();
+};
+
 // Cevabı kontrol et
 const checkAnswer = () => {
+  if (gameState.value.showAnswer) return;
   if (!gameState.value.userInput.trim()) return;
 
   const userAnswer = gameState.value.userInput.trim().toLowerCase();
@@ -532,21 +560,11 @@ const checkAnswer = () => {
   const newProgress = Math.round(((gameState.value.currentIndex + 1) / gameState.value.totalQuestions) * 100);
   animateProgress(newProgress);
 
-  // 2 saniye sonra sonraki soruya geç
-  setTimeout(() => {
-    // Input alanının stillerini sıfırla
-    gsap.set(answerInput.value, {
-      clearProps: 'all',
-    });
-    answerInput.value.style.backgroundColor = '';
-    answerInput.value.style.borderColor = '';
-
-    gameState.value.currentIndex++;
-    gameState.value.userInput = '';
-    gameState.value.showAnswer = false;
-    gameState.value.progress = 0;
-    loadNextQuestion();
-  }, 2000);
+  if (gameState.value.isCorrect) {
+    nextQuestionTimer = setTimeout(() => {
+      advanceToNextQuestion();
+    }, 650);
+  }
 };
 
 // Puan hesapla

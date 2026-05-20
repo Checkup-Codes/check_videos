@@ -1,10 +1,10 @@
 <template>
   <Head :title="browserTitle" />
   <CheckScreen>
-    <div class="mx-auto max-w-5xl py-8">
+    <div class="mx-auto w-full max-w-5xl py-6 sm:py-8">
       <!-- Hero Section -->
-      <div class="mb-12">
-          <h1 class="xl:-translate-x-[80px] mb-5 text-2xl font-bold text-foreground sm:text-3xl">Çalışma Alanım</h1>
+      <div class="mb-8">
+        <h1 class="mb-5 text-2xl font-bold text-foreground sm:text-3xl">Çalışma Alanım</h1>
       </div>
 
       <!-- Single Workspace View -->

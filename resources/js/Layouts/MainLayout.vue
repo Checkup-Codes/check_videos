@@ -2,19 +2,25 @@
   <Head>
     <title>{{ title }}</title>
   </Head>
-  <div class="relative flex h-screen flex-col bg-background text-foreground transition-colors duration-300 px-3">
+  <div class="relative flex h-screen flex-col overflow-hidden bg-background text-foreground transition-colors duration-300">
     <!-- Animated Background - Global -->
     <AnimatedBackground />
 
     <!-- Header - En üstte -->
     <HeaderLayout class="relative z-10" @toggle-sidebar="toggleSidebar" />
 
-    <!-- Tab Navigation - Header altında -->
-    <SidebarLayout class="relative z-10" :is-compact="isCompactMode" @link-clicked="toggleSidebar" />
+    <!-- Body: global sidebar + content -->
+    <div class="relative z-10 flex min-h-0 flex-1 overflow-hidden">
+      <SidebarLayout
+        class="relative z-10 hidden shrink-0 lg:flex"
+        :is-compact="isCompactMode"
+        @link-clicked="toggleSidebar"
+      />
 
-    <!-- Content Area -->
-    <div :class="contentWrapperClass" class="relative z-10">
-      <slot />
+      <!-- Content Area -->
+      <div :class="contentWrapperClass" class="relative z-10 min-w-0">
+        <slot />
+      </div>
     </div>
   </div>
 </template>
@@ -67,7 +73,7 @@ const isCompactMode = computed(() => {
 });
 
 const contentWrapperClass = computed(() => {
-  const baseClass = 'flex-1 transition-all duration-500 ease-out';
+  const baseClass = 'min-h-0 flex-1 transition-all duration-500 ease-out';
 
   // Check if we're on the index page
   const isIndexPage = page.url === '/' || page.url === '';
@@ -83,6 +89,16 @@ const contentWrapperClass = computed(() => {
 
   // Check if we're on rendition pages
   const isRenditionPage = page.url.startsWith('/rendition');
+
+  const isJourneyPage = page.url.startsWith('/journey');
+  const isCertificatesPage = page.url.startsWith('/certificates');
+  const isWorkspacePage = page.url.startsWith('/workspace');
+  const isBookmarksPage = page.url.startsWith('/bookmarks') || page.url.startsWith('/bookmark-categories');
+  const isTestsPage = page.url.startsWith('/tests') || page.url.startsWith('/test-categories');
+  const isProjectsPage =
+    page.url.startsWith('/services') ||
+    page.url.startsWith('/projects') ||
+    page.url.startsWith('/customers');
 
   // Check if we're on versions page
   const isVersionsPage = page.url.startsWith('/versions');
@@ -109,6 +125,12 @@ const contentWrapperClass = computed(() => {
     isCategoriesPage ||
     isLoginPage ||
     isRenditionPage ||
+    isJourneyPage ||
+    isCertificatesPage ||
+    isWorkspacePage ||
+    isBookmarksPage ||
+    isTestsPage ||
+    isProjectsPage ||
     isVersionsPage ||
     isDashboardPage ||
     isMediaPage ||

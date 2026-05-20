@@ -270,6 +270,22 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  input[type='checkbox'],
+  input[type='radio'] {
+    accent-color: hsl(var(--primary));
+  }
+
+  .dark input[type='checkbox'],
+  .dark input[type='radio'] {
+    accent-color: hsl(217 91% 60%);
+  }
+
+  .dark input[type='checkbox']:checked,
+  .dark input[type='radio']:checked {
+    background-color: hsl(217 91% 60%) !important;
+    border-color: hsl(217 91% 60%) !important;
+  }
 }
 
 .input-error {

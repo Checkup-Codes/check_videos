@@ -1,17 +1,12 @@
 <template>
   <Link
     :href="href"
-    class="group relative inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50"
-    :class="[
-      isActive
-        ? 'bg-accent text-accent-foreground shadow-sm'
-        : 'text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground',
-    ]"
+    :class="linkClasses"
   >
     <!-- Active indicator -->
     <div
       v-if="isActive"
-      class="absolute bottom-0 left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-full bg-primary transition-all duration-300"
+      :class="activeIndicatorClasses"
     ></div>
 
     <!-- Icon with animation -->
@@ -190,11 +185,31 @@ const props = defineProps({
   href: String,
   icon: [String, Array],
   label: String,
+  orientation: {
+    type: String,
+    default: 'horizontal',
+  },
   isActive: {
     type: Boolean,
     default: false,
   },
 });
+
+const isVertical = computed(() => props.orientation === 'vertical');
+
+const linkClasses = computed(() => [
+  'group relative inline-flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50',
+  isVertical.value ? 'w-full justify-start' : 'justify-center',
+  props.isActive
+    ? 'bg-accent text-accent-foreground shadow-sm'
+    : 'text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground',
+]);
+
+const activeIndicatorClasses = computed(() =>
+  isVertical.value
+    ? 'absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-full bg-primary transition-all duration-300'
+    : 'absolute bottom-0 left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-full bg-primary transition-all duration-300'
+);
 
 // Theme control
 const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);

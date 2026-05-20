@@ -93,7 +93,7 @@
               :key="status.value"
               class="relative flex cursor-pointer items-center gap-3 rounded-lg border-2 p-4 transition-all hover:bg-accent/50"
               :class="{
-                'border-primary bg-primary/5': form.status === status.value,
+                'border-primary bg-primary/5 dark:border-blue-400 dark:bg-blue-500/15': form.status === status.value,
                 'border-border': form.status !== status.value,
               }"
             >
@@ -101,7 +101,7 @@
                 type="radio"
                 :value="status.value"
                 v-model="form.status"
-                class="h-4 w-4 border-input text-primary ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                class="h-4 w-4 border-input text-primary ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:border-muted-foreground/60 dark:bg-background dark:checked:border-blue-400 dark:checked:bg-blue-500"
               />
               <div class="flex-1">
                 <div class="flex items-center gap-2">
@@ -253,14 +253,14 @@
             class="group relative flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all"
             :class="
               form.hasDraw
-                ? 'border-primary bg-primary/10 shadow-sm'
+                ? 'border-primary bg-primary/10 shadow-sm dark:border-blue-400 dark:bg-blue-500/15'
                 : 'border-border bg-background hover:border-primary/50 hover:bg-accent/50'
             "
           >
             <input
               type="checkbox"
               v-model="form.hasDraw"
-              class="mt-0.5 h-4 w-4 rounded border-2 border-input bg-background text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:border-muted-foreground"
+              class="mt-0.5 h-4 w-4 rounded border-2 border-input bg-background text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:border-muted-foreground/60 dark:checked:border-blue-400 dark:checked:bg-blue-500"
             />
             <div class="flex-1">
               <div class="flex items-center gap-2">
@@ -302,14 +302,14 @@
             class="group relative flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all"
             :class="
               form.hasYoutubeVideo
-                ? 'border-primary bg-primary/10 shadow-sm'
+                ? 'border-primary bg-primary/10 shadow-sm dark:border-blue-400 dark:bg-blue-500/15'
                 : 'border-border bg-background hover:border-primary/50 hover:bg-accent/50'
             "
           >
             <input
               type="checkbox"
               v-model="form.hasYoutubeVideo"
-              class="mt-0.5 h-4 w-4 rounded border-2 border-input bg-background text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:border-muted-foreground"
+              class="mt-0.5 h-4 w-4 rounded border-2 border-input bg-background text-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 dark:border-muted-foreground/60 dark:checked:border-blue-400 dark:checked:bg-blue-500"
             />
             <div class="flex-1">
               <div class="flex items-center gap-2">

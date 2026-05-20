@@ -139,7 +139,7 @@
           <button
             v-for="(option, index) in shuffledOptions"
             :key="`${gameState.currentIndex}-${index}`"
-            @click="selectAnswer(option)"
+            @click="selectAnswer(option, $event)"
             :disabled="gameState.showAnswer"
             class="w-full rounded border border-border bg-background p-2.5 text-left text-sm text-foreground transition-all duration-200 hover:bg-muted disabled:cursor-not-allowed"
             :class="getOptionClasses(option, index)"
@@ -160,6 +160,14 @@
           <p class="text-base font-medium" :class="gameState.isCorrect ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
             {{ gameState.isCorrect ? 'Doğru!' : 'Yanlış!' }}
           </p>
+          <button
+            v-if="!gameState.isCorrect"
+            type="button"
+            @click="goToNextQuestion"
+            class="mt-3 inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            Devam Et
+          </button>
         </div>
       </div>
     </div>
@@ -206,6 +214,7 @@ const gameState = ref({
   hintShown: false,
   currentHintIndex: 0,
 });
+let nextQuestionTimer = null;
 
 // Kelimeleri kullan
 const words = ref([]);
@@ -236,8 +245,6 @@ const animateCorrectAnswer = (element) => {
   gsap.to(element, {
     scale: 1.05,
     duration: 0.2,
-    backgroundColor: '#ecfdf5',
-    borderColor: '#34d399',
     ease: 'power2.out',
   });
 
@@ -255,8 +262,6 @@ const animateWrongAnswer = (element) => {
     .to(element, {
       scale: 1.05,
       duration: 0.2,
-      backgroundColor: '#fef2f2',
-      borderColor: '#f87171',
       ease: 'power2.out',
     })
     .to(element, {
@@ -290,6 +295,8 @@ const animateProgress = (progress) => {
     duration: 0.5,
     ease: 'power2.out',
   });
+
+  if (!progressBarGlow.value) return;
 
   // Parlama efekti animasyonu
   gsap.fromTo(
@@ -333,6 +340,14 @@ const nextQuestion = () => {
     // Game over
     gameState.value.isPlaying = false;
   }
+};
+
+const goToNextQuestion = () => {
+  if (nextQuestionTimer) {
+    clearTimeout(nextQuestionTimer);
+    nextQuestionTimer = null;
+  }
+  nextQuestion();
 };
 
 // Oyunu başlat
@@ -457,7 +472,7 @@ const shuffledOptions = computed(() => {
 });
 
 // Cevap seçimi
-const selectAnswer = (option) => {
+const selectAnswer = (option, event) => {
   gameState.value.selectedAnswer = option;
   gameState.value.showAnswer = true;
   gameState.value.isCorrect = isCorrectAnswer(option, gameState.value.currentQuestion);
@@ -470,7 +485,7 @@ const selectAnswer = (option) => {
   });
 
   // Animasyonları çalıştır
-  const buttonElement = event.target;
+  const buttonElement = event?.currentTarget;
   if (gameState.value.isCorrect) {
     animateCorrectAnswer(buttonElement);
   } else {
@@ -481,10 +496,11 @@ const selectAnswer = (option) => {
   const newProgress = Math.round(((gameState.value.currentIndex + 1) / gameState.value.totalQuestions) * 100);
   animateProgress(newProgress);
 
-  // 1.5 saniye sonra bir sonraki soruya geç
-  setTimeout(() => {
-    nextQuestion();
-  }, 1500);
+  if (gameState.value.isCorrect) {
+    nextQuestionTimer = setTimeout(() => {
+      goToNextQuestion();
+    }, 650);
+  }
 };
 
 // Oyunu bitir
@@ -581,11 +597,11 @@ const getOptionClasses = (option, index) => {
   }
 
   if (isCorrectAnswer(option, gameState.value.currentQuestion)) {
-    return 'border-green-500 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200';
+    return 'border-green-500 bg-green-500/10 text-green-700 dark:border-green-400 dark:bg-green-500/15 dark:text-green-300';
   }
 
   if (isSelectedAnswer(option)) {
-    return 'border-red-500 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200';
+    return 'border-red-500 bg-red-500/10 text-red-700 dark:border-red-400 dark:bg-red-500/15 dark:text-red-300';
   }
 
   return 'border-border bg-background text-foreground';

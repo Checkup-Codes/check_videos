@@ -400,6 +400,8 @@
 
       <!-- Right Section: Navigation + Actions -->
       <div class="flex items-center space-x-2">
+        <PageActions v-if="isLoggedIn" variant="desktop" />
+
         <!-- Navigation Links -->
         <div class="hidden items-center space-x-1 xl:flex">
           <Link
@@ -508,10 +510,11 @@
           </div>
         </template>
 
-        <!-- Mobile Menu Toggle for Desktop (fallback) -->
+        <!-- Menu Toggle -->
         <button
           @click="toggleMenu"
-          class="inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 xl:hidden"
+          class="inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+          title="Menü"
         >
           <svg
             class="h-3.5 w-3.5"

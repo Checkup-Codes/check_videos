@@ -101,10 +101,12 @@
                 </span>
                 <span class="text-sm text-muted-foreground">({{ question.points }} puan)</span>
                 <button
-                  v-if="isQuestionAnswered(question.id)"
                   type="button"
+                  :disabled="!isQuestionAnswered(question.id)"
+                  :aria-hidden="!isQuestionAnswered(question.id)"
                   @click="clearQuestionAnswer(question)"
                   class="ml-auto inline-flex h-8 items-center justify-center rounded-md border border-border bg-background px-3 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                  :class="{ 'invisible pointer-events-none': !isQuestionAnswered(question.id) }"
                 >
                   Seçimi temizle
                 </button>
@@ -127,7 +129,7 @@
                 :for="`question-${question.id}-option-${option.id}`"
                 class="flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all duration-200"
                 :class="{
-                  'border-primary bg-primary/10 ring-2 ring-primary/20 dark:bg-primary/20':
+                  'border-primary bg-primary/10 ring-2 ring-primary/20 dark:border-blue-400 dark:bg-blue-500/15 dark:ring-blue-400/20':
                     answers[question.id] === option.id,
                   'border-border bg-background hover:border-primary/50 hover:bg-accent':
                     answers[question.id] !== option.id,
@@ -139,7 +141,7 @@
                   :name="`question-${question.id}`"
                   :value="option.id"
                   v-model="answers[question.id]"
-                  class="mt-1 h-5 w-5 cursor-pointer border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/50 dark:bg-background dark:checked:border-primary dark:checked:bg-primary"
+                  class="mt-1 h-5 w-5 cursor-pointer border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/60 dark:bg-background dark:checked:border-blue-400 dark:checked:bg-blue-500"
                   @change="updateAnsweredCount"
                 />
                 <div class="flex-1">
@@ -169,7 +171,7 @@
                 :for="`question-${question.id}-option-${option.id}`"
                 class="flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all duration-200"
                 :class="{
-                  'border-primary bg-primary/10 ring-2 ring-primary/20 dark:bg-primary/20': isOptionSelected(
+                  'border-primary bg-primary/10 ring-2 ring-primary/20 dark:border-blue-400 dark:bg-blue-500/15 dark:ring-blue-400/20': isOptionSelected(
                     question.id,
                     option.id
                   ),
@@ -184,7 +186,7 @@
                   type="checkbox"
                   :value="option.id"
                   v-model="answers[question.id]"
-                  class="mt-1 h-5 w-5 cursor-pointer rounded border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/50 dark:bg-background dark:checked:border-primary dark:checked:bg-primary"
+                  class="mt-1 h-5 w-5 cursor-pointer rounded border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/60 dark:bg-background dark:checked:border-blue-400 dark:checked:bg-blue-500"
                   @change="updateAnsweredCount"
                 />
                 <div class="flex-1">
@@ -214,7 +216,7 @@
                 :for="`question-${question.id}-true`"
                 class="flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all duration-200"
                 :class="{
-                  'border-primary bg-primary/10 ring-2 ring-primary/20 dark:bg-primary/20':
+                  'border-primary bg-primary/10 ring-2 ring-primary/20 dark:border-blue-400 dark:bg-blue-500/15 dark:ring-blue-400/20':
                     answers[question.id] === true,
                   'border-border bg-background hover:border-primary/50 hover:bg-accent': answers[question.id] !== true,
                 }"
@@ -225,7 +227,7 @@
                   :name="`question-${question.id}`"
                   :value="true"
                   v-model="answers[question.id]"
-                  class="mt-1 h-5 w-5 cursor-pointer border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/50 dark:bg-background dark:checked:border-primary dark:checked:bg-primary"
+                  class="mt-1 h-5 w-5 cursor-pointer border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/60 dark:bg-background dark:checked:border-blue-400 dark:checked:bg-blue-500"
                   @change="updateAnsweredCount"
                 />
                 <div class="flex-1">
@@ -242,7 +244,7 @@
                 :for="`question-${question.id}-false`"
                 class="flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all duration-200"
                 :class="{
-                  'border-primary bg-primary/10 ring-2 ring-primary/20 dark:bg-primary/20':
+                  'border-primary bg-primary/10 ring-2 ring-primary/20 dark:border-blue-400 dark:bg-blue-500/15 dark:ring-blue-400/20':
                     answers[question.id] === false,
                   'border-border bg-background hover:border-primary/50 hover:bg-accent': answers[question.id] !== false,
                 }"
@@ -253,7 +255,7 @@
                   :name="`question-${question.id}`"
                   :value="false"
                   v-model="answers[question.id]"
-                  class="mt-1 h-5 w-5 cursor-pointer border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/50 dark:bg-background dark:checked:border-primary dark:checked:bg-primary"
+                  class="mt-1 h-5 w-5 cursor-pointer border-2 border-muted-foreground/30 text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-muted-foreground/60 dark:bg-background dark:checked:border-blue-400 dark:checked:bg-blue-500"
                   @change="updateAnsweredCount"
                 />
                 <div class="flex-1">

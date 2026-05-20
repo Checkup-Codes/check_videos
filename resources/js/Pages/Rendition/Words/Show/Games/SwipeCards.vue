@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-full w-full max-w-2xl flex-col justify-center px-4">
+  <div class="flex h-full w-full max-w-xl flex-col justify-center px-4">
     <!-- Minimalist Progress Section -->
     <div class="mb-4 space-y-2">
       <!-- Stats Row -->
@@ -18,7 +18,7 @@
             {{ stats.incorrect }}
           </span>
         </div>
-        <span class="text-xs font-medium text-muted-foreground">{{ currentIndex + 1 }} / {{ totalQuestions }}</span>
+        <span class="text-xs font-medium text-muted-foreground">{{ currentStep }} / {{ totalQuestions }}</span>
       </div>
       
       <!-- Progress Bar -->
@@ -54,15 +54,15 @@
     </div>
 
     <!-- Card Stack Container - Fixed Size -->
-    <div class="relative" style="width: 500px; height: 450px; max-width: 90vw">
+    <div class="relative mx-auto w-full max-w-[460px] aspect-[1.08]">
       <!-- Background Cards (for depth effect) -->
       <div
+        v-if="currentWord"
         v-for="i in 2"
         :key="`bg-${i}`"
-        class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-3xl border border-border/50 bg-card/50 backdrop-blur-sm"
-        style="width: 500px; height: 450px; max-width: 90vw"
+        class="absolute inset-0 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm"
         :style="{
-          transform: `translate(-50%, -50%) scale(${1 - i * 0.04}) translateY(${i * 6}px)`,
+          transform: `scale(${1 - i * 0.04}) translateY(${i * 6}px)`,
           opacity: 0.4 - i * 0.1,
           zIndex: 10 - i,
         }"
@@ -74,8 +74,7 @@
           v-if="currentWord"
           :key="currentWord.id"
           ref="cardRef"
-          class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-grab rounded-3xl border border-border bg-card shadow-2xl active:cursor-grabbing overflow-y-auto"
-          style="width: 500px; height: 450px; max-width: 90vw"
+          class="absolute inset-0 cursor-grab overflow-y-auto rounded-2xl border border-border bg-card shadow-xl active:cursor-grabbing"
           :style="{
             transform: cardTransform,
             transition: isDragging ? 'none' : 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -166,19 +165,34 @@
       <!-- Completion State -->
       <div
         v-if="!currentWord && currentIndex >= totalQuestions"
-        class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center"
-        style="width: 500px; max-width: 90vw"
+        class="absolute inset-0 z-30 flex items-center justify-center text-center"
       >
-        <div class="rounded-3xl border border-border bg-card p-8 shadow-2xl">
+        <div class="w-full rounded-2xl border border-border bg-card p-6 shadow-xl">
           <div class="mb-4 flex justify-center">
-            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
-              <svg class="h-8 w-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10">
+              <svg class="h-7 w-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
             </div>
           </div>
           <h3 class="mb-2 text-xl font-bold text-foreground">Tebrikler!</h3>
           <p class="text-sm text-muted-foreground">Tüm kelimeleri tamamladın</p>
+          <div class="mt-6 grid gap-2 sm:grid-cols-2">
+            <button
+              type="button"
+              @click="emit('game-completed', getGameResults())"
+              class="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              Pakete Dön
+            </button>
+            <button
+              type="button"
+              @click="restartGame"
+              class="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            >
+              Tekrar Başla
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -187,6 +201,7 @@
     <div v-if="currentWord" class="mt-4 flex items-center justify-center gap-4">
       <button
         @click="swipeLeft"
+        :disabled="isAnswering"
         class="group flex h-14 w-14 items-center justify-center rounded-2xl border-2 border-red-500/20 bg-red-500/5 transition-all hover:scale-105 hover:border-red-500/30 hover:bg-red-500/10 hover:shadow-lg hover:shadow-red-500/20 active:scale-95"
       >
         <svg class="h-6 w-6 text-red-600 dark:text-red-400 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -206,6 +221,7 @@
 
       <button
         @click="swipeRight"
+        :disabled="isAnswering"
         class="group flex h-14 w-14 items-center justify-center rounded-2xl border-2 border-green-500/20 bg-green-500/5 transition-all hover:scale-105 hover:border-green-500/30 hover:bg-green-500/10 hover:shadow-lg hover:shadow-green-500/20 active:scale-95"
       >
         <svg class="h-6 w-6 text-green-600 dark:text-green-400 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -215,7 +231,7 @@
     </div>
 
     <!-- Minimalist Keyboard Shortcuts -->
-    <div class="mt-3 flex items-center justify-center gap-2 text-[10px] text-muted-foreground">
+    <div v-if="currentWord" class="mt-3 flex items-center justify-center gap-2 text-[10px] text-muted-foreground">
       <kbd class="inline-flex h-5 min-w-[20px] items-center justify-center rounded border border-border bg-muted px-1.5 font-mono font-medium">←</kbd>
       <span>•</span>
       <kbd class="inline-flex h-5 items-center justify-center rounded border border-border bg-muted px-1.5 font-mono font-medium">Space</kbd>
@@ -227,7 +243,6 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
   words: {
@@ -254,6 +269,7 @@ const stats = ref({
 });
 const showMeaning = ref(false);
 const hasStartedSwiping = ref(false);
+const isAnswering = ref(false);
 
 // Drag state
 const isDragging = ref(false);
@@ -269,18 +285,23 @@ const results = ref([]);
 // Computed
 const currentWord = computed(() => props.words[currentIndex.value]);
 const totalQuestions = computed(() => props.words.length);
-const progress = computed(() => ((currentIndex.value / totalQuestions.value) * 100).toFixed(0));
+const currentStep = computed(() => (currentIndex.value >= totalQuestions.value ? totalQuestions.value : currentIndex.value + 1));
+const progress = computed(() => {
+  if (!totalQuestions.value) return 0;
+  return ((Math.min(currentIndex.value, totalQuestions.value) / totalQuestions.value) * 100).toFixed(0);
+});
 
 const cardTransform = computed(() => {
   if (isDragging.value) {
     const rotate = dragX.value / 20;
-    return `translate(-50%, -50%) translateX(${dragX.value}px) translateY(${dragY.value}px) rotate(${rotate}deg)`;
+    return `translateX(${dragX.value}px) translateY(${dragY.value}px) rotate(${rotate}deg)`;
   }
-  return 'translate(-50%, -50%)';
+  return 'translate(0, 0)';
 });
 
 // Methods
 const startDrag = (e) => {
+  if (isAnswering.value) return;
   isDragging.value = true;
   hasStartedSwiping.value = true;
   const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
@@ -326,6 +347,7 @@ const endDrag = () => {
 };
 
 const swipeRight = () => {
+  if (isAnswering.value || !currentWord.value) return;
   hasStartedSwiping.value = true;
   // Animate swipe
   dragX.value = 400;
@@ -336,6 +358,7 @@ const swipeRight = () => {
 };
 
 const swipeLeft = () => {
+  if (isAnswering.value || !currentWord.value) return;
   hasStartedSwiping.value = true;
   // Animate swipe
   dragX.value = -400;
@@ -350,7 +373,8 @@ const toggleMeaning = () => {
 };
 
 const handleAnswer = (isCorrect) => {
-  if (!currentWord.value) return;
+  if (!currentWord.value || isAnswering.value) return;
+  isAnswering.value = true;
 
   // Record result
   results.value.push({
@@ -377,28 +401,40 @@ const handleAnswer = (isCorrect) => {
   if (currentIndex.value >= totalQuestions.value) {
     completeGame();
   }
+
+  setTimeout(() => {
+    isAnswering.value = false;
+  }, 320);
 };
 
 const completeGame = () => {
-  // Update words in database
-  router.post(
-    route('rendition.words.update-words'),
-    {
-      words: results.value,
-    },
-    {
-      preserveState: true,
-      preserveScroll: true,
-      onSuccess: () => {
-        emit('game-completed', {
-          totalQuestions: totalQuestions.value,
-          correctAnswers: stats.value.correct,
-          incorrectAnswers: stats.value.incorrect,
-          results: results.value,
-        });
-      },
-    }
-  );
+  dragX.value = 0;
+  dragY.value = 0;
+  showMeaning.value = false;
+};
+
+const getGameResults = () => ({
+  totalQuestions: totalQuestions.value,
+  correctAnswers: stats.value.correct,
+  incorrectAnswers: stats.value.incorrect,
+  results: results.value,
+});
+
+const restartGame = () => {
+  currentIndex.value = 0;
+  stats.value = {
+    correct: 0,
+    incorrect: 0,
+  };
+  showMeaning.value = false;
+  hasStartedSwiping.value = false;
+  isDragging.value = false;
+  isAnswering.value = false;
+  dragX.value = 0;
+  dragY.value = 0;
+  startX.value = 0;
+  startY.value = 0;
+  results.value = [];
 };
 
 // Keyboard shortcuts

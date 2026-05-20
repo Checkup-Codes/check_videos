@@ -120,6 +120,7 @@ class SeoService
         return [
             'name' => $screenName,
             'isMobileSidebar' => $isMobileSidebar,
+            'is_mobile' => $isMobileSidebar,
             'seo' => [
                 // Browser tab title: "PageTitle | SiteName" veya sadece "SiteName"
                 'title' => $pageTitle 

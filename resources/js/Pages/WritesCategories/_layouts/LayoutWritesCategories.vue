@@ -2,7 +2,7 @@
   <FlashMessage :message="flashMessage" @close="handleFlashClose" />
   
   <!-- Toggle Sidebar Button - Fixed position, only for logged in users and NOT on index pages -->
-  <div v-if="isLoggedIn && !shouldHideSidebarContent && !isIndexPage" class="fixed bottom-6 right-6 z-50 lg:bottom-8 lg:right-8">
+  <div v-if="isLoggedIn && !shouldHideSidebarContent && !isIndexPage" class="fixed bottom-6 right-6 z-50 hidden lg:block lg:bottom-8 lg:right-8">
     <!-- Tooltip hint for first-time external visitors -->
     <div
       v-if="showSidebarHint"
@@ -70,7 +70,7 @@
         <component :is="sidebarComponent" :key="screenName" @update:isNarrow="handleSidebarWidthChange" />
       </KeepAlive>
     </template>
-    <div :class="[shouldShowMainContentOnMobile ? 'block' : 'hidden lg:block', mainContentClass]">
+    <div :class="[shouldShowMainContentOnMobile ? 'block' : 'hidden lg:block', 'h-full min-h-0 overflow-hidden', mainContentClass]">
       <slot name="screen"></slot>
     </div>
   </CheckLayout>

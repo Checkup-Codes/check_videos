@@ -1,34 +1,34 @@
 <template>
   <CheckSubsidebar :isNarrow="isNarrow">
-    <!-- View Toggle - Modern Header -->
-    <div class="relative z-10 shrink-0 border-b border-border/50 bg-background/95 p-2.5 backdrop-blur-sm">
+    <!-- View Toggle - Always visible -->
+    <div class="relative z-10 shrink-0 border-b border-border bg-background p-2">
       <div class="flex items-center justify-between gap-2">
         <!-- View Toggle (Left) -->
-        <div class="flex items-center gap-1 rounded-lg bg-muted/50 p-0.5">
+        <div class="flex items-center gap-1">
           <Link
             :href="route('writes.index')"
-            class="inline-flex h-7 items-center gap-1.5 rounded-md px-2.5 text-xs font-medium transition-all duration-200"
+            class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs transition-colors"
             :class="
               isListView
-                ? 'bg-background text-foreground shadow-sm'
-                : 'text-muted-foreground hover:bg-background/50 hover:text-foreground'
+                ? 'bg-accent text-accent-foreground'
+                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
             "
             title="Liste görünümü"
           >
-            <IconMenu class="h-3.5 w-3.5" />
+            <IconMenu class="h-3 w-3" />
             <span v-if="!isNarrow">Liste</span>
           </Link>
           <Link
             :href="route('categories.index')"
-            class="inline-flex h-7 items-center gap-1.5 rounded-md px-2.5 text-xs font-medium transition-all duration-200"
+            class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs transition-colors"
             :class="
               !isListView
-                ? 'bg-background text-foreground shadow-sm'
-                : 'text-muted-foreground hover:bg-background/50 hover:text-foreground'
+                ? 'bg-accent text-accent-foreground'
+                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
             "
             title="Kategori görünümü"
           >
-            <IconFolder class="h-3.5 w-3.5" />
+            <IconFolder class="h-3 w-3" />
             <span v-if="!isNarrow">Kategori</span>
           </Link>
         </div>
@@ -37,53 +37,53 @@
           <button
             v-if="writeFilter !== 'all'"
             @click="clearWriteFilter"
-            class="inline-flex h-7 w-7 items-center justify-center rounded-lg text-xs text-muted-foreground transition-all duration-200 hover:bg-accent hover:text-accent-foreground"
+            class="inline-flex h-6 w-6 items-center justify-center rounded text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
             title="Filtreyi temizle"
           >
-            <IconX class="h-3.5 w-3.5" />
+            <IconX class="h-3 w-3" />
           </button>
           <div class="write-filter-dropdown-container relative">
             <button
               @click.stop="showWriteFilterDropdown = !showWriteFilterDropdown"
-              class="inline-flex h-7 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium transition-all duration-200"
+              class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
               :class="
                 showWriteFilterDropdown
-                  ? 'bg-accent text-accent-foreground shadow-sm'
-                  : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
+                  ? 'bg-accent text-accent-foreground'
+                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
               "
               title="Filtrele"
             >
-              <IconFilter class="h-3.5 w-3.5" />
+              <IconFilter class="h-3 w-3" />
               <span class="text-xs">{{ getFilterLabel(writeFilter) }}</span>
             </button>
             <div
               v-if="showWriteFilterDropdown"
-              class="absolute right-0 top-full z-50 mt-1.5 w-40 rounded-lg border border-border/50 bg-popover shadow-lg backdrop-blur-sm"
+              class="absolute right-0 top-full z-50 mt-1 w-40 rounded border border-border bg-popover shadow-lg"
             >
-              <div class="flex flex-col gap-0.5 p-1.5">
+              <div class="flex flex-col gap-0.5 p-1">
                 <button
-                  class="inline-flex h-8 items-center gap-2 rounded-md px-3 text-left text-xs font-medium transition-all duration-200 hover:bg-accent hover:text-accent-foreground"
+                  class="inline-flex h-7 items-center gap-2 rounded px-2 text-left text-xs transition-colors hover:bg-accent hover:text-accent-foreground"
                   :class="{ 'bg-accent text-accent-foreground': writeFilter === 'all' }"
                   @click="setWriteFilter('all')"
                 >
                   Tümü
                 </button>
                 <button
-                  class="inline-flex h-8 items-center gap-2 rounded-md px-3 text-left text-xs font-medium transition-all duration-200 hover:bg-accent hover:text-accent-foreground"
+                  class="inline-flex h-7 items-center gap-2 rounded px-2 text-left text-xs transition-colors hover:bg-accent hover:text-accent-foreground"
                   :class="{ 'bg-accent text-accent-foreground': writeFilter === 'published' }"
                   @click="setWriteFilter('published')"
                 >
                   Herkese Açık
                 </button>
                 <button
-                  class="inline-flex h-8 items-center gap-2 rounded-md px-3 text-left text-xs font-medium transition-all duration-200 hover:bg-accent hover:text-accent-foreground"
+                  class="inline-flex h-7 items-center gap-2 rounded px-2 text-left text-xs transition-colors hover:bg-accent hover:text-accent-foreground"
                   :class="{ 'bg-accent text-accent-foreground': writeFilter === 'link_only' }"
                   @click="setWriteFilter('link_only')"
                 >
                   Sadece Link
                 </button>
                 <button
-                  class="inline-flex h-8 items-center gap-2 rounded-md px-3 text-left text-xs font-medium transition-all duration-200 hover:bg-accent hover:text-accent-foreground"
+                  class="inline-flex h-7 items-center gap-2 rounded px-2 text-left text-xs transition-colors hover:bg-accent hover:text-accent-foreground"
                   :class="{ 'bg-accent text-accent-foreground': writeFilter === 'private' }"
                   @click="setWriteFilter('private')"
                 >

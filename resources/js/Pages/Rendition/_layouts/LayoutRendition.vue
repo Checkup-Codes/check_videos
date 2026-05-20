@@ -18,7 +18,7 @@
         <SidebarRendition :key="screenName" @update:isCollapsed="handleSidebarCollapse" />
       </KeepAlive>
     </template>
-    <div :class="[shouldShowMainContentOnMobile ? 'block' : 'hidden lg:block']">
+    <div :class="[shouldShowMainContentOnMobile ? 'block' : 'hidden lg:block', 'h-full min-h-0 overflow-hidden', mainContentClass]">
       <slot name="screen"></slot>
     </div>
   </CheckLayout>
@@ -29,7 +29,7 @@ import CheckLayout from '@/Components/CekapUI/Slots/CheckLayout.vue';
 import FlashMessage from '@/Components/CekapUI/Notifications/FlashMessage.vue';
 import SidebarRendition from '@/Pages/Rendition/_layouts/SidebarRendition.vue';
 import { usePage, Head } from '@inertiajs/vue3';
-import { ref, computed, onMounted, onBeforeUnmount, provide } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, provide, watch } from 'vue';
 import { useStore } from 'vuex';
 
 const page = usePage();
@@ -63,6 +63,15 @@ const titleName = computed(() => {
 
 const flashSuccess = ref(page.props.flash?.success);
 const isSidebarCollapsed = ref(true);
+const isSidebarNarrow = ref(store.getters['Writes/isCollapsed']);
+
+watch(
+  () => store.getters['Writes/isCollapsed'],
+  (val) => {
+    isSidebarNarrow.value = val;
+  },
+  { immediate: true }
+);
 
 const handleSidebarCollapse = (newState) => {
   isSidebarCollapsed.value = newState;
@@ -105,6 +114,21 @@ const shouldShowSidebarOnMobile = computed(() => {
 const shouldShowMainContentOnMobile = computed(() => {
   if (!isMobile.value) return true; // Desktop: always show main content
   return isNonIndexPage.value; // Mobile: show main content on non-index pages (show, create, edit)
+});
+
+const mainContentClass = computed(() => {
+  const classes = {
+    'transition-all duration-300': true,
+    'lg:ml-[-200px]': isSidebarNarrow.value && isSidebarCollapsed.value,
+    'lg:ml-[00px]': !isSidebarNarrow.value && isSidebarCollapsed.value,
+    'lg:ml-0': !isSidebarCollapsed.value,
+  };
+
+  if (isMobile.value && isNonIndexPage.value) {
+    classes['w-full'] = true;
+  }
+
+  return classes;
 });
 
 // Track if component is mounted (client-side only)

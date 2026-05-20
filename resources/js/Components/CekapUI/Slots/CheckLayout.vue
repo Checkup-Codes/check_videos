@@ -2,8 +2,8 @@
   <div
     :class="[
       isCollapsed
-        ? 'flex flex-col lg:grid lg:grid-cols-subsidebar h-[calc(100vh-3rem)] lg:h-[calc(100vh-5.5rem)]'
-        : 'h-[calc(100vh-3rem)] lg:h-[calc(100vh-5.5rem)]',
+        ? 'flex flex-col lg:grid lg:grid-cols-subsidebar h-[calc(100vh-3rem)] lg:h-full'
+        : 'h-[calc(100vh-3rem)] lg:h-full',
       'overflow-hidden overscroll-none scrollbar-hide',
     ]"
   >

@@ -106,8 +106,8 @@
       style="width: 700px; max-width: 90vw; max-height: 80vh; overflow-y-auto"
       :class="{
         'bg-card': !gameState.showAnswer,
-        'bg-green-50 dark:bg-green-900/10': gameState.showAnswer && gameState.isCorrect,
-        'bg-red-50 dark:bg-red-900/10': gameState.showAnswer && !gameState.isCorrect,
+        'bg-green-500/5 dark:bg-green-500/10': gameState.showAnswer && gameState.isCorrect,
+        'bg-red-500/5 dark:bg-red-500/10': gameState.showAnswer && !gameState.isCorrect,
       }"
     >
       <!-- Progress Bar -->
@@ -162,8 +162,8 @@
               :class="{
                 'border-border bg-background': !gameState.selectedLetters[index],
                 'border-primary bg-muted': !gameState.selectedLetters[index] && index === getNextEmptyIndex(),
-                'bg-green-100 dark:bg-green-900/30 border-green-500 text-green-600 dark:text-green-400': gameState.showAnswer && gameState.isCorrect,
-                'bg-red-100 dark:bg-red-900/30 border-red-500 text-red-600 dark:text-red-400': gameState.showAnswer && !gameState.isCorrect,
+                'border-green-500 bg-green-500/10 text-green-700 dark:border-green-400 dark:bg-green-500/15 dark:text-green-300': gameState.showAnswer && gameState.isCorrect,
+                'border-red-500 bg-red-500/10 text-red-700 dark:border-red-400 dark:bg-red-500/15 dark:text-red-300': gameState.showAnswer && !gameState.isCorrect,
                 'border-blue-500': gameState.hintLetterIndices.includes(index) && !gameState.isHintAnimating,
               }"
             >
@@ -188,7 +188,7 @@
             <div
               v-for="(letter, index) in gameState.currentQuestion.word.split('')"
               :key="index"
-              class="letter-box bg-green-100 dark:bg-green-900/30 flex h-7 w-7 items-center justify-center rounded border border-green-500 text-xs font-medium text-green-600 dark:text-green-400"
+              class="letter-box flex h-7 w-7 items-center justify-center rounded border border-green-500 bg-green-500/10 text-xs font-medium text-green-700 dark:border-green-400 dark:bg-green-500/15 dark:text-green-300"
             >
               {{ letter.toLowerCase() }}
             </div>
@@ -202,6 +202,15 @@
           class="inline-flex w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90"
         >
           Kontrol Et
+        </button>
+
+        <button
+          v-if="gameState.showAnswer && !gameState.isCorrect"
+          type="button"
+          @click="advanceToNextQuestion"
+          class="inline-flex w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+        >
+          Devam Et
         </button>
       </div>
 
@@ -342,6 +351,7 @@ const gameState = ref({
   hintLetterIndices: [],
   isHintAnimating: false, // Track if hint animation is in progress
 });
+let nextQuestionTimer = null;
 
 // Kelimeleri kullan
 const words = ref([]);
@@ -635,6 +645,16 @@ const loadNextQuestion = () => {
   });
 };
 
+const advanceToNextQuestion = () => {
+  if (nextQuestionTimer) {
+    clearTimeout(nextQuestionTimer);
+    nextQuestionTimer = null;
+  }
+
+  gameState.value.currentIndex++;
+  loadNextQuestion();
+};
+
 // Rastgele maskeli indeksler oluştur
 const createMaskedIndices = () => {
   const word = gameState.value.currentQuestion.word;
@@ -889,11 +909,11 @@ const checkAnswer = () => {
     ease: 'power2.out',
   });
 
-  // Sonraki soruya geç
-  setTimeout(() => {
-    gameState.value.currentIndex++;
-    loadNextQuestion();
-  }, 2000);
+  if (isCorrect) {
+    nextQuestionTimer = setTimeout(() => {
+      advanceToNextQuestion();
+    }, 650);
+  }
 };
 
 // Puan animasyonu

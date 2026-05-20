@@ -328,7 +328,7 @@
                     <td class="p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
                       <div class="flex items-center gap-2">
                         <!-- Success Rate Progress Bar -->
-                        <div v-if="word.review_count >= 5" class="flex-1 min-w-0">
+                        <div v-if="word.review_count >= SUCCESS_RATE_MIN_REVIEWS" class="flex-1 min-w-0">
                           <div class="flex items-center gap-2">
                             <div class="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                               <div
@@ -352,14 +352,22 @@
                         </div>
                         <div v-else class="flex-1">
                           <span class="text-xs text-muted-foreground">
-                            {{ word.review_count > 0 ? `${word.review_count}/5 gösterim` : 'Henüz gösterilmedi' }}
+                            {{
+                              word.review_count > 0
+                                ? `${word.review_count}/${SUCCESS_RATE_MIN_REVIEWS} gösterim`
+                                : 'Henüz gösterilmedi'
+                            }}
                           </span>
                         </div>
                       </div>
                     </td>
                     <td class="p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
                       <div class="flex items-center gap-2">
-                        <button class="inline-flex h-7 w-7 items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground">
+                        <button
+                          type="button"
+                          @click.stop="showWordDetails(word)"
+                          class="inline-flex h-7 w-7 items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
+                        >
                           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
                               stroke-linecap="round"
@@ -438,128 +446,129 @@
     </div>
 
     <!-- Word Detail Modal -->
-    <div v-if="selectedWord" class="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm" @click="selectedWord = null">
+    <div
+      v-if="selectedWord"
+      class="fixed inset-0 z-50 flex items-end bg-background/80 p-3 backdrop-blur-sm sm:items-center sm:justify-center sm:p-6"
+      @click="selectedWord = null"
+    >
       <div
-        class="fixed left-[50%] top-[50%] z-50 flex grid max-h-[80vh] w-full max-w-2xl translate-x-[-50%] translate-y-[-50%] flex-col gap-4 border border-border bg-background shadow-lg duration-200 sm:rounded-lg"
+        class="flex max-h-[calc(100dvh-1.5rem)] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-border bg-background shadow-xl sm:max-h-[min(760px,calc(100dvh-3rem))]"
         @click.stop
       >
         <!-- Modal Header -->
-        <div
-          class="flex flex-shrink-0 flex-col space-y-1.5 border-b border-border p-6 pb-4 text-center sm:text-left"
-        >
-          <div class="flex items-center justify-between">
-            <h3 class="text-lg font-semibold leading-none tracking-tight text-foreground">{{ selectedWord.word }}</h3>
-            <button @click="selectedWord = null" class="inline-flex h-7 w-7 items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground">
+        <div class="flex flex-shrink-0 items-start justify-between gap-4 border-b border-border px-4 py-4 sm:px-5">
+          <div class="min-w-0">
+            <h3 class="truncate text-xl font-semibold tracking-tight text-foreground">{{ selectedWord.word }}</h3>
+            <p class="mt-1 text-sm text-muted-foreground">
+              {{ getWordTypeLabel(selectedWord.type) }} · {{ getDifficultyLabel(selectedWord.difficulty_level) }}
+            </p>
+          </div>
+          <button
+            type="button"
+            @click="selectedWord = null"
+            class="inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
               <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-          </div>
-          <p class="text-muted-foreground text-sm">
-            {{ getWordTypeLabel(selectedWord.type) }} • {{ getDifficultyLabel(selectedWord.difficulty_level) }}
-          </p>
         </div>
 
         <!-- Modal Content -->
-        <div class="flex-1 overflow-y-auto p-6 pt-4">
-          <div class="space-y-4">
+        <div class="min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-5">
+          <div class="space-y-5">
+            <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
+              <div class="rounded-lg border border-border bg-muted/40 p-3">
+                <p class="text-xs text-muted-foreground">Gösterim</p>
+                <p class="mt-1 text-lg font-semibold text-foreground">{{ selectedWord.review_count || 0 }}</p>
+              </div>
+              <div class="rounded-lg border border-border bg-muted/40 p-3">
+                <p class="text-xs text-muted-foreground">Yanlış</p>
+                <p class="mt-1 text-lg font-semibold text-foreground">{{ selectedWord.incorrect_count || 0 }}</p>
+              </div>
+              <div class="rounded-lg border border-border bg-muted/40 p-3">
+                <p class="text-xs text-muted-foreground">Başarı</p>
+                <p class="mt-1 text-lg font-semibold text-foreground">{{ calculateSuccessRate(selectedWord).label }}</p>
+              </div>
+            </div>
+
             <!-- Meanings -->
             <div>
-              <h4 class="text-sm font-medium leading-none text-foreground">Anlamlar</h4>
+              <h4 class="text-sm font-semibold text-foreground">Anlamlar</h4>
               <div class="mt-2 space-y-2">
                 <div
-                  v-for="(meaning, index) in selectedWord.meanings"
+                  v-for="(meaning, index) in selectedWord.meanings || []"
                   :key="index"
-                  class="flex items-start gap-3 rounded-lg border border-border p-3"
-                  :class="meaning.is_primary ? 'bg-primary text-primary-foreground' : 'bg-muted'"
+                  class="flex items-start gap-3 rounded-lg border border-border bg-muted/40 p-3"
                 >
                   <span
-                    class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-medium"
-                    :class="meaning.is_primary ? 'bg-primary-foreground text-primary' : 'bg-muted-foreground/20 text-foreground'"
+                    class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-background text-xs font-medium text-muted-foreground"
                   >
                     {{ index + 1 }}
                   </span>
                   <div class="min-w-0 flex-1">
-                    <span class="text-sm" :class="meaning.is_primary ? 'text-primary-foreground' : 'text-foreground'">{{
-                      meaning.meaning
-                    }}</span>
+                    <span class="text-sm text-foreground">{{ meaning.meaning }}</span>
                     <span
                       v-if="meaning.is_primary"
-                      class="ml-2 inline-flex items-center rounded-full border border-border px-2 py-1 text-xs font-medium"
-                      :class="meaning.is_primary ? 'bg-primary-foreground text-primary' : 'bg-transparent'"
+                      class="ml-2 inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary"
                     >
                       Birincil
                     </span>
                   </div>
                 </div>
+                <div v-if="!selectedWord.meanings || selectedWord.meanings.length === 0" class="rounded-lg border border-border bg-muted/40 p-3 text-sm text-muted-foreground">
+                  Anlam bilgisi bulunmuyor.
+                </div>
               </div>
             </div>
 
-            <!-- Stats -->
-            <div class="grid grid-cols-2 gap-4">
-              <div class="rounded-lg border border-border bg-muted p-3">
-                <h4 class="text-sm font-medium leading-none text-foreground">Öğrenme Durumu</h4>
-                <div class="text-muted-foreground mt-2 space-y-1 text-sm">
-                  <div class="flex justify-between">
-                    <span>Durum:</span>
-                    <span class="font-medium text-foreground">{{
-                      getLearningStatusLabel(selectedWord.learning_status)
-                    }}</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span>Toplam:</span>
-                    <span class="font-medium text-foreground">{{ selectedWord.review_count || 0 }}</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span>Yanlış:</span>
-                    <span class="font-medium text-foreground">{{ selectedWord.incorrect_count || 0 }}</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span>Başarı:</span>
-                    <span class="font-medium text-foreground">{{ calculateSuccessRate(selectedWord).label }}</span>
-                  </div>
-                </div>
-              </div>
+            <div class="flex flex-wrap gap-2">
+              <span class="inline-flex items-center rounded-full border border-border bg-muted/40 px-2.5 py-1 text-xs font-medium text-foreground">
+                {{ getLearningStatusLabel(selectedWord.learning_status) }}
+              </span>
+              <span
+                v-for="synonym in selectedWord.synonyms || []"
+                :key="typeof synonym === 'object' ? synonym.synonym : synonym"
+                class="inline-flex items-center rounded-full border border-border bg-muted/40 px-2.5 py-1 text-xs text-muted-foreground"
+              >
+                {{ typeof synonym === 'object' ? synonym.synonym : synonym }}
+              </span>
+              <span v-if="selectedWord.flag" class="inline-flex items-center rounded-full border border-border bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+                Öne çıkarılmış
+              </span>
+            </div>
 
-              <div class="rounded-lg border border-border bg-muted p-3">
-                <h4 class="text-sm font-medium leading-none text-foreground">Diğer Bilgiler</h4>
-                <div class="text-muted-foreground mt-2 space-y-1 text-sm">
-                  <div v-if="selectedWord.synonyms && selectedWord.synonyms.length > 0">
-                    <span class="font-medium text-foreground">Eş Anlamlılar:</span>
-                    <div class="mt-1 flex flex-wrap gap-1">
-                      <span
-                        v-for="synonym in selectedWord.synonyms"
-                        :key="synonym"
-                        class="inline-flex items-center rounded-md border border-border bg-muted px-2 py-1 text-xs text-foreground"
-                      >
-                        {{ typeof synonym === 'object' ? synonym.synonym : synonym }}
-                      </span>
-                    </div>
-                  </div>
-                  <div v-if="selectedWord.flag" class="flex items-center gap-1">
-                    <svg class="h-4 w-4 text-foreground" fill="currentColor" viewBox="0 0 20 20">
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      />
-                    </svg>
-                    <span class="font-medium text-foreground">Öne çıkarılmış</span>
-                  </div>
-                </div>
+            <div v-if="selectedWord.review_count >= SUCCESS_RATE_MIN_REVIEWS" class="rounded-lg border border-border bg-muted/40 p-3">
+              <div class="mb-2 flex items-center justify-between text-xs">
+                <span class="text-muted-foreground">Başarı oranı</span>
+                <span class="font-medium text-foreground">{{ calculateSuccessRate(selectedWord).label }}</span>
+              </div>
+              <div class="h-2 overflow-hidden rounded-full bg-muted">
+                <div
+                  class="h-full rounded-full transition-all"
+                  :class="{
+                    'bg-red-500': calculateSuccessRate(selectedWord).rate < 40,
+                    'bg-orange-500': calculateSuccessRate(selectedWord).rate >= 40 && calculateSuccessRate(selectedWord).rate < 60,
+                    'bg-yellow-500': calculateSuccessRate(selectedWord).rate >= 60 && calculateSuccessRate(selectedWord).rate < 80,
+                    'bg-green-500': calculateSuccessRate(selectedWord).rate >= 80,
+                  }"
+                  :style="{ width: calculateSuccessRate(selectedWord).rate + '%' }"
+                ></div>
               </div>
             </div>
 
             <!-- Example Sentences -->
             <div v-if="selectedWord.example_sentences && selectedWord.example_sentences.length > 0">
-              <h4 class="text-sm font-medium leading-none text-foreground">Örnek Cümleler</h4>
+              <h4 class="text-sm font-semibold text-foreground">Örnek Cümleler</h4>
               <div class="mt-2 space-y-2">
                 <div
                   v-for="(sentence, index) in selectedWord.example_sentences"
                   :key="index"
-                  class="rounded-lg border border-border bg-muted p-3"
+                  class="rounded-lg border border-border bg-muted/40 p-3"
                 >
                   <div class="flex items-start gap-3">
                     <span
-                      class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground"
+                      class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-background text-xs font-medium text-muted-foreground"
                     >
                       {{ index + 1 }}
                     </span>
@@ -577,14 +586,12 @@
         </div>
 
         <!-- Modal Footer -->
-        <div
-          class="flex flex-shrink-0 flex-col-reverse border-t border-border p-6 pt-4 sm:flex-row sm:justify-end sm:space-x-2"
-        >
-          <button @click="selectedWord = null" class="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground">Kapat</button>
+        <div class="flex flex-shrink-0 flex-col-reverse gap-2 border-t border-border px-4 py-4 sm:flex-row sm:justify-end sm:px-5">
+          <button @click="selectedWord = null" class="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground">Kapat</button>
           <Link
             v-if="isLoggedIn"
             :href="route('rendition.words.edit', selectedWord.id)"
-            class="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90"
+            class="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             @click="selectedWord = null"
           >
             Düzenle
@@ -767,6 +774,7 @@ const showGameInterface = ref(false);
 const currentGame = ref('');
 const loadingGame = ref(false);
 const prioritizeUnlearned = ref(true);
+const SUCCESS_RATE_MIN_REVIEWS = 3;
 
 // Filtreleme ve arama
 const searchQuery = ref('');
@@ -966,9 +974,9 @@ const filteredWordsForGame = computed(() => {
       wordsToUse = wordsToUse.filter((word) => !word.review_count || word.review_count === 0);
       break;
     case 'lowest-success':
-      // En az 5 kez gösterilmiş ve %0-40 başarı oranına sahip kelimeler
+      // En az 3 kez gösterilmiş ve %0-40 başarı oranına sahip kelimeler
       wordsToUse = wordsToUse.filter((word) => {
-        if (!word.review_count || word.review_count < 5) return false;
+        if (!word.review_count || word.review_count < SUCCESS_RATE_MIN_REVIEWS) return false;
         const successRate = ((word.review_count - (word.incorrect_count || 0)) / word.review_count) * 100;
         return successRate < 40;
       });
@@ -980,9 +988,9 @@ const filteredWordsForGame = computed(() => {
       });
       break;
     case 'low-success':
-      // En az 5 kez gösterilmiş ve %40-60 başarı oranına sahip kelimeler
+      // En az 3 kez gösterilmiş ve %40-60 başarı oranına sahip kelimeler
       wordsToUse = wordsToUse.filter((word) => {
-        if (!word.review_count || word.review_count < 5) return false;
+        if (!word.review_count || word.review_count < SUCCESS_RATE_MIN_REVIEWS) return false;
         const successRate = ((word.review_count - (word.incorrect_count || 0)) / word.review_count) * 100;
         return successRate >= 40 && successRate < 60;
       });
@@ -993,9 +1001,9 @@ const filteredWordsForGame = computed(() => {
       });
       break;
     case 'medium-success':
-      // En az 5 kez gösterilmiş ve %60-80 başarı oranına sahip kelimeler
+      // En az 3 kez gösterilmiş ve %60-80 başarı oranına sahip kelimeler
       wordsToUse = wordsToUse.filter((word) => {
-        if (!word.review_count || word.review_count < 5) return false;
+        if (!word.review_count || word.review_count < SUCCESS_RATE_MIN_REVIEWS) return false;
         const successRate = ((word.review_count - (word.incorrect_count || 0)) / word.review_count) * 100;
         return successRate >= 60 && successRate < 80;
       });
@@ -1006,9 +1014,9 @@ const filteredWordsForGame = computed(() => {
       });
       break;
     case 'high-success':
-      // En az 5 kez gösterilmiş ve %80-100 başarı oranına sahip kelimeler
+      // En az 3 kez gösterilmiş ve %80-100 başarı oranına sahip kelimeler
       wordsToUse = wordsToUse.filter((word) => {
-        if (!word.review_count || word.review_count < 5) return false;
+        if (!word.review_count || word.review_count < SUCCESS_RATE_MIN_REVIEWS) return false;
         const successRate = ((word.review_count - (word.incorrect_count || 0)) / word.review_count) * 100;
         return successRate >= 80;
       });
@@ -1272,11 +1280,13 @@ const startGame = (gameType) => {
 
 // Oyun tamamlandığında
 const handleGameComplete = (gameResults) => {
+  closeGameInterface();
+
   // Eğer kullanıcı giriş yaptıysa ve sonuçlar varsa otomatik kaydet
   if (isLoggedIn.value && gameResults && gameResults.results && gameResults.results.length > 0) {
     // Sonuçları DB'ye kaydet
     router.post(
-      route('rendition.words.update-words'),
+      route('update-words'),
       {
         words: gameResults.results,
       },
@@ -1284,25 +1294,17 @@ const handleGameComplete = (gameResults) => {
         preserveState: true,
         preserveScroll: true,
         onSuccess: () => {
-          // Başarılı kaydedildikten sonra oyunu kapat ve kelime listesine dön
-          showGameInterface.value = false;
-          currentGame.value = '';
-          loadingGame.value = false;
+          closeGameInterface();
         },
         onError: (error) => {
           console.error('İstatistik güncelleme hatası:', error);
-          // Hata olsa bile oyunu kapat
-          showGameInterface.value = false;
-          currentGame.value = '';
-          loadingGame.value = false;
+          closeGameInterface();
         },
       }
     );
   } else {
     // Kullanıcı giriş yapmamışsa veya sonuç yoksa sadece oyunu kapat
-    showGameInterface.value = false;
-    currentGame.value = '';
-    loadingGame.value = false;
+    closeGameInterface();
   }
 };
 
@@ -1315,9 +1317,25 @@ const confirmStopGame = () => {
 
 // Oyunu durdur
 const stopGame = () => {
+  closeGameInterface();
+};
+
+const closeGameInterface = () => {
   showGameInterface.value = false;
   currentGame.value = '';
   loadingGame.value = false;
+  removeGameQueryParam();
+};
+
+const removeGameQueryParam = () => {
+  if (typeof window === 'undefined') return;
+
+  const url = new URL(window.location.href);
+  if (!url.searchParams.has('game')) return;
+
+  url.searchParams.delete('game');
+  const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+  window.history.replaceState(window.history.state, '', nextUrl);
 };
 
 // Helper for parsing URL query parameters

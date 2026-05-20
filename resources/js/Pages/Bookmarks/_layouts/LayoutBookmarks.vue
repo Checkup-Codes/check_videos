@@ -17,7 +17,7 @@
         <SidebarLayoutBookmarks :key="screenName" @update:isNarrow="handleSidebarWidthChange" />
       </KeepAlive>
     </template>
-    <div :class="[shouldShowMainContentOnMobile ? 'block' : 'hidden lg:block', mainContentClass]">
+    <div :class="[shouldShowMainContentOnMobile ? 'block' : 'hidden lg:block', 'h-full min-h-0 overflow-hidden', mainContentClass]">
       <slot name="screen"></slot>
     </div>
   </CheckLayout>
@@ -162,4 +162,3 @@ onBeforeUnmount(() => {
   transition-duration: 300ms;
 }
 </style>
-

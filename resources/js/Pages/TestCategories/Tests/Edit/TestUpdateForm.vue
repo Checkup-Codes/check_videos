@@ -303,7 +303,7 @@
                       :name="`question-${questionIndex}-correct`"
                       :checked="option.is_correct"
                       @change="setCorrectAnswer(questionIndex, optionIndex)"
-                      class="h-4 w-4 cursor-pointer text-primary focus:ring-primary"
+                      class="h-4 w-4 cursor-pointer border-2 border-muted-foreground/30 bg-background text-primary focus:ring-primary dark:border-muted-foreground/60 dark:bg-background dark:checked:border-blue-400 dark:checked:bg-blue-500"
                     />
                     <span class="text-xs text-muted-foreground">Doğru</span>
                   </label>
@@ -384,7 +384,7 @@
                     <input
                       type="checkbox"
                       v-model="option.is_correct"
-                      class="h-4 w-4 cursor-pointer rounded border-gray-300 text-primary focus:ring-primary"
+                      class="h-4 w-4 cursor-pointer rounded border-2 border-muted-foreground/30 bg-background text-primary focus:ring-primary dark:border-muted-foreground/60 dark:bg-background dark:checked:border-blue-400 dark:checked:bg-blue-500"
                     />
                     <span class="text-xs text-muted-foreground">Doğru</span>
                   </label>
@@ -421,7 +421,7 @@
               <div class="flex gap-4">
                 <label class="flex cursor-pointer items-center gap-2 rounded-lg border-2 p-4 transition-all"
                   :class="{
-                    'border-primary bg-primary/10': question.correct_answer === true,
+                    'border-primary bg-primary/10 dark:border-blue-400 dark:bg-blue-500/15': question.correct_answer === true,
                     'border-border hover:border-primary/50': question.correct_answer !== true
                   }"
                 >
@@ -430,13 +430,13 @@
                     :name="`question-${questionIndex}-tf`"
                     :value="true"
                     v-model="question.correct_answer"
-                    class="h-4 w-4 cursor-pointer text-primary focus:ring-primary"
+                    class="h-4 w-4 cursor-pointer border-2 border-muted-foreground/30 bg-background text-primary focus:ring-primary dark:border-muted-foreground/60 dark:bg-background dark:checked:border-blue-400 dark:checked:bg-blue-500"
                   />
                   <span class="font-medium">Doğru</span>
                 </label>
                 <label class="flex cursor-pointer items-center gap-2 rounded-lg border-2 p-4 transition-all"
                   :class="{
-                    'border-primary bg-primary/10': question.correct_answer === false,
+                    'border-primary bg-primary/10 dark:border-blue-400 dark:bg-blue-500/15': question.correct_answer === false,
                     'border-border hover:border-primary/50': question.correct_answer !== false
                   }"
                 >
@@ -445,7 +445,7 @@
                     :name="`question-${questionIndex}-tf`"
                     :value="false"
                     v-model="question.correct_answer"
-                    class="h-4 w-4 cursor-pointer text-primary focus:ring-primary"
+                    class="h-4 w-4 cursor-pointer border-2 border-muted-foreground/30 bg-background text-primary focus:ring-primary dark:border-muted-foreground/60 dark:bg-background dark:checked:border-blue-400 dark:checked:bg-blue-500"
                   />
                   <span class="font-medium">Yanlış</span>
                 </label>
@@ -834,4 +834,3 @@ const updateTest = () => {
   });
 };
 </script>
-
