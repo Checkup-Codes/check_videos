@@ -3,6 +3,7 @@
   <FlashMessage :message="flashMessage" @close="handleFlashClose" />
   <CheckLayout
     :isCollapsed="!shouldHideSidebarContent"
+    :is-narrow="isSidebarNarrow"
     :show-sidebar-on-mobile="shouldShowSidebarOnMobile"
     :show-main-content-on-mobile="shouldShowMainContentOnMobile"
   >
@@ -147,9 +148,7 @@ watch(
 const mainContentClass = computed(() => {
   const classes = {
     'transition-all duration-300': true,
-    'lg:ml-[-200px]': isSidebarNarrow.value && !shouldHideSidebarContent.value,
-    'lg:ml-[00px]': !isSidebarNarrow.value && !shouldHideSidebarContent.value,
-    'lg:ml-0': shouldHideSidebarContent.value,
+    'lg:ml-0': true,
   };
 
   // Mobil non-index ve full-screen test sayfalarında tam genişlik

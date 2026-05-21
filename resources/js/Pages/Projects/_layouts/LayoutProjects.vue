@@ -3,6 +3,7 @@
   <FlashMessage :message="flashMessage" @close="handleFlashClose" />
   <CheckLayout
     :isCollapsed="isCollapsed"
+    :is-narrow="isSidebarNarrow"
     :show-sidebar-on-mobile="shouldShowSidebarOnMobile"
     :show-main-content-on-mobile="shouldShowMainContentOnMobile"
   >
@@ -123,8 +124,7 @@ const isSidebarNarrow = ref(false);
 const mainContentClass = computed(() => {
   const classes = {
     'transition-all duration-300': true,
-    'lg:ml-[-200px]': isSidebarNarrow.value,
-    'lg:ml-[00px]': !isSidebarNarrow.value,
+    'lg:ml-0': true,
   };
 
   // Mobil non-index sayfalarında (show, create, edit) tam genişlik

@@ -22,12 +22,7 @@
   </div>
 
   <CheckScreen v-else>
-    <div
-      class="mx-auto max-w-4xl transition-all duration-300"
-      :class="{
-        'xl:-translate-x-[100px]': !isLoading && showTableOfContents && isTableOfContentsOpen && !showDraw,
-      }"
-    >
+    <div class="mx-auto w-full max-w-4xl">
       <div class="bg-background transition-colors">
         <div class="p-3 pt-6 sm:p-6 sm:pt-12 lg:p-8 lg:pt-16">
           <div class="mb-8">
@@ -287,74 +282,108 @@
       </div>
     </div>
 
-    <button
-      v-if="!isLoading && showTableOfContents && !showDraw"
-      @click="toggleTableOfContents"
-      class="fixed right-4 top-28 z-50 hidden h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-colors hover:bg-primary/90 xl:flex"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="h-5 w-5"
-      >
-        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-      </svg>
-    </button>
-
     <div
       v-if="!isLoading && showTableOfContents && !showDraw"
-      class="fixed right-4 top-28 z-30 hidden w-64 transition-all duration-300 ease-in-out xl:block"
-      :class="isTableOfContentsOpen ? 'translate-x-0 opacity-100' : 'pointer-events-none translate-x-full opacity-0'"
+      class="fixed right-0 top-24 z-40 hidden w-72 max-w-[calc(100vw-2rem)] transition-transform duration-300 ease-out xl:block"
+      :class="
+        isTableOfContentsOpen
+          ? 'translate-x-0'
+          : 'translate-x-[calc(100%-2.75rem)] hover:translate-x-0 focus-within:translate-x-0'
+      "
     >
-      <div class="rounded-lg border border-border bg-popover shadow-lg">
-        <div class="flex items-center justify-between border-b border-border p-3">
-          <h3 class="text-sm font-semibold text-foreground">İçindekiler</h3>
-          <button
-            @click="toggleTableOfContents"
-            class="inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+      <div class="flex max-h-[calc(100vh-7rem)] overflow-hidden rounded-l-lg border border-r-0 border-border bg-popover/95 shadow-2xl backdrop-blur supports-[backdrop-filter]:bg-popover/90">
+        <button
+          @click="toggleTableOfContents"
+          class="flex w-11 shrink-0 items-center justify-center border-r border-border bg-muted/60 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          :title="isTableOfContentsOpen ? 'İçindekileri gizle' : 'İçindekileri göster'"
+        >
+          <span class="sr-only">{{ isTableOfContentsOpen ? 'İçindekileri gizle' : 'İçindekileri göster' }}</span>
+          <svg
+            v-if="isTableOfContentsOpen"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="h-5 w-5"
           >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+          </svg>
+          <span v-else class="flex flex-col items-center gap-1">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class="h-4 w-4"
+              class="h-5 w-5"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
             </svg>
-          </button>
-        </div>
-        <div ref="desktopTocScrollRef" class="overflow-y-auto p-3" style="max-height: calc(100vh - 220px)">
-          <div v-if="tableOfContents.length === 0" class="py-4 text-center text-xs text-muted-foreground">
-            İçindekiler bulunamadı
-          </div>
-          <nav v-else class="space-y-0.5">
-            <a
-              v-for="(item, index) in tableOfContents"
-              :key="index"
-              :ref="(el) => setTocItemRef(el, item.id)"
-              @click="
-                (e) => {
-                  e.preventDefault();
-                  scrollToHeading(item.id);
-                }
-              "
-              class="block cursor-pointer rounded-md px-2 py-1 text-xs transition-colors"
-              :class="[
-                getTreeHeadingClass(item.level),
-                getActiveHeadingClass(item.id),
-                activeHeadingId === item.id
-                  ? 'bg-accent font-medium text-accent-foreground'
-                  : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground',
-              ]"
+            <span class="[writing-mode:vertical-rl] rotate-180 text-[10px] font-semibold uppercase">
+              İçindekiler
+            </span>
+          </span>
+        </button>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center justify-between border-b border-border p-3">
+            <h3 class="text-sm font-semibold text-foreground">İçindekiler</h3>
+            <button
+              @click="toggleTableOfContents"
+              class="inline-flex h-7 w-7 items-center justify-center rounded-md text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              :title="isTableOfContentsOpen ? 'Sabitlemeyi kaldır' : 'Sabitle'"
             >
-              {{ item.text }}
-            </a>
-          </nav>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="h-4 w-4"
+              >
+                <path
+                  v-if="isTableOfContentsOpen"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+                <path
+                  v-else
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M16.5 10.5V6.75A2.25 2.25 0 0014.25 4.5h-4.5A2.25 2.25 0 007.5 6.75v3.75m9 0h-9m9 0l.75 7.5h-10.5l.75-7.5"
+                />
+              </svg>
+            </button>
+          </div>
+          <div ref="desktopTocScrollRef" class="max-h-[calc(100vh-10.5rem)] overflow-y-auto p-3">
+            <div v-if="tableOfContents.length === 0" class="py-4 text-center text-xs text-muted-foreground">
+              İçindekiler bulunamadı
+            </div>
+            <nav v-else class="space-y-0.5">
+              <a
+                v-for="(item, index) in tableOfContents"
+                :key="index"
+                :ref="(el) => setTocItemRef(el, item.id)"
+                @click="
+                  (e) => {
+                    e.preventDefault();
+                    scrollToHeading(item.id);
+                  }
+                "
+                class="block cursor-pointer rounded-md px-2 py-1.5 text-xs transition-colors"
+                :class="[
+                  getTreeHeadingClass(item.level),
+                  getActiveHeadingClass(item.id),
+                  activeHeadingId === item.id
+                    ? 'bg-accent font-medium text-accent-foreground'
+                    : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground',
+                ]"
+              >
+                {{ item.text }}
+              </a>
+            </nav>
+          </div>
         </div>
       </div>
     </div>
@@ -514,7 +543,7 @@ const initializeTableOfContentsState = () => {
   const isLarge = window.innerWidth >= 1280; // xl breakpoint
   isLargeScreen.value = isLarge;
   if (isLarge && showTableOfContents.value && tableOfContents.value.length > 0) {
-    isTableOfContentsOpen.value = true;
+    isTableOfContentsOpen.value = false;
   } else if (!isLarge) {
     isTableOfContentsOpen.value = false;
   }
@@ -999,7 +1028,7 @@ onMounted(() => {
                   if (tableOfContents.value.length > 0) {
                     setupActiveHeadingTracking();
                     if (isLargeScreen.value) {
-                      isTableOfContentsOpen.value = true;
+                      isTableOfContentsOpen.value = false;
                     }
                   }
                 }, 100);
@@ -1022,7 +1051,7 @@ onMounted(() => {
           if (tableOfContents.value.length > 0) {
             setupActiveHeadingTracking();
             if (isLargeScreen.value) {
-              isTableOfContentsOpen.value = true;
+              isTableOfContentsOpen.value = false;
             }
           }
         }, 100);
@@ -1091,7 +1120,7 @@ watch(
         if (tableOfContents.value.length > 0) {
           setupActiveHeadingTracking();
           if (isLargeScreen.value) {
-            isTableOfContentsOpen.value = true;
+            isTableOfContentsOpen.value = false;
           }
         }
       });

@@ -3,6 +3,7 @@
   <FlashMessage :message="flashSuccess" />
   <CheckLayout
     :isCollapsed="isSidebarCollapsed"
+    :is-narrow="isSidebarNarrow"
     :show-sidebar-on-mobile="shouldShowSidebarOnMobile"
     :show-main-content-on-mobile="shouldShowMainContentOnMobile"
     :class="currentTheme"
@@ -119,9 +120,7 @@ const shouldShowMainContentOnMobile = computed(() => {
 const mainContentClass = computed(() => {
   const classes = {
     'transition-all duration-300': true,
-    'lg:ml-[-200px]': isSidebarNarrow.value && isSidebarCollapsed.value,
-    'lg:ml-[00px]': !isSidebarNarrow.value && isSidebarCollapsed.value,
-    'lg:ml-0': !isSidebarCollapsed.value,
+    'lg:ml-0': true,
   };
 
   if (isMobile.value && isNonIndexPage.value) {

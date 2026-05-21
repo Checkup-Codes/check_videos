@@ -2,7 +2,10 @@
   <div
     :class="[
       isCollapsed
-        ? 'flex flex-col lg:grid lg:grid-cols-subsidebar h-[calc(100vh-3rem)] lg:h-full'
+        ? [
+            'flex flex-col lg:grid h-[calc(100vh-3rem)] lg:h-full',
+            isNarrow ? 'lg:grid-cols-subsidebar-narrow' : 'lg:grid-cols-subsidebar',
+          ]
         : 'h-[calc(100vh-3rem)] lg:h-full',
       'overflow-hidden overscroll-none scrollbar-hide',
     ]"
@@ -35,6 +38,10 @@ const props = defineProps({
   },
   isCollapsed: {
     type: Boolean,
+  },
+  isNarrow: {
+    type: Boolean,
+    default: false,
   },
   showSidebarOnMobile: {
     type: Boolean,

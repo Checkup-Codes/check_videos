@@ -56,6 +56,7 @@
   
   <CheckLayout
     :isCollapsed="!shouldHideSidebarContent && (isIndexPage || isSidebarVisible)"
+    :is-narrow="isSidebarNarrow"
     :show-sidebar-on-mobile="shouldShowSidebarOnMobile"
     :show-main-content-on-mobile="shouldShowMainContentOnMobile"
   >
@@ -227,9 +228,7 @@ watch(
 
 const mainContentClass = computed(() => ({
   'transition-all duration-300': true,
-  'lg:ml-[-200px]': isSidebarNarrow.value && !shouldHideSidebarContent.value && (isIndexPage.value || isSidebarVisible.value),
-  'lg:ml-[00px]': !isSidebarNarrow.value && !shouldHideSidebarContent.value && (isIndexPage.value || isSidebarVisible.value),
-  'lg:ml-0': shouldHideSidebarContent.value || (!isIndexPage.value && !isSidebarVisible.value), // Full width when sidebar is hidden or toggled off (except on index pages)
+  'lg:ml-0': true,
 }));
 
 const handleSidebarWidthChange = (isNarrow) => {
