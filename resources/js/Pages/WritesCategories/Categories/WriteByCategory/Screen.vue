@@ -255,11 +255,11 @@
 
     <div
       v-if="!isLoading && showTableOfContents && !showDraw"
-      class="fixed right-6 top-24 z-40 hidden w-72 max-w-[calc(100vw-3rem)] transition-transform duration-300 ease-out xl:block"
+      class="fixed right-0 top-24 z-40 hidden w-72 max-w-[calc(100vw-2rem)] transition-transform duration-300 ease-out xl:block"
       :class="
         isTableOfContentsOpen
           ? 'translate-x-0'
-          : 'translate-x-[calc(100%-2.75rem)] hover:translate-x-0 focus-within:translate-x-0'
+          : 'translate-x-[calc(100%-2.5rem)] hover:translate-x-0 focus-within:translate-x-0'
       "
     >
       <div class="flex max-h-[calc(100vh-7rem)] overflow-hidden rounded-l-lg border border-r-0 border-border bg-popover/95 shadow-2xl backdrop-blur supports-[backdrop-filter]:bg-popover/90">
