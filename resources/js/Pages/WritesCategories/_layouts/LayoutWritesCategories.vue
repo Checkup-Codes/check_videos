@@ -55,7 +55,7 @@
   </div>
   
   <CheckLayout
-    :isCollapsed="!shouldHideSidebarContent && (isIndexPage || isSidebarVisible)"
+    :isCollapsed="shouldRenderSidebar"
     :is-narrow="isSidebarNarrow"
     :show-sidebar-on-mobile="shouldShowSidebarOnMobile"
     :show-main-content-on-mobile="shouldShowMainContentOnMobile"
@@ -64,7 +64,7 @@
       <!-- SSR'da sidebar içeriğini gizle, sadece client-side'da göster -->
       <!-- Mobil show sayfalarında sidebar hiç render edilmez -->
       <KeepAlive
-        v-if="shouldShowSidebarOnMobile && !shouldHideSidebarContent && isMounted && (isIndexPage || isSidebarVisible)"
+        v-if="shouldShowSidebarOnMobile && shouldRenderSidebar && isMounted"
         :max="5"
         :include="['SidebarLayoutWrite', 'SidebarLayoutCategory']"
       >
@@ -195,6 +195,26 @@ const shouldHideSidebarContent = computed(() => {
   return false;
 });
 
+const isGuestExternalWriteEntry = computed(() => {
+  if (isLoggedIn.value || isIndexPage.value || !isNonIndexPage.value) {
+    return false;
+  }
+
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  return isExternalReferrer() && sessionStorage.getItem('writes_sidebar_discovery_enabled') !== 'true';
+});
+
+const shouldRenderSidebar = computed(() => {
+  if (shouldHideSidebarContent.value || isGuestExternalWriteEntry.value) {
+    return false;
+  }
+
+  return isIndexPage.value || isSidebarVisible.value;
+});
+
 // On mobile: show only sidebar on index pages, only main content on non-index pages (show, create, edit)
 const shouldShowSidebarOnMobile = computed(() => {
   if (!isMobile.value) return true; // Desktop: always show sidebar if collapsed
@@ -208,7 +228,7 @@ const shouldShowMainContentOnMobile = computed(() => {
 
 // Determine which sidebar component to display based on screen name
 const sidebarComponent = computed(() => {
-  if (isCollapsed.value && screenName.value && !shouldHideSidebarContent.value && shouldShowSidebarOnMobile.value && (isIndexPage.value || isSidebarVisible.value)) {
+  if (isCollapsed.value && screenName.value && shouldShowSidebarOnMobile.value && shouldRenderSidebar.value) {
     return sidebarComponents[screenName.value] || null;
   }
   return null;
@@ -280,6 +300,12 @@ const getInitialSidebarState = () => {
   
   // On index pages, sidebar is always visible
   if (isIndexPage.value) return true;
+
+  // Guests who land directly on a write/category detail should get a focused reading view.
+  // After they browse from the writes/categories pages, the discovery sidebar is enabled for the session.
+  if (!isLoggedIn.value) {
+    return sessionStorage.getItem('writes_sidebar_discovery_enabled') === 'true' || !isExternalReferrer();
+  }
   
   // PRIORITY 1: Check sessionStorage first (maintains state during site navigation)
   const sessionPreference = sessionStorage.getItem('sidebar_visible');
@@ -336,6 +362,10 @@ const loadSidebarVisibility = () => {
     
     // Save to sessionStorage to maintain state during site navigation
     sessionStorage.setItem('sidebar_visible', isSidebarVisible.value.toString());
+
+    if (isIndexPage.value) {
+      sessionStorage.setItem('writes_sidebar_discovery_enabled', 'true');
+    }
     
     // Show hint after a short delay if conditions are met
     if (shouldShowHint() && !isSidebarVisible.value) {
@@ -391,7 +421,7 @@ onMounted(() => {
   
   // F5 sonrası veya ilk yüklemede sidebar verilerini yükle
   // Watch'tan bağımsız olarak, mount olduğunda da kontrol et
-  if (shouldShowSidebarOnMobile.value && !shouldHideSidebarContent.value && (isIndexPage.value || isSidebarVisible.value)) {
+  if (shouldShowSidebarOnMobile.value && shouldRenderSidebar.value) {
     loadSidebarDataOnce();
   }
   
@@ -400,6 +430,17 @@ onMounted(() => {
     // On every navigation, reload sidebar state from storage
     // This ensures state persists when navigating between write pages
     if (typeof window !== 'undefined') {
+      if (isIndexPage.value) {
+        sessionStorage.setItem('writes_sidebar_discovery_enabled', 'true');
+        isSidebarVisible.value = true;
+        return;
+      }
+
+      if (isGuestExternalWriteEntry.value) {
+        isSidebarVisible.value = false;
+        return;
+      }
+
       const sessionPreference = sessionStorage.getItem('sidebar_visible');
       if (sessionPreference !== null) {
         isSidebarVisible.value = sessionPreference === 'true';
@@ -513,11 +554,18 @@ const loadSidebarDataOnce = async () => {
 };
 
 // Mount olduğunda ve sidebar gösterilmesi gerektiğinde veri yükle
-watch([isMounted, shouldShowSidebarOnMobile, shouldHideSidebarContent, isSidebarVisible, isIndexPage], async ([mounted, showSidebar, hideSidebar, visible, indexPage]) => {
-  if (mounted && showSidebar && !hideSidebar && (indexPage || visible)) {
+watch([isMounted, shouldShowSidebarOnMobile, shouldRenderSidebar], async ([mounted, showSidebar, renderSidebar]) => {
+  if (mounted && showSidebar && renderSidebar) {
     await loadSidebarDataOnce();
   }
 }, { immediate: true });
+
+watch(isIndexPage, (indexPage) => {
+  if (typeof window !== 'undefined' && indexPage) {
+    sessionStorage.setItem('writes_sidebar_discovery_enabled', 'true');
+    isSidebarVisible.value = true;
+  }
+});
 
 // User değiştiğinde (login/logout) cache'i yenile
 watch(currentUserId, (newUserId, oldUserId) => {

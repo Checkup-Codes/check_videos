@@ -255,7 +255,7 @@
 
     <div
       v-if="!isLoading && showTableOfContents && !showDraw"
-      class="fixed right-0 top-24 z-40 hidden w-72 max-w-[calc(100vw-2rem)] transition-transform duration-300 ease-out xl:block"
+      class="fixed right-6 top-24 z-40 hidden w-72 max-w-[calc(100vw-3rem)] transition-transform duration-300 ease-out xl:block"
       :class="
         isTableOfContentsOpen
           ? 'translate-x-0'
