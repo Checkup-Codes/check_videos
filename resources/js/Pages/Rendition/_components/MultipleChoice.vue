@@ -141,7 +141,7 @@
             :key="`${gameState.currentIndex}-${index}`"
             @click="selectAnswer(option, $event)"
             :disabled="gameState.showAnswer"
-            class="w-full rounded border border-border bg-background p-2.5 text-left text-sm text-foreground transition-all duration-200 hover:bg-muted disabled:cursor-not-allowed"
+            class="w-full rounded border border-border bg-background p-2.5 text-left text-sm text-foreground transition-all duration-200 focus:outline-none disabled:cursor-not-allowed"
             :class="getOptionClasses(option, index)"
           >
             <div class="flex items-center gap-2.5">
@@ -186,7 +186,7 @@ const props = defineProps({
   gameConfig: Object,
 });
 
-const emit = defineEmits(['game-completed']);
+const emit = defineEmits(['game-completed', 'save-progress']);
 
 const page = usePage();
 const allPacks = page.props.languagePacks || [];
@@ -473,6 +473,7 @@ const shuffledOptions = computed(() => {
 
 // Cevap seçimi
 const selectAnswer = (option, event) => {
+  event?.currentTarget?.blur?.();
   gameState.value.selectedAnswer = option;
   gameState.value.showAnswer = true;
   gameState.value.isCorrect = isCorrectAnswer(option, gameState.value.currentQuestion);
@@ -526,6 +527,10 @@ const getGameResults = () => {
 
 // Oyunu yeniden başlat
 const restartGame = () => {
+  if (gameState.value.userResponses.length > 0) {
+    emit('save-progress', getGameResults());
+  }
+
   gameState.value = {
     isLoading: true,
     isPlaying: false,

@@ -1,7 +1,7 @@
 <template>
-  <CheckScreen>
+  <CheckScreen info-class="test-take-screen">
     <div
-      class="mx-auto max-w-4xl space-y-6 p-4 pb-28 transition-all duration-300 lg:p-6 lg:pb-6"
+      class="mx-auto min-h-full max-w-4xl space-y-6 p-4 pb-28 transition-all duration-300 lg:p-6 lg:pb-6"
       :class="{
         'xl:-translate-x-[100px]': showQuestionNavigation && isQuestionNavigationOpen,
       }"
@@ -696,6 +696,8 @@ const setupActiveQuestionTracking = () => {
     }
   };
 
+  const scrollContainer = questionElements[0]?.closest('.overflow-y-auto') || null;
+
   questionObserver = new IntersectionObserver(
     () => {
       if (!isScrollingProgrammatically) {
@@ -703,7 +705,7 @@ const setupActiveQuestionTracking = () => {
       }
     },
     {
-      root: null,
+      root: scrollContainer,
       rootMargin: `-${headerOffset + 10}px 0px -60% 0px`,
       threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
     }
@@ -721,7 +723,7 @@ const setupActiveQuestionTracking = () => {
     }
   };
 
-  window.addEventListener('scroll', scrollHandler, { passive: true });
+  (scrollContainer || window).addEventListener('scroll', scrollHandler, { passive: true });
   updateActiveQuestion();
 };
 
@@ -866,7 +868,9 @@ onUnmounted(() => {
     questionObserver = null;
   }
   if (scrollHandler) {
-    window.removeEventListener('scroll', scrollHandler);
+    const firstQuestion = test.questions?.[0]?.id ? document.getElementById(`question-${test.questions[0].id}`) : null;
+    const scrollContainer = firstQuestion?.closest('.overflow-y-auto') || null;
+    (scrollContainer || window).removeEventListener('scroll', scrollHandler);
     scrollHandler = null;
   }
   window.removeEventListener('beforeunload', handleBeforeUnload);
@@ -899,3 +903,11 @@ watch(currentQuestionId, (newId, oldId) => {
   }
 });
 </script>
+
+<style>
+.test-take-screen > .min-h-0 {
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+</style>

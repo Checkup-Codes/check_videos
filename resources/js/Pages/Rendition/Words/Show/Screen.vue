@@ -241,6 +241,7 @@
               :words="filteredWords"
               :gameConfig="gameConfig"
               @game-completed="handleGameComplete"
+              @save-progress="saveGameProgress"
             />
             <TranslateWord
               v-else-if="currentGame === 'fill-in-the-blank'"
@@ -249,6 +250,7 @@
               :words="filteredWords"
               :gameConfig="gameConfig"
               @game-completed="handleGameComplete"
+              @save-progress="saveGameProgress"
             />
             <WordCompletion
               v-else-if="currentGame === 'word-completion'"
@@ -257,6 +259,7 @@
               :words="filteredWords"
               :gameConfig="gameConfig"
               @game-completed="handleGameComplete"
+              @save-progress="saveGameProgress"
             />
             <SwipeCards
               v-else-if="currentGame === 'swipe-cards'"
@@ -265,6 +268,7 @@
               :words="filteredWords"
               :gameConfig="gameConfig"
               @game-completed="handleGameComplete"
+              @save-progress="saveGameProgress"
             />
           </div>
         </div>
@@ -1281,7 +1285,10 @@ const startGame = (gameType) => {
 // Oyun tamamlandığında
 const handleGameComplete = (gameResults) => {
   closeGameInterface();
+  saveGameProgress(gameResults, { closeAfterSave: true });
+};
 
+const saveGameProgress = (gameResults, options = {}) => {
   // Eğer kullanıcı giriş yaptıysa ve sonuçlar varsa otomatik kaydet
   if (isLoggedIn.value && gameResults && gameResults.results && gameResults.results.length > 0) {
     // Sonuçları DB'ye kaydet
@@ -1294,15 +1301,19 @@ const handleGameComplete = (gameResults) => {
         preserveState: true,
         preserveScroll: true,
         onSuccess: () => {
-          closeGameInterface();
+          if (options.closeAfterSave) {
+            closeGameInterface();
+          }
         },
         onError: (error) => {
           console.error('İstatistik güncelleme hatası:', error);
-          closeGameInterface();
+          if (options.closeAfterSave) {
+            closeGameInterface();
+          }
         },
       }
     );
-  } else {
+  } else if (options.closeAfterSave) {
     // Kullanıcı giriş yapmamışsa veya sonuç yoksa sadece oyunu kapat
     closeGameInterface();
   }

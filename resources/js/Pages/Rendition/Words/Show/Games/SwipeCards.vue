@@ -137,12 +137,27 @@
                   </div>
 
                   <!-- Example Sentence -->
-                  <div v-if="currentWord.example_sentences && currentWord.example_sentences.length > 0" class="rounded-2xl border border-border/50 bg-muted/30 p-4">
-                    <p class="text-sm leading-relaxed text-foreground">{{ currentWord.example_sentences[0].sentence }}</p>
-                    <p v-if="currentWord.example_sentences[0].translation" class="mt-2 text-xs text-muted-foreground">
-                      {{ currentWord.example_sentences[0].translation }}
+                  <button
+                    v-if="currentWord.example_sentences && currentWord.example_sentences.length > 0"
+                    type="button"
+                    @click.stop="showNextExampleSentence"
+                    class="w-full rounded-2xl border border-border/50 bg-muted/30 p-4 text-left transition-colors hover:bg-muted/45 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    :class="{ 'cursor-pointer': currentWord.example_sentences.length > 1 }"
+                  >
+                    <div class="mb-2 flex items-center justify-between gap-3">
+                      <span class="text-xs font-medium text-muted-foreground">Örnek Cümle</span>
+                      <span
+                        v-if="currentWord.example_sentences.length > 1"
+                        class="rounded-full bg-background/70 px-2 py-0.5 text-[11px] text-muted-foreground"
+                      >
+                        {{ exampleSentenceIndex + 1 }}/{{ currentWord.example_sentences.length }}
+                      </span>
+                    </div>
+                    <p class="text-sm leading-relaxed text-foreground">{{ currentExampleSentence.sentence }}</p>
+                    <p v-if="currentExampleSentence.translation" class="mt-2 text-xs text-muted-foreground">
+                      {{ currentExampleSentence.translation }}
                     </p>
-                  </div>
+                  </button>
                 </div>
 
                 <!-- Placeholder -->
@@ -259,7 +274,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['game-completed']);
+const emit = defineEmits(['game-completed', 'save-progress']);
 
 // State
 const currentIndex = ref(0);
@@ -270,6 +285,7 @@ const stats = ref({
 const showMeaning = ref(false);
 const hasStartedSwiping = ref(false);
 const isAnswering = ref(false);
+const exampleSentenceIndex = ref(0);
 
 // Drag state
 const isDragging = ref(false);
@@ -286,6 +302,10 @@ const results = ref([]);
 const currentWord = computed(() => props.words[currentIndex.value]);
 const totalQuestions = computed(() => props.words.length);
 const currentStep = computed(() => (currentIndex.value >= totalQuestions.value ? totalQuestions.value : currentIndex.value + 1));
+const currentExampleSentence = computed(() => {
+  const examples = currentWord.value?.example_sentences || [];
+  return examples[exampleSentenceIndex.value] || examples[0] || {};
+});
 const progress = computed(() => {
   if (!totalQuestions.value) return 0;
   return ((Math.min(currentIndex.value, totalQuestions.value) / totalQuestions.value) * 100).toFixed(0);
@@ -372,6 +392,16 @@ const toggleMeaning = () => {
   showMeaning.value = !showMeaning.value;
 };
 
+const showNextExampleSentence = () => {
+  const examples = currentWord.value?.example_sentences || [];
+
+  if (examples.length <= 1) {
+    return;
+  }
+
+  exampleSentenceIndex.value = (exampleSentenceIndex.value + 1) % examples.length;
+};
+
 const handleAnswer = (isCorrect) => {
   if (!currentWord.value || isAnswering.value) return;
   isAnswering.value = true;
@@ -393,6 +423,7 @@ const handleAnswer = (isCorrect) => {
 
   // Reset meaning visibility
   showMeaning.value = false;
+  exampleSentenceIndex.value = 0;
 
   // Move to next word
   currentIndex.value++;
@@ -411,6 +442,7 @@ const completeGame = () => {
   dragX.value = 0;
   dragY.value = 0;
   showMeaning.value = false;
+  exampleSentenceIndex.value = 0;
 };
 
 const getGameResults = () => ({
@@ -421,12 +453,17 @@ const getGameResults = () => ({
 });
 
 const restartGame = () => {
+  if (results.value.length > 0) {
+    emit('save-progress', getGameResults());
+  }
+
   currentIndex.value = 0;
   stats.value = {
     correct: 0,
     incorrect: 0,
   };
   showMeaning.value = false;
+  exampleSentenceIndex.value = 0;
   hasStartedSwiping.value = false;
   isDragging.value = false;
   isAnswering.value = false;
@@ -495,6 +532,7 @@ onUnmounted(() => {
 // Watch for word changes to reset meaning visibility
 watch(currentIndex, () => {
   showMeaning.value = false;
+  exampleSentenceIndex.value = 0;
 });
 </script>
 

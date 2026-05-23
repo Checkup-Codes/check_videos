@@ -317,7 +317,7 @@ const props = defineProps({
   gameConfig: Object,
 });
 
-const emit = defineEmits(['game-completed']);
+const emit = defineEmits(['game-completed', 'save-progress']);
 
 const page = usePage();
 const allPacks = page.props.languagePacks || [];
@@ -959,6 +959,10 @@ const endGame = () => {
 
 // Oyunu yeniden başlat
 const restartGame = () => {
+  if (gameState.value.userResponses.length > 0) {
+    emit('save-progress', getGameResults());
+  }
+
   gameState.value = {
     isLoading: true,
     isPlaying: false,
