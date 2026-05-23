@@ -6,8 +6,8 @@ return [
     | Main Domain
     |--------------------------------------------------------------------------
     |
-    | The primary domain that should receive all SEO authority.
-    | Parked domains will use canonical URLs pointing to this domain.
+    | Platform owner domain. Each tenant domain is indexed independently
+    | with its own DB, sitemap and canonical URLs.
     |
     */
     'main_domain' => env('MAIN_DOMAIN', 'checkupcodes.com'),
@@ -32,45 +32,37 @@ return [
 
         'yusufdur.com' => [
             'name' => 'Yusuf Dur',
-            'type' => 'parked',
-            'index_in_google' => false,
+            'type' => 'tenant',
+            'index_in_google' => true,
             'features' => ['writes', 'journey', 'certificates'],
             'hidden_features' => ['workspaces', 'projects'],
-            'description' => 'Park edilmiş domain - noindex, follow stratejisi',
-            'seo_strategy' => 'noindex_follow',
-            'canonical_target' => 'checkupcodes.com',
+            'description' => 'Tenant domain - bağımsız SEO',
         ],
 
         'elselif.com' => [
             'name' => 'Else If',
-            'type' => 'parked',
-            'index_in_google' => false,
+            'type' => 'tenant',
+            'index_in_google' => true,
             'features' => ['writes', 'tests'],
             'hidden_features' => ['workspaces', 'projects', 'journey'],
-            'description' => 'Park edilmiş domain - noindex, follow stratejisi',
-            'seo_strategy' => 'noindex_follow',
-            'canonical_target' => 'checkupcodes.com',
+            'description' => 'Tenant domain - bağımsız SEO',
         ],
 
         'candundarli.com' => [
             'name' => 'Can Dündarlı',
             'type' => 'tenant',
-            'index_in_google' => false,
+            'index_in_google' => true,
             'features' => ['all'],
             'hidden_features' => ['workspaces', 'projects', 'journey'],
-            'description' => 'Tenant domain - noindex, follow stratejisi',
-            'seo_strategy' => 'noindex_follow',
-            'canonical_target' => 'checkupcodes.com',
+            'description' => 'Tenant domain - bağımsız SEO',
         ],
 
         'alperenalperen.com' => [
             'name' => 'Alperen Alperen',
-            'type' => 'parked',
-            'index_in_google' => false,
+            'type' => 'tenant',
+            'index_in_google' => true,
             'features' => ['all'],
-            'description' => 'Park edilmiş domain - noindex, follow stratejisi',
-            'seo_strategy' => 'noindex_follow',
-            'canonical_target' => 'checkupcodes.com',
+            'description' => 'Tenant domain - bağımsız SEO',
         ],
 
         // Localhost için

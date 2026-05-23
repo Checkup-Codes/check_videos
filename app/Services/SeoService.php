@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Support\TenantDomain;
 use App\Models\Seo;
 use App\Models\WritesCategories\WriteImage;
 use Illuminate\Support\Facades\Cache;
@@ -32,7 +33,7 @@ class SeoService
 
         // Laravel cache ile DB sorgularını minimize et
         self::$cachedData = Cache::remember($this->getCacheKey(), self::CACHE_TTL, function () {
-            $domain = $this->normalizeDomain(request()->getHost());
+            $domain = TenantDomain::current();
             
             // Get or create SEO data for current domain
             $seo = Seo::firstOrCreate(
@@ -41,8 +42,8 @@ class SeoService
                     'site_name' => config('app.name'),
                     'title' => config('app.name'),
                     'description' => 'Site açıklaması',
-                    'language' => 'tr',
-                    'locale' => 'tr_TR',
+                    'language' => config('app.locale', 'tr'),
+                    'locale' => config('app.locale', 'tr') === 'en' ? 'en_US' : 'tr_TR',
                     'robots' => 'index, follow',
                 ]
             );
@@ -188,7 +189,7 @@ class SeoService
             'og' => [
                 'title' => $pageTitle ?? $global['ogTitle'],
                 'description' => $pageDescription ?? $global['ogDescription'],
-                'image' => $global['ogImage'],
+                'image' => $this->toAbsoluteUrl($global['ogImage']),
                 'type' => 'website',
                 'locale' => $global['locale'],
                 'site_name' => $global['siteName'],
@@ -201,12 +202,12 @@ class SeoService
                 'creator' => $global['twitterCreator'],
                 'title' => $pageTitle ?? $global['ogTitle'],
                 'description' => $pageDescription ?? $global['ogDescription'],
-                'image' => $global['ogImage'],
+                'image' => $this->toAbsoluteUrl($global['ogImage']),
             ],
             
             // Icons
-            'favicon' => $global['favicon'],
-            'appleTouchIcon' => $global['appleTouchIcon'],
+            'favicon' => $this->toAbsoluteUrl($global['favicon']),
+            'appleTouchIcon' => $this->toAbsoluteUrl($global['appleTouchIcon']),
             'themeColor' => $global['themeColor'],
             
             // Verification
@@ -233,24 +234,15 @@ class SeoService
      */
     private function getCacheKey(): string
     {
-        $domain = $this->normalizeDomain(request()->getHost());
-        return "seo_data_{$domain}";
+        return 'seo_data_' . TenantDomain::current();
     }
 
     /**
-     * Normalize domain (www. prefix'ini kaldır)
-     * 
-     * @param string $domain
-     * @return string
+     * @deprecated Use TenantDomain::normalize()
      */
     private function normalizeDomain(string $domain): string
     {
-        // www. prefix'ini kaldır
-        if (str_starts_with($domain, 'www.')) {
-            return substr($domain, 4);
-        }
-        
-        return $domain;
+        return TenantDomain::normalize($domain);
     }
 
     /**
@@ -498,69 +490,41 @@ class SeoService
     }
 
     /**
-     * Get canonical URL for current page
-     * 
-     * Park edilmiş domainler ana domain'e işaret eder.
-     * Bu duplicate content cezasını önler.
-     * 
-     * @param string|null $path Custom path (opsiyonel, default: current path)
-     * @return string Full canonical URL
+     * Get canonical URL for current page.
+     * Indexed tenant domains use their own APP_URL; others may point to canonical_target.
      */
     public function getCanonicalUrl(?string $path = null): string
     {
-        $currentDomain = $this->normalizeDomain(request()->getHost());
-        $mainDomain = config('domains.main_domain', 'checkupcodes.com');
-        $domainConfig = config("domains.domains.{$currentDomain}", []);
-        
-        // Eğer bu domain Google'da indexlenecekse, kendi URL'ini kullan
-        // Değilse (parked domain), ana domain'e yönlendir
-        $shouldUseMainDomain = !($domainConfig['index_in_google'] ?? false);
-        
-        $targetDomain = $shouldUseMainDomain ? $mainDomain : $currentDomain;
-        
-        // Path belirtilmemişse, mevcut path'i kullan
+        $currentDomain = TenantDomain::current();
+        $domainConfig = TenantDomain::config($currentDomain);
+        $baseUrl = TenantDomain::baseUrl();
+
+        if (!($domainConfig['index_in_google'] ?? false)) {
+            $targetDomain = $domainConfig['canonical_target'] ?? config('domains.main_domain', 'checkupcodes.com');
+            $baseUrl = 'https://' . TenantDomain::normalize($targetDomain);
+        }
+
         if ($path === null) {
             $path = request()->path();
         }
-        
-        // Path'i temizle
+
         $path = ltrim($path, '/');
-        
-        // Eğer path boşsa (homepage), sadece domain döndür
-        if (empty($path) || $path === '/') {
-            return "https://{$targetDomain}";
+
+        if ($path === '' || $path === '/') {
+            return $baseUrl;
         }
-        
-        return "https://{$targetDomain}/{$path}";
+
+        return "{$baseUrl}/{$path}";
     }
 
-    /**
-     * Check if current domain should be indexed by Google
-     * 
-     * @return bool
-     */
     public function shouldIndexInGoogle(): bool
     {
-        $currentDomain = $this->normalizeDomain(request()->getHost());
-        $domainConfig = config("domains.domains.{$currentDomain}", []);
-        
-        return $domainConfig['index_in_google'] ?? false;
+        return TenantDomain::shouldIndex(TenantDomain::current());
     }
 
-    /**
-     * Get domain configuration
-     * 
-     * @return array
-     */
     public function getDomainConfig(): array
     {
-        $currentDomain = $this->normalizeDomain(request()->getHost());
-        return config("domains.domains.{$currentDomain}", [
-            'name' => config('app.name'),
-            'type' => 'unknown',
-            'index_in_google' => true,
-            'features' => ['all'],
-        ]);
+        return TenantDomain::config(TenantDomain::current());
     }
 
     /**
@@ -573,18 +537,25 @@ class SeoService
      */
     public function getRobotsMetaTag(): string
     {
-        $currentDomain = $this->normalizeDomain(request()->getHost());
-        $domainConfig = config("domains.domains.{$currentDomain}", []);
-        $indexInGoogle = $domainConfig['index_in_google'] ?? false;
-        
-        // Park edilmiş domainler: noindex, follow
-        // Bu sayede Google içeriği indexlemez ama link juice ana domain'e akar
-        if (!$indexInGoogle) {
+        if (!TenantDomain::shouldIndex(TenantDomain::current())) {
             return 'noindex, follow';
         }
-        
-        // Ana domain: Veritabanından gelen robots ayarı varsa kullan
+
         $global = $this->getGlobalSeo();
+
         return $global['robots'] ?? 'index, follow';
+    }
+
+    private function toAbsoluteUrl(?string $path): ?string
+    {
+        if ($path === null || $path === '') {
+            return null;
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+
+        return rtrim(TenantDomain::baseUrl(), '/') . '/' . ltrim($path, '/');
     }
 }

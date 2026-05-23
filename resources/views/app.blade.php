@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" prefix="og: https://ogp.me/ns#">
 
 <head>
     <meta charset="utf-8">
@@ -14,8 +14,10 @@
         $canonicalUrl = $seoService->getCanonicalUrl();
     @endphp
 
-    <!-- Canonical URL (prevents duplicate content penalty) -->
+    <!-- Canonical URL -->
     <link rel="canonical" href="{{ $canonicalUrl }}" />
+    <link rel="alternate" hreflang="{{ str_replace('_', '-', app()->getLocale()) }}" href="{{ $canonicalUrl }}" />
+    <link rel="alternate" hreflang="x-default" href="{{ $canonicalUrl }}" />
 
     <!-- Primary Meta Tags -->
     <meta name="description" content="{{ $meta['description'] }}">

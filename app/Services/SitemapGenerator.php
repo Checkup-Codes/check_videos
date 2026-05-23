@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Models\WritesCategories\Category;
+use App\Support\TenantDomain;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\URL;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url as SitemapUrl;
 
@@ -15,9 +15,8 @@ class SitemapGenerator
 
     public function __construct()
     {
-        // Get current domain from request or config
-        $this->domain = request()->getHost() ?? parse_url(config('app.url'), PHP_URL_HOST) ?? 'localhost';
-        $this->baseUrl = rtrim(request()->getSchemeAndHttpHost(), '/');
+        $this->domain = TenantDomain::current();
+        $this->baseUrl = TenantDomain::baseUrl();
     }
 
     public function generate(): void
@@ -25,7 +24,6 @@ class SitemapGenerator
         $sitemap = Sitemap::create();
         $now = Carbon::now();
 
-        // Ana sayfa
         $sitemap->add(
             SitemapUrl::create($this->baseUrl)
                 ->setLastModificationDate($now)
@@ -33,29 +31,40 @@ class SitemapGenerator
                 ->setPriority(1.0)
         );
 
-        // Ana sayfalar (Sitelinks için önemli!)
-        $mainPages = [
-            '/writes' => 0.9,
-            '/tests' => 0.9,
-            '/certificates' => 0.9,
-            '/categories' => 0.8,
-            '/workspaces' => 0.8,
-        ];
-
-        foreach ($mainPages as $page => $priority) {
-            try {
-                $sitemap->add(
-                    SitemapUrl::create($this->baseUrl . $page)
-                        ->setLastModificationDate($now)
-                        ->setChangeFrequency('daily')
-                        ->setPriority($priority)
-                );
-            } catch (\Exception $e) {
-                // Page might not exist
+        foreach (TenantDomain::sitemapRoutes() as $feature => $path) {
+            if (TenantDomain::isFeatureHidden($this->domain, $feature)) {
+                continue;
             }
+
+            $sitemap->add(
+                SitemapUrl::create($this->baseUrl . $path)
+                    ->setLastModificationDate($now)
+                    ->setChangeFrequency('daily')
+                    ->setPriority(0.9)
+            );
         }
 
-        // Kategoriler ve Yazılar
+        if (!TenantDomain::isFeatureHidden($this->domain, 'writes')) {
+            $this->addWrites($sitemap, $now);
+        }
+
+        if (!TenantDomain::isFeatureHidden($this->domain, 'tests')) {
+            $this->addTests($sitemap, $now);
+        }
+
+        if (!TenantDomain::isFeatureHidden($this->domain, 'certificates')) {
+            $this->addCertificates($sitemap, $now);
+        }
+
+        if (!TenantDomain::isFeatureHidden($this->domain, 'workspaces')) {
+            $this->addWorkspaces($sitemap, $now);
+        }
+
+        $sitemap->writeToFile($this->getSitemapPath());
+    }
+
+    private function addWrites(Sitemap $sitemap, Carbon $now): void
+    {
         try {
             Category::with('writes')->chunk(100, function ($categories) use ($sitemap, $now) {
                 foreach ($categories as $category) {
@@ -66,7 +75,6 @@ class SitemapGenerator
                             ->setPriority(0.7)
                     );
 
-                    // Her kategorinin yazıları
                     foreach ($category->writes as $write) {
                         if ($write->status === 'published') {
                             $sitemap->add(
@@ -80,10 +88,12 @@ class SitemapGenerator
                 }
             });
         } catch (\Exception $e) {
-            // Categories might not exist
+            // Categories might not exist for this tenant DB
         }
+    }
 
-        // Testler
+    private function addTests(Sitemap $sitemap, Carbon $now): void
+    {
         try {
             \App\Models\Tests\Test::where('status', 'published')
                 ->chunk(100, function ($tests) use ($sitemap, $now) {
@@ -99,8 +109,10 @@ class SitemapGenerator
         } catch (\Exception $e) {
             // Tests might not exist
         }
+    }
 
-        // Sertifikalar
+    private function addCertificates(Sitemap $sitemap, Carbon $now): void
+    {
         try {
             \App\Models\Certificate::chunk(100, function ($certificates) use ($sitemap, $now) {
                 foreach ($certificates as $certificate) {
@@ -115,8 +127,10 @@ class SitemapGenerator
         } catch (\Exception $e) {
             // Certificates might not exist
         }
+    }
 
-        // Çalışma Alanları
+    private function addWorkspaces(Sitemap $sitemap, Carbon $now): void
+    {
         try {
             \App\Models\Workspace::chunk(100, function ($workspaces) use ($sitemap, $now) {
                 foreach ($workspaces as $workspace) {
@@ -131,40 +145,24 @@ class SitemapGenerator
         } catch (\Exception $e) {
             // Workspaces might not exist
         }
-
-        // Domain-specific sitemap dosyası
-        $filename = $this->getSitemapFilename();
-        $sitemap->writeToFile(public_path($filename));
     }
 
-    /**
-     * Get domain-specific sitemap filename
-     */
     private function getSitemapFilename(): string
     {
-        // Sanitize domain for filename
-        $safeDomain = str_replace(['.', ':'], '_', $this->domain);
-        
-        // For localhost or default, use sitemap.xml
-        if (in_array($this->domain, ['localhost', '127.0.0.1', '::1'])) {
+        if (in_array($this->domain, ['localhost', '127.0.0.1', '::1'], true)) {
             return 'sitemap.xml';
         }
-        
-        // For production domains, use domain-specific filename
+
+        $safeDomain = str_replace(['.', ':'], '_', $this->domain);
+
         return "sitemap_{$safeDomain}.xml";
     }
 
-    /**
-     * Get sitemap path for current domain
-     */
     public function getSitemapPath(): string
     {
         return public_path($this->getSitemapFilename());
     }
 
-    /**
-     * Get public sitemap filename (for URL)
-     */
     public function getPublicSitemapFilename(): string
     {
         return $this->getSitemapFilename();
