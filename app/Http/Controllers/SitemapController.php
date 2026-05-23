@@ -7,26 +7,15 @@ use Illuminate\Http\Response;
 
 class SitemapController extends Controller
 {
-    private $sitemapGenerator;
+    public function __construct(private SitemapGenerator $sitemapGenerator) {}
 
-    public function __construct(SitemapGenerator $sitemapGenerator)
+    public function generate(): Response
     {
-        $this->sitemapGenerator = $sitemapGenerator;
-    }
+        $xml = $this->sitemapGenerator->generate();
 
-    public function generate()
-    {
-        $this->sitemapGenerator->generate();
-
-        // Serve domain-specific sitemap
-        $sitemapPath = $this->sitemapGenerator->getSitemapPath();
-        
-        if (!file_exists($sitemapPath)) {
-            abort(404, 'Sitemap not found for this domain');
-        }
-
-        return response()->file($sitemapPath, [
-            'Content-Type' => 'application/xml'
+        return response($xml, 200, [
+            'Content-Type' => 'application/xml; charset=UTF-8',
+            'Cache-Control' => 'public, max-age=3600',
         ]);
     }
 }

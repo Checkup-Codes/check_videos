@@ -19,7 +19,7 @@ class SitemapGenerator
         $this->baseUrl = TenantDomain::baseUrl();
     }
 
-    public function generate(): void
+    public function generate(): string
     {
         $sitemap = Sitemap::create();
         $now = Carbon::now();
@@ -60,7 +60,15 @@ class SitemapGenerator
             $this->addWorkspaces($sitemap, $now);
         }
 
-        $sitemap->writeToFile($this->getSitemapPath());
+        $path = $this->getSitemapPath();
+        $directory = dirname($path);
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        $sitemap->writeToFile($path);
+
+        return file_get_contents($path) ?: '';
     }
 
     private function addWrites(Sitemap $sitemap, Carbon $now): void
@@ -160,7 +168,7 @@ class SitemapGenerator
 
     public function getSitemapPath(): string
     {
-        return public_path($this->getSitemapFilename());
+        return storage_path('app/sitemaps/' . $this->getSitemapFilename());
     }
 
     public function getPublicSitemapFilename(): string

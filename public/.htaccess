@@ -5,6 +5,9 @@
 
     RewriteEngine On
 
+    # Always route SEO files through Laravel (avoid stale static public/sitemap.xml)
+    RewriteRule ^(sitemap\.xml|robots\.txt)$ index.php [L]
+
     # Block web access to run_prices.php (only allow CLI/cronjob execution)
     RewriteCond %{REQUEST_URI} run_prices\.php$ [NC]
     RewriteRule ^(.*)$ - [F,L]
