@@ -49,33 +49,34 @@ Route::delete('/writes/{write}/draw/{version}', [WritesController::class, 'destr
 Route::resource('/categories', CategoriesController::class);
 Route::get('/categories/{category}/{slug}', [CategoriesController::class, 'showByCategory'])->name('categories.showByCategory');
 
-// Tests — ziyaretçi: index/show/take; CRUD: auth
+// Tests — sabit path'ler wildcard'lardan önce (create/edit 404 önlenir)
 Route::middleware('module.access:tests')->group(function () {
     Route::get('/tests', [TestsController::class, 'index'])->name('tests.index');
-    Route::get('/tests/{test}', [TestsController::class, 'show'])->name('tests.show');
+    Route::get('/tests/result/{result}', [TestsController::class, 'result'])->name('tests.result');
+
+    Route::middleware(['auth', 'verified'])->group(function () {
+        Route::get('/tests/create', [TestsController::class, 'create'])->name('tests.create');
+        Route::post('/tests', [TestsController::class, 'store'])->name('tests.store');
+        Route::post('/tests/bulk-store', [TestsController::class, 'bulkStore'])->name('tests.bulk-store');
+        Route::get('/tests/{test}/edit', [TestsController::class, 'edit'])->name('tests.edit');
+        Route::put('/tests/{test}', [TestsController::class, 'update'])->name('tests.update');
+        Route::patch('/tests/{test}', [TestsController::class, 'update']);
+        Route::delete('/tests/{test}', [TestsController::class, 'destroy'])->name('tests.destroy');
+
+        Route::get('/test-categories/create', [TestCategoriesController::class, 'create'])->name('test-categories.create');
+        Route::post('/test-categories', [TestCategoriesController::class, 'store'])->name('test-categories.store');
+        Route::get('/test-categories/{test_category}/edit', [TestCategoriesController::class, 'edit'])->name('test-categories.edit');
+        Route::put('/test-categories/{test_category}', [TestCategoriesController::class, 'update'])->name('test-categories.update');
+        Route::patch('/test-categories/{test_category}', [TestCategoriesController::class, 'update']);
+        Route::delete('/test-categories/{test_category}', [TestCategoriesController::class, 'destroy'])->name('test-categories.destroy');
+    });
+
     Route::get('/tests/{test}/take', [TestsController::class, 'take'])->name('tests.take');
     Route::post('/tests/{test}/submit', [TestsController::class, 'submit'])->name('tests.submit');
-    Route::get('/tests/result/{result}', [TestsController::class, 'result'])->name('tests.result');
+    Route::get('/tests/{test}', [TestsController::class, 'show'])->name('tests.show');
 
     Route::get('/test-categories', [TestCategoriesController::class, 'index'])->name('test-categories.index');
     Route::get('/test-categories/{test_category}', [TestCategoriesController::class, 'show'])->name('test-categories.show');
-});
-
-Route::middleware(['auth', 'verified', 'module.access:tests'])->group(function () {
-    Route::get('/tests/create', [TestsController::class, 'create'])->name('tests.create');
-    Route::post('/tests', [TestsController::class, 'store'])->name('tests.store');
-    Route::post('/tests/bulk-store', [TestsController::class, 'bulkStore'])->name('tests.bulk-store');
-    Route::get('/tests/{test}/edit', [TestsController::class, 'edit'])->name('tests.edit');
-    Route::put('/tests/{test}', [TestsController::class, 'update'])->name('tests.update');
-    Route::patch('/tests/{test}', [TestsController::class, 'update']);
-    Route::delete('/tests/{test}', [TestsController::class, 'destroy'])->name('tests.destroy');
-
-    Route::get('/test-categories/create', [TestCategoriesController::class, 'create'])->name('test-categories.create');
-    Route::post('/test-categories', [TestCategoriesController::class, 'store'])->name('test-categories.store');
-    Route::get('/test-categories/{test_category}/edit', [TestCategoriesController::class, 'edit'])->name('test-categories.edit');
-    Route::put('/test-categories/{test_category}', [TestCategoriesController::class, 'update'])->name('test-categories.update');
-    Route::patch('/test-categories/{test_category}', [TestCategoriesController::class, 'update']);
-    Route::delete('/test-categories/{test_category}', [TestCategoriesController::class, 'destroy'])->name('test-categories.destroy');
 });
 
 // Journey Routes (Public - View only index, show is below with proper order)
