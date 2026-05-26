@@ -1,0 +1,1 @@
+function n(e){if(!e)return"";if(typeof document<"u"){const t=document.createElement("div");return t.innerHTML=e,(t.textContent||t.innerText||"").replace(/\s+/g," ").trim()}return String(e).replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim()}export{n as s};

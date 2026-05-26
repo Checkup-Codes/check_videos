@@ -3,7 +3,17 @@
     <div class="mx-auto max-w-7xl px-4 py-8">
       <!-- Header -->
       <div class="mb-8 flex items-center justify-between">
-        <div>
+        <div class="min-w-0">
+          <Link
+            v-if="selectedCategory"
+            href="/bookmarks"
+            class="mb-3 inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground lg:hidden"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Kategorilere dön
+          </Link>
           <h1 class="mb-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Yer İmleri</h1>
           <p v-if="selectedCategory" class="text-sm text-muted-foreground">
             {{ selectedCategory.name }} kategorisindeki yer imleri

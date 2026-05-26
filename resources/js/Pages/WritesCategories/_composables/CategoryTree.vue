@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-1 p-2">
+  <div class="space-y-1">
     <!-- Category List -->
         <div v-for="category in filteredParentCategories" :key="category.id" class="space-y-1">
           <!-- Ana kategori -->

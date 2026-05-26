@@ -1,51 +1,46 @@
 <template>
   <CheckSubsidebar :isNarrow="isNarrow">
-    <!-- View Toggle - Always visible -->
-    <div class="relative z-10 shrink-0 border-b border-border bg-background p-2">
-      <div class="flex items-center justify-between gap-2">
-        <!-- View Toggle (Left) -->
-        <div class="flex items-center gap-1">
-          <Link
-            :href="route('writes.index')"
-            class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs transition-colors"
-            :class="
-              isListView
-                ? 'bg-accent text-accent-foreground'
-                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-            "
-            title="Liste görünümü"
-          >
-            <IconMenu class="h-3 w-3" />
-            <span v-if="!isNarrow">Liste</span>
-          </Link>
-          <Link
-            :href="route('categories.index')"
-            class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs transition-colors"
-            :class="
-              !isListView
-                ? 'bg-accent text-accent-foreground'
-                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-            "
-            title="Kategori görünümü"
-          >
-            <IconFolder class="h-3 w-3" />
-            <span v-if="!isNarrow">Kategori</span>
-          </Link>
-        </div>
-        <!-- Filter Controls (Right) - Only for logged in users -->
-        <div v-if="isLoggedIn" class="flex items-center gap-1">
+    <SubSidebarHeader title="Yazılar" :description="String(writesCount)">
+      <template #actions>
+        <Link
+          :href="route('writes.index')"
+          class="inline-flex h-5 shrink-0 items-center gap-1 whitespace-nowrap rounded px-1.5 text-xs transition-colors"
+          :class="
+            isListView
+              ? 'bg-accent text-accent-foreground'
+              : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+          "
+          title="Liste görünümü"
+        >
+          <IconMenu class="h-3 w-3 shrink-0" />
+          <span v-if="!isNarrow">Liste</span>
+        </Link>
+        <Link
+          :href="route('categories.index')"
+          class="inline-flex h-5 shrink-0 items-center gap-1 whitespace-nowrap rounded px-1.5 text-xs transition-colors"
+          :class="
+            !isListView
+              ? 'bg-accent text-accent-foreground'
+              : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+          "
+          title="Kategori görünümü"
+        >
+          <IconFolder class="h-3 w-3 shrink-0" />
+          <span v-if="!isNarrow">Kategori</span>
+        </Link>
+        <template v-if="isLoggedIn">
           <button
             v-if="writeFilter !== 'all'"
             @click="clearWriteFilter"
-            class="inline-flex h-6 w-6 items-center justify-center rounded text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
             title="Filtreyi temizle"
           >
             <IconX class="h-3 w-3" />
           </button>
-          <div class="write-filter-dropdown-container relative">
+          <div class="write-filter-dropdown-container relative shrink-0">
             <button
               @click.stop="showWriteFilterDropdown = !showWriteFilterDropdown"
-              class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+              class="inline-flex h-5 shrink-0 items-center gap-1 whitespace-nowrap rounded px-1.5 text-[10px] text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
               :class="
                 showWriteFilterDropdown
                   ? 'bg-accent text-accent-foreground'
@@ -53,8 +48,8 @@
               "
               title="Filtrele"
             >
-              <IconFilter class="h-3 w-3" />
-              <span class="text-xs">{{ getFilterLabel(writeFilter) }}</span>
+              <IconFilter class="h-3 w-3 shrink-0" />
+              <span v-if="!isNarrow">{{ getFilterLabel(writeFilter) }}</span>
             </button>
             <div
               v-if="showWriteFilterDropdown"
@@ -92,11 +87,13 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </template>
+      </template>
+    </SubSidebarHeader>
     <SubSidebarScreen ref="scrollableRef" class="sidebar-content-embedded min-h-0 flex-1" :infoClass="'flex-1 min-h-0'">
-      <WriteList ref="writeListRef" :writes="writes" :route="route" :isCollapsed="isNarrow" />
+      <SubSidebarContent>
+        <WriteList ref="writeListRef" :writes="writes" :route="route" :isCollapsed="isNarrow" />
+      </SubSidebarContent>
     </SubSidebarScreen>
   </CheckSubsidebar>
 </template>
@@ -118,6 +115,8 @@ import { usePage, Link } from '@inertiajs/vue3';
 import WriteList from '@/Pages/WritesCategories/_composables/WriteList.vue';
 import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
 import SubSidebarScreen from '@/Components/CekapUI/Slots/SubSidebarScreen.vue';
+import SubSidebarHeader from '@/Components/CekapUI/Layout/SubSidebarHeader.vue';
+import SubSidebarContent from '@/Components/CekapUI/Layout/SubSidebarContent.vue';
 import { useSidebar } from '../_utils/useSidebar';
 import { useStore } from 'vuex';
 import IconMenu from '../_components/icons/IconMenu.vue';
@@ -179,6 +178,12 @@ const clearWriteFilter = () => {
 // Local state
 const { props } = usePage();
 const writes = inject('writes', []);
+
+const writesCount = computed(() => {
+  const value = writes?.value ?? writes;
+  return Array.isArray(value) ? value.length : 0;
+});
+
 const writeListRef = ref(null);
 const scrollableRef = ref(null);
 const isNarrow = ref(store.getters['Writes/isCollapsed']);

@@ -2,7 +2,7 @@
   <Head :title="titleName" />
   <FlashMessage :message="flashSuccess" />
   <CheckLayout
-    :isCollapsed="isSidebarCollapsed"
+    :isCollapsed="!shouldHideSidebarContent"
     :is-narrow="isSidebarNarrow"
     :show-sidebar-on-mobile="shouldShowSidebarOnMobile"
     :show-main-content-on-mobile="shouldShowMainContentOnMobile"
@@ -11,14 +11,14 @@
       <!-- SSR'da sidebar içeriğini gizle, sadece client-side'da göster -->
       <!-- Mobil show sayfalarında sidebar hiç render edilmez -->
       <KeepAlive
-        v-if="isSidebarCollapsed && isMounted && shouldShowSidebarOnMobile && screenName === 'bookmarks'"
+        v-if="!shouldHideSidebarContent && isMounted && shouldShowSidebarOnMobile"
         :max="5"
         :include="['SidebarLayoutBookmarks']"
       >
         <SidebarLayoutBookmarks :key="screenName" @update:isNarrow="handleSidebarWidthChange" />
       </KeepAlive>
     </template>
-    <div :class="[shouldShowMainContentOnMobile ? 'block' : 'hidden lg:block', 'h-full min-h-0 overflow-hidden', mainContentClass]">
+    <div :class="[shouldShowMainContentOnMobile ? 'block' : 'hidden lg:block', 'flex h-full min-h-0 flex-col overflow-hidden', mainContentClass]">
       <slot name="screen"></slot>
     </div>
   </CheckLayout>
@@ -31,6 +31,7 @@ import CheckLayout from '@/Components/CekapUI/Slots/CheckLayout.vue';
 import SidebarLayoutBookmarks from '@/Pages/Bookmarks/_layouts/SidebarLayoutBookmarks.vue';
 import FlashMessage from '@/Components/CekapUI/Notifications/FlashMessage.vue';
 import { useStore } from 'vuex';
+import { useMobileSubsidebarLayout } from '@/composables/useMobileSubsidebarLayout';
 
 // Component name definition for dev tools
 defineOptions({
@@ -59,47 +60,37 @@ const titleName = computed(() => {
   );
 });
 
-// Real mobile detection based on window width (client-side only)
-const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024);
-const isMobile = computed(() => windowWidth.value < 1024);
-
-// Update window width on resize
-const updateWindowWidth = () => {
-  if (typeof window !== 'undefined') {
-    windowWidth.value = window.innerWidth;
-  }
-};
-
-// Check if we're on a non-index page (show, create, or edit) - on mobile, hide sidebar for these pages
+// Check if we're on a non-index page (show, create, or edit)
 const isNonIndexPage = computed(() => {
-  const currentUrl = page.url || '';
+  const path = (page.url || '').split('?')[0].split('#')[0];
 
-  // Bookmark show page: /bookmarks/{id} (but not /bookmarks, /bookmarks/create, /bookmarks/edit)
-  const isBookmarkShowPage =
-    currentUrl.startsWith('/bookmarks/') &&
-    currentUrl !== '/bookmarks' &&
-    !currentUrl.includes('/bookmarks/create') &&
-    !currentUrl.includes('/bookmarks/edit');
+  // Bookmark show page: /bookmarks/{id}
+  const isBookmarkShowPage = /^\/bookmarks\/[^/]+$/.test(path);
 
   // Bookmark create/edit pages
-  const isBookmarkCreateEditPage = currentUrl === '/bookmarks/create' || currentUrl.includes('/bookmarks/edit');
+  const isBookmarkCreateEditPage =
+    path === '/bookmarks/create' || /^\/bookmarks\/[^/]+\/edit$/.test(path);
 
-  return isBookmarkShowPage || isBookmarkCreateEditPage;
+  // Category create page
+  const isCategoryCreatePage = path === '/bookmark-categories/create';
+
+  return isBookmarkShowPage || isBookmarkCreateEditPage || isCategoryCreatePage;
 });
 
-// On mobile: show only sidebar on index pages, only main content on non-index pages (show, create, edit)
-const shouldShowSidebarOnMobile = computed(() => {
-  if (!isMobile.value) return true; // Desktop: always show sidebar if collapsed
-  return !isNonIndexPage.value; // Mobile: show sidebar only on index pages
+const shouldHideSidebarContent = computed(() => false);
+
+const {
+  shouldShowSidebarOnMobile,
+  shouldShowMainContentOnMobile,
+  showFullWidthMainOnMobile,
+} = useMobileSubsidebarLayout({
+  mode: 'filter-query',
+  indexPath: '/bookmarks',
+  filterParam: 'category',
+  isNonIndexPage: () => isNonIndexPage.value,
 });
 
-const shouldShowMainContentOnMobile = computed(() => {
-  if (!isMobile.value) return true; // Desktop: always show main content
-  return isNonIndexPage.value; // Mobile: show main content on non-index pages (show, create, edit)
-});
-
-// Sidebar state
-const isSidebarCollapsed = ref(true);
+// Sidebar state (always expanded unless shouldHideSidebarContent)
 const isSidebarNarrow = ref(store.getters['Writes/isCollapsed']);
 
 // Sync with store on mount and when store changes
@@ -117,8 +108,7 @@ const mainContentClass = computed(() => {
     'lg:ml-0': true,
   };
 
-  // Mobil non-index sayfalarında (show, create, edit) tam genişlik
-  if (isMobile.value && isNonIndexPage.value) {
+  if (showFullWidthMainOnMobile.value) {
     classes['w-full'] = true;
   }
 
@@ -137,21 +127,10 @@ onMounted(() => {
   // Mark as mounted to enable sidebar rendering (client-side only)
   isMounted.value = true;
   document.body.style.overflow = 'hidden';
-
-  // Initialize window width and add resize listener
-  if (typeof window !== 'undefined') {
-    windowWidth.value = window.innerWidth;
-    window.addEventListener('resize', updateWindowWidth);
-  }
 });
 
 onBeforeUnmount(() => {
   document.body.style.overflow = '';
-
-  // Remove resize listener
-  if (typeof window !== 'undefined') {
-    window.removeEventListener('resize', updateWindowWidth);
-  }
 });
 </script>
 

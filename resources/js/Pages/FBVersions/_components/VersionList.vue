@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-1 p-2">
+  <div class="space-y-1">
     <Link
       v-for="version in versions"
       :key="version.id"

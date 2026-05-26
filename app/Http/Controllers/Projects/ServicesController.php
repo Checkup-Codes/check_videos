@@ -7,7 +7,10 @@ use App\Http\Controllers\Traits\HasScreenData;
 use App\Models\Projects\Service;
 use App\Models\Projects\Project;
 use App\Models\Projects\Customer;
+use App\Models\WritesCategories\WriteImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ServicesController extends Controller
@@ -16,15 +19,20 @@ class ServicesController extends Controller
 
     public function index()
     {
-        $services = Service::all();
-        $projects = Project::with(['customer'])->get();
-        $customers = Customer::all();
+        $isGuest = !Auth::check();
+        $services = Service::with('images')->get();
+
+        $projectQuery = Project::query();
+        if (!$isGuest) {
+            $projectQuery->with('customer');
+        }
 
         return Inertia::render('Projects/Services/IndexService', [
-            'screen' => $this->getScreenData('proj_services', 'Servisler', null, true),
+            'screen' => $this->getScreenData('proj_services', 'Hizmetler', null, true),
             'services' => $services,
-            'projects' => $projects,
-            'customers' => $customers,
+            'projects' => $projectQuery->get(),
+            'customers' => $isGuest ? [] : Customer::all(),
+            'isGuestView' => $isGuest,
         ]);
     }
 
@@ -32,20 +40,23 @@ class ServicesController extends Controller
 
     public function show($id)
     {
-        $service = Service::with(['subCategories', 'parentCategory'])
+        $isGuest = !Auth::check();
+        $service = Service::with(['subCategories.images', 'parentCategory', 'images'])
             ->findOrFail($id);
 
-        // Load sidebar data
-        $services = Service::all();
-        $projects = Project::with(['customer'])->get();
-        $customers = Customer::all();
+        $services = Service::with('images')->get();
+        $projectQuery = Project::query();
+        if (!$isGuest) {
+            $projectQuery->with('customer');
+        }
 
         return Inertia::render('Projects/Services/ShowService', [
             'service' => $service,
             'screen' => $this->getScreenData('proj_services', $service->name),
             'services' => $services,
-            'projects' => $projects,
-            'customers' => $customers,
+            'projects' => $projectQuery->get(),
+            'customers' => $isGuest ? [] : Customer::all(),
+            'isGuestView' => $isGuest,
         ]);
     }
 
@@ -53,14 +64,14 @@ class ServicesController extends Controller
 
     public function create()
     {
-        $services = Service::all();
+        $services = Service::with('images')->get();
 
         // Load sidebar data
         $projects = Project::with(['customer'])->get();
         $customers = Customer::all();
 
         return Inertia::render('Projects/Services/CreateService', [
-            'screen' => $this->getScreenData('proj_services', 'Yeni Servis'),
+            'screen' => $this->getScreenData('proj_services', 'Yeni Hizmet'),
             'services' => $services,
             'projects' => $projects,
             'customers' => $customers,
@@ -91,7 +102,7 @@ class ServicesController extends Controller
             }
         }
 
-        Service::create([
+        $service = Service::create([
             'name' => $request->name,
             'slug' => $slug,
             'description' => $request->description,
@@ -99,14 +110,16 @@ class ServicesController extends Controller
             'sub_category_id' => $request->parent_id,
         ]);
 
-        return redirect()->route('services.index')->with('success', 'Servis başarıyla oluşturuldu.');
+        return redirect()
+            ->route('services.edit', $service->id)
+            ->with('success', 'Hizmet oluşturuldu. Görselleri ekleyebilirsiniz.');
     }
 
 
     public function edit($id)
     {
-        $service = Service::findOrFail($id);
-        $services = Service::all();
+        $service = Service::with('images')->findOrFail($id);
+        $services = Service::with('images')->get();
 
         // Load sidebar data
         $projects = Project::with(['customer'])->get();
@@ -189,7 +202,7 @@ class ServicesController extends Controller
             $service->fill($updateData);
             $service->save();
 
-            return redirect()->route('services.index')->with('success', 'Servis başarıyla güncellendi.');
+            return redirect()->route('services.index')->with('success', 'Hizmet başarıyla güncellendi.');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
@@ -198,15 +211,27 @@ class ServicesController extends Controller
                 'request' => $request->all(),
                 'trace' => $e->getTraceAsString()
             ]);
-            return redirect()->back()->with('error', 'Servis güncellenirken bir hata oluştu: ' . $e->getMessage())->withInput();
+            return redirect()->back()->with('error', 'Hizmet güncellenirken bir hata oluştu: ' . $e->getMessage())->withInput();
         }
     }
 
     public function destroy($id)
     {
         $service = Service::findOrFail($id);
+
+        WriteImage::where('category', WriteImage::CATEGORY_SERVICES)
+            ->where('related_id', $service->id)
+            ->get()
+            ->each(function (WriteImage $image) {
+                $path = str_replace('/storage/', 'public/', $image->image_path);
+                if (Storage::exists($path)) {
+                    Storage::delete($path);
+                }
+                $image->delete();
+            });
+
         $service->delete();
 
-        return redirect()->route('services.index')->with('success', 'Servis başarıyla silindi.');
+        return redirect()->route('services.index')->with('success', 'Hizmet başarıyla silindi.');
     }
 }

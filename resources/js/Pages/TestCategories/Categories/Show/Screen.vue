@@ -3,7 +3,7 @@
     <div class="mx-auto max-w-4xl space-y-6 p-6">
       <div class="space-y-4">
         <h1 class="text-3xl font-bold text-foreground">{{ category.name }}</h1>
-        <p v-if="category.description" class="text-muted-foreground">{{ category.description }}</p>
+        <p v-if="category.description" class="text-muted-foreground">{{ stripHtml(category.description) }}</p>
       </div>
 
       <div v-if="tests && tests.length > 0" class="space-y-4">
@@ -17,7 +17,7 @@
           >
             <h3 class="font-semibold text-foreground">{{ test.title }}</h3>
             <p v-if="test.description" class="mt-2 text-sm text-muted-foreground line-clamp-2">
-              {{ test.description }}
+              {{ stripHtml(test.description) }}
             </p>
             <div class="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
               <span>{{ test.total_questions }} soru</span>
@@ -36,6 +36,7 @@
 <script setup>
 import { usePage, Link } from '@inertiajs/vue3';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import { stripHtml } from '@/utils/stripHtml';
 
 const { props } = usePage();
 const category = props.category || {};

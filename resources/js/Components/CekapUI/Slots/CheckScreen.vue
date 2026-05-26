@@ -1,6 +1,6 @@
 <template>
   <div :class="computedClass">
-    <div class="min-h-0 flex-1 overflow-y-auto overscroll-none">
+    <div class="min-h-0 flex-1 overflow-y-auto overscroll-y-auto">
       <div class="mx-auto max-w-full sm:max-w-[920px]" :class="{ 'xl:mx-auto': isWideScreen }">
         <slot />
       </div>

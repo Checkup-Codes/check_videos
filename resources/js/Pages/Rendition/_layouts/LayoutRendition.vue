@@ -1,6 +1,7 @@
 <template>
   <Head :title="titleName" />
-  <FlashMessage :message="flashSuccess" />
+  <FlashMessage :message="flashSuccess" variant="success" />
+  <FlashMessage :message="flashError" variant="error" />
   <CheckLayout
     :isCollapsed="isSidebarCollapsed"
     :is-narrow="isSidebarNarrow"
@@ -32,28 +33,15 @@ import SidebarRendition from '@/Pages/Rendition/_layouts/SidebarRendition.vue';
 import { usePage, Head } from '@inertiajs/vue3';
 import { ref, computed, onMounted, onBeforeUnmount, provide, watch } from 'vue';
 import { useStore } from 'vuex';
+import { useMobileSubsidebarLayout } from '@/composables/useMobileSubsidebarLayout';
 
 const page = usePage();
 const store = useStore();
 
-// Get current theme
 const currentTheme = computed(() => store.getters['Theme/getCurrentTheme']);
 
-// Real mobile detection based on window width (client-side only)
-const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024);
-const isMobile = computed(() => windowWidth.value < 1024);
-
-// Update window width on resize
-const updateWindowWidth = () => {
-  if (typeof window !== 'undefined') {
-    windowWidth.value = window.innerWidth;
-  }
-};
-
-// Get screen name from props - make it reactive
 const screenName = computed(() => page.props.screen?.name || '');
 
-// Browser tab title - screen.seo.title kullan (PageTitle | SiteName formatında)
 const titleName = computed(() => {
   return (
     page.props?.screen?.seo?.title ||
@@ -63,6 +51,22 @@ const titleName = computed(() => {
 });
 
 const flashSuccess = ref(page.props.flash?.success);
+const flashError = ref(page.props.flash?.error);
+
+watch(
+  () => page.props.flash?.success,
+  (value) => {
+    flashSuccess.value = value || null;
+  }
+);
+
+watch(
+  () => page.props.flash?.error,
+  (value) => {
+    flashError.value = value || null;
+  }
+);
+
 const isSidebarCollapsed = ref(true);
 const isSidebarNarrow = ref(store.getters['Writes/isCollapsed']);
 
@@ -78,7 +82,7 @@ const handleSidebarCollapse = (newState) => {
   isSidebarCollapsed.value = newState;
 };
 
-// Check if we're on a non-index page (show, create, or edit) - on mobile, hide sidebar for these pages
+// Check if we're on a non-index page (show, create, or edit)
 const isNonIndexPage = computed(() => {
   const currentUrl = page.url || '';
 
@@ -106,15 +110,13 @@ const isNonIndexPage = computed(() => {
   return isWordShowPage || isWordCreateEditPage || isPackShowPage || isPackCreateEditPage;
 });
 
-// On mobile: show only sidebar on index pages, only main content on non-index pages (show, create, edit)
-const shouldShowSidebarOnMobile = computed(() => {
-  if (!isMobile.value) return true; // Desktop: always show sidebar if collapsed
-  return !isNonIndexPage.value; // Mobile: show sidebar only on index pages
-});
-
-const shouldShowMainContentOnMobile = computed(() => {
-  if (!isMobile.value) return true; // Desktop: always show main content
-  return isNonIndexPage.value; // Mobile: show main content on non-index pages (show, create, edit)
+const {
+  shouldShowSidebarOnMobile,
+  shouldShowMainContentOnMobile,
+  showFullWidthMainOnMobile,
+} = useMobileSubsidebarLayout({
+  mode: 'sidebar-first',
+  isNonIndexPage: () => isNonIndexPage.value,
 });
 
 const mainContentClass = computed(() => {
@@ -123,7 +125,7 @@ const mainContentClass = computed(() => {
     'lg:ml-0': true,
   };
 
-  if (isMobile.value && isNonIndexPage.value) {
+  if (showFullWidthMainOnMobile.value) {
     classes['w-full'] = true;
   }
 
@@ -137,21 +139,10 @@ const isMounted = ref(false);
 onMounted(() => {
   isMounted.value = true;
   document.body.style.overflow = 'hidden';
-
-  // Initialize window width and add resize listener
-  if (typeof window !== 'undefined') {
-    windowWidth.value = window.innerWidth;
-    window.addEventListener('resize', updateWindowWidth);
-  }
 });
 
 onBeforeUnmount(() => {
   document.body.style.overflow = '';
-
-  // Remove resize listener
-  if (typeof window !== 'undefined') {
-    window.removeEventListener('resize', updateWindowWidth);
-  }
 });
 
 // Provide reactive data

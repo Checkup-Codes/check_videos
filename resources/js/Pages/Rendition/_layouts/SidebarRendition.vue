@@ -1,14 +1,8 @@
 <template>
   <CheckSubsidebar :isNarrow="isNarrow" :class="currentTheme">
-    <!-- Header -->
-    <div class="relative z-10 shrink-0 border-b border-border bg-background p-3">
-      <div class="flex items-center justify-between gap-2">
-        <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Kelime Paketleri</span>
-      </div>
-    </div>
-    <!-- Scrollable Content -->
+    <SubSidebarHeader title="Kelime Paketleri" :description="String(languagePacks.length)" />
     <SubSidebarScreen ref="scrollableRef" class="sidebar-content-embedded min-h-0 flex-1" :infoClass="'flex-1 min-h-0'">
-      <div class="space-y-1 p-2">
+      <SubSidebarContent>
         <Link
           v-for="languagePack in languagePacks"
           :key="languagePack.id"
@@ -55,7 +49,7 @@
             </div>
           </div>
         </Link>
-      </div>
+      </SubSidebarContent>
     </SubSidebarScreen>
   </CheckSubsidebar>
 </template>
@@ -66,6 +60,8 @@ import { usePage, Link } from '@inertiajs/vue3';
 import { useStore } from 'vuex';
 import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
 import SubSidebarScreen from '@/Components/CekapUI/Slots/SubSidebarScreen.vue';
+import SubSidebarHeader from '@/Components/CekapUI/Layout/SubSidebarHeader.vue';
+import SubSidebarContent from '@/Components/CekapUI/Layout/SubSidebarContent.vue';
 
 defineOptions({
   name: 'SidebarRendition',

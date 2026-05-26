@@ -2,11 +2,21 @@
   <div class="group rounded-lg border border-border bg-card transition-all hover:border-primary/40 hover:shadow-sm">
     <div class="flex items-center justify-between gap-3 p-4">
       <div class="flex flex-1 items-center gap-3 min-w-0" :class="{ 'cursor-pointer': hasChildren }" @click="toggle">
-        <!-- Icon -->
-        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 transition-all group-hover:from-primary/30 group-hover:to-primary/10">
-          <svg class="h-5 w-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
+        <!-- Icon / Cover -->
+        <div class="h-10 w-10 shrink-0 overflow-hidden rounded-md border border-border bg-muted/30" @click.stop>
+          <ZoomableImage
+            v-if="service.images?.[0]?.image_path"
+            :src="service.images[0].image_path"
+            :alt="service.name"
+            :gallery="service.images"
+            wrapper-class="h-full w-full"
+            img-class="h-full w-full object-cover"
+          />
+          <div v-else class="flex h-full w-full items-center justify-center">
+            <svg class="h-4 w-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
         </div>
 
         <!-- Content -->
@@ -112,6 +122,8 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
+import { stripHtml } from '@/utils/stripHtml';
+import ZoomableImage from '@/Components/CekapUI/Image/ZoomableImage.vue';
 
 const props = defineProps({
   service: {
@@ -145,10 +157,4 @@ const formatPrice = (price) => {
   return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 0 }).format(price);
 };
 
-const stripHtml = (html) => {
-  if (!html) return '';
-  const tmp = document.createElement('div');
-  tmp.innerHTML = html;
-  return tmp.textContent || tmp.innerText || '';
-};
 </script>

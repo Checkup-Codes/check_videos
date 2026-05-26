@@ -2,6 +2,7 @@
 
 namespace App\Models\Projects;
 
+use App\Models\WritesCategories\WriteImage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -46,5 +47,12 @@ class Project extends Model
     public function payments()
     {
         return $this->hasMany(ProjectPayment::class, 'project_id');
+    }
+
+    public function images()
+    {
+        return $this->hasMany(WriteImage::class, 'related_id')
+            ->where('category', WriteImage::CATEGORY_PROJECTS)
+            ->orderBy('order');
     }
 }

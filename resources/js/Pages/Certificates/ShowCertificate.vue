@@ -2,7 +2,7 @@
   <LayoutCertificates>
     <template #screen>
       <CheckScreen>
-        <div class="p-6 pt-12 sm:p-8 sm:pt-16">
+        <PageShell width="detail">
         <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
           <!-- Image Section -->
           <div class="space-y-4">
@@ -129,8 +129,8 @@
             </div>
           </div>
         </div>
-      </div>
-    </CheckScreen>
+        </PageShell>
+      </CheckScreen>
     </template>
   </LayoutCertificates>
 </template>
@@ -140,6 +140,7 @@ import { computed } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import LayoutCertificates from './_layouts/LayoutCertificates.vue';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import PageShell from '@/Components/CekapUI/Layout/PageShell.vue';
 
 const props = defineProps({
   certificate: Object,

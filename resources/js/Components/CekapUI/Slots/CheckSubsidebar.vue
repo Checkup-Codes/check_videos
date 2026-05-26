@@ -40,14 +40,12 @@ const computedClass = computed(() => {
   height: 100%;
 }
 
-/* Enhanced sidebar design with inner shadow and depth */
+/* Sidebar depth — light */
 .subsidebar-enhanced {
-  box-shadow:
-    inset 0 0 20px rgba(0, 0, 0, 0.08),
-    inset 0 4px 12px rgba(0, 0, 0, 0.04),
-    4px 0 12px rgba(0, 0, 0, 0.08),
-    -2px 0 8px rgba(0, 0, 0, 0.04);
   position: relative;
+  box-shadow:
+    inset -1px 0 0 hsl(var(--border) / 0.5),
+    4px 0 16px -4px rgb(0 0 0 / 0.06);
 }
 
 .subsidebar-enhanced::before {
@@ -57,24 +55,22 @@ const computedClass = computed(() => {
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(to right, transparent, hsl(var(--b3) / 0.5), transparent);
+  background: linear-gradient(to right, transparent, hsl(var(--border)), transparent);
   pointer-events: none;
   z-index: 1;
 }
 
-/* Dark theme adjustments */
-[data-theme*='dark'] .subsidebar-enhanced,
-html[data-theme*='dark'] .subsidebar-enhanced {
+/* Sidebar depth — dark */
+.dark .subsidebar-enhanced {
+  background-color: hsl(var(--muted)) !important;
+  border-color: hsl(var(--border)) !important;
   box-shadow:
-    inset 0 0 30px rgba(0, 0, 0, 0.3),
-    inset 0 4px 16px rgba(0, 0, 0, 0.2),
-    4px 0 20px rgba(0, 0, 0, 0.4),
-    -2px 0 12px rgba(0, 0, 0, 0.2);
-  border-color: hsl(var(--b3) / 0.4);
+    inset -1px 0 0 hsl(0 0% 100% / 0.05),
+    4px 0 24px -4px rgb(0 0 0 / 0.55),
+    0 0 0 1px hsl(var(--border) / 0.4);
 }
 
-[data-theme*='dark'] .subsidebar-enhanced::before,
-html[data-theme*='dark'] .subsidebar-enhanced::before {
-  background: linear-gradient(to right, transparent, hsl(var(--b2) / 0.6), transparent);
+.dark .subsidebar-enhanced::before {
+  background: linear-gradient(to right, transparent, hsl(0 0% 100% / 0.08), transparent);
 }
 </style>

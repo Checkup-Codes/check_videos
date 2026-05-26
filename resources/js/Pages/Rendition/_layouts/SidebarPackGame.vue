@@ -1,14 +1,8 @@
 <template>
   <CheckSubsidebar>
-    <!-- Header -->
-    <div class="relative z-10 shrink-0 border-b border-border bg-background p-2">
-      <div class="flex items-center justify-between gap-2">
-        <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Oyun Modları</span>
-      </div>
-    </div>
-    <!-- Scrollable Content -->
+    <SubSidebarHeader title="Oyun Modları" :description="String(games.length)" />
     <SubSidebarScreen ref="scrollContainer" class="sidebar-content-embedded min-h-0 flex-1">
-      <div class="space-y-1 p-3">
+      <SubSidebarContent>
         <button
           v-for="(game, index) in games"
           :key="index"
@@ -18,7 +12,7 @@
         >
           {{ game.name }}
         </button>
-      </div>
+      </SubSidebarContent>
     </SubSidebarScreen>
   </CheckSubsidebar>
 </template>
@@ -28,6 +22,8 @@ import { ref, computed } from 'vue';
 import { usePage, Link, router } from '@inertiajs/vue3';
 import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
 import SubSidebarScreen from '@/Components/CekapUI/Slots/SubSidebarScreen.vue';
+import SubSidebarHeader from '@/Components/CekapUI/Layout/SubSidebarHeader.vue';
+import SubSidebarContent from '@/Components/CekapUI/Layout/SubSidebarContent.vue';
 
 const page = usePage();
 const scrollContainer = ref(null);

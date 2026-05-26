@@ -1,11 +1,8 @@
 <template>
   <Head :title="browserTitle" />
   <CheckScreen>
-    <div class="mx-auto w-full max-w-5xl py-6 sm:py-8">
-      <!-- Hero Section -->
-      <div class="mb-8">
-        <h1 class="mb-5 text-2xl font-bold text-foreground sm:text-3xl">Çalışma Alanım</h1>
-      </div>
+    <PageShell width="detail">
+      <PageHeader title="Çalışma Alanım" :description="`${workspaces.length} kayıt`" />
 
       <!-- Single Workspace View -->
       <div v-if="workspaces.length === 1" class="space-y-8">
@@ -248,7 +245,7 @@
         <h3 class="mb-2 text-lg font-medium text-foreground">Henüz çalışma alanı yok</h3>
         <p class="text-sm text-muted-foreground">Çalışma alanları eklendiğinde burada görünecek.</p>
       </div>
-    </div>
+    </PageShell>
   </CheckScreen>
 </template>
 
@@ -256,6 +253,8 @@
 import { ref, computed } from 'vue';
 import { Link, usePage, Head } from '@inertiajs/vue3';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import PageShell from '@/Components/CekapUI/Layout/PageShell.vue';
+import PageHeader from '@/Components/CekapUI/Layout/PageHeader.vue';
 
 const page = usePage();
 

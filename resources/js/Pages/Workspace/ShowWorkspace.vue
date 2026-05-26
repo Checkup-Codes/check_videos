@@ -1,21 +1,17 @@
 <template>
   <Head :title="browserTitle" />
   <CheckScreen>
-    <div class="mx-auto max-w-6xl py-8">
-      <!-- Back Button -->
-      <div class="mb-6">
-        <Link
-          href="/workspace"
-          class="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-          </svg>
-          Geri
-        </Link>
-      </div>
+    <PageShell width="detail">
+      <Link
+        href="/workspace"
+        class="mb-6 inline-flex items-center gap-2 text-xs text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        Geri
+      </Link>
 
-      <!-- Workspace Content -->
       <article class="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
         <!-- Images Gallery -->
         <div v-if="workspace.images && workspace.images.length > 0" class="grid grid-cols-1 gap-2 p-4 md:grid-cols-2 lg:grid-cols-3">
@@ -80,7 +76,7 @@
           </div>
         </div>
       </article>
-    </div>
+    </PageShell>
   </CheckScreen>
 </template>
 
@@ -88,6 +84,7 @@
 import { computed } from 'vue';
 import { Link, usePage, Head } from '@inertiajs/vue3';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import PageShell from '@/Components/CekapUI/Layout/PageShell.vue';
 
 const page = usePage();
 

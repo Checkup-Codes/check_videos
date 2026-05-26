@@ -10,13 +10,20 @@
     @confirm="confirmDelete"
   />
 
-  <!-- Write Show Page Actions -->
-  <template v-if="isWriteShowPage && !isWriteEditPage && isLoggedIn && write">
-    <div :class="containerClass">
-      <Link
-        :href="route('writes.edit', write.id)"
-        @click="onLinkClick"
-        class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+  <PageActionToolbar
+    v-if="pageActionConfig"
+    :variant="variant"
+    :edit-href="pageActionConfig.editHref || ''"
+    :show-delete="pageActionConfig.showDelete !== false"
+    :on-link-click="onLinkClick"
+    @delete="handlePageDelete"
+  >
+    <template v-if="pageActionConfig.onPdf" #leading>
+      <button
+        type="button"
+        :title="'PDF indir'"
+        :class="pdfButtonClass"
+        @click="pageActionConfig.onPdf()"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -24,715 +31,27 @@
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          class="h-3.5 w-3.5"
+          class="h-4 w-4 shrink-0"
+          aria-hidden="true"
         >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
-            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
           />
         </svg>
-        Düzenle
-      </Link>
-      <Button
-        @click="deleteWrite(write.id)"
-        variant="outline"
-        size="sm"
-        class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="mr-1.5 h-3.5 w-3.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-          />
-        </svg>
-        Sil
-      </Button>
-    </div>
-  </template>
-
-  <!-- Write Edit Page Actions - Only Delete Button -->
-  <template v-else-if="isWriteEditPage && isLoggedIn && write">
-    <Button
-      @click="deleteWrite(write.id)"
-      variant="outline"
-      size="sm"
-      class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="mr-1.5 h-3.5 w-3.5"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-        />
-      </svg>
-      Sil
-    </Button>
-  </template>
-
-  <!-- Category Show Page Actions -->
-  <template v-else-if="isCategoryShowPage && !isCategoryEditPage && isLoggedIn && category">
-    <div :class="containerClass">
-      <Link
-        :href="route('categories.edit', category.id)"
-        @click="onLinkClick"
-        class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="h-3.5 w-3.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-          />
-        </svg>
-        Düzenle
-      </Link>
-      <Button
-        @click="deleteCategory(category.id)"
-        variant="outline"
-        size="sm"
-        class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="mr-1.5 h-3.5 w-3.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-          />
-        </svg>
-        Sil
-      </Button>
-    </div>
-  </template>
-
-  <!-- Category Edit Page Actions - Only Delete Button -->
-  <template v-else-if="isCategoryEditPage && isLoggedIn && category">
-    <Button
-      @click="deleteCategory(category.id)"
-      variant="outline"
-      size="sm"
-      class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="mr-1.5 h-3.5 w-3.5"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-        />
-      </svg>
-      Sil
-    </Button>
-  </template>
-
-  <!-- Word Show Page Actions (both standalone words and words in packs) -->
-  <template v-else-if="isWordShowPage && isLoggedIn && word">
-    <div :class="containerClass">
-      <Link
-        :href="route('rendition.words.edit', word.id)"
-        @click="onLinkClick"
-        class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="h-3.5 w-3.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-          />
-        </svg>
-        Düzenle
-      </Link>
-      <Button
-        @click="deleteWord(word.id)"
-        variant="outline"
-        size="sm"
-        class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="mr-1.5 h-3.5 w-3.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-          />
-        </svg>
-        Sil
-      </Button>
-    </div>
-  </template>
-
-  <!-- Language Pack Show Page Actions -->
-  <template v-else-if="isLanguagePackShowPage && isLoggedIn && pack">
-    <div :class="containerClass">
-      <Link
-        :href="route('rendition.language-packs.edit', pack.id)"
-        @click="onLinkClick"
-        class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="h-3.5 w-3.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-          />
-        </svg>
-        Düzenle
-      </Link>
-      <Button
-        @click="deleteLanguagePack(pack.id)"
-        variant="outline"
-        size="sm"
-        class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="mr-1.5 h-3.5 w-3.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-          />
-        </svg>
-        Sil
-      </Button>
-    </div>
-  </template>
-
-  <!-- Version Show Page Actions -->
-  <template v-else-if="isVersionShowPage && isLoggedIn && version">
-    <div :class="containerClass">
-      <Link
-        :href="route('versions.edit', version.id)"
-        @click="onLinkClick"
-        class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="h-3.5 w-3.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-          />
-        </svg>
-        Düzenle
-      </Link>
-      <Button
-        @click="deleteVersion(version.id)"
-        variant="outline"
-        size="sm"
-        class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="mr-1.5 h-3.5 w-3.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-          />
-        </svg>
-        Sil
-      </Button>
-    </div>
-  </template>
-
-  <!-- Test Category Show Page Actions -->
-  <template v-else-if="isTestCategoryShowPage && !isTestCategoryEditPage && isLoggedIn && testCategory">
-    <div :class="containerClass">
-      <Link
-        :href="route('test-categories.edit', testCategory.slug)"
-        @click="onLinkClick"
-        class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="h-3.5 w-3.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-          />
-        </svg>
-        Düzenle
-      </Link>
-      <Button
-        @click="deleteTestCategory(testCategory.slug || testCategory.id)"
-        variant="outline"
-        size="sm"
-        class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="mr-1.5 h-3.5 w-3.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-          />
-        </svg>
-        Sil
-      </Button>
-    </div>
-  </template>
-
-  <!-- Test Category Edit Page Actions - Only Delete Button -->
-  <template v-else-if="isTestCategoryEditPage && isLoggedIn && testCategory">
-    <Button
-      @click="deleteTestCategory(testCategory.slug || testCategory.id)"
-      variant="outline"
-      size="sm"
-      class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="mr-1.5 h-3.5 w-3.5"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-        />
-      </svg>
-      Sil
-    </Button>
-  </template>
-
-  <!-- Test Show Page Actions -->
-  <template v-else-if="isTestShowPage && !isTestEditPage && isLoggedIn && test">
-    <div :class="containerClass">
-      <Link
-        :href="route('tests.edit', test.slug)"
-        @click="onLinkClick"
-        class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="h-3.5 w-3.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-          />
-        </svg>
-        Düzenle
-      </Link>
-      <Button
-        @click="deleteTest(test.slug || test.id)"
-        variant="outline"
-        size="sm"
-        class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="mr-1.5 h-3.5 w-3.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-          />
-        </svg>
-        Sil
-      </Button>
-    </div>
-  </template>
-
-  <!-- Test Edit Page Actions - Only Delete Button -->
-  <template v-else-if="isTestEditPage && isLoggedIn && test">
-    <Button
-      @click="deleteTest(test.slug || test.id)"
-      variant="outline"
-      size="sm"
-      class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="mr-1.5 h-3.5 w-3.5"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-        />
-      </svg>
-      Sil
-    </Button>
-  </template>
-
-  <!-- Journey Show Page Actions -->
-  <template v-else-if="isJourneyShowPage && !isJourneyEditPage && isLoggedIn && journey">
-    <div :class="containerClass">
-      <Link
-        :href="route('journey.edit', journey.id)"
-        @click="onLinkClick"
-        class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="h-3.5 w-3.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-          />
-        </svg>
-        Düzenle
-      </Link>
-      <Button
-        @click="deleteJourney(journey.id)"
-        variant="outline"
-        size="sm"
-        class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="mr-1.5 h-3.5 w-3.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-          />
-        </svg>
-        Sil
-      </Button>
-    </div>
-  </template>
-
-  <!-- Journey Edit Page Actions - Only Delete Button -->
-  <template v-else-if="isJourneyEditPage && isLoggedIn && journey">
-    <Button
-      @click="deleteJourney(journey.id)"
-      variant="outline"
-      size="sm"
-      class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="mr-1.5 h-3.5 w-3.5"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-        />
-      </svg>
-      Sil
-    </Button>
-  </template>
-
-  <!-- Service Show Page Actions -->
-  <template v-else-if="isServiceShowPage && !isServiceEditPage && isLoggedIn && service">
-    <div :class="containerClass">
-      <Link :href="`/services/${service.id}/edit`" @click="onLinkClick" :class="editButtonClass">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          :class="iconClass"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-          />
-        </svg>
-        <span v-if="variant === 'mobile'">Düzenle</span>
-      </Link>
-      <Button
-        @click="deleteService(service.id)"
-        :variant="variant === 'mobile' ? 'destructive' : 'outline'"
-        :size="variant === 'mobile' ? 'default' : 'sm'"
-        :class="deleteButtonClass"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          :class="iconClass"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-          />
-        </svg>
-        <span v-if="variant === 'mobile'">Sil</span>
-      </Button>
-    </div>
-  </template>
-
-  <!-- Service Edit Page Actions - Only Delete Button -->
-  <template v-else-if="isServiceEditPage && isLoggedIn && service">
-    <Button
-      @click="deleteService(service.id)"
-      :variant="variant === 'mobile' ? 'destructive' : 'outline'"
-      :size="variant === 'mobile' ? 'default' : 'sm'"
-      :class="deleteButtonClass"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        :class="iconClass"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-        />
-      </svg>
-      <span v-if="variant === 'mobile'">Sil</span>
-    </Button>
-  </template>
-
-  <!-- Workspace Show Page Actions -->
-  <template v-else-if="isWorkspaceShowPage && !isWorkspaceEditPage && isLoggedIn && workspace">
-    <div :class="containerClass">
-      <Link
-        :href="`/workspace/${workspace.id}/edit`"
-        @click="onLinkClick"
-        class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="h-3.5 w-3.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-          />
-        </svg>
-        Düzenle
-      </Link>
-      <Button
-        @click="deleteWorkspace(workspace.id)"
-        variant="outline"
-        size="sm"
-        class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="mr-1.5 h-3.5 w-3.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-          />
-        </svg>
-        Sil
-      </Button>
-    </div>
-  </template>
-
-  <!-- Workspace Edit Page Actions - Only Delete Button -->
-  <template v-else-if="isWorkspaceEditPage && isLoggedIn && workspace">
-    <Button
-      @click="deleteWorkspace(workspace.id)"
-      variant="outline"
-      size="sm"
-      class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="mr-1.5 h-3.5 w-3.5"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-        />
-      </svg>
-      Sil
-    </Button>
-  </template>
-
-  <!-- Certificate Show Page Actions -->
-  <template v-else-if="isCertificateShowPage && isLoggedIn && certificate">
-    <div :class="containerClass">
-      <Link
-        :href="route('certificates.edit', certificate.id)"
-        @click="onLinkClick"
-        class="inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="h-3.5 w-3.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-          />
-        </svg>
-        Düzenle
-      </Link>
-      <Button
-        @click="deleteCertificate(certificate.id)"
-        variant="outline"
-        size="sm"
-        class="h-8 border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="mr-1.5 h-3.5 w-3.5"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-          />
-        </svg>
-        Sil
-      </Button>
-    </div>
-  </template>
+        <span :class="pdfLabelClass">PDF</span>
+      </button>
+    </template>
+  </PageActionToolbar>
 </template>
 
 <script setup>
 import { computed, ref } from 'vue';
-import { Link, usePage, router } from '@inertiajs/vue3';
-import Button from '@/Components/UI/Button.vue';
+import { usePage, router } from '@inertiajs/vue3';
 import DeleteConfirmationModal from '@/Components/CekapUI/Dialog/DeleteConfirmationModal.vue';
+import PageActionToolbar from '@/Components/CekapUI/Layout/PageActionToolbar.vue';
+import { triggerProjectPdfExport } from '@/composables/useProjectPdfExport';
 
 const props = defineProps({
   variant: {
@@ -850,6 +169,34 @@ const isServiceEditPage = computed(() => {
   return url.startsWith('/services/') && url.includes('/edit');
 });
 
+const isProjectShowPage = computed(() => {
+  const url = page.url;
+  if (!url.startsWith('/projects/') || url.includes('/edit') || url === '/projects/create') {
+    return false;
+  }
+  const parts = url.split('/').filter((part) => part.length > 0);
+  return parts.length === 2 && parts[0] === 'projects';
+});
+
+const isProjectEditPage = computed(() => {
+  const url = page.url;
+  return url.startsWith('/projects/') && url.includes('/edit');
+});
+
+const isCustomerShowPage = computed(() => {
+  const url = page.url;
+  if (!url.startsWith('/customers/') || url.includes('/edit') || url === '/customers/create') {
+    return false;
+  }
+  const parts = url.split('/').filter((part) => part.length > 0);
+  return parts.length === 2 && parts[0] === 'customers';
+});
+
+const isCustomerEditPage = computed(() => {
+  const url = page.url;
+  return url.startsWith('/customers/') && url.includes('/edit');
+});
+
 const isWorkspaceShowPage = computed(() => {
   const url = page.url;
   return url.startsWith('/workspace/') && url !== '/workspace' && url !== '/workspace/create' && !url.includes('/edit');
@@ -883,31 +230,149 @@ const journey = computed(() => page.props.entry || null);
 const service = computed(() => page.props.service || null);
 const workspace = computed(() => page.props.workspace || null);
 const certificate = computed(() => page.props.certificate || null);
+const pack = computed(() => page.props.pack || null);
+const project = computed(() => page.props.project || null);
+const customer = computed(() => page.props.customer || null);
+const isGuestProjectView = computed(() => !!page.props.isGuestView);
 
-// Dynamic classes based on variant
-const containerClass = computed(() => {
-  return props.variant === 'mobile' ? 'flex flex-col gap-2' : 'flex items-center gap-2';
+const pdfButtonClass = computed(() => {
+  if (props.variant === 'mobile') {
+    return 'flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-foreground transition-colors hover:bg-accent';
+  }
+  return 'inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring';
 });
 
-const editButtonClass = computed(() => {
-  const base =
-    props.variant === 'mobile'
-      ? 'flex w-full items-center gap-3 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground'
-      : 'inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
-  return base;
+const pdfLabelClass = computed(() => (props.variant === 'mobile' ? 'text-sm font-medium' : 'sr-only'));
+
+const pageActionConfig = computed(() => {
+  if (!isLoggedIn.value) {
+    return null;
+  }
+
+  if (isWriteShowPage.value && !isWriteEditPage.value && write.value) {
+    return {
+      editHref: route('writes.edit', write.value.id),
+      onDelete: () => deleteWrite(write.value.id),
+    };
+  }
+  if (isWriteEditPage.value && write.value) {
+    return { onDelete: () => deleteWrite(write.value.id) };
+  }
+
+  if (isCategoryShowPage.value && !isCategoryEditPage.value && category.value) {
+    return {
+      editHref: route('categories.edit', category.value.id),
+      onDelete: () => deleteCategory(category.value.id),
+    };
+  }
+  if (isCategoryEditPage.value && category.value) {
+    return { onDelete: () => deleteCategory(category.value.id) };
+  }
+
+  if (isWordShowPage.value && word.value) {
+    return {
+      editHref: route('rendition.words.edit', word.value.id),
+      onDelete: () => deleteWord(word.value.id),
+    };
+  }
+  if (isLanguagePackShowPage.value && pack.value) {
+    return {
+      editHref: route('rendition.language-packs.edit', pack.value.id),
+      onDelete: () => deleteLanguagePack(pack.value.id),
+    };
+  }
+
+  if (isVersionShowPage.value && version.value) {
+    return {
+      editHref: route('versions.edit', version.value.id),
+      onDelete: () => deleteVersion(version.value.id),
+    };
+  }
+
+  if (isTestCategoryShowPage.value && !isTestCategoryEditPage.value && testCategory.value) {
+    return {
+      editHref: route('test-categories.edit', testCategory.value.slug),
+      onDelete: () => deleteTestCategory(testCategory.value.slug),
+    };
+  }
+  if (isTestCategoryEditPage.value && testCategory.value) {
+    return { onDelete: () => deleteTestCategory(testCategory.value.slug) };
+  }
+
+  if (isTestShowPage.value && !isTestEditPage.value && test.value) {
+    return {
+      editHref: route('tests.edit', test.value.slug),
+      onDelete: () => deleteTest(test.value.slug),
+    };
+  }
+  if (isTestEditPage.value && test.value) {
+    return { onDelete: () => deleteTest(test.value.slug) };
+  }
+
+  if (isJourneyShowPage.value && !isJourneyEditPage.value && journey.value) {
+    return {
+      editHref: route('journey.edit', journey.value.id),
+      onDelete: () => deleteJourney(journey.value.id),
+    };
+  }
+  if (isJourneyEditPage.value && journey.value) {
+    return { onDelete: () => deleteJourney(journey.value.id) };
+  }
+
+  if (isServiceShowPage.value && !isServiceEditPage.value && service.value) {
+    return {
+      editHref: `/services/${service.value.id}/edit`,
+      onDelete: () => deleteService(service.value.id),
+    };
+  }
+  if (isServiceEditPage.value && service.value) {
+    return { onDelete: () => deleteService(service.value.id) };
+  }
+
+  if (isProjectShowPage.value && !isProjectEditPage.value && project.value?.id && !isGuestProjectView.value) {
+    return {
+      editHref: route('projects.edit', project.value.id),
+      onDelete: () => deleteProject(project.value.id),
+      onPdf: triggerProjectPdfExport,
+    };
+  }
+  if (isProjectEditPage.value && project.value?.id) {
+    return { onDelete: () => deleteProject(project.value.id) };
+  }
+
+  if (isCustomerShowPage.value && !isCustomerEditPage.value && customer.value?.id) {
+    return {
+      editHref: route('customers.edit', customer.value.id),
+      onDelete: () => deleteCustomer(customer.value.id),
+    };
+  }
+  if (isCustomerEditPage.value && customer.value?.id) {
+    return { onDelete: () => deleteCustomer(customer.value.id) };
+  }
+
+  if (isWorkspaceShowPage.value && !isWorkspaceEditPage.value && workspace.value) {
+    return {
+      editHref: `/workspace/${workspace.value.id}/edit`,
+      onDelete: () => deleteWorkspace(workspace.value.id),
+    };
+  }
+  if (isWorkspaceEditPage.value && workspace.value) {
+    return { onDelete: () => deleteWorkspace(workspace.value.id) };
+  }
+
+  if (isCertificateShowPage.value && certificate.value) {
+    return {
+      editHref: route('certificates.edit', certificate.value.id),
+      onDelete: () => deleteCertificate(certificate.value.id),
+    };
+  }
+
+  return null;
 });
 
-const deleteButtonClass = computed(() => {
-  const base =
-    props.variant === 'mobile'
-      ? 'flex w-full items-center gap-3 rounded-md border border-destructive bg-background px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive hover:text-destructive-foreground'
-      : 'inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-destructive bg-background px-3 text-xs font-medium text-destructive transition-colors hover:bg-destructive hover:text-destructive-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
-  return base;
-});
-
-const iconClass = computed(() => {
-  return props.variant === 'mobile' ? 'h-4 w-4' : 'h-3.5 w-3.5';
-});
+const handlePageDelete = () => {
+  pageActionConfig.value?.onDelete?.();
+};
 
 // Delete modal state
 const showDeleteModal = ref(false);
@@ -1164,6 +629,54 @@ const deleteLanguagePack = async (id) => {
   );
 };
 
+const deleteProject = async (id) => {
+  const performDelete = async () => {
+    await router.delete(route('projects.destroy', id), {
+      onSuccess: () => {
+        router.visit(route('projects.index'));
+        if (props.variant === 'mobile' && props.onLinkClick) {
+          props.onLinkClick();
+        }
+      },
+      onError: (errors) => {
+        console.error('Error deleting project:', errors);
+        alert('Proje silinirken bir hata oluştu. Lütfen tekrar deneyin.');
+      },
+    });
+  };
+
+  openDeleteModal(
+    'Projeyi Sil',
+    'Bu projeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+    '',
+    performDelete
+  );
+};
+
+const deleteCustomer = async (id) => {
+  const performDelete = async () => {
+    await router.delete(route('customers.destroy', id), {
+      onSuccess: () => {
+        router.visit(route('customers.index'));
+        if (props.variant === 'mobile' && props.onLinkClick) {
+          props.onLinkClick();
+        }
+      },
+      onError: (errors) => {
+        console.error('Error deleting customer:', errors);
+        alert('Müşteri silinirken bir hata oluştu. Lütfen tekrar deneyin.');
+      },
+    });
+  };
+
+  openDeleteModal(
+    'Müşteriyi Sil',
+    'Bu müşteriyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+    '',
+    performDelete
+  );
+};
+
 const deleteService = async (id) => {
   const performDelete = async () => {
     await router.delete(`/services/${id}`, {
@@ -1175,14 +688,14 @@ const deleteService = async (id) => {
       },
       onError: (errors) => {
         console.error('Error deleting service:', errors);
-        alert('Servis silinirken bir hata oluştu. Lütfen tekrar deneyin.');
+        alert('Hizmet silinirken bir hata oluştu. Lütfen tekrar deneyin.');
       },
     });
   };
 
   openDeleteModal(
-    'Servisi Sil',
-    'Bu servisi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+    'Hizmeti Sil',
+    'Bu hizmeti silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
     '',
     performDelete
   );

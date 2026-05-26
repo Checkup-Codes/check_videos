@@ -6,7 +6,7 @@
             'flex flex-col lg:grid h-[calc(100vh-3rem)] lg:h-full',
             isNarrow ? 'lg:grid-cols-subsidebar-narrow' : 'lg:grid-cols-subsidebar',
           ]
-        : 'h-[calc(100vh-3rem)] lg:h-full',
+        : 'flex h-full min-h-0 flex-col lg:h-full',
       'overflow-hidden overscroll-none scrollbar-hide',
     ]"
   >
@@ -21,7 +21,7 @@
     <!-- Main content -->
     <div
       :class="[
-        'main-content-container min-h-0 flex-1 lg:h-full overflow-hidden',
+        'main-content-container flex min-h-0 h-full flex-1 flex-col overflow-hidden',
         showMainContentOnMobile === false ? 'hidden lg:block' : '',
       ]"
     >

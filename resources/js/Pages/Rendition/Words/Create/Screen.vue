@@ -412,7 +412,21 @@ const errors = computed(() => usePage().props.errors);
 const processing = ref(false);
 const newSynonym = ref('');
 const showIncompleteList = ref(false);
-const activeTab = ref('single'); // Tab state
+const page = usePage();
+const hasBulkErrors = computed(() =>
+  Object.keys(page.props.errors || {}).some((key) => key === 'words' || key.startsWith('words.'))
+);
+const activeTab = ref(hasBulkErrors.value || page.props.flash?.error ? 'bulk' : 'single');
+
+watch(
+  () => [page.props.errors, page.props.flash?.error],
+  () => {
+    if (hasBulkErrors.value || page.props.flash?.error) {
+      activeTab.value = 'bulk';
+    }
+  },
+  { deep: true }
+);
 
 const form = useForm({
   word: '',

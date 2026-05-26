@@ -2,6 +2,7 @@
 
 namespace App\Models\Projects;
 
+use App\Models\WritesCategories\WriteImage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -52,5 +53,12 @@ class Service extends Model
     public function todos()
     {
         return $this->hasMany(\App\Models\Projects\ProjectServiceTodo::class, 'service_id');
+    }
+
+    public function images()
+    {
+        return $this->hasMany(WriteImage::class, 'related_id')
+            ->where('category', WriteImage::CATEGORY_SERVICES)
+            ->orderBy('order');
     }
 }

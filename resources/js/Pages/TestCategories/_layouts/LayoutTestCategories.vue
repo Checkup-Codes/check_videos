@@ -18,7 +18,7 @@
         <component :is="sidebarComponent" :key="screenName" @update:isNarrow="handleSidebarWidthChange" />
       </KeepAlive>
     </template>
-    <div :class="[shouldShowMainContentOnMobile ? 'block' : 'hidden lg:block', 'h-full min-h-0 overflow-hidden', mainContentClass]">
+    <div :class="[shouldShowMainContentOnMobile ? 'block' : 'hidden lg:block', 'flex h-full min-h-0 flex-col overflow-hidden', mainContentClass]">
       <slot name="screen"></slot>
     </div>
   </CheckLayout>
@@ -34,6 +34,7 @@ import FlashMessage from '@/Components/CekapUI/Notifications/FlashMessage.vue';
 import { useSidebar } from '../_utils/useSidebar';
 import { useFlashMessage } from '../_utils/useFlashMessage';
 import { useStore } from 'vuex';
+import { useMobileSubsidebarLayout } from '@/composables/useMobileSubsidebarLayout';
 
 defineOptions({
   name: 'LayoutTestCategories',
@@ -69,18 +70,7 @@ const isLoggedIn = computed(() => {
   return !!(page.props.auth && page.props.auth.user);
 });
 
-// Real mobile detection based on window width (client-side only)
-const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024);
-const isMobile = computed(() => windowWidth.value < 1024);
-
-// Update window width on resize
-const updateWindowWidth = () => {
-  if (typeof window !== 'undefined') {
-    windowWidth.value = window.innerWidth;
-  }
-};
-
-// Check if we're on a non-index page (show, create, or edit) - on mobile, hide sidebar for these pages
+// Check if we're on a non-index page (show, create, or edit)
 const isNonIndexPage = computed(() => {
   const currentUrl = page.url || '';
 
@@ -116,15 +106,14 @@ const shouldHideSidebarContent = computed(() => {
   return url.includes('/take') || url.includes('/result');
 });
 
-// On mobile: show only sidebar on index pages, only main content on non-index pages (show, create, edit)
-const shouldShowSidebarOnMobile = computed(() => {
-  if (!isMobile.value) return true; // Desktop: always show sidebar if collapsed
-  return !isNonIndexPage.value; // Mobile: show sidebar only on index pages
-});
-
-const shouldShowMainContentOnMobile = computed(() => {
-  if (!isMobile.value) return true; // Desktop: always show main content
-  return isNonIndexPage.value || shouldHideSidebarContent.value; // Mobile: show main content on non-index and full-screen test pages
+const {
+  shouldShowSidebarOnMobile,
+  shouldShowMainContentOnMobile,
+  showFullWidthMainOnMobile,
+} = useMobileSubsidebarLayout({
+  mode: 'sidebar-first',
+  isNonIndexPage: () => isNonIndexPage.value,
+  forceMainContent: () => shouldHideSidebarContent.value,
 });
 
 // Determine which sidebar component to display based on screen name
@@ -151,8 +140,7 @@ const mainContentClass = computed(() => {
     'lg:ml-0': true,
   };
 
-  // Mobil non-index ve full-screen test sayfalarında tam genişlik
-  if (isMobile.value && (isNonIndexPage.value || shouldHideSidebarContent.value)) {
+  if (showFullWidthMainOnMobile.value) {
     classes['w-full'] = true;
   }
 
@@ -168,21 +156,10 @@ const isMounted = ref(false);
 onMounted(() => {
   isMounted.value = true;
   document.body.style.overflow = 'hidden';
-
-  // Initialize window width and add resize listener
-  if (typeof window !== 'undefined') {
-    windowWidth.value = window.innerWidth;
-    window.addEventListener('resize', updateWindowWidth);
-  }
 });
 
 onBeforeUnmount(() => {
   document.body.style.overflow = '';
-
-  // Remove resize listener
-  if (typeof window !== 'undefined') {
-    window.removeEventListener('resize', updateWindowWidth);
-  }
 });
 
 // Provide reactive data

@@ -1,79 +1,81 @@
 <template>
-  <CheckScreen>
-    <div class="mx-auto max-w-4xl">
-      <div class="mb-6">
-        <h1 class="text-2xl font-bold text-foreground">{{ service.name }}</h1>
-        <div v-if="service.price" class="mt-2 inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-primary/10 to-primary/5 px-4 py-2">
-          <svg class="h-4 w-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span class="text-sm font-semibold text-primary">{{ formatPrice(service.price) }}</span>
-        </div>
+  <ProjectsPageFrame :title="service.name" :description="service.price ? formatPrice(service.price) : ''">
+      <div v-if="coverImage" class="mb-4 overflow-hidden rounded-md border border-border">
+        <ZoomableImage
+          :src="coverImage"
+          :alt="service.name"
+          :gallery="allServiceImages"
+          :index="0"
+          wrapper-class="w-full"
+          img-class="aspect-[16/9] w-full object-cover"
+        />
       </div>
 
-      <!-- Description with Quill Content -->
+      <div v-if="galleryImages.length" class="mb-4 flex gap-2 overflow-x-auto pb-1">
+        <ZoomableImage
+          v-for="(image, galleryIndex) in galleryImages"
+          :key="image.id"
+          :src="image.image_path"
+          :alt="image.alt_text || service.name"
+          :gallery="allServiceImages"
+          :index="galleryIndex + 1"
+          wrapper-class="h-20 w-20 shrink-0 overflow-hidden rounded-md border border-border"
+          img-class="h-full w-full object-cover"
+        />
+      </div>
+
       <div
         v-if="service.description"
-        class="quill-content prose prose-sm dark:prose-invert mb-6 rounded-lg border border-border bg-card p-6"
+        class="quill-content prose prose-sm dark:prose-invert mb-4 rounded-md border border-border bg-card p-4"
         v-html="service.description"
       ></div>
 
-      <!-- Parent Category -->
-      <div v-if="service.parentCategory" class="mb-6">
-        <h3 class="mb-3 text-sm font-semibold text-foreground">Üst Kategori</h3>
-        <div class="rounded-lg border border-border bg-card p-4">
-          <div class="flex items-start justify-between gap-3">
-            <div class="flex-1">
-              <h4 class="text-sm font-semibold text-foreground">{{ service.parentCategory.name }}</h4>
-              <div
-                v-if="service.parentCategory.description"
-                class="quill-content prose prose-sm dark:prose-invert mt-2"
-                v-html="service.parentCategory.description"
-              ></div>
-            </div>
-            <div v-if="service.parentCategory.price" class="shrink-0 rounded-md bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary">
-              {{ formatPrice(service.parentCategory.price) }}
-            </div>
-          </div>
-        </div>
+      <div v-if="service.parentCategory" class="mb-4 rounded-md border border-border p-3">
+        <p class="mb-1 text-xs text-muted-foreground">Üst kategori</p>
+        <p class="text-sm font-medium text-foreground">{{ service.parentCategory.name }}</p>
       </div>
 
-      <!-- Sub Categories -->
-      <div v-if="service.subCategories && service.subCategories.length" class="mb-6">
-        <h3 class="mb-3 text-sm font-semibold text-foreground">Alt Hizmetler</h3>
-        <ul class="space-y-2">
-          <li
+      <div v-if="service.subCategories?.length">
+        <p class="mb-2 text-xs font-medium text-muted-foreground">Alt hizmetler</p>
+        <div class="divide-y divide-border rounded-md border border-border">
+          <Link
             v-for="subCategory in service.subCategories"
             :key="subCategory.id"
-            class="group rounded-lg border border-border bg-card p-4 transition-all hover:border-primary/40 hover:shadow-sm"
+            :href="`/services/${subCategory.id}`"
+            class="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/40"
           >
-            <div class="flex items-start justify-between gap-3">
-              <div class="flex-1">
-                <h4 class="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{{ subCategory.name }}</h4>
-                <div
-                  v-if="subCategory.description"
-                  class="quill-content prose prose-sm dark:prose-invert mt-2"
-                  v-html="subCategory.description"
-                ></div>
-              </div>
-              <div v-if="subCategory.price" class="shrink-0 rounded-md bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary">
-                {{ formatPrice(subCategory.price) }}
-              </div>
+            <div class="h-10 w-10 shrink-0 overflow-hidden rounded-md border border-border bg-muted/30">
+              <ZoomableImage
+                v-if="subCategory.images?.[0]?.image_path"
+                :src="subCategory.images[0].image_path"
+                :alt="subCategory.name"
+                wrapper-class="h-full w-full"
+                img-class="h-full w-full object-cover"
+              />
             </div>
-          </li>
-        </ul>
+            <div class="min-w-0 flex-1">
+              <p class="truncate text-sm font-medium text-foreground">{{ subCategory.name }}</p>
+              <p v-if="subCategory.price" class="text-xs text-muted-foreground">{{ formatPrice(subCategory.price) }}</p>
+            </div>
+          </Link>
+        </div>
       </div>
-    </div>
-  </CheckScreen>
+  </ProjectsPageFrame>
 </template>
 
 <script setup>
-import { usePage } from '@inertiajs/vue3';
-import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import { computed } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import ProjectsPageFrame from '@/Pages/Projects/_components/ProjectsPageFrame.vue';
+import ZoomableImage from '@/Components/CekapUI/Image/ZoomableImage.vue';
 import '@/Shared/Css/quill-styles.css';
 
-const { props } = usePage();
-const service = props.service;
+const page = usePage();
+const service = computed(() => page.props.service || {});
+
+const coverImage = computed(() => service.value.images?.[0]?.image_path || null);
+const galleryImages = computed(() => (service.value.images || []).slice(1));
+const allServiceImages = computed(() => service.value.images || []);
 
 const formatPrice = (price) => {
   if (!price) return '₺0';

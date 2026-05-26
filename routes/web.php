@@ -32,6 +32,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\SeoController;
+use App\Http\Controllers\GuestVisibilityController;
 
 // Public Routes
 Route::get('/', [IndexController::class, 'index']);
@@ -48,19 +49,42 @@ Route::delete('/writes/{write}/draw/{version}', [WritesController::class, 'destr
 Route::resource('/categories', CategoriesController::class);
 Route::get('/categories/{category}/{slug}', [CategoriesController::class, 'showByCategory'])->name('categories.showByCategory');
 
-// Tests & Test Categories Routes (Public)
-Route::resource('/tests', TestsController::class);
-Route::post('/tests/bulk-store', [TestsController::class, 'bulkStore'])->name('tests.bulk-store');
-Route::get('/tests/{test}/take', [TestsController::class, 'take'])->name('tests.take');
-Route::post('/tests/{test}/submit', [TestsController::class, 'submit'])->name('tests.submit');
-Route::get('/tests/result/{result}', [TestsController::class, 'result'])->name('tests.result');
-Route::resource('/test-categories', TestCategoriesController::class);
+// Tests — ziyaretçi: index/show/take; CRUD: auth
+Route::middleware('module.access:tests')->group(function () {
+    Route::get('/tests', [TestsController::class, 'index'])->name('tests.index');
+    Route::get('/tests/{test}', [TestsController::class, 'show'])->name('tests.show');
+    Route::get('/tests/{test}/take', [TestsController::class, 'take'])->name('tests.take');
+    Route::post('/tests/{test}/submit', [TestsController::class, 'submit'])->name('tests.submit');
+    Route::get('/tests/result/{result}', [TestsController::class, 'result'])->name('tests.result');
+
+    Route::get('/test-categories', [TestCategoriesController::class, 'index'])->name('test-categories.index');
+    Route::get('/test-categories/{test_category}', [TestCategoriesController::class, 'show'])->name('test-categories.show');
+});
+
+Route::middleware(['auth', 'verified', 'module.access:tests'])->group(function () {
+    Route::get('/tests/create', [TestsController::class, 'create'])->name('tests.create');
+    Route::post('/tests', [TestsController::class, 'store'])->name('tests.store');
+    Route::post('/tests/bulk-store', [TestsController::class, 'bulkStore'])->name('tests.bulk-store');
+    Route::get('/tests/{test}/edit', [TestsController::class, 'edit'])->name('tests.edit');
+    Route::put('/tests/{test}', [TestsController::class, 'update'])->name('tests.update');
+    Route::patch('/tests/{test}', [TestsController::class, 'update']);
+    Route::delete('/tests/{test}', [TestsController::class, 'destroy'])->name('tests.destroy');
+
+    Route::get('/test-categories/create', [TestCategoriesController::class, 'create'])->name('test-categories.create');
+    Route::post('/test-categories', [TestCategoriesController::class, 'store'])->name('test-categories.store');
+    Route::get('/test-categories/{test_category}/edit', [TestCategoriesController::class, 'edit'])->name('test-categories.edit');
+    Route::put('/test-categories/{test_category}', [TestCategoriesController::class, 'update'])->name('test-categories.update');
+    Route::patch('/test-categories/{test_category}', [TestCategoriesController::class, 'update']);
+    Route::delete('/test-categories/{test_category}', [TestCategoriesController::class, 'destroy'])->name('test-categories.destroy');
+});
 
 // Journey Routes (Public - View only index, show is below with proper order)
 Route::get('/journey', [JourneyController::class, 'index'])->name('journey.index');
 
 // Certificates Routes (Public - View only index, show is below with proper order)
-Route::get('/certificates', [CertificateController::class, 'index'])->name('certificates.index');
+Route::middleware('module.access:certificates')->group(function () {
+    Route::get('/certificates', [CertificateController::class, 'index'])->name('certificates.index');
+});
 
 // Equipments Routes (Public - View Only)
 Route::get('/equipments', [EquipmentsController::class, 'index'])->name('equipments.index');
@@ -121,9 +145,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/tenants/cleanup-dots', [\App\Http\Controllers\TenantController::class, 'cleanupDots'])->name('tenants.cleanup-dots');
     });
 
-    // Project Management
-    Route::resource('/projects', ProjectsController::class);
-    Route::resource('/services', ServicesController::class);
+    // Project Management (CRUD — index/show are public with module.access)
+    Route::resource('/projects', ProjectsController::class)->except(['index', 'show']);
+    Route::resource('/services', ServicesController::class)->except(['index', 'show']);
     Route::resource('/customers', CustomersController::class);
     
     // Project Service Todos
@@ -170,6 +194,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/bookmark-categories/{id}', [BookmarkCategoryController::class, 'update'])->name('bookmark-categories.update');
     Route::delete('/bookmark-categories/{id}', [BookmarkCategoryController::class, 'destroy'])->name('bookmark-categories.destroy');
 
+    // Guest visibility (per-tenant DB)
+    Route::get('/guest-visibility', [GuestVisibilityController::class, 'edit'])->name('guest-visibility.edit');
+    Route::put('/guest-visibility', [GuestVisibilityController::class, 'update'])->name('guest-visibility.update');
+
     // SEO Management
     Route::get('/seo', [SeoController::class, 'edit'])->name('seo.edit');
     Route::put('/seo', [SeoController::class, 'update'])->name('seo.update');
@@ -188,17 +216,35 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::get('/journey/{id}', [JourneyController::class, 'show'])->name('journey.show');
 
 // Certificates Show (Public - must be after /certificates/create to avoid route conflict)
-Route::get('/certificates/{slug}', [CertificateController::class, 'show'])->name('certificates.show');
+Route::middleware('module.access:certificates')->group(function () {
+    Route::get('/certificates/{slug}', [CertificateController::class, 'show'])->name('certificates.show');
+});
 
 // Workspace Routes (Public index, show - must be after /workspace/create to avoid route conflict)
-Route::get('/workspace', [WorkspaceController::class, 'index'])->name('workspace.index');
-Route::get('/workspace/{id}', [WorkspaceController::class, 'show'])->name('workspace.show');
+Route::middleware('module.access:workspace')->group(function () {
+    Route::get('/workspace', [WorkspaceController::class, 'index'])->name('workspace.index');
+    Route::get('/workspace/{id}', [WorkspaceController::class, 'show'])->name('workspace.show');
+});
 
 // Bookmarks Routes (Public - must be after /bookmarks/create to avoid route conflict)
-Route::get('/bookmarks', [BookmarkController::class, 'index'])->name('bookmarks.index');
-Route::get('/bookmarks/{id}', [BookmarkController::class, 'show'])->name('bookmarks.show');
+Route::middleware('module.access:bookmarks')->group(function () {
+    Route::get('/bookmarks', [BookmarkController::class, 'index'])->name('bookmarks.index');
+    Route::get('/bookmarks/{id}', [BookmarkController::class, 'show'])->name('bookmarks.show');
+});
+
+// Projects & Services (guest read when enabled)
+Route::middleware('module.access:projects')->group(function () {
+    Route::get('/projects', [ProjectsController::class, 'index'])->name('projects.index');
+    Route::get('/projects/{project}', [ProjectsController::class, 'show'])->name('projects.show');
+});
+
+Route::middleware('module.access:services')->group(function () {
+    Route::get('/services', [ServicesController::class, 'index'])->name('services.index');
+    Route::get('/services/{service}', [ServicesController::class, 'show'])->name('services.show');
+});
 
 // Rendition Routes
+Route::middleware('module.access:words')->group(function () {
 Route::group(['prefix' => 'rendition', 'as' => 'rendition.'], function () {
     // Words Management
     Route::post('words/bulk-store', [WordController::class, 'bulkStore'])->name('words.bulk-store');
@@ -216,6 +262,7 @@ Route::group(['prefix' => 'rendition', 'as' => 'rendition.'], function () {
     Route::delete('language-packs/{id}/words/{wordId}', [LanguagePackController::class, 'removeWord'])->name('language-packs.remove-word');
     Route::get('language-packs/{id}/export', [LanguagePackController::class, 'export'])->name('language-packs.export');
     Route::resource('language-packs', LanguagePackController::class);
+});
 });
 
 // Public API Routes

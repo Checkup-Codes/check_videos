@@ -22,6 +22,8 @@
         <slot />
       </div>
     </div>
+
+    <ImageLightbox />
   </div>
 </template>
 
@@ -31,6 +33,7 @@ import { usePage, Head } from '@inertiajs/vue3';
 import HeaderLayout from './MainLayout/HeaderLayout.vue';
 import SidebarLayout from './MainLayout/SidebarLayout.vue';
 import AnimatedBackground from '@/Components/AnimatedBackground.vue';
+import ImageLightbox from '@/Components/CekapUI/Image/ImageLightbox.vue';
 
 const page = usePage();
 
@@ -114,6 +117,7 @@ const contentWrapperClass = computed(() => {
 
   // Check if we're on seo page
   const isSeoPage = page.url.startsWith('/seo');
+  const isGuestVisibilityPage = page.url.startsWith('/guest-visibility');
 
   // Check if we're on theme-management page
   const isThemeManagementPage = page.url.startsWith('/theme-management');
@@ -136,6 +140,7 @@ const contentWrapperClass = computed(() => {
     isMediaPage ||
     isSocialMediaPage ||
     isSeoPage ||
+    isGuestVisibilityPage ||
     isThemeManagementPage
   ) {
     return `${baseClass} overflow-hidden`;

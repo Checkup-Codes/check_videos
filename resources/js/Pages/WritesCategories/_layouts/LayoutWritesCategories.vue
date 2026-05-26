@@ -87,6 +87,7 @@ import FlashMessage from '@/Components/CekapUI/Notifications/FlashMessage.vue';
 import { useSidebar } from '../_utils/useSidebar';
 import { useFlashMessage } from '../_utils/useFlashMessage';
 import { useStore } from 'vuex';
+import { useMobileSubsidebarLayout } from '@/composables/useMobileSubsidebarLayout';
 
 // Component name definition for dev tools
 defineOptions({
@@ -98,47 +99,31 @@ const { isCollapsed, toggleSidebar, sidebarStyle } = useSidebar();
 const { flashMessage } = useFlashMessage();
 const store = useStore();
 
-// Real mobile detection based on window width (client-side only)
-const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024);
-const isMobile = computed(() => windowWidth.value < 1024);
-
-// Update window width on resize
-const updateWindowWidth = () => {
-  if (typeof window !== 'undefined') {
-    windowWidth.value = window.innerWidth;
-  }
-};
-
 const handleFlashClose = () => {
   flashMessage.value = '';
 };
 
-// Get screen name from props - make it reactive
 const page = usePage();
 const screenName = computed(() => page.props.screen?.name || 'writes');
 
-// Sidebar component mapping
 const sidebarComponents = {
   writes: SidebarLayoutWrite,
   categories: SidebarLayoutCategory,
 };
 
-// Check if user is logged in
 const isLoggedIn = computed(() => {
   return !!(page.props.auth && page.props.auth.user);
 });
 
-// Check if we're on an index page (list page) where sidebar should always be visible
 const isIndexPage = computed(() => {
   const currentUrl = page.url || '';
-  // Index pages: /writes, /categories, /writes?search=..., /categories?search=...
-  return currentUrl === '/writes' || 
-         currentUrl.startsWith('/writes?') || 
-         currentUrl === '/categories' || 
+  return currentUrl === '/writes' ||
+         currentUrl.startsWith('/writes?') ||
+         currentUrl === '/categories' ||
          currentUrl.startsWith('/categories?');
 });
 
-// Check if we're on a non-index page (show, create, or edit) - on mobile, hide sidebar for these pages
+// Check if we're on a non-index page (show, create, or edit)
 const isNonIndexPage = computed(() => {
   const currentUrl = page.url || '';
 
@@ -215,15 +200,12 @@ const shouldRenderSidebar = computed(() => {
   return isIndexPage.value || isSidebarVisible.value;
 });
 
-// On mobile: show only sidebar on index pages, only main content on non-index pages (show, create, edit)
-const shouldShowSidebarOnMobile = computed(() => {
-  if (!isMobile.value) return true; // Desktop: always show sidebar if collapsed
-  return !isNonIndexPage.value; // Mobile: show sidebar only on index pages
-});
-
-const shouldShowMainContentOnMobile = computed(() => {
-  if (!isMobile.value) return true; // Desktop: always show main content
-  return isNonIndexPage.value; // Mobile: show main content on non-index pages (show, create, edit)
+const {
+  shouldShowSidebarOnMobile,
+  shouldShowMainContentOnMobile,
+} = useMobileSubsidebarLayout({
+  mode: 'sidebar-first',
+  isNonIndexPage: () => isNonIndexPage.value,
 });
 
 // Determine which sidebar component to display based on screen name
@@ -413,12 +395,6 @@ onMounted(() => {
   // Load sidebar visibility preference
   loadSidebarVisibility();
 
-  // Initialize window width and add resize listener
-  if (typeof window !== 'undefined') {
-    windowWidth.value = window.innerWidth;
-    window.addEventListener('resize', updateWindowWidth);
-  }
-  
   // F5 sonrası veya ilk yüklemede sidebar verilerini yükle
   // Watch'tan bağımsız olarak, mount olduğunda da kontrol et
   if (shouldShowSidebarOnMobile.value && shouldRenderSidebar.value) {
@@ -474,11 +450,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   document.body.style.overflow = '';
 
-  // Remove resize listener
-  if (typeof window !== 'undefined') {
-    window.removeEventListener('resize', updateWindowWidth);
-  }
-  
   // Remove router listener
   if (removeRouterListener) {
     removeRouterListener();

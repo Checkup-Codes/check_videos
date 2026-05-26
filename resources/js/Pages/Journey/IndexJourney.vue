@@ -1,16 +1,15 @@
 <template>
   <LayoutJourney>
     <template #screen>
-      <div class="min-h-screen bg-background">
+        <PageShell
+          width="detail"
+          :class="showYearFilter && isYearFilterOpen ? 'xl:pr-56' : ''"
+        >
+          <PageHeader title="Yolculuk" :description="`${entries.length} kayıt`" />
 
-        <!-- Timeline -->
-        <div class="mx-auto max-w-4xl px-4 py-6 sm:px-6">
-          <h1 class="xl:-translate-x-[80px] mb-6 text-2xl font-semibold text-foreground">Yolculuk</h1>
-
-          <div 
-            v-if="groupedByYear.length > 0" 
-            class="relative transition-all duration-300"
-            :class="{ 'xl:-translate-x-[80px]': showYearFilter && isYearFilterOpen }"
+          <div
+            v-if="groupedByYear.length > 0"
+            class="relative transition-[padding] duration-300"
           >
             <!-- Year Groups -->
             <div class="space-y-8">
@@ -139,11 +138,11 @@
               {{ selectedYear ? `${selectedYear} yılında kayıt bulunamadı` : 'Henüz kayıt yok' }}
             </p>
           </div>
-        </div>
+        </PageShell>
 
         <!-- Stats -->
         <div v-if="entries.length > 0" class="border-t border-border bg-muted/20">
-          <div class="mx-auto max-w-4xl px-4 py-4 sm:px-6">
+          <PageShell width="detail" class="py-4 sm:py-4">
             <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-1.5 text-xs text-muted-foreground">
               <div class="flex items-center gap-1.5">
                 <div class="h-1.5 w-1.5 rounded-full bg-primary"></div>
@@ -158,9 +157,8 @@
                 <span>{{ oldestYear }} - {{ newestYear }}</span>
               </div>
             </div>
-          </div>
+          </PageShell>
         </div>
-      </div>
 
       <!-- Year Filter Toggle Button - Mobile -->
       <button
@@ -292,6 +290,8 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import LayoutJourney from '@/Pages/Journey/_layouts/LayoutJourney.vue';
+import PageShell from '@/Components/CekapUI/Layout/PageShell.vue';
+import PageHeader from '@/Components/CekapUI/Layout/PageHeader.vue';
 
 const props = defineProps({
   entries: {

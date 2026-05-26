@@ -1,11 +1,5 @@
 <template>
-  <CheckScreen>
-    <div class="mx-auto max-w-4xl">
-      <div class="mb-6">
-        <h1 class="text-xl font-semibold text-foreground">Projeyi Düzenle</h1>
-        <p class="mt-1 text-xs text-muted-foreground">{{ project.project_name }}</p>
-      </div>
-
+  <ProjectsPageFrame title="Projeyi Düzenle" :description="project.project_name">
       <form @submit.prevent="handleSubmit" class="space-y-4">
         <div class="rounded-lg border border-border bg-card p-5 shadow-sm">
           <div class="space-y-4">
@@ -63,6 +57,13 @@
                 Bu projeye ait yazıların bulunduğu kategoriyi seçin.
               </p>
             </div>
+
+            <RelatedImagesUpload
+              :entity-id="project.id"
+              category="projects"
+              label="Proje Görselleri"
+              :initial-images="project.images || []"
+            />
           </div>
 
           <div class="space-y-4 border-t border-border mt-4 pt-4">
@@ -83,7 +84,7 @@
                   d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 ></path>
               </svg>
-              <span>Henüz servis bulunmamaktadır.</span>
+              <span>Henüz hizmet bulunmamaktadır.</span>
             </div>
 
             <div v-else class="space-y-4">
@@ -102,8 +103,8 @@
                   />
                   <div class="flex-1">
                     <span class="text-sm font-medium text-foreground">{{ service.name }}</span>
-                    <p v-if="service.description" class="mt-1 text-xs text-muted-foreground">
-                      {{ service.description }}
+                    <p v-if="service.description" class="mt-1 text-xs text-muted-foreground line-clamp-2">
+                      {{ stripHtml(service.description) }}
                     </p>
                   </div>
                 </label>
@@ -167,11 +168,23 @@
                   </div>
 
                   <div>
-                    <label class="mb-1 block text-xs font-medium text-foreground">Notlar</label>
+                    <RichTextEditor
+                      v-model="getServiceData(service.id).guest_description"
+                      label="Ziyaretçilere gösterilecek açıklama"
+                      placeholder="Bu projede verilen hizmeti ziyaretçilere anlatın..."
+                      height="220px"
+                    />
+                    <p class="mt-1 text-[10px] text-muted-foreground">
+                      Boş bırakılırsa hizmet kataloğundaki açıklama kullanılır.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label class="mb-1 block text-xs font-medium text-foreground">İç notlar</label>
                     <textarea
                       v-model="getServiceData(service.id).notes"
                       rows="3"
-                      placeholder="Bu servis hakkında notlar..."
+                      placeholder="Sadece ekip için notlar (ziyaretçilere gösterilmez)..."
                       class="flex w-full rounded-md border border-input bg-background px-2 py-1 text-xs ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     ></textarea>
                   </div>
@@ -289,15 +302,17 @@
           </div>
         </div>
       </form>
-    </div>
-  </CheckScreen>
+  </ProjectsPageFrame>
 </template>
 
 <script setup>
 import { computed, ref, onMounted, watch } from 'vue';
 import { useForm, usePage, Link, router } from '@inertiajs/vue3';
 import axios from 'axios';
-import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import ProjectsPageFrame from '@/Pages/Projects/_components/ProjectsPageFrame.vue';
+import RelatedImagesUpload from '@/Pages/Projects/_components/RelatedImagesUpload.vue';
+import RichTextEditor from '@/Pages/WritesCategories/_components/RichTextEditor.vue';
+import { stripHtml } from '@/utils/stripHtml';
 
 const { props } = usePage();
 const services = computed(() => props.services || []);
@@ -334,6 +349,7 @@ const initializeForm = () => {
         status: service.pivot?.status || 'pending',
         payment_status: service.pivot?.payment_status || 'unpaid',
         notes: service.pivot?.notes || '',
+        guest_description: service.pivot?.guest_description || '',
         service_start_date: service.pivot?.service_start_date || null,
         service_end_date: service.pivot?.service_end_date || null,
       };
@@ -379,6 +395,7 @@ const getServiceData = (serviceId) => {
       status: 'pending',
       payment_status: 'unpaid',
       notes: '',
+      guest_description: '',
       service_start_date: null,
       service_end_date: null,
     };

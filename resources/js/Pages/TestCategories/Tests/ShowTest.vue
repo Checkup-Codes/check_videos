@@ -17,6 +17,7 @@ import { usePage } from '@inertiajs/vue3';
 import LayoutTestCategories from '@/Pages/TestCategories/_layouts/LayoutTestCategories.vue';
 import Screen from '@/Pages/TestCategories/Tests/Show/Screen.vue';
 import PageMeta from '@/Components/PageMeta.vue';
+import { stripHtml } from '@/utils/stripHtml';
 
 defineOptions({
   name: 'ShowTestPage',
@@ -30,7 +31,7 @@ const metaTitle = computed(() => {
 });
 
 const metaDescription = computed(() => {
-  return test.description || 'Test detayları ve sorular';
+  return stripHtml(test.description) || 'Test detayları ve sorular';
 });
 
 const metaKeywords = computed(() => {

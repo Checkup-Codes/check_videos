@@ -31,6 +31,7 @@ class WriteImage extends Model
     const CATEGORY_WRITES = 'writes';
     const CATEGORY_PROJECTS = 'projects';
     const CATEGORY_PRODUCTS = 'products';
+    const CATEGORY_SERVICES = 'services';
     const CATEGORY_AWARDS = 'awards';
     const CATEGORY_LOGO = 'logo';
 
@@ -41,6 +42,7 @@ class WriteImage extends Model
             self::CATEGORY_WRITES => 'Yazılar',
             self::CATEGORY_PROJECTS => 'Projeler',
             self::CATEGORY_PRODUCTS => 'Ürünler',
+            self::CATEGORY_SERVICES => 'Hizmetler',
             self::CATEGORY_AWARDS => 'Ödüller',
             self::CATEGORY_LOGO => 'Logo',
         ];

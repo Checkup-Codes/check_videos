@@ -1,5 +1,5 @@
 <template>
-  <LayoutRendition v-bind="props">
+  <LayoutRendition>
     <template #screen>
       <Screen v-bind="props" />
     </template>

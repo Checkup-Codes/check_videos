@@ -86,6 +86,7 @@ return $app
         // Alias middleware for route usage
         $middleware->alias([
             'main.domain' => \App\Http\Middleware\CheckMainDomain::class,
+            'module.access' => \App\Http\Middleware\EnsureModuleAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

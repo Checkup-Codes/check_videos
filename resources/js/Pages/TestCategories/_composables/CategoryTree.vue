@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-1 p-2">
+  <div class="space-y-1">
     <div v-for="category in filteredCategories" :key="category.id" class="space-y-1">
       <Link
         :href="`/test-categories/${category.slug}`"

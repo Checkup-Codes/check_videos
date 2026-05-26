@@ -18,7 +18,7 @@ class CustomersController extends Controller
     {
         $customers = Customer::select('id', 'first_name', 'last_name', 'email', 'created_at')->get();
         $projects = Project::with(['customer'])->get();
-        $services = Service::all();
+        $services = Service::with('images')->get();
 
         return Inertia::render('Projects/Customers/IndexCustomer', [
             'screen' => $this->getScreenData('projects', 'Müşteriler', null, true),
@@ -31,7 +31,7 @@ class CustomersController extends Controller
     public function create()
     {
         // Load sidebar data
-        $services = Service::all();
+        $services = Service::with('images')->get();
         $projects = Project::with(['customer'])->get();
         $customers = Customer::select('id', 'first_name', 'last_name', 'email', 'created_at')->get();
 
@@ -67,7 +67,7 @@ class CustomersController extends Controller
         $customer = Customer::findOrFail($id);
 
         // Load sidebar data
-        $services = Service::all();
+        $services = Service::with('images')->get();
         $projects = Project::with(['customer'])->get();
         $customers = Customer::select('id', 'first_name', 'last_name', 'email', 'created_at')->get();
 
@@ -85,7 +85,7 @@ class CustomersController extends Controller
         $customer = Customer::findOrFail($id);
 
         // Load sidebar data
-        $services = Service::all();
+        $services = Service::with('images')->get();
         $projects = Project::with(['customer'])->get();
         $customers = Customer::select('id', 'first_name', 'last_name', 'email', 'created_at')->get();
 

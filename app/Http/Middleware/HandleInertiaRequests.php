@@ -4,7 +4,9 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use App\Services\GuestVisibilityService;
 use App\Services\SeoService;
+use App\Support\TenantDomain;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -44,6 +46,8 @@ class HandleInertiaRequests extends Middleware
             'app' => fn() => $this->getAppData(),
             'workspaceCount' => fn() => \App\Models\Workspace::published()->count(),
             'bookmarkCount' => fn() => \App\Models\Bookmark::count(),
+            'guestVisibility' => fn() => app(GuestVisibilityService::class)->forFrontend(),
+            'hiddenFeatures' => fn() => TenantDomain::hiddenFeatures(TenantDomain::current()),
         ];
     }
 

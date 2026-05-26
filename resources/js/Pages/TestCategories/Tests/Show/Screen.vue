@@ -24,7 +24,7 @@
         </div>
 
         <div v-if="test.description" class="text-sm leading-6 text-muted-foreground">
-          {{ test.description }}
+          {{ stripHtml(test.description) }}
         </div>
 
         <div class="flex flex-wrap gap-4 text-sm text-muted-foreground">
@@ -397,6 +397,7 @@
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import { usePage, Link } from '@inertiajs/vue3';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import { stripHtml } from '@/utils/stripHtml';
 
 const { props } = usePage();
 const test = props.test || {};

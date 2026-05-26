@@ -1,14 +1,10 @@
 <template>
   <CheckSubsidebar :isNarrow="isNarrow">
-    <!-- Header -->
-    <div class="relative z-10 shrink-0 border-b border-border bg-background p-3">
-      <div class="flex items-center justify-between gap-2">
-        <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Versiyonlar</span>
-      </div>
-    </div>
-    <!-- Scrollable Content -->
+    <SubSidebarHeader title="Versiyonlar" :description="String(versions.length)" />
     <SubSidebarScreen ref="scrollableRef" class="sidebar-content-embedded min-h-0 flex-1" :infoClass="'flex-1 min-h-0'">
-      <VersionsList :versions="versions" :currentUrl="url" />
+      <SubSidebarContent>
+        <VersionsList :versions="versions" :currentUrl="url" />
+      </SubSidebarContent>
     </SubSidebarScreen>
   </CheckSubsidebar>
 </template>
@@ -19,6 +15,8 @@ import { usePage } from '@inertiajs/vue3';
 import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
 import VersionsList from '@/Pages/FBVersions/_components/VersionList.vue';
 import SubSidebarScreen from '@/Components/CekapUI/Slots/SubSidebarScreen.vue';
+import SubSidebarHeader from '@/Components/CekapUI/Layout/SubSidebarHeader.vue';
+import SubSidebarContent from '@/Components/CekapUI/Layout/SubSidebarContent.vue';
 import { useStore } from 'vuex';
 
 defineOptions({

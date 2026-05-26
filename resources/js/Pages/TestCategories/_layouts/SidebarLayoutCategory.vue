@@ -1,62 +1,58 @@
 <template>
   <CheckSubsidebar :isNarrow="isNarrow">
-    <!-- View Toggle - Always visible -->
-    <div class="relative z-10 shrink-0 border-b border-border bg-background p-2">
-      <div class="flex items-center justify-between gap-2">
-        <!-- View Toggle (Left) -->
-        <div class="flex items-center gap-1">
-          <Link
-            :href="route('tests.index')"
-            class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs transition-colors"
-            :class="
-              isListView
-                ? 'bg-accent text-accent-foreground'
-                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-            "
-            title="Liste görünümü"
-          >
-            <IconMenu class="h-3 w-3" />
-            <span v-if="!isNarrow">Liste</span>
-          </Link>
-          <Link
-            :href="route('test-categories.index')"
-            class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs transition-colors"
-            :class="
-              !isListView
-                ? 'bg-accent text-accent-foreground'
-                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-            "
-            title="Kategori görünümü"
-          >
-            <IconFolder class="h-3 w-3" />
-            <span v-if="!isNarrow">Kategori</span>
-          </Link>
-        </div>
-        <!-- Collapse/Expand Button (Right) - Only for logged in users -->
-        <div v-if="isLoggedIn" class="flex items-center gap-1">
-          <button
-            @click="toggleAllCategories"
-            class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-            :class="{ 'bg-accent text-accent-foreground': areAllCategoriesExpanded }"
-            :title="areAllCategoriesExpanded ? 'Tümünü Daralt' : 'Tümünü Genişlet'"
-          >
-            <IconChevronDown
-              class="h-3 w-3 transition-transform duration-200"
-              :class="{ 'rotate-180': areAllCategoriesExpanded }"
-            />
-            <span class="text-xs">{{ areAllCategoriesExpanded ? 'Daralt' : 'Genişlet' }}</span>
-          </button>
-        </div>
-      </div>
-    </div>
+    <SubSidebarHeader title="Kategoriler" :description="String(categories.length)">
+      <template #actions>
+        <Link
+          :href="route('tests.index')"
+          class="inline-flex h-5 shrink-0 items-center gap-1 whitespace-nowrap rounded px-1.5 text-xs transition-colors"
+          :class="
+            isListView
+              ? 'bg-accent text-accent-foreground'
+              : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+          "
+          title="Liste görünümü"
+        >
+          <IconMenu class="h-3 w-3 shrink-0" />
+          <span v-if="!isNarrow">Liste</span>
+        </Link>
+        <Link
+          :href="route('test-categories.index')"
+          class="inline-flex h-5 shrink-0 items-center gap-1 whitespace-nowrap rounded px-1.5 text-xs transition-colors"
+          :class="
+            !isListView
+              ? 'bg-accent text-accent-foreground'
+              : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+          "
+          title="Kategori görünümü"
+        >
+          <IconFolder class="h-3 w-3 shrink-0" />
+          <span v-if="!isNarrow">Kategori</span>
+        </Link>
+        <button
+          v-if="isLoggedIn"
+          @click="toggleAllCategories"
+          class="inline-flex h-5 shrink-0 items-center gap-1 whitespace-nowrap rounded px-1.5 text-[10px] text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+          :class="{ 'bg-accent text-accent-foreground': areAllCategoriesExpanded }"
+          :title="areAllCategoriesExpanded ? 'Tümünü Daralt' : 'Tümünü Genişlet'"
+        >
+          <IconChevronDown
+            class="h-3 w-3 shrink-0 transition-transform duration-200"
+            :class="{ 'rotate-180': areAllCategoriesExpanded }"
+          />
+          <span v-if="!isNarrow">{{ areAllCategoriesExpanded ? 'Daralt' : 'Genişlet' }}</span>
+        </button>
+      </template>
+    </SubSidebarHeader>
     <SubSidebarScreen ref="scrollableRef" class="sidebar-content-embedded min-h-0 flex-1" :infoClass="'flex-1 min-h-0'">
-      <CategoryTree
-        v-if="showCategories"
-        ref="categoryTreeRef"
-        :getLinkClasses="getLinkClasses"
-        :expandAll="areAllCategoriesExpanded"
-        :isCollapsed="isNarrow"
-      />
+      <SubSidebarContent>
+        <CategoryTree
+          v-if="showCategories"
+          ref="categoryTreeRef"
+          :getLinkClasses="getLinkClasses"
+          :expandAll="areAllCategoriesExpanded"
+          :isCollapsed="isNarrow"
+        />
+      </SubSidebarContent>
     </SubSidebarScreen>
   </CheckSubsidebar>
 </template>
@@ -66,6 +62,8 @@ import { ref, watch, computed, onMounted, onBeforeUnmount, onActivated, onDeacti
 import { usePage, Link } from '@inertiajs/vue3';
 import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
 import SubSidebarScreen from '@/Components/CekapUI/Slots/SubSidebarScreen.vue';
+import SubSidebarHeader from '@/Components/CekapUI/Layout/SubSidebarHeader.vue';
+import SubSidebarContent from '@/Components/CekapUI/Layout/SubSidebarContent.vue';
 import CategoryTree from '@/Pages/TestCategories/_composables/CategoryTree.vue';
 import { useSidebar } from '../_utils/useSidebar';
 import { useStore } from 'vuex';

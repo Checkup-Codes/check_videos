@@ -1,11 +1,5 @@
 <template>
-  <CheckScreen>
-    <div class="mx-auto max-w-4xl">
-      <div class="mb-6">
-        <h1 class="text-xl font-semibold text-foreground">Yeni Müşteri</h1>
-        <p class="mt-1 text-xs text-muted-foreground">Yeni müşteri bilgilerini girin</p>
-      </div>
-
+  <ProjectsPageFrame title="Yeni Müşteri" description="Yeni müşteri bilgilerini girin">
       <form @submit.prevent="handleSubmit" class="space-y-4">
         <div class="rounded-lg border border-border bg-card p-5 shadow-sm">
           <div class="space-y-4">
@@ -182,14 +176,13 @@
           </div>
         </div>
       </form>
-    </div>
-  </CheckScreen>
+  </ProjectsPageFrame>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { useForm, usePage, Link } from '@inertiajs/vue3';
-import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import ProjectsPageFrame from '@/Pages/Projects/_components/ProjectsPageFrame.vue';
 
 // Field refs for scroll to error
 const firstNameRef = ref(null);

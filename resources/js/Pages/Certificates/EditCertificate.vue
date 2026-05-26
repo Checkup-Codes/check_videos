@@ -2,8 +2,8 @@
   <LayoutCertificates>
     <template #screen>
       <CheckScreen>
-        <div class="space-y-4 py-6">
-          <h1 class="text-2xl font-bold text-foreground">Sertifika Düzenle</h1>
+        <PageShell width="content">
+          <PageHeader title="Sertifika Düzenle" description="Sertifika bilgilerini güncelleyin" />
 
           <form @submit.prevent="submit" class="space-y-4">
             <!-- Title -->
@@ -194,8 +194,8 @@
               </button>
             </div>
           </form>
-        </div>
-    </CheckScreen>
+        </PageShell>
+      </CheckScreen>
     </template>
   </LayoutCertificates>
 </template>
@@ -205,6 +205,8 @@ import { ref } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import LayoutCertificates from './_layouts/LayoutCertificates.vue';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import PageShell from '@/Components/CekapUI/Layout/PageShell.vue';
+import PageHeader from '@/Components/CekapUI/Layout/PageHeader.vue';
 
 const props = defineProps({
   certificate: Object,

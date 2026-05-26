@@ -1,5 +1,5 @@
 <template>
-  <LayoutRendition v-bind="props" :class="currentTheme">
+  <LayoutRendition :class="currentTheme">
     <template #screen>
       <Screen v-bind="props" />
     </template>

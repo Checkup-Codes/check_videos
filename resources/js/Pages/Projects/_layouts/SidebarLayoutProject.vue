@@ -1,58 +1,14 @@
 <template>
   <CheckSubsidebar :isNarrow="isNarrow">
-    <!-- View Toggle - Always visible -->
-    <div class="relative z-10 shrink-0 border-b border-border bg-background p-2">
-      <div class="flex items-center justify-between gap-2">
-        <!-- View Toggle (Left) -->
-        <div class="flex items-center gap-1">
-          <Link
-            :href="route('services.index')"
-            class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs transition-colors"
-            :class="
-              currentView === 'services'
-                ? 'bg-accent text-accent-foreground'
-                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-            "
-            title="Servisler"
-          >
-            <IconBolt class="h-3 w-3" />
-            <span v-if="!isNarrow">Servisler</span>
-          </Link>
-          <Link
-            :href="route('projects.index')"
-            class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs transition-colors"
-            :class="
-              currentView === 'projects'
-                ? 'bg-accent text-accent-foreground'
-                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-            "
-            title="Projeler"
-          >
-            <IconFolder class="h-3 w-3" />
-            <span v-if="!isNarrow">Projeler</span>
-          </Link>
-          <Link
-            :href="route('customers.index')"
-            class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs transition-colors"
-            :class="
-              currentView === 'customers'
-                ? 'bg-accent text-accent-foreground'
-                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-            "
-            title="Müşteriler"
-          >
-            <IconUsers class="h-3 w-3" />
-            <span v-if="!isNarrow">Müşteriler</span>
-          </Link>
-        </div>
-      </div>
-    </div>
+    <SubSidebarHeader>
+      <ProjectsModuleTabs compact embedded :show-labels="!isNarrow" />
+    </SubSidebarHeader>
     <SubSidebarScreen ref="scrollableRef" class="sidebar-content-embedded min-h-0 flex-1" :infoClass="'flex-1 min-h-0'">
-      <div class="space-y-1 p-2">
+      <SubSidebarContent>
         <!-- Services List -->
         <div v-if="currentView === 'services'" class="space-y-1">
           <div v-if="!services || services.length === 0" class="p-2 text-[10px] text-muted-foreground">
-            Henüz servis bulunmamaktadır.
+            Henüz hizmet bulunmamaktadır.
           </div>
           <Link
             v-for="service in services"
@@ -66,16 +22,28 @@
             ]"
           >
             <div class="flex items-center gap-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-3.5 w-3.5 shrink-0"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
+              <div class="h-8 w-8 shrink-0 overflow-hidden rounded-md border border-border bg-muted/30" @click.stop>
+                <ZoomableImage
+                  v-if="service.images?.[0]?.image_path"
+                  :src="service.images[0].image_path"
+                  :alt="service.name"
+                  :gallery="service.images"
+                  wrapper-class="h-full w-full"
+                  img-class="h-full w-full object-cover"
+                />
+                <div v-else class="flex h-full w-full items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-3.5 w-3.5 shrink-0 text-primary"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+              </div>
               <span class="truncate text-[11px] font-medium leading-tight">{{ service.name }}</span>
             </div>
             <span
@@ -83,7 +51,7 @@
               class="mt-1 block truncate text-[10px]"
               :class="getLinkClasses(`/services/${service.id}`) ? 'text-primary-foreground/70' : 'text-muted-foreground'"
             >
-              {{ service.description }}
+              {{ stripHtml(service.description) }}
             </span>
           </Link>
         </div>
@@ -132,7 +100,7 @@
         </div>
 
         <!-- Customers List -->
-        <div v-if="currentView === 'customers'" class="space-y-1">
+        <div v-if="currentView === 'customers' && showCustomers" class="space-y-1">
           <div v-if="!customers || customers.length === 0" class="p-2 text-[10px] text-muted-foreground">
             Henüz müşteri bulunmamaktadır.
           </div>
@@ -173,7 +141,7 @@
             </span>
           </Link>
         </div>
-      </div>
+      </SubSidebarContent>
     </SubSidebarScreen>
   </CheckSubsidebar>
 </template>
@@ -185,9 +153,12 @@ import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
 import SubSidebarScreen from '@/Components/CekapUI/Slots/SubSidebarScreen.vue';
 import { useSidebar } from '../_utils/useSidebar';
 import { useStore } from 'vuex';
-import IconBolt from '../_components/icons/IconBolt.vue';
-import IconFolder from '../_components/icons/IconFolder.vue';
-import IconUsers from '../_components/icons/IconUsers.vue';
+import ProjectsModuleTabs from '../_components/ProjectsModuleTabs.vue';
+import SubSidebarHeader from '@/Components/CekapUI/Layout/SubSidebarHeader.vue';
+import SubSidebarContent from '@/Components/CekapUI/Layout/SubSidebarContent.vue';
+import { stripHtml } from '@/utils/stripHtml';
+import ZoomableImage from '@/Components/CekapUI/Image/ZoomableImage.vue';
+import { useModuleVisibility } from '@/composables/useModuleVisibility';
 
 // Component name definition for dev tools
 defineOptions({
@@ -202,28 +173,26 @@ const store = useStore();
 // Local state
 const scrollableRef = ref(null);
 const isNarrow = ref(store.getters['Writes/isCollapsed']);
-const currentView = ref('services'); // 'services', 'projects', 'customers'
 
 // Get data from props
 const services = computed(() => page.props.services || []);
 const projects = computed(() => page.props.projects || []);
 const customers = computed(() => page.props.customers || []);
+const showCustomers = useModuleVisibility('customers');
 
-// Determine current view based on URL
-const url = computed(() => page.url || '');
-watch(
-  url,
-  (newUrl) => {
-    if (newUrl.startsWith('/services')) {
-      currentView.value = 'services';
-    } else if (newUrl.startsWith('/projects')) {
-      currentView.value = 'projects';
-    } else if (newUrl.startsWith('/customers')) {
-      currentView.value = 'customers';
-    }
-  },
-  { immediate: true }
-);
+const currentView = computed(() => {
+  const url = page.url || '';
+
+  if (url.startsWith('/projects')) {
+    return 'projects';
+  }
+
+  if (url.startsWith('/customers')) {
+    return 'customers';
+  }
+
+  return 'services';
+});
 
 const emit = defineEmits(['update:isNarrow']);
 

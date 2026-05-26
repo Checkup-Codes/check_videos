@@ -1,11 +1,8 @@
 <template>
-  <CheckScreen>
-    <div class="mx-auto max-w-4xl">
-      <div class="mb-6">
-        <h1 class="text-xl font-semibold text-foreground">Yeni Hizmet</h1>
-        <p class="mt-1 text-xs text-muted-foreground">Yeni bir hizmet oluşturun</p>
-      </div>
-
+  <ProjectsPageFrame
+    title="Yeni Hizmet"
+    description="Kaydettikten sonra görselleri düzenleme ekranından ekleyebilirsiniz."
+  >
       <form @submit.prevent="handleSubmit" class="space-y-4">
         <div class="rounded-lg border border-border bg-card p-5 shadow-sm">
           <div class="space-y-4">
@@ -130,14 +127,13 @@
           </button>
         </div>
       </form>
-    </div>
-  </CheckScreen>
+  </ProjectsPageFrame>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
 import { useForm, usePage, Link } from '@inertiajs/vue3';
-import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import ProjectsPageFrame from '@/Pages/Projects/_components/ProjectsPageFrame.vue';
 import RichTextEditor from '@/Pages/WritesCategories/_components/RichTextEditor.vue';
 
 const { props } = usePage();

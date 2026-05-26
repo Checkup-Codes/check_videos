@@ -8,5 +8,5 @@
 
 <script setup>
 import LayoutProjects from '@/Pages/Projects/_layouts/LayoutProjects.vue';
-import Screen from '@/Pages/Projects/Project/Index/Screen.vue';
+import Screen from '@/Pages/Projects/Index/Screen.vue';
 </script>

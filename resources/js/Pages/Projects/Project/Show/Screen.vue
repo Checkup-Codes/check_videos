@@ -1,37 +1,51 @@
 <template>
-  <CheckScreen>
-    <div class="mx-auto max-w-4xl">
-      <div class="mb-6 flex items-center justify-between">
-        <div>
-          <h1 class="text-2xl font-bold text-foreground">{{ project.project_name }}</h1>
-          <p v-if="project.customer" class="mt-1 text-sm text-muted-foreground">
-            {{ project.customer.first_name }} {{ project.customer.last_name }}
-          </p>
-        </div>
-        <div class="flex items-center gap-2">
-          <button
-            @click="exportToPDF"
-            class="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-input bg-background px-3.5 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-          >
-            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            PDF
-          </button>
-          <Link
-            :href="`/projects/${project.id}/edit`"
-            class="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-input bg-background px-3.5 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-          >
-            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            Düzenle
-          </Link>
-        </div>
+  <ProjectsPageFrame>
+    <template #header>
+      <h1 class="text-lg font-semibold text-foreground">{{ project.project_name }}</h1>
+      <p v-if="!isGuestView && project.customer" class="text-xs text-muted-foreground">
+        {{ project.customer.first_name }} {{ project.customer.last_name }}
+      </p>
+    </template>
+
+    <div class="space-y-4" id="project-detail-content">
+      <div v-if="project.images?.length" class="flex gap-2 overflow-x-auto pb-1">
+        <ZoomableImage
+          v-for="(image, imageIndex) in project.images"
+          :key="image.id"
+          :src="image.image_path"
+          :alt="image.alt_text || project.project_name"
+          :gallery="project.images"
+          :index="imageIndex"
+          :wrapper-class="isGuestView ? 'h-32 w-32 shrink-0 overflow-hidden rounded-lg border border-border sm:h-40 sm:w-40' : 'h-24 w-24 shrink-0 overflow-hidden rounded-md border border-border'"
+          img-class="h-full w-full object-cover"
+        />
       </div>
 
-      <div class="space-y-4" id="project-detail-content">
-        <!-- Category Section -->
+      <!-- Ziyaretçi görünümü -->
+      <template v-if="isGuestView">
+        <div class="rounded-lg border border-border bg-card p-4">
+          <h3 class="mb-3 text-xs font-semibold text-foreground">Verilen Hizmetler</h3>
+
+          <div v-if="project.services?.length" class="space-y-4">
+            <div
+              v-for="service in project.services"
+              :key="service.id"
+              class="rounded-lg border border-border bg-background p-4"
+            >
+              <h4 class="text-sm font-semibold text-foreground">{{ service.name }}</h4>
+              <div
+                v-if="getPublicServiceDescription(service)"
+                class="quill-content prose prose-sm dark:prose-invert mt-3 max-w-none text-sm"
+                v-html="getPublicServiceDescription(service)"
+              />
+            </div>
+          </div>
+          <p v-else class="text-sm text-muted-foreground">Bu projede henüz hizmet bilgisi yok.</p>
+        </div>
+      </template>
+
+      <!-- Yönetici görünümü -->
+      <template v-else>
         <div v-if="project.category" class="rounded-lg border border-border bg-card p-4">
           <h3 class="mb-3 text-xs font-semibold text-foreground">Kategori Bağlantısı</h3>
           <div class="flex items-center justify-between rounded-md bg-muted/30 p-3">
@@ -47,7 +61,6 @@
           </div>
         </div>
 
-        <!-- Customer Section -->
         <div class="rounded-lg border border-border bg-card p-4">
           <h3 class="mb-3 text-xs font-semibold text-foreground">Müşteri Bilgileri</h3>
           <div v-if="project.customer" class="grid grid-cols-1 gap-3 rounded-md bg-muted/30 p-3 md:grid-cols-3">
@@ -70,11 +83,10 @@
           </div>
         </div>
 
-        <!-- Services Section -->
         <div class="rounded-lg border border-border bg-card p-4">
           <h3 class="mb-3 text-xs font-semibold text-foreground">Hizmetler</h3>
 
-          <div v-if="project.services && project.services.length" class="space-y-3">
+          <div v-if="project.services?.length" class="space-y-3">
             <div
               v-for="service in project.services"
               :key="service.id"
@@ -89,9 +101,6 @@
                   </div>
                   <div>
                     <h4 class="text-sm font-semibold text-foreground">{{ service.name }}</h4>
-                    <p v-if="service.description" class="mt-0.5 text-xs text-muted-foreground line-clamp-1">
-                      {{ stripHtml(service.description) }}
-                    </p>
                   </div>
                 </div>
                 <div class="flex items-center gap-2">
@@ -108,6 +117,17 @@
                     {{ getPaymentStatusLabel(service.pivot?.payment_status) }}
                   </span>
                 </div>
+              </div>
+
+              <div
+                v-if="getPublicServiceDescription(service)"
+                class="mt-3 rounded-md border border-border/60 bg-muted/20 p-3"
+              >
+                <h5 class="mb-2 text-xs font-medium text-muted-foreground">Ziyaretçi açıklaması</h5>
+                <div
+                  class="quill-content prose prose-sm dark:prose-invert max-w-none text-sm"
+                  v-html="getPublicServiceDescription(service)"
+                />
               </div>
 
               <div class="mt-3 space-y-3 border-t border-border pt-3">
@@ -131,7 +151,7 @@
                 </div>
 
                 <div v-if="service.pivot?.notes" class="rounded-md bg-muted/30 p-2.5">
-                  <h5 class="mb-1 text-xs font-medium text-muted-foreground">Notlar</h5>
+                  <h5 class="mb-1 text-xs font-medium text-muted-foreground">İç notlar</h5>
                   <p class="whitespace-pre-wrap text-xs text-foreground">{{ service.pivot.notes }}</p>
                 </div>
 
@@ -143,7 +163,7 @@
                     </span>
                   </div>
 
-                  <div v-if="service.todos && service.todos.length > 0" class="space-y-1.5">
+                  <div v-if="service.todos?.length" class="space-y-1.5">
                     <div
                       v-for="todo in service.todos"
                       :key="todo.id"
@@ -170,9 +190,6 @@
                     v-else
                     class="flex items-center gap-2 rounded-md border border-dashed border-border bg-muted/20 p-2.5 text-xs text-muted-foreground"
                   >
-                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
                     <span>Henüz TO-DO eklenmemiş</span>
                   </div>
                 </div>
@@ -183,25 +200,35 @@
             v-else
             class="flex items-center gap-3 rounded-lg border border-dashed border-border bg-muted/20 p-4 text-sm text-muted-foreground"
           >
-            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
             <span>Bu projeye atanmış hizmet bulunmuyor</span>
           </div>
         </div>
-      </div>
+      </template>
     </div>
-  </CheckScreen>
+  </ProjectsPageFrame>
 </template>
 
 <script setup>
-import { computed, nextTick } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted } from 'vue';
 import { usePage, Link } from '@inertiajs/vue3';
 import html2pdf from 'html2pdf.js';
-import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import ProjectsPageFrame from '@/Pages/Projects/_components/ProjectsPageFrame.vue';
+import ZoomableImage from '@/Components/CekapUI/Image/ZoomableImage.vue';
+import { registerProjectPdfExport, unregisterProjectPdfExport } from '@/composables/useProjectPdfExport';
+import '@/Shared/Css/quill-styles.css';
 
-const { props } = usePage();
-const project = computed(() => props.project || {});
+const page = usePage();
+const project = computed(() => page.props.project || {});
+const isGuestView = computed(() => !!page.props.isGuestView);
+
+const getPublicServiceDescription = (service) => {
+  const guestHtml = service.pivot?.guest_description?.trim();
+  if (guestHtml) {
+    return guestHtml;
+  }
+  const catalogHtml = service.description?.trim();
+  return catalogHtml || '';
+};
 
 const getStatusClass = (status) => {
   const classes = {
@@ -255,41 +282,22 @@ const formatDate = (date) => {
   });
 };
 
-const stripHtml = (html) => {
-  if (!html) return '';
-  const tmp = document.createElement('div');
-  tmp.innerHTML = html;
-  return tmp.textContent || tmp.innerText || '';
-};
-
 const getServiceCompletionPercentage = (service) => {
   if (!service.todos || service.todos.length === 0) return 0;
   const completed = service.todos.filter((t) => t.is_completed).length;
   return Math.round((completed / service.todos.length) * 100);
 };
 
-// PDF Export Function - Basit ve çalışır versiyon
 const exportToPDF = async () => {
-  // DOM'un hazır olmasını bekle
   await nextTick();
 
-  // Mevcut sayfadaki içeriği al
   const element = document.getElementById('project-detail-content');
 
   if (!element) {
-    console.error('PDF element not found');
     alert('PDF oluşturulamadı: İçerik bulunamadı');
     return;
   }
 
-  // Element'in içeriğini kontrol et
-  if (!element.innerHTML || element.innerHTML.trim() === '') {
-    console.error('PDF element is empty');
-    alert('PDF oluşturulamadı: İçerik boş');
-    return;
-  }
-
-  // PDF seçenekleri
   const opt = {
     margin: [10, 10, 10, 10],
     filename: `proje-${project.value.project_name?.toLowerCase().replace(/\s+/g, '-') || 'detay'}-${new Date().toISOString().split('T')[0]}.pdf`,
@@ -309,11 +317,20 @@ const exportToPDF = async () => {
   };
 
   try {
-    // PDF oluştur
     await html2pdf().set(opt).from(element).save();
   } catch (error) {
     console.error('PDF export error:', error);
     alert('PDF oluşturulurken bir hata oluştu: ' + error.message);
   }
 };
+
+onMounted(() => {
+  if (!isGuestView.value) {
+    registerProjectPdfExport(exportToPDF);
+  }
+});
+
+onUnmounted(() => {
+  unregisterProjectPdfExport(exportToPDF);
+});
 </script>

@@ -2,117 +2,116 @@
   <LayoutCertificates>
     <template #screen>
       <CheckScreen>
-        <div class="p-6 pt-12 sm:p-8 sm:pt-16">
-        <!-- Header -->
-        <div class="mb-8">
-          <h1 class="text-2xl font-semibold text-foreground sm:text-3xl">Sertifikalar</h1>
-          <p class="mt-2 text-sm text-muted-foreground">{{ certificates.length }} sertifika</p>
-        </div>
+        <PageShell>
+          <PageHeader title="Sertifikalar" :description="`${certificates.length} sertifika`" />
 
-        <!-- Certificates Grid -->
-        <div v-if="certificates.length > 0" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <Link
-            v-for="certificate in certificates"
-            :key="certificate.id"
-            :href="route('certificates.show', certificate.slug)"
-            class="group overflow-hidden rounded-xl border border-border bg-card transition-all hover:shadow-lg"
+          <div
+            v-if="certificates.length > 0"
+            class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
           >
-            <!-- Image -->
-            <div class="relative aspect-[4/3] overflow-hidden bg-muted">
-              <img
-                v-if="certificate.image"
-                :src="certificate.image"
-                :alt="certificate.title"
-                class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-              <div v-else class="flex h-full items-center justify-center">
-                <svg class="h-16 w-16 text-muted-foreground/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              
-              <!-- Status Badge -->
-              <div class="absolute right-3 top-3">
+            <Link
+              v-for="certificate in certificates"
+              :key="certificate.id"
+              :href="route('certificates.show', certificate.slug)"
+              class="group block"
+            >
+              <div class="relative aspect-video overflow-hidden rounded-xl bg-muted">
+                <img
+                  v-if="certificate.image"
+                  :src="certificate.image"
+                  :alt="certificate.title"
+                  class="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]"
+                />
+                <div v-else class="flex h-full items-center justify-center">
+                  <svg class="h-12 w-12 text-muted-foreground/25" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.5"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                </div>
+
                 <span
                   v-if="certificate.status === 'expired'"
-                  class="inline-flex items-center rounded-full bg-destructive px-2.5 py-0.5 text-xs font-semibold text-destructive-foreground"
+                  class="absolute right-2 top-2 rounded-md bg-destructive/90 px-2 py-0.5 text-[10px] font-medium text-destructive-foreground"
                 >
-                  Süresi Doldu
+                  Süresi doldu
                 </span>
                 <span
                   v-else-if="certificate.status === 'draft'"
-                  class="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground"
+                  class="absolute right-2 top-2 rounded-md bg-black/60 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm"
                 >
                   Taslak
                 </span>
               </div>
-            </div>
 
-            <!-- Content -->
-            <div class="p-4">
-              <h3 class="mb-2 line-clamp-2 text-lg font-semibold text-foreground group-hover:text-primary">
-                {{ certificate.title }}
-              </h3>
-              <p class="mb-3 text-sm text-muted-foreground">{{ certificate.issuer }}</p>
-              
-              <!-- Date -->
-              <div class="flex items-center gap-2 text-xs text-muted-foreground">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <span>{{ formatDate(certificate.issue_date) }}</span>
-              </div>
-
-              <!-- Skills -->
-              <div v-if="certificate.skills && certificate.skills.length > 0" class="mt-3 flex flex-wrap gap-1">
-                <span
-                  v-for="(skill, index) in certificate.skills.slice(0, 3)"
-                  :key="index"
-                  class="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
+              <div class="mt-3 space-y-1 pr-1">
+                <h3
+                  class="line-clamp-2 text-sm font-medium leading-snug text-foreground transition-colors group-hover:text-primary"
+                  :title="certificate.title"
                 >
-                  {{ skill }}
-                </span>
-                <span
-                  v-if="certificate.skills.length > 3"
-                  class="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground"
-                >
-                  +{{ certificate.skills.length - 3 }}
-                </span>
+                  {{ certificate.title }}
+                </h3>
+                <p class="line-clamp-1 text-xs text-muted-foreground">
+                  {{ certificate.issuer }} · {{ formatDate(certificate.issue_date) }}
+                </p>
               </div>
-            </div>
-          </Link>
-        </div>
+            </Link>
+          </div>
 
-        <!-- Empty State -->
-        <div v-else class="py-12 text-center">
-          <svg class="mx-auto h-16 w-16 text-muted-foreground/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          <h3 class="mt-4 text-lg font-semibold text-foreground">Henüz sertifika yok</h3>
-          <p class="mt-2 text-sm text-muted-foreground">Sidebar'daki + butonundan ilk sertifikanızı ekleyebilirsiniz</p>
-        </div>
-      </div>
-    </CheckScreen>
+          <div v-else class="rounded-xl border border-dashed border-border py-16 text-center">
+            <svg class="mx-auto h-14 w-14 text-muted-foreground/25" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <h3 class="mt-4 text-base font-medium text-foreground">Henüz sertifika yok</h3>
+            <p class="mt-1 text-sm text-muted-foreground">Sidebar'dan yeni sertifika ekleyebilirsiniz.</p>
+          </div>
+        </PageShell>
+      </CheckScreen>
     </template>
   </LayoutCertificates>
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 import LayoutCertificates from './_layouts/LayoutCertificates.vue';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import PageShell from '@/Components/CekapUI/Layout/PageShell.vue';
+import PageHeader from '@/Components/CekapUI/Layout/PageHeader.vue';
 
-const props = defineProps({
-  certificates: Array,
+defineProps({
+  certificates: {
+    type: Array,
+    default: () => [],
+  },
   screen: Object,
 });
 
-const page = usePage();
-const isLoggedIn = computed(() => page.props.auth?.user);
-
 const formatDate = (dateString) => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('tr-TR', { year: 'numeric', month: 'long' });
+  return date.toLocaleDateString('tr-TR', { year: 'numeric', month: 'short' });
 };
 </script>
+
+<style scoped>
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+</style>

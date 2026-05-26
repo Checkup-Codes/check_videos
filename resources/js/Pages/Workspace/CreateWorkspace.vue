@@ -1,12 +1,8 @@
 <template>
   <Head :title="browserTitle" />
   <CheckScreen>
-    <div class="space-y-6 py-6">
-      <!-- Header -->
-      <div>
-        <h1 class="text-2xl font-bold text-foreground">Yeni Çalışma Alanı</h1>
-        <p class="mt-1 text-sm text-muted-foreground">Çalışma alanınızı ve ürünlerinizi ekleyin</p>
-      </div>
+    <PageShell width="content">
+      <PageHeader title="Yeni Çalışma Alanı" description="Çalışma alanınızı ve ürünlerinizi ekleyin" />
 
       <form @submit.prevent="submit" class="space-y-6">
         <!-- Images Section -->
@@ -135,7 +131,7 @@
           </button>
         </div>
       </form>
-    </div>
+    </PageShell>
 
     <!-- Product Modal -->
     <Teleport to="body">
@@ -244,6 +240,8 @@
 import { ref, computed } from 'vue';
 import { Link, useForm, usePage, Head } from '@inertiajs/vue3';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import PageShell from '@/Components/CekapUI/Layout/PageShell.vue';
+import PageHeader from '@/Components/CekapUI/Layout/PageHeader.vue';
 import ImageCropper from '@/Components/ImageCropper.vue';
 
 const page = usePage();

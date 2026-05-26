@@ -1,8 +1,9 @@
 <template>
   <LayoutJourney>
     <template #screen>
-      <CheckScreen>
-        <div class="space-y-4 py-6">
+        <PageShell width="content">
+          <PageHeader title="Yeni Kayıt" description="Yolculuğunuza yeni bir an ekleyin" />
+
           <form @submit.prevent="submit" class="space-y-4">
           <!-- Title -->
           <div>
@@ -129,8 +130,7 @@
             </button>
           </div>
         </form>
-      </div>
-    </CheckScreen>
+        </PageShell>
     </template>
   </LayoutJourney>
 </template>
@@ -139,7 +139,8 @@
 import { ref } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import LayoutJourney from '@/Pages/Journey/_layouts/LayoutJourney.vue';
-import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import PageShell from '@/Components/CekapUI/Layout/PageShell.vue';
+import PageHeader from '@/Components/CekapUI/Layout/PageHeader.vue';
 
 const today = new Date().toISOString().split('T')[0];
 

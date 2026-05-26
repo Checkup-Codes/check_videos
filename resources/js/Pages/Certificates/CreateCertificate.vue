@@ -2,9 +2,8 @@
   <LayoutCertificates>
     <template #screen>
       <CheckScreen>
-        <div class="p-6 pt-12 sm:p-8 sm:pt-16">
-        <div class="mx-auto max-w-3xl">
-          <h1 class="mb-8 text-2xl font-bold text-foreground">Yeni Sertifika</h1>
+        <PageShell width="content">
+          <PageHeader title="Yeni Sertifika" description="Sertifika bilgilerini girin" />
 
           <form @submit.prevent="submit" class="space-y-6">
             <!-- Title -->
@@ -177,9 +176,8 @@
               </button>
             </div>
           </form>
-        </div>
-      </div>
-    </CheckScreen>
+        </PageShell>
+      </CheckScreen>
     </template>
   </LayoutCertificates>
 </template>
@@ -189,6 +187,8 @@ import { ref } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import LayoutCertificates from './_layouts/LayoutCertificates.vue';
 import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import PageShell from '@/Components/CekapUI/Layout/PageShell.vue';
+import PageHeader from '@/Components/CekapUI/Layout/PageHeader.vue';
 
 const props = defineProps({
   screen: Object,

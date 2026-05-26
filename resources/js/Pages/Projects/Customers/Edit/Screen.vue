@@ -1,11 +1,8 @@
 <template>
-  <CheckScreen>
-    <div class="mx-auto max-w-4xl">
-      <div class="mb-6">
-        <h1 class="text-xl font-semibold text-foreground">Müşteriyi Düzenle</h1>
-        <p class="mt-1 text-xs text-muted-foreground">{{ customer.first_name }} {{ customer.last_name }}</p>
-      </div>
-
+  <ProjectsPageFrame
+    title="Müşteriyi Düzenle"
+    :description="`${customer.first_name} ${customer.last_name}`"
+  >
       <form @submit.prevent="handleSubmit" class="space-y-4">
         <div class="rounded-lg border border-border bg-card p-5 shadow-sm">
           <div class="space-y-4">
@@ -182,14 +179,13 @@
           </div>
         </div>
       </form>
-    </div>
-  </CheckScreen>
+  </ProjectsPageFrame>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { useForm, usePage, Link } from '@inertiajs/vue3';
-import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import ProjectsPageFrame from '@/Pages/Projects/_components/ProjectsPageFrame.vue';
 
 const { props } = usePage();
 const customer = props.customer;

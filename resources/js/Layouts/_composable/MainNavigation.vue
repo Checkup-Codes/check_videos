@@ -24,7 +24,7 @@
       label="Testler"
       :is-compact="isCompact"
     />
-    <NavItem v-if="isLoggedIn" href="/services" icon="fa-solid fa-bolt" label="Servisler" :is-compact="isCompact" />
+    <NavItem v-if="isLoggedIn" href="/services" icon="fa-solid fa-bolt" label="Hizmetler" :is-compact="isCompact" />
     <NavItem
       v-if="isLoggedIn"
       href="/rendition/words"

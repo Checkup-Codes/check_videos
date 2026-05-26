@@ -14,14 +14,14 @@
 
   <!-- Full Width Header -->
   <header
-    class="sticky top-0 z-50 w-full backdrop-blur-xl transition-all duration-300 bg-[rgb(243,243,243)]/95 dark:bg-background/70 dark:border-b dark:border-border/50 supports-[backdrop-filter]:bg-[rgb(243,243,243)]/85 dark:supports-[backdrop-filter]:bg-background/50"
+    class="sticky top-0 z-50 w-full border-b border-border/80 bg-muted/90 shadow-sm backdrop-blur-xl transition-all duration-300 supports-[backdrop-filter]:bg-muted/80 dark:border-border dark:bg-card/95 dark:shadow-[var(--shadow-md)] dark:supports-[backdrop-filter]:bg-card/90"
   >
     <!-- Mobile Header -->
     <div class="flex h-12 items-center justify-between gap-2 px-3 sm:px-4 lg:hidden">
       <!-- Back button -->
       <Link
-        v-if="basePath"
-        :href="`/${basePath}`"
+        v-if="mobileBackHref"
+        :href="mobileBackHref"
         class="inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
       >
         <GoBackSvg class="h-4 w-4" />
@@ -530,35 +530,48 @@
     </div>
   </header>
 
-  <!-- Elegant Mobile Menu Overlay -->
+  <!-- Menu overlay: mobilde alt sheet, lg+ sağdan geniş drawer -->
   <div
     v-if="isMenuOpen"
-    class="fixed inset-0 z-50 transition-all duration-300 ease-out"
+    class="fixed inset-0 z-50 transition-opacity duration-300 ease-out"
     :class="isMenuOpen ? 'opacity-100' : 'opacity-0'"
     @click="closeMenu"
   >
-    <!-- Backdrop with theme-aware opacity -->
-    <div class="bg-base-content/20 absolute inset-0 backdrop-blur-sm"></div>
+    <div class="absolute inset-0 bg-base-content/20 backdrop-blur-sm"></div>
 
-    <!-- Menu Container -->
-    <div class="relative flex h-full items-end justify-center">
-      <!-- Menu Panel -->
+    <div class="relative flex h-full w-full items-end justify-center lg:items-stretch lg:justify-end">
       <div
-        class="w-full max-w-sm transform transition-all duration-300 ease-out"
-        :class="isMenuOpen ? 'translate-y-0' : 'translate-y-full'"
+        class="w-full max-w-sm transform transition-all duration-300 ease-out lg:h-full lg:max-h-none lg:w-[min(100vw,20rem)] lg:max-w-none lg:translate-y-0 xl:w-[min(100vw,24rem)] 2xl:w-[min(100vw,28rem)]"
+        :class="isMenuOpen ? 'translate-y-0 lg:translate-x-0' : 'translate-y-full lg:translate-x-full'"
         @click.stop
       >
-        <div class="mx-4 mb-4 max-h-[85vh] overflow-y-auto rounded-lg border border-border bg-popover shadow-lg">
-          <!-- Handle Bar -->
-          <div class="flex justify-center pb-2 pt-4">
+        <div
+          class="mx-4 mb-4 flex max-h-[85vh] flex-col overflow-hidden rounded-lg border border-border bg-popover shadow-lg dark:shadow-[var(--shadow-xl)] lg:mx-0 lg:mb-0 lg:h-full lg:max-h-none lg:rounded-none lg:rounded-l-xl lg:border-b-0 lg:border-r-0 lg:border-t-0"
+        >
+          <!-- Mobil tutamaç -->
+          <div class="flex shrink-0 justify-center pb-2 pt-4 lg:hidden">
             <div class="h-1.5 w-16 rounded-full bg-muted"></div>
           </div>
 
-          <!-- Menu Content -->
-          <div class="px-4 pb-6 sm:px-6" @click="handleMenuItemClick">
+          <!-- Masaüstü başlık + kapat -->
+          <div class="hidden shrink-0 items-center justify-between border-b border-border px-5 py-4 lg:flex">
+            <span class="text-sm font-semibold text-foreground">Menü</span>
+            <button
+              type="button"
+              class="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              title="Kapat"
+              @click="closeMenu"
+            >
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="min-h-0 flex-1 overflow-y-auto px-4 pb-6 sm:px-6 lg:px-5 lg:pb-8" @click="handleMenuItemClick">
             <!-- App Header -->
             <Link href="/" class="mb-4 block" @click="closeMenu">
-              <div class="flex items-center space-x-3 rounded-lg border border-border bg-card p-3">
+              <div class="flex items-center space-x-3 rounded-lg border border-border bg-card p-3 lg:p-4">
                 <div class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-md bg-primary/10">
                   <template v-if="logoPath && !isLoading">
                     <img :src="logoPath" :alt="logoAlt" class="h-full w-full object-cover" @error="handleImageError" />
@@ -576,7 +589,7 @@
             <div class="mb-4">
               <Link
                 :href="isLoggedIn ? '/dashboard' : '/login'"
-                class="flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                class="flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 lg:text-base"
                 @click="closeMenu"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -587,9 +600,9 @@
             </div>
 
             <!-- Navigation Buttons -->
-            <div class="space-y-2">
+            <div class="space-y-2 lg:space-y-4">
               <!-- Public Navigation -->
-              <div class="space-y-1">
+              <div class="space-y-1 lg:grid lg:grid-cols-2 lg:gap-2 lg:space-y-0">
                 <NavItem href="/" icon="home" label="Ana Sayfa" />
                 <NavItem href="/writes" icon="fa-solid fa-pencil" label="Yazılar" />
                 <!-- Journey - visible to everyone -->
@@ -607,7 +620,7 @@
                 <template v-if="isLoggedIn">
                   <NavItem href="/test-categories" icon="fa-solid fa-clipboard-question" label="Testler" />
                   <NavItem href="/rendition/words" icon="fa-solid fa-globe" label="Kelimeler" />
-                  <NavItem href="/services" icon="fa-solid fa-bolt" label="Servisler" />
+                  <NavItem href="/services" icon="fa-solid fa-bolt" label="Hizmetler" />
                   <NavItem href="/versions" icon="fa-solid fa-sync" label="Versiyonlar" />
                 </template>
               </div>
@@ -944,7 +957,7 @@
                               d="M13 10V3L4 14h7v7l9-11h-7z"
                             />
                           </svg>
-                          <span>Yeni Servis</span>
+                          <span>Yeni Hizmet</span>
                         </Link>
                       </div>
                     </div>
@@ -1120,6 +1133,10 @@
                     isJourneyEditPage ||
                     isServiceShowPage ||
                     isServiceEditPage ||
+                    isProjectShowPage ||
+                    isProjectEditPage ||
+                    isCustomerShowPage ||
+                    isCustomerEditPage ||
                     isWorkspaceShowPage ||
                     isWorkspaceEditPage ||
                     isCertificateShowPage)
@@ -1268,6 +1285,37 @@
                       <span>Sosyal Medya Yönetimi</span>
                     </Link>
                     <Link
+                      :href="route('guest-visibility.edit')"
+                      class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors"
+                      :class="
+                        isActiveRoute('/guest-visibility')
+                          ? 'bg-accent text-accent-foreground'
+                          : 'text-foreground hover:bg-accent/50'
+                      "
+                      @click="closeMenu"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                        />
+                      </svg>
+                      <span>Ziyaretçi Görünürlüğü</span>
+                    </Link>
+                    <Link
                       :href="route('seo.edit')"
                       class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors"
                       :class="
@@ -1386,6 +1434,7 @@ import { computed, ref, onMounted, onUnmounted, watch, nextTick } from 'vue';
 import { Link, usePage, router } from '@inertiajs/vue3';
 import { useStore } from 'vuex';
 import GoBackSvg from '@/Shared/Svg/GoBack.vue';
+import { useMobileBackNavigation } from '@/composables/useMobileBackNavigation';
 import axios from 'axios';
 
 // Import SidebarLayout components
@@ -1643,6 +1692,34 @@ const isServiceEditPage = computed(() => {
   return url.startsWith('/services/') && url.includes('/edit');
 });
 
+const isProjectShowPage = computed(() => {
+  const url = page.url;
+  if (!url.startsWith('/projects/') || url.includes('/edit') || url === '/projects/create') {
+    return false;
+  }
+  const parts = url.split('/').filter((part) => part.length > 0);
+  return parts.length === 2 && parts[0] === 'projects';
+});
+
+const isProjectEditPage = computed(() => {
+  const url = page.url;
+  return url.startsWith('/projects/') && url.includes('/edit');
+});
+
+const isCustomerShowPage = computed(() => {
+  const url = page.url;
+  if (!url.startsWith('/customers/') || url.includes('/edit') || url === '/customers/create') {
+    return false;
+  }
+  const parts = url.split('/').filter((part) => part.length > 0);
+  return parts.length === 2 && parts[0] === 'customers';
+});
+
+const isCustomerEditPage = computed(() => {
+  const url = page.url;
+  return url.startsWith('/customers/') && url.includes('/edit');
+});
+
 const isWorkspaceShowPage = computed(() => {
   const url = page.url;
   return url.startsWith('/workspace/') && url !== '/workspace' && url !== '/workspace/create' && !url.includes('/edit');
@@ -1820,19 +1897,7 @@ watch(
 
 const emit = defineEmits(['toggleSidebar']);
 
-const basePath = computed(() => {
-  const url = page.url;
-  const parts = url.split('/').filter((part) => part);
-
-  if (!parts.length) return null;
-
-  const pathMap = {
-    rendition: 'rendition/words',
-    //  academy: 'academy/courses',
-  };
-
-  return pathMap[parts[0]] || parts[0];
-});
+const { mobileBackHref } = useMobileBackNavigation();
 
 // Toggle the mobile menu
 const toggleMenu = () => {

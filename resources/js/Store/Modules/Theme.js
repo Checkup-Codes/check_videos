@@ -5,17 +5,14 @@ export default {
 
   state: {
     currentTheme: localStorage.getItem('theme') || 'light',
-    // Font preference - Single unified font choice for entire site
-    font: localStorage.getItem('font') || 'inter', // 'inter' = Inter (default), 'geist' = Geist (minimalist)
+    font: localStorage.getItem('font') || 'inter',
   },
 
   mutations: {
-    // Sadece .dark class'ını toggle eder - CSS'teki renkler otomatik değişir
     setTheme(state, theme) {
       state.currentTheme = theme;
       localStorage.setItem('theme', theme);
 
-      // Shadcn dark mode - CSS'teki .dark selector'ı aktif eder
       if (theme === 'dark') {
         document.documentElement.classList.add('dark');
       } else {
@@ -23,7 +20,6 @@ export default {
       }
     },
 
-    // Font preference mutation - applies to entire site
     setFont(state, font) {
       state.font = font;
       localStorage.setItem('font', font);
@@ -38,7 +34,6 @@ export default {
 
     initTheme({ commit, state }) {
       commit('setTheme', state.currentTheme);
-      // Initialize font preference
       commit('setFont', state.font);
     },
 
@@ -46,7 +41,6 @@ export default {
       commit('setTheme', state.currentTheme === 'light' ? 'dark' : 'light');
     },
 
-    // Font preference action
     changeFont({ commit }, font) {
       commit('setFont', font);
     },

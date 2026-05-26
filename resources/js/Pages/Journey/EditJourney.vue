@@ -1,8 +1,10 @@
 <template>
   <LayoutJourney>
     <template #screen>
-      <div class="mx-auto max-w-2xl px-4 py-6 sm:px-6">
-        <form @submit.prevent="submit" class="space-y-5">
+        <PageShell width="content">
+          <PageHeader title="Kayıt Düzenle" description="Yolculuk kaydını güncelleyin" />
+
+          <form @submit.prevent="submit" class="space-y-5">
           <!-- Title -->
           <div>
             <label class="mb-1.5 block text-sm font-medium text-foreground">
@@ -133,7 +135,7 @@
             </button>
           </div>
         </form>
-      </div>
+        </PageShell>
     </template>
   </LayoutJourney>
 </template>
@@ -142,6 +144,8 @@
 import { ref } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import LayoutJourney from '@/Pages/Journey/_layouts/LayoutJourney.vue';
+import PageShell from '@/Components/CekapUI/Layout/PageShell.vue';
+import PageHeader from '@/Components/CekapUI/Layout/PageHeader.vue';
 
 const props = defineProps({
   entry: {

@@ -1,33 +1,8 @@
 <template>
-  <CheckScreen>
-    <div class="mx-auto max-w-4xl">
-      <div class="mb-6 flex items-center justify-between">
-        <div>
-          <h1 class="text-xl font-semibold text-foreground">{{ customer.first_name }} {{ customer.last_name }}</h1>
-          <p class="mt-1 text-xs text-muted-foreground">{{ customer.email }}</p>
-        </div>
-        <Link
-          :href="`/customers/${customer.id}/edit`"
-          class="inline-flex h-9 items-center justify-center gap-1.5 rounded-md border border-input bg-background px-3.5 text-xs font-medium text-foreground ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-3.5 w-3.5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-            />
-          </svg>
-          Düzenle
-        </Link>
-      </div>
-
+  <ProjectsPageFrame
+    :title="`${customer.first_name} ${customer.last_name}`"
+    :description="customer.email"
+  >
       <div class="rounded-lg border border-border bg-card p-5 shadow-sm">
         <div class="space-y-4">
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -134,13 +109,12 @@
           </div>
         </div>
       </div>
-    </div>
-  </CheckScreen>
+  </ProjectsPageFrame>
 </template>
 
 <script setup>
 import { usePage, Link } from '@inertiajs/vue3';
-import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import ProjectsPageFrame from '@/Pages/Projects/_components/ProjectsPageFrame.vue';
 
 const { props } = usePage();
 const customer = props.customer;

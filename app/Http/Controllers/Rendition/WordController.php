@@ -430,30 +430,46 @@ class WordController extends Controller
      */
     public function bulkStore(Request $request)
     {
-        try {
-            $request->validate([
+        $this->normalizeBulkWordInput($request);
+
+        $validated = $request->validate(
+            [
                 'words' => 'required|array|min:1',
                 'words.*.word' => 'required|string|max:255',
+                'words.*.definition' => 'nullable|string',
+                'words.*.meaning' => 'nullable|string',
                 'words.*.meanings' => 'nullable|array',
                 'words.*.meanings.*.meaning' => 'nullable|string',
-                'words.*.type' => 'nullable|string',
+                'words.*.meanings.*.is_primary' => 'nullable|boolean',
+                'words.*.type' => 'nullable|string|max:50',
                 'words.*.language' => 'required|string|size:2',
                 'words.*.difficulty_level' => 'nullable|integer|min:1|max:4',
+                'words.*.learning_status' => 'nullable|integer|min:0|max:2',
+                'words.*.flag' => 'nullable|boolean',
                 'words.*.example_sentences' => 'nullable|array',
+                'words.*.example_translations' => 'nullable|array',
                 'words.*.synonyms' => 'nullable|array',
                 'language_pack_ids' => 'nullable|array',
                 'language_pack_ids.*' => 'exists:lang_language_packs,id',
-            ]);
+            ],
+            $this->bulkWordValidationMessages()
+        );
 
+        try {
             DB::beginTransaction();
 
             $results = [
                 'success' => [],
-                'duplicates' => [], // Mevcut kelimeler (pakete eklenebilir)
+                'updated' => [],
+                'linked' => [],
+                'incomplete' => [],
+                'duplicates' => [],
                 'errors' => [],
             ];
 
-            foreach ($request->words as $index => $wordData) {
+            $languagePackIds = $validated['language_pack_ids'] ?? [];
+
+            foreach ($validated['words'] as $index => $wordData) {
                 try {
                     // Duplicate kontrolü
                     $existingWord = Word::where('word', $wordData['word'])
@@ -469,31 +485,46 @@ class WordController extends Controller
                         ->first();
 
                     if ($existingWord) {
-                        // Kelime mevcut - paket bilgilerini topla
+                        if (!$existingWord->is_complete && $this->wordDataHasMeaning($wordData)) {
+                            $this->applyBulkWordRelations(
+                                $existingWord,
+                                $wordData,
+                                $languagePackIds
+                            );
+
+                            $results['updated'][] = [
+                                'index' => $index,
+                                'word' => $wordData['word'],
+                                'id' => $existingWord->id,
+                            ];
+                            continue;
+                        }
+
+                        if (!empty($languagePackIds)) {
+                            $existingWord->languagePacks()->syncWithoutDetaching($languagePackIds);
+
+                            $results['linked'][] = [
+                                'index' => $index,
+                                'word' => $wordData['word'],
+                                'id' => $existingWord->id,
+                            ];
+                            continue;
+                        }
+
                         $currentPacks = $existingWord->languagePacks->pluck('name')->toArray();
-                        
+
                         $results['duplicates'][] = [
                             'index' => $index,
                             'word' => $wordData['word'],
                             'id' => $existingWord->id,
                             'current_packs' => $currentPacks,
-                            'can_add_to_packs' => $request->has('language_pack_ids') && count($request->language_pack_ids) > 0,
+                            'can_add_to_packs' => false,
                         ];
                         continue;
                     }
 
-                    // Anlam var mı kontrol et
-                    $hasMeaning = false;
-                    if (isset($wordData['meanings']) && is_array($wordData['meanings'])) {
-                        foreach ($wordData['meanings'] as $meaningData) {
-                            if (!empty($meaningData['meaning'])) {
-                                $hasMeaning = true;
-                                break;
-                            }
-                        }
-                    }
+                    $hasMeaning = $this->wordDataHasMeaning($wordData);
 
-                    // Kelimeyi oluştur
                     $word = Word::create([
                         'word' => $wordData['word'],
                         'definition' => $wordData['definition'] ?? null,
@@ -507,63 +538,30 @@ class WordController extends Controller
                         'review_count' => 0,
                     ]);
 
-                    // Anlamları ekle
-                    if (isset($wordData['meanings']) && is_array($wordData['meanings'])) {
-                        $hasPrimary = false;
-                        $meaningIndex = 0;
-                        foreach ($wordData['meanings'] as $meaningData) {
-                            if (!empty($meaningData['meaning'])) {
-                                $isPrimary = isset($meaningData['is_primary']) ? $meaningData['is_primary'] : false;
-                                if ($isPrimary || (!$hasPrimary && $meaningIndex === 0)) {
-                                    $isPrimary = true;
-                                    $hasPrimary = true;
-                                }
-                                $word->meanings()->create([
-                                    'meaning' => $meaningData['meaning'],
-                                    'is_primary' => $isPrimary,
-                                    'display_order' => $meaningIndex,
-                                ]);
-                                $meaningIndex++;
-                            }
-                        }
-                    }
+                    $this->applyBulkWordRelations(
+                        $word,
+                        $wordData,
+                        $languagePackIds
+                    );
 
-                    // Dil paketlerine ekle
-                    if ($request->has('language_pack_ids') && is_array($request->language_pack_ids)) {
-                        $word->languagePacks()->attach($request->language_pack_ids);
-                    }
-
-                    // Örnek cümleleri ekle
-                    if (isset($wordData['example_sentences']) && is_array($wordData['example_sentences'])) {
-                        foreach ($wordData['example_sentences'] as $sentenceIndex => $sentence) {
-                            if (!empty($sentence)) {
-                                $word->exampleSentences()->create([
-                                    'sentence' => $sentence,
-                                    'translation' => $wordData['example_translations'][$sentenceIndex] ?? null,
-                                    'language' => $word->language,
-                                ]);
-                            }
-                        }
-                    }
-
-                    // Eş anlamlıları ekle
-                    if (isset($wordData['synonyms']) && is_array($wordData['synonyms'])) {
-                        foreach ($wordData['synonyms'] as $synonym) {
-                            if (!empty($synonym)) {
-                                $word->synonyms()->create([
-                                    'synonym' => $synonym,
-                                    'language' => $word->language,
-                                ]);
-                            }
-                        }
-                    }
-
-                    $results['success'][] = [
+                    $entry = [
                         'index' => $index,
                         'word' => $wordData['word'],
                         'id' => $word->id,
                     ];
+
+                    if ($word->is_complete) {
+                        $results['success'][] = $entry;
+                    } else {
+                        $results['incomplete'][] = $entry;
+                    }
                 } catch (\Exception $e) {
+                    Log::warning('Bulk word row failed', [
+                        'index' => $index,
+                        'word' => $wordData['word'] ?? null,
+                        'error' => $e->getMessage(),
+                    ]);
+
                     $results['errors'][] = [
                         'index' => $index,
                         'word' => $wordData['word'] ?? 'Unknown',
@@ -574,24 +572,29 @@ class WordController extends Controller
 
             DB::commit();
 
-            // Duplicate kelimeler varsa ve paket seçilmişse, onay için session'a kaydet
-            if (count($results['duplicates']) > 0 && $request->has('language_pack_ids') && count($request->language_pack_ids) > 0) {
-                session()->put('bulk_import_duplicates', [
-                    'duplicates' => $results['duplicates'],
-                    'pack_ids' => $request->language_pack_ids,
-                    'pack_names' => DB::table('lang_language_packs')
-                        ->whereIn('id', $request->language_pack_ids)
-                        ->pluck('name')
-                        ->toArray(),
-                ]);
-            }
+            $addedCount = count($results['success']);
+            $updatedCount = count($results['updated']);
+            $linkedCount = count($results['linked']);
+            $incompleteCount = count($results['incomplete']);
+            $duplicateCount = count($results['duplicates']);
+            $errorCount = count($results['errors']);
+            $processedCount = $addedCount + $updatedCount + $linkedCount;
 
-            $message = sprintf(
-                '%d kelime eklendi%s%s',
-                count($results['success']),
-                count($results['duplicates']) > 0 ? ', ' . count($results['duplicates']) . ' mevcut kelime bulundu' : '',
-                count($results['errors']) > 0 ? ', ' . count($results['errors']) . ' hata' : ''
+            $message = $this->buildBulkImportMessage(
+                $addedCount,
+                $updatedCount,
+                $linkedCount,
+                $incompleteCount,
+                $duplicateCount,
+                $errorCount
             );
+
+            if ($processedCount === 0) {
+                return Redirect::back()
+                    ->withInput()
+                    ->with('error', $message)
+                    ->with('bulkResults', $results);
+            }
 
             return Redirect::route('rendition.words.index')
                 ->with('success', $message)
@@ -1016,8 +1019,8 @@ class WordController extends Controller
                 ]);
             }
 
-            // Kelimeyi bul - sadece tamamlanmış kelimeler, önce tam eşleşme, sonra kısmi eşleşme
-            $word = Word::complete()
+            // Kelimeyi bul - önce tam eşleşme, sonra kısmi eşleşme
+            $word = Word::query()
                 ->with([
                     'meanings',
                     'exampleSentences',
@@ -1103,6 +1106,7 @@ class WordController extends Controller
                     'meaning' => $word->meaning,
                     'type' => $word->type,
                     'language' => $word->language,
+                    'is_complete' => $word->is_complete,
                     'difficulty_level' => $word->difficulty_level,
                     'learning_status' => $word->learning_status,
                     'review_count' => $word->review_count,
@@ -1213,6 +1217,219 @@ class WordController extends Controller
                 'error' => 'Kontrol sırasında bir hata oluştu'
             ], 500);
         }
+    }
+
+    /**
+     * Toplu kelime isteğindeki alanları normalize et.
+     */
+    private function normalizeBulkWordInput(Request $request): void
+    {
+        $words = collect($request->input('words', []))
+            ->filter(fn ($word) => is_array($word))
+            ->map(function (array $word) {
+                if (isset($word['language']) && is_string($word['language'])) {
+                    $word['language'] = strtolower(substr(trim($word['language']), 0, 2));
+                }
+
+                if (empty($word['meanings']) && !empty($word['meaning']) && is_string($word['meaning'])) {
+                    $word['meanings'] = [
+                        ['meaning' => trim($word['meaning']), 'is_primary' => true],
+                    ];
+                }
+
+                if (isset($word['meanings']) && is_array($word['meanings'])) {
+                    $word['meanings'] = collect($word['meanings'])
+                        ->map(function ($meaning, $index) {
+                            if (is_string($meaning)) {
+                                return [
+                                    'meaning' => trim($meaning),
+                                    'is_primary' => $index === 0,
+                                ];
+                            }
+
+                            if (is_array($meaning) && !empty($meaning['meaning'])) {
+                                return $meaning;
+                            }
+
+                            return null;
+                        })
+                        ->filter()
+                        ->values()
+                        ->all();
+                }
+
+                if (array_key_exists('difficulty_level', $word)) {
+                    if ($word['difficulty_level'] === '' || $word['difficulty_level'] === null) {
+                        unset($word['difficulty_level']);
+                    } else {
+                        $word['difficulty_level'] = (int) $word['difficulty_level'];
+                    }
+                }
+
+                if (array_key_exists('learning_status', $word)) {
+                    if ($word['learning_status'] === '' || $word['learning_status'] === null) {
+                        unset($word['learning_status']);
+                    } else {
+                        $word['learning_status'] = (int) $word['learning_status'];
+                    }
+                }
+
+                return $word;
+            })
+            ->values()
+            ->all();
+
+        $request->merge(['words' => $words]);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function bulkWordValidationMessages(): array
+    {
+        return [
+            'words.required' => 'En az bir kelime gönderilmelidir.',
+            'words.array' => 'Kelime listesi geçerli bir dizi olmalıdır.',
+            'words.min' => 'En az bir kelime gönderilmelidir.',
+            'words.*.word.required' => ':attribute kelimesi için "word" alanı zorunludur.',
+            'words.*.word.max' => ':attribute kelimesi en fazla 255 karakter olabilir.',
+            'words.*.language.required' => ':attribute kelimesi için "language" alanı zorunludur.',
+            'words.*.language.size' => ':attribute kelimesinde dil kodu tam 2 harf olmalıdır (örn: en, tr).',
+            'words.*.difficulty_level.integer' => ':attribute kelimesinde zorluk seviyesi sayı olmalıdır.',
+            'words.*.difficulty_level.min' => ':attribute kelimesinde zorluk seviyesi 1 ile 4 arasında olmalıdır.',
+            'words.*.difficulty_level.max' => ':attribute kelimesinde zorluk seviyesi 1 ile 4 arasında olmalıdır.',
+            'words.*.learning_status.integer' => ':attribute kelimesinde öğrenme durumu sayı olmalıdır.',
+            'words.*.learning_status.min' => ':attribute kelimesinde öğrenme durumu 0 ile 2 arasında olmalıdır.',
+            'words.*.learning_status.max' => ':attribute kelimesinde öğrenme durumu 0 ile 2 arasında olmalıdır.',
+            'language_pack_ids.*.exists' => 'Seçilen dil paketlerinden biri geçersiz.',
+        ];
+    }
+
+    private function wordDataHasMeaning(array $wordData): bool
+    {
+        if (!isset($wordData['meanings']) || !is_array($wordData['meanings'])) {
+            return false;
+        }
+
+        foreach ($wordData['meanings'] as $meaningData) {
+            if (!empty($meaningData['meaning'])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param  list<string>|null  $languagePackIds
+     */
+    private function applyBulkWordRelations(Word $word, array $wordData, ?array $languagePackIds = []): void
+    {
+        $hasMeaning = $this->wordDataHasMeaning($wordData);
+
+        $word->update([
+            'definition' => $wordData['definition'] ?? $word->definition,
+            'type' => $wordData['type'] ?? $word->type,
+            'learning_status' => $wordData['learning_status'] ?? $word->learning_status,
+            'flag' => $wordData['flag'] ?? $word->flag,
+            'difficulty_level' => $wordData['difficulty_level'] ?? $word->difficulty_level,
+            'is_complete' => $hasMeaning ?: $word->is_complete,
+        ]);
+
+        if ($hasMeaning) {
+            $word->meanings()->delete();
+
+            $hasPrimary = false;
+            $meaningIndex = 0;
+
+            foreach ($wordData['meanings'] as $meaningData) {
+                if (empty($meaningData['meaning'])) {
+                    continue;
+                }
+
+                $isPrimary = !empty($meaningData['is_primary']);
+                if ($isPrimary || (!$hasPrimary && $meaningIndex === 0)) {
+                    $isPrimary = true;
+                    $hasPrimary = true;
+                }
+
+                $word->meanings()->create([
+                    'meaning' => $meaningData['meaning'],
+                    'is_primary' => $isPrimary,
+                    'display_order' => $meaningIndex,
+                ]);
+
+                $meaningIndex++;
+            }
+        }
+
+        if (!empty($languagePackIds)) {
+            $word->languagePacks()->syncWithoutDetaching($languagePackIds);
+        }
+
+        if (isset($wordData['example_sentences']) && is_array($wordData['example_sentences'])) {
+            foreach ($wordData['example_sentences'] as $sentenceIndex => $sentence) {
+                if (!empty($sentence)) {
+                    $word->exampleSentences()->create([
+                        'sentence' => $sentence,
+                        'translation' => $wordData['example_translations'][$sentenceIndex] ?? null,
+                        'language' => $word->language,
+                    ]);
+                }
+            }
+        }
+
+        if (isset($wordData['synonyms']) && is_array($wordData['synonyms'])) {
+            foreach ($wordData['synonyms'] as $synonym) {
+                if (!empty($synonym)) {
+                    $word->synonyms()->create([
+                        'synonym' => $synonym,
+                        'language' => $word->language,
+                    ]);
+                }
+            }
+        }
+    }
+
+    private function buildBulkImportMessage(
+        int $addedCount,
+        int $updatedCount,
+        int $linkedCount,
+        int $incompleteCount,
+        int $duplicateCount,
+        int $errorCount
+    ): string {
+        if ($addedCount === 0 && $updatedCount === 0 && $linkedCount === 0 && $duplicateCount === 0 && $errorCount === 0) {
+            return 'Hiçbir kelime işlenemedi. JSON formatını kontrol edin.';
+        }
+
+        $parts = [];
+
+        if ($addedCount > 0) {
+            $parts[] = "{$addedCount} yeni kelime eklendi";
+        }
+
+        if ($updatedCount > 0) {
+            $parts[] = "{$updatedCount} yarım kelime tamamlandı";
+        }
+
+        if ($linkedCount > 0) {
+            $parts[] = "{$linkedCount} mevcut kelime pakete bağlandı";
+        }
+
+        if ($incompleteCount > 0) {
+            $parts[] = "{$incompleteCount} kelime anlamsız eklendi (aramada görünmez, anlam girin)";
+        }
+
+        if ($duplicateCount > 0) {
+            $parts[] = "{$duplicateCount} kelime zaten vardı — pakete eklemek için dil paketi seçin";
+        }
+
+        if ($errorCount > 0) {
+            $parts[] = "{$errorCount} kelime eklenemedi";
+        }
+
+        return implode(', ', $parts) . '.';
     }
 
     /**

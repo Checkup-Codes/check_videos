@@ -26,6 +26,23 @@
         <ActivityHeatmap :stats="stats" />
       </div>
 
+      <!-- Bulk import summary -->
+      <div
+        v-if="bulkImportSummary"
+        class="mb-6 rounded-xl border p-4"
+        :class="bulkImportSummary.isError
+          ? 'border-destructive/30 bg-destructive/5'
+          : 'border-primary/30 bg-primary/5'"
+      >
+        <h3 class="font-medium" :class="bulkImportSummary.isError ? 'text-destructive' : 'text-foreground'">
+          {{ bulkImportSummary.title }}
+        </h3>
+        <p class="mt-1 text-sm text-muted-foreground">{{ bulkImportSummary.message }}</p>
+        <ul v-if="bulkImportSummary.details.length" class="mt-3 space-y-1 text-sm text-muted-foreground">
+          <li v-for="(detail, index) in bulkImportSummary.details" :key="index">• {{ detail }}</li>
+        </ul>
+      </div>
+
       <!-- Search Box - sade tasarım -->
       <div class="mb-8">
         <div class="flex gap-3">
@@ -88,6 +105,12 @@
                   </span>
                   <span class="inline-flex items-center rounded-full border border-border bg-muted px-2.5 py-0.5 text-xs font-semibold text-foreground">
                     {{ getLanguageLabel(searchResult.language) }}
+                  </span>
+                  <span
+                    v-if="!searchResult.is_complete"
+                    class="inline-flex items-center rounded-full border border-yellow-500/40 bg-yellow-500/10 px-2.5 py-0.5 text-xs font-semibold text-yellow-700 dark:text-yellow-300"
+                  >
+                    Anlam eksik
                   </span>
                 </div>
               </div>
@@ -289,6 +312,54 @@ watch(
   },
   { immediate: true }
 );
+
+const bulkImportSummary = computed(() => {
+  const bulkResults = page.props.flash?.bulkResults;
+  const flashSuccess = page.props.flash?.success;
+  const flashError = page.props.flash?.error;
+
+  if (!bulkResults && !flashSuccess && !flashError) {
+    return null;
+  }
+
+  if (flashError) {
+    return {
+      isError: true,
+      title: 'Toplu ekleme başarısız',
+      message: flashError,
+      details: (bulkResults?.errors || []).slice(0, 10).map(
+        (item) => `${item.index + 1}. kelime (${item.word}): ${item.error}`
+      ),
+    };
+  }
+
+  if (flashSuccess && bulkResults) {
+    const details = [];
+
+    if (bulkResults.linked?.length) {
+      details.push(`${bulkResults.linked.length} mevcut kelime seçilen pakete bağlandı.`);
+    }
+
+    if (bulkResults.incomplete?.length) {
+      details.push(
+        `${bulkResults.incomplete.length} kelime anlamsız kaydedildi — aramada görünmez, düzenleyip anlam ekleyin.`
+      );
+    }
+
+    if (bulkResults.duplicates?.length) {
+      details.push(`${bulkResults.duplicates.length} kelime zaten kayıtlıydı.`);
+    }
+
+    return {
+      isError: false,
+      title: 'Toplu ekleme tamamlandı',
+      message: flashSuccess,
+      details,
+    };
+  }
+
+  return null;
+});
 
 // User state
 const auth = computed(() => usePage().props.auth);

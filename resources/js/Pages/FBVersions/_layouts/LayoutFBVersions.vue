@@ -31,6 +31,7 @@ import FlashMessage from '@/Components/CekapUI/Notifications/FlashMessage.vue';
 import { usePage, Head } from '@inertiajs/vue3';
 import { ref, computed, provide, onMounted, onBeforeUnmount, watch } from 'vue';
 import { useStore } from 'vuex';
+import { useMobileSubsidebarLayout } from '@/composables/useMobileSubsidebarLayout';
 
 defineOptions({
   name: 'LayoutFBVersions',
@@ -54,18 +55,7 @@ const titleName = computed(() => {
   );
 });
 
-// Real mobile detection based on window width (client-side only)
-const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024);
-const isMobile = computed(() => windowWidth.value < 1024);
-
-// Update window width on resize
-const updateWindowWidth = () => {
-  if (typeof window !== 'undefined') {
-    windowWidth.value = window.innerWidth;
-  }
-};
-
-// Check if we're on a non-index page (show, create, or edit) - on mobile, hide sidebar for these pages
+// Check if we're on a non-index page (show, create, or edit)
 const isNonIndexPage = computed(() => {
   const currentUrl = page.url || '';
 
@@ -83,15 +73,13 @@ const isNonIndexPage = computed(() => {
   return isVersionShowPage || isVersionCreateEditPage;
 });
 
-// On mobile: show only sidebar on index pages, only main content on non-index pages (show, create, edit)
-const shouldShowSidebarOnMobile = computed(() => {
-  if (!isMobile.value) return true; // Desktop: always show sidebar if collapsed
-  return !isNonIndexPage.value; // Mobile: show sidebar only on index pages
-});
-
-const shouldShowMainContentOnMobile = computed(() => {
-  if (!isMobile.value) return true; // Desktop: always show main content
-  return isNonIndexPage.value; // Mobile: show main content on non-index pages (show, create, edit)
+const {
+  shouldShowSidebarOnMobile,
+  shouldShowMainContentOnMobile,
+  showFullWidthMainOnMobile,
+} = useMobileSubsidebarLayout({
+  mode: 'sidebar-first',
+  isNonIndexPage: () => isNonIndexPage.value,
 });
 
 // Sidebar state
@@ -113,8 +101,7 @@ const mainContentClass = computed(() => {
     'lg:ml-0': true,
   };
 
-  // Mobil non-index sayfalarında (show, create, edit) tam genişlik
-  if (isMobile.value && isNonIndexPage.value) {
+  if (showFullWidthMainOnMobile.value) {
     classes['w-full'] = true;
   }
 
@@ -132,21 +119,10 @@ const isMounted = ref(false);
 onMounted(() => {
   isMounted.value = true;
   document.body.style.overflow = 'hidden';
-
-  // Initialize window width and add resize listener
-  if (typeof window !== 'undefined') {
-    windowWidth.value = window.innerWidth;
-    window.addEventListener('resize', updateWindowWidth);
-  }
 });
 
 onBeforeUnmount(() => {
   document.body.style.overflow = '';
-
-  // Remove resize listener
-  if (typeof window !== 'undefined') {
-    window.removeEventListener('resize', updateWindowWidth);
-  }
 });
 
 // Provide reactive versions data

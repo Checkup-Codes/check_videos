@@ -66,9 +66,14 @@ export default {
                 'sidebar': '2fr 10fr',
             },
             boxShadow: {
+                sm: 'var(--shadow-sm)',
+                DEFAULT: 'var(--shadow-md)',
+                md: 'var(--shadow-md)',
+                lg: 'var(--shadow-lg)',
+                xl: 'var(--shadow-xl)',
                 'right': '10px 0 10px -3px rgba(0, 0, 0, 0.1)',
-                'subtle': '0 2px 4px rgba(0, 0, 0, 0.05)',
-                'medium': '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                'subtle': 'var(--shadow-sm)',
+                'medium': 'var(--shadow-md)',
             },
             screens: {
                 '2xl': '1536px',

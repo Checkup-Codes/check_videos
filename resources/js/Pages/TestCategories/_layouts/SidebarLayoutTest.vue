@@ -1,41 +1,39 @@
 <template>
   <CheckSubsidebar :isNarrow="isNarrow">
-    <!-- View Toggle - Always visible -->
-    <div class="relative z-10 shrink-0 border-b border-border bg-background p-2">
-      <div class="flex items-center justify-between gap-2">
-        <!-- View Toggle (Left) -->
-        <div class="flex items-center gap-1">
-          <Link
-            :href="route('tests.index')"
-            class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs transition-colors"
-            :class="
-              isListView
-                ? 'bg-accent text-accent-foreground'
-                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-            "
-            title="Liste görünümü"
-          >
-            <IconMenu class="h-3 w-3" />
-            <span v-if="!isNarrow">Liste</span>
-          </Link>
-          <Link
-            :href="route('test-categories.index')"
-            class="inline-flex h-6 items-center gap-1 rounded px-2 text-xs transition-colors"
-            :class="
-              !isListView
-                ? 'bg-accent text-accent-foreground'
-                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-            "
-            title="Kategori görünümü"
-          >
-            <IconFolder class="h-3 w-3" />
-            <span v-if="!isNarrow">Kategori</span>
-          </Link>
-        </div>
-      </div>
-    </div>
+    <SubSidebarHeader title="Testler" :description="String(tests.length)">
+      <template #actions>
+        <Link
+          :href="route('tests.index')"
+          class="inline-flex h-5 shrink-0 items-center gap-1 whitespace-nowrap rounded px-1.5 text-xs transition-colors"
+          :class="
+            isListView
+              ? 'bg-accent text-accent-foreground'
+              : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+          "
+          title="Liste görünümü"
+        >
+          <IconMenu class="h-3 w-3 shrink-0" />
+          <span v-if="!isNarrow">Liste</span>
+        </Link>
+        <Link
+          :href="route('test-categories.index')"
+          class="inline-flex h-5 shrink-0 items-center gap-1 whitespace-nowrap rounded px-1.5 text-xs transition-colors"
+          :class="
+            !isListView
+              ? 'bg-accent text-accent-foreground'
+              : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+          "
+          title="Kategori görünümü"
+        >
+          <IconFolder class="h-3 w-3 shrink-0" />
+          <span v-if="!isNarrow">Kategori</span>
+        </Link>
+      </template>
+    </SubSidebarHeader>
     <SubSidebarScreen ref="scrollableRef" class="sidebar-content-embedded min-h-0 flex-1" :infoClass="'flex-1 min-h-0'">
-      <TestList ref="testListRef" :tests="tests" :isCollapsed="isNarrow" />
+      <SubSidebarContent>
+        <TestList ref="testListRef" :tests="tests" :isCollapsed="isNarrow" />
+      </SubSidebarContent>
     </SubSidebarScreen>
   </CheckSubsidebar>
 </template>
@@ -46,6 +44,8 @@ import { usePage, Link } from '@inertiajs/vue3';
 import TestList from '@/Pages/TestCategories/_composables/TestList.vue';
 import CheckSubsidebar from '@/Components/CekapUI/Slots/CheckSubsidebar.vue';
 import SubSidebarScreen from '@/Components/CekapUI/Slots/SubSidebarScreen.vue';
+import SubSidebarHeader from '@/Components/CekapUI/Layout/SubSidebarHeader.vue';
+import SubSidebarContent from '@/Components/CekapUI/Layout/SubSidebarContent.vue';
 import { useSidebar } from '../_utils/useSidebar';
 import { useStore } from 'vuex';
 import IconMenu from '../_components/icons/IconMenu.vue';

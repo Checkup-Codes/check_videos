@@ -9,12 +9,32 @@
   >
     <div v-if="message" class="fixed right-4 top-4 z-50 w-full max-w-sm">
       <div
-        class="relative flex items-center gap-3 rounded-lg border border-primary/20 bg-primary/10 px-4 py-3 shadow-lg backdrop-blur-sm"
+        class="relative flex items-start gap-3 rounded-lg border px-4 py-3 shadow-lg backdrop-blur-sm"
+        :class="variant === 'error'
+          ? 'border-destructive/30 bg-destructive/10'
+          : 'border-primary/20 bg-primary/10'"
         role="alert"
       >
-        <!-- Success Icon -->
-        <div class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+        <!-- Icon -->
+        <div
+          class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
+          :class="variant === 'error'
+            ? 'bg-destructive text-destructive-foreground'
+            : 'bg-primary text-primary-foreground'"
+        >
           <svg
+            v-if="variant === 'error'"
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-3.5 w-3.5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="3"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          <svg
+            v-else
             xmlns="http://www.w3.org/2000/svg"
             class="h-3.5 w-3.5"
             fill="none"
@@ -27,7 +47,7 @@
         </div>
         <!-- Message -->
         <div class="flex-1">
-          <p class="text-sm font-medium text-foreground">{{ message }}</p>
+          <p class="whitespace-pre-wrap text-sm font-medium text-foreground">{{ message }}</p>
         </div>
         <!-- Close Button -->
         <button
@@ -55,6 +75,10 @@ import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
 
 const props = defineProps({
   message: String,
+  variant: {
+    type: String,
+    default: 'success',
+  },
 });
 
 const emit = defineEmits(['close']);
@@ -83,13 +107,14 @@ watch(
       timeoutId = null;
     }
     
-    // Set new timeout for 3 seconds
+    // Set new timeout for 3 seconds (errors stay a bit longer)
     if (newMessage) {
+      const duration = props.variant === 'error' ? 8000 : 3000;
       timeoutId = setTimeout(() => {
         localMessage.value = null;
         timeoutId = null;
         emit('close');
-      }, 3000);
+      }, duration);
     }
   },
   { immediate: true }

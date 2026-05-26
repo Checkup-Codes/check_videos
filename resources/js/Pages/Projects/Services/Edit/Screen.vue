@@ -1,11 +1,5 @@
 <template>
-  <CheckScreen>
-    <div class="mx-auto max-w-4xl">
-      <div class="mb-6">
-        <h1 class="text-xl font-semibold text-foreground">Hizmeti Düzenle</h1>
-        <p class="mt-1 text-xs text-muted-foreground">{{ service.name }}</p>
-      </div>
-
+  <ProjectsPageFrame title="Hizmeti Düzenle" :description="service.name">
       <form @submit.prevent="handleSubmit" class="space-y-4">
         <div class="rounded-lg border border-border bg-card p-5 shadow-sm">
           <div class="space-y-4">
@@ -73,6 +67,13 @@
                 </p>
               </div>
             </div>
+
+            <RelatedImagesUpload
+              :entity-id="service.id"
+              category="services"
+              label="Hizmet Görselleri"
+              :initial-images="service.images || []"
+            />
           </div>
         </div>
 
@@ -128,15 +129,15 @@
           </div>
         </div>
       </form>
-    </div>
-  </CheckScreen>
+  </ProjectsPageFrame>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
 import { usePage, useForm, Link, router } from '@inertiajs/vue3';
-import CheckScreen from '@/Components/CekapUI/Slots/CheckScreen.vue';
+import ProjectsPageFrame from '@/Pages/Projects/_components/ProjectsPageFrame.vue';
 import RichTextEditor from '@/Pages/WritesCategories/_components/RichTextEditor.vue';
+import RelatedImagesUpload from '@/Pages/Projects/_components/RelatedImagesUpload.vue';
 
 const { props } = usePage();
 const service = computed(() => props.service || {});

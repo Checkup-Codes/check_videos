@@ -44,7 +44,7 @@ const moduleLabels: Record<string, string> = {
   bookmarks: 'Yer İmleri',
   tests: 'Testler',
   words: 'Kelimeler',
-  services: 'Servisler',
+  services: 'Hizmetler',
   versions: 'Versiyonlar',
 };
 </script>
@@ -61,8 +61,7 @@ const moduleLabels: Record<string, string> = {
           <p class="mt-1 text-sm text-muted-foreground">İçeriklerinize hızlı erişim</p>
         </div>
         
-        <!-- Font Switcher -->
-        <div class="inline-flex items-center rounded-lg border bg-card p-1 shadow-sm">
+        <div class="inline-flex items-center rounded-lg border border-border bg-card p-1 shadow-sm">
           <button
             @click="changeFont('inter')"
             :class="[

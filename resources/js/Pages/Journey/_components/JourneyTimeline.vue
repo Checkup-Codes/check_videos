@@ -1,5 +1,5 @@
 <template>
-  <div class="journey-timeline p-2">
+  <div class="journey-timeline space-y-1">
     <!-- Empty State -->
     <div v-if="!hasEntries" class="flex h-32 items-center justify-center text-center text-muted-foreground">
       <div class="space-y-2">
