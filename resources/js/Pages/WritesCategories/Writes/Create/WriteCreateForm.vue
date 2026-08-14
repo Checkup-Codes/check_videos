@@ -400,7 +400,7 @@
         <button
           type="submit"
           class="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-          :disabled="form.processing || !form.title || !form.slug || !form.content || !form.category_id"
+          :disabled="form.processing"
         >
           <svg
             v-if="form.processing"
@@ -773,6 +773,15 @@ const clearCategory = () => {
   showCategoryList.value = false;
 };
 
+// Escape ile dropdown'ları kapat. Named handler, çünkü onUnmounted'da
+// kaldırılabilmesi gerekiyor (aksi halde her sayfa ziyaretinde bir tane birikir).
+const escapeHandler = (e) => {
+  if (e.key === 'Escape') {
+    showCategoryList.value = false;
+    showStatusList.value = false;
+  }
+};
+
 onMounted(() => {
   // Set initial status label
   const currentStatus = statusOptions.find((s) => s.value === form.status);
@@ -795,12 +804,7 @@ onMounted(() => {
   publishDateObj.value.time = now.toTimeString().slice(0, 5);
 
   // Add global escape key listener to close dropdowns
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      showCategoryList.value = false;
-      showStatusList.value = false;
-    }
-  });
+  document.addEventListener('keydown', escapeHandler);
 });
 
 watch(
@@ -815,14 +819,37 @@ watch(
 
 const LOCAL_STORAGE_KEY = 'write_create_form';
 
+// Taslakta sadece bu alanlar tutulur. Form nesnesini olduğu gibi yaymak
+// Inertia'nın iç durumunu da (errors, hasErrors, isDirty, progress...) taslağa
+// yazar ve geri yüklerken forma geri basardı; eski hatalar temiz sayfada
+// yeniden görünürdü. `content` data URL'ler yüzünden çok büyük olduğu için hariç.
+const DRAFT_FIELDS = [
+  'title',
+  'slug',
+  'published_at',
+  'summary',
+  'status',
+  'category_id',
+  'seo_keywords',
+  'meta_description',
+  'tags',
+  'views_count',
+  'hasDraw',
+  'hasYoutubeVideo',
+  'youtube_url',
+];
+
+const pickDraftFields = (source) =>
+  DRAFT_FIELDS.reduce((acc, key) => {
+    if (source[key] !== undefined) acc[key] = source[key];
+    return acc;
+  }, {});
+
 watch(
   form,
   (newVal) => {
-    // Content'i hariç tut (data URL'ler çok büyük)
-    const { content, processing, ...formData } = newVal;
-    
     try {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(formData));
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(pickDraftFields(newVal)));
     } catch (e) {
       // QuotaExceededError - localStorage dolu, temizle
       console.warn('localStorage quota exceeded, clearing old data');
@@ -849,9 +876,8 @@ onMounted(() => {
   const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
   if (saved) {
     try {
-      const parsed = JSON.parse(saved);
-      const { processing, ...formData } = parsed;
-      if (Object.keys(formData).length > 0 && (formData.title || formData.content || formData.category_id)) {
+      const formData = pickDraftFields(JSON.parse(saved));
+      if (formData.title || formData.category_id) {
         Object.assign(form, formData);
       } else {
         localStorage.removeItem(LOCAL_STORAGE_KEY);
@@ -1120,6 +1146,7 @@ onUnmounted(() => {
   if (sidebarResetHandler) {
     window.removeEventListener('sidebarFormReset', sidebarResetHandler);
   }
+  document.removeEventListener('keydown', escapeHandler);
 });
 </script>
 

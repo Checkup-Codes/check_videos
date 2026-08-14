@@ -1,13 +1,13 @@
 <template>
   <div class="w-full">
     <label v-if="label" class="mb-1 block text-sm font-medium text-foreground">{{ label }}</label>
-    <div 
-      ref="editorContainer" 
+    <div
+      ref="editorContainer"
       class="quill-editor-container rounded-md border border-input bg-background"
       :style="{ height: height }"
     ></div>
     <p v-if="error" class="mt-1 text-xs text-destructive">{{ error }}</p>
-    
+
     <!-- Pending Images Info -->
     <div v-if="pendingImages.length > 0" class="mt-2 rounded-md border border-amber-500/20 bg-amber-500/5 p-2">
       <div class="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400">
@@ -17,7 +17,7 @@
         <span>{{ pendingImages.length }} resim kaydetme bekliyor (Formu kaydettiğinizde yüklenecek)</span>
       </div>
     </div>
-    
+
     <!-- Max File Size Info -->
     <p class="mt-1 text-xs text-muted-foreground">
       Maksimum dosya boyutu: 2MB. Desteklenen formatlar: JPEG, PNG, GIF, WebP, SVG
@@ -43,26 +43,55 @@ const emit = defineEmits(['update:modelValue', 'images-changed']);
 const editorContainer = ref(null);
 let quill = null;
 
+// Boş editörün Quill'deki HTML karşılığı. Dışarıya boş string olarak bildiriyoruz
+// ki formlardaki `!form.content` kontrolleri çalışsın.
+const EMPTY_HTML = '<p><br></p>';
+
+// Dışarıya en son bildirdiğimiz değer. modelValue watch'ı kendi emit'imizin
+// geri dönüşünü bununla ayırt edip editörü gereksiz yere sıfırlamıyor.
+let lastEmitted = null;
+
 // Blob URL'leri ve gerçek dosyaları sakla
 const pendingImages = ref([]);
 const blobUrlMap = new Map(); // blob URL -> File mapping
 
+// İçeriği Quill'in kendi API'siyle yaz. root.innerHTML'e doğrudan atamak
+// DOM'u değiştirir ama Quill'in iç dokümanını boş bırakır; o durumda
+// getContents()/getImagesInContent() içeriği göremez.
+const setEditorHtml = (html) => {
+  if (!quill) return;
+  const delta = quill.clipboard.convert({ html: html || '' });
+  quill.setContents(delta, 'silent');
+};
+
+const currentHtml = () => {
+  if (!quill) return '';
+  const html = quill.root.innerHTML;
+  return html === EMPTY_HTML ? '' : html;
+};
+
+const emitContent = () => {
+  const value = currentHtml();
+  lastEmitted = value;
+  emit('update:modelValue', value);
+};
+
 // Resim ekleme metodu - dışarıdan çağrılabilir
 const insertImage = (imageUrl, altText = '') => {
   if (!quill) return;
-  
-  const range = quill.getSelection(true);
-  quill.insertEmbed(range.index, 'image', imageUrl);
+
+  const range = quill.getSelection(true) || { index: quill.getLength() - 1 };
+  quill.insertEmbed(range.index, 'image', imageUrl, 'user');
   quill.setSelection(range.index + 1);
 };
 
-// Dosyadan blob URL oluştur ve editöre ekle
+// Dosyadan data URL oluştur ve editöre ekle
 const insertImageFromFile = (file) => {
   if (!quill) {
     console.error('Quill editor not initialized');
     return;
   }
-  
+
   // File size validation (2MB = 2 * 1024 * 1024 bytes)
   const maxSize = 2 * 1024 * 1024; // 2MB
   if (file.size > maxSize) {
@@ -70,43 +99,32 @@ const insertImageFromFile = (file) => {
     alert(`Resim boyutu çok büyük: ${sizeMB}MB\n\nMaksimum dosya boyutu: 2MB\n\nLütfen resmi küçültüp tekrar deneyin.`);
     return;
   }
-  
-  console.log('Inserting image from file:', file.name, file.type, file.size);
-  
-  // FileReader ile data URL oluştur (blob yerine)
+
   const reader = new FileReader();
-  
+
   reader.onload = (e) => {
     const dataUrl = e.target.result;
-    console.log('Created data URL, length:', dataUrl.length);
-    
+
     // Pending images'a ekle (file'ı sakla)
-    const imageData = {
+    pendingImages.value.push({
       dataUrl,
       file,
       fileName: file.name,
-    };
-    
-    pendingImages.value.push(imageData);
-    console.log('Pending images count:', pendingImages.value.length);
-    
+    });
+
     // Editöre ekle
-    const range = quill.getSelection(true) || { index: quill.getLength() };
-    console.log('Inserting at position:', range.index);
-    
-    quill.insertEmbed(range.index, 'image', dataUrl);
+    const range = quill.getSelection(true) || { index: quill.getLength() - 1 };
+    quill.insertEmbed(range.index, 'image', dataUrl, 'user');
     quill.setSelection(range.index + 1);
-    
+
     // Parent'a bildir
     emit('images-changed', pendingImages.value);
-    
-    console.log('Image inserted successfully');
   };
-  
+
   reader.onerror = (error) => {
     console.error('FileReader error:', error);
   };
-  
+
   // Data URL olarak oku
   reader.readAsDataURL(file);
 };
@@ -119,10 +137,10 @@ const getPendingImages = () => {
 // Data URL'leri gerçek URL'lerle değiştir
 const replaceDataUrls = (urlMapping) => {
   if (!quill) return;
-  
+
   const delta = quill.getContents();
   let changed = false;
-  
+
   delta.ops.forEach((op) => {
     if (op.insert && op.insert.image) {
       const dataUrl = op.insert.image;
@@ -132,10 +150,10 @@ const replaceDataUrls = (urlMapping) => {
       }
     }
   });
-  
+
   if (changed) {
-    quill.setContents(delta);
-    emit('update:modelValue', quill.root.innerHTML);
+    quill.setContents(delta, 'silent');
+    emitContent();
   }
 };
 
@@ -153,22 +171,55 @@ const clearPendingImages = () => {
 // İçerikteki tüm resim URL'lerini al
 const getImagesInContent = () => {
   if (!quill) return [];
-  
-  const delta = quill.getContents();
+
   const images = [];
-  
-  delta.ops.forEach((op) => {
+  quill.getContents().ops.forEach((op) => {
     if (op.insert && op.insert.image) {
       images.push(op.insert.image);
     }
   });
-  
+
   return images;
 };
 
-onMounted(async () => {
-  await nextTick();
+// Custom image handler - toolbar'daki image button'ı için
+const imageHandler = () => {
+  // Hidden file input oluştur
+  const input = document.createElement('input');
+  input.setAttribute('type', 'file');
+  input.setAttribute('accept', 'image/*');
+  input.setAttribute('multiple', 'multiple'); // Çoklu seçim
 
+  input.onchange = () => {
+    const files = input.files;
+    if (files && files.length > 0) {
+      // Her dosyayı ekle
+      Array.from(files).forEach((file) => {
+        if (file.type.indexOf('image') !== -1) {
+          insertImageFromFile(file);
+        }
+      });
+    }
+  };
+
+  input.click();
+};
+
+// Editörü saran ilk kaydırılabilir ata. Yapıştırma sonrası tarayıcı imleci
+// görünür kılmak için burayı kaydırıyor; eski konumu geri yüklemek için lazım.
+const findScrollParent = (el) => {
+  let node = el?.parentElement;
+  while (node && node !== document.body) {
+    const style = window.getComputedStyle(node);
+    if (/(auto|scroll)/.test(style.overflowY) && node.scrollHeight > node.clientHeight) {
+      return node;
+    }
+    node = node.parentElement;
+  }
+  return null;
+};
+
+onMounted(() => {
   if (!editorContainer.value) return;
 
   // Quill'i özelleştirilmiş toolbar ile oluştur
@@ -189,7 +240,7 @@ onMounted(async () => {
           [{ color: [] }, { background: [] }],
           [{ font: [] }],
           [{ align: [] }],
-          ['link', 'image', 'video'], // Image button'ı geri ekledik
+          ['link', 'image', 'video'],
           ['clean'],
         ],
         handlers: {
@@ -203,7 +254,7 @@ onMounted(async () => {
   const toolbar = editorContainer.value.querySelector('.ql-toolbar');
   const container = editorContainer.value.querySelector('.ql-container');
   const editor = editorContainer.value.querySelector('.ql-editor');
-  
+
   if (toolbar) {
     toolbar.style.position = 'sticky';
     toolbar.style.top = '0';
@@ -211,7 +262,7 @@ onMounted(async () => {
     toolbar.style.backgroundColor = 'hsl(var(--background))';
     toolbar.style.borderBottom = '1px solid hsl(var(--border))';
   }
-  
+
   if (container) {
     // Container height = total height - toolbar height
     const toolbarHeight = toolbar ? toolbar.offsetHeight : 42;
@@ -220,7 +271,7 @@ onMounted(async () => {
     container.style.display = 'flex';
     container.style.flexDirection = 'column';
   }
-  
+
   if (editor) {
     // Editor should scroll independently
     editor.style.overflowY = 'auto';
@@ -229,47 +280,25 @@ onMounted(async () => {
     editor.style.maxHeight = '100%';
   }
 
-  // İlk içeriği yükle
+  // İlk içeriği yükle (Quill API'si üzerinden, innerHTML ile değil)
   if (props.modelValue) {
-    quill.root.innerHTML = props.modelValue;
+    setEditorHtml(props.modelValue);
   }
-
-  // Scroll pozisyonunu sakla
-  let preventScroll = false;
-  let savedScrollTop = 0;
+  lastEmitted = currentHtml();
 
   // İçerik değişikliklerini dinle
-  quill.on('text-change', (delta, oldDelta, source) => {
-    const content = quill.root.innerHTML;
-    if (content === '<p><br></p>') {
-      emit('update:modelValue', '');
-    } else {
-      emit('update:modelValue', content);
-    }
-    
-    // Eğer paste işlemi sonrası scroll engellenmişse, geri yükle
-    if (preventScroll && editor) {
-      requestAnimationFrame(() => {
-        editor.scrollTop = savedScrollTop;
-        preventScroll = false;
-      });
-    }
+  quill.on('text-change', () => {
+    emitContent();
   });
 
-  // Paste event - resim yapıştırma ve scroll önleme
+  // Paste event - resim yapıştırma ve scroll sıçramasını önleme
   quill.root.addEventListener('paste', (e) => {
-    // Mevcut scroll pozisyonunu kaydet
-    if (editor) {
-      savedScrollTop = editor.scrollTop;
-      preventScroll = true;
-    }
-    
     const clipboardData = e.clipboardData || window.clipboardData;
-    const items = clipboardData.items;
+    const items = clipboardData?.items || [];
 
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
-      
+
       // Resim kontrolü
       if (item.type.indexOf('image') !== -1) {
         e.preventDefault();
@@ -280,14 +309,17 @@ onMounted(async () => {
         return; // Resim varsa diğer işlemleri yapma
       }
     }
-    
-    // Metin paste işlemi için scroll'u engelle
-    setTimeout(() => {
-      if (editor && preventScroll) {
-        editor.scrollTop = savedScrollTop;
-        preventScroll = false;
-      }
-    }, 0);
+
+    // Metin yapıştırmada tarayıcı imleci görünür kılmak için sayfayı kaydırır.
+    // Yapıştırma öncesi konumları alıp Quill içeriği işledikten sonra geri koy.
+    const scrollParent = findScrollParent(editorContainer.value);
+    const editorTop = editor ? editor.scrollTop : 0;
+    const parentTop = scrollParent ? scrollParent.scrollTop : 0;
+
+    requestAnimationFrame(() => {
+      if (editor) editor.scrollTop = editorTop;
+      if (scrollParent) scrollParent.scrollTop = parentTop;
+    });
   });
 
   // Drop event - resim sürükleme
@@ -295,8 +327,8 @@ onMounted(async () => {
     e.preventDefault();
     e.stopPropagation();
 
-    const files = e.dataTransfer.files;
-    
+    const files = e.dataTransfer?.files || [];
+
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       if (file.type.indexOf('image') !== -1) {
@@ -309,68 +341,29 @@ onMounted(async () => {
   quill.root.addEventListener('dragover', (e) => {
     e.preventDefault();
   });
-
-  // Window scroll'unu engelle - editör focus'tayken
-  let isEditorFocused = false;
-  
-  quill.on('selection-change', (range) => {
-    isEditorFocused = range !== null;
-  });
-  
-  // Global scroll event'ini yakala ve engelle
-  const preventWindowScroll = (e) => {
-    if (isEditorFocused && e.target === document) {
-      e.preventDefault();
-      e.stopPropagation();
-      return false;
-    }
-  };
-  
-  window.addEventListener('scroll', preventWindowScroll, { passive: false, capture: true });
-  
-  // Cleanup
-  onUnmounted(() => {
-    window.removeEventListener('scroll', preventWindowScroll, { capture: true });
-  });
 });
 
-// Custom image handler - toolbar'daki image button'ı için
-const imageHandler = () => {
-  // Hidden file input oluştur
-  const input = document.createElement('input');
-  input.setAttribute('type', 'file');
-  input.setAttribute('accept', 'image/*');
-  input.setAttribute('multiple', 'multiple'); // Çoklu seçim
-  
-  input.onchange = () => {
-    const files = input.files;
-    if (files && files.length > 0) {
-      // Her dosyayı ekle
-      Array.from(files).forEach(file => {
-        if (file.type.indexOf('image') !== -1) {
-          insertImageFromFile(file);
-        }
-      });
-    }
-  };
-  
-  input.click();
-};
-
-// ModelValue değişikliklerini dinle
+// ModelValue değişikliklerini dinle.
+// Kendi emit'imizin geri dönüşünde hiçbir şey yapma; aksi halde editör
+// boşaltıldığında (emit '' iken DOM '<p><br></p>') içerik silinir.
 watch(
   () => props.modelValue,
   (newValue) => {
-    if (quill && quill.root.innerHTML !== newValue) {
-      quill.root.innerHTML = newValue || '';
-    }
+    if (!quill) return;
+
+    const incoming = newValue || '';
+    if (incoming === lastEmitted) return;
+    if (incoming === currentHtml()) return;
+
+    setEditorHtml(incoming);
+    lastEmitted = currentHtml();
   }
 );
 
 onUnmounted(() => {
   // Pending images'ı temizle (data URL'ler için revoke gerekmez)
   clearPendingImages();
-  
+
   if (quill) {
     quill = null;
   }

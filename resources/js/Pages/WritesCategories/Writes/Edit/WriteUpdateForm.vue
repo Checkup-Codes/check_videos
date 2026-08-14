@@ -763,6 +763,15 @@ const clearStatus = () => {
 // Flag to prevent watch from triggering during initial mount
 const isInitialMount = ref(true);
 
+// Escape ile dropdown'ları kapat. Named handler, çünkü onUnmounted'da
+// kaldırılabilmesi gerekiyor (aksi halde her sayfa ziyaretinde bir tane birikir).
+const escapeHandler = (e) => {
+  if (e.key === 'Escape') {
+    showCategoryList.value = false;
+    showStatusList.value = false;
+  }
+};
+
 onMounted(() => {
   if (form.published_at) {
     const dateObj = new Date(form.published_at);
@@ -793,12 +802,7 @@ onMounted(() => {
   }
 
   // Add global escape key listener to close dropdowns
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      showCategoryList.value = false;
-      showStatusList.value = false;
-    }
-  });
+  document.addEventListener('keydown', escapeHandler);
 
   // Mark initial mount as complete after a short delay
   nextTick(() => {
@@ -976,6 +980,7 @@ onUnmounted(() => {
   if (sidebarSubmitHandler) {
     window.removeEventListener('sidebarFormSubmit', sidebarSubmitHandler);
   }
+  document.removeEventListener('keydown', escapeHandler);
 });
 
 const updateWrite = async () => {
