@@ -42,6 +42,7 @@ const emit = defineEmits(['update:modelValue', 'images-changed']);
 
 const editorContainer = ref(null);
 let quill = null;
+let toolbarResizeObserver = null;
 
 // Boş editörün Quill'deki HTML karşılığı. Dışarıya boş string olarak bildiriyoruz
 // ki formlardaki `!form.content` kontrolleri çalışsın.
@@ -264,12 +265,23 @@ onMounted(() => {
   }
 
   if (container) {
-    // Container height = total height - toolbar height
-    const toolbarHeight = toolbar ? toolbar.offsetHeight : 42;
-    container.style.height = `calc(${props.height} - ${toolbarHeight}px)`;
     container.style.overflow = 'hidden';
     container.style.display = 'flex';
     container.style.flexDirection = 'column';
+
+    // Container height = total height - toolbar height.
+    // Toolbar dar ekranlarda birden çok satıra sarıyor, yani yüksekliği
+    // sabit değil; ekran döndüğünde/yeniden boyutlandığında tekrar ölçüyoruz.
+    const applyContainerHeight = () => {
+      const toolbarHeight = toolbar ? toolbar.offsetHeight : 42;
+      container.style.height = `calc(${props.height} - ${toolbarHeight}px)`;
+    };
+    applyContainerHeight();
+
+    if (toolbar && typeof ResizeObserver !== 'undefined') {
+      toolbarResizeObserver = new ResizeObserver(applyContainerHeight);
+      toolbarResizeObserver.observe(toolbar);
+    }
   }
 
   if (editor) {
@@ -363,6 +375,11 @@ watch(
 onUnmounted(() => {
   // Pending images'ı temizle (data URL'ler için revoke gerekmez)
   clearPendingImages();
+
+  if (toolbarResizeObserver) {
+    toolbarResizeObserver.disconnect();
+    toolbarResizeObserver = null;
+  }
 
   if (quill) {
     quill = null;

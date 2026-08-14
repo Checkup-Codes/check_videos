@@ -32,7 +32,7 @@
 
         <div ref="publishedAtRef">
           <label class="mb-1 block text-sm font-medium text-foreground">Yayınlama Tarihi</label>
-          <div class="flex gap-2">
+          <div class="flex flex-col gap-2 sm:flex-row">
             <input
               type="date"
               v-model="publishDateObj.date"
@@ -70,7 +70,8 @@
             <p v-if="errors.summary || form.errors.summary" class="text-xs text-destructive">
               {{ errors.summary || form.errors.summary }}
             </p>
-            <span class="text-xs text-muted-foreground">{{ form.summary?.length || 0 }}/160 karakter</span>
+            <!-- ml-auto: hata mesajı yokken de sayaç sağda kalsın -->
+            <span class="ml-auto shrink-0 text-xs text-muted-foreground">{{ form.summary?.length || 0 }}/160 karakter</span>
           </div>
         </div>
 
@@ -81,7 +82,7 @@
             label="İçerik"
             :error="errors.content || form.errors.content"
             placeholder="İçeriği buraya yazın..."
-            height="600px"
+            height="clamp(240px, 60vh, 600px)"
           />
         </div>
 
@@ -373,10 +374,11 @@
         </div>
       </div>
 
-      <div class="flex justify-end gap-2 pt-2">
+      <!-- Aksiyonlar: masaüstünde sola hizalı, mobilde tam genişlikte -->
+      <div class="flex flex-col gap-2 pt-2 sm:flex-row sm:items-center">
         <button
           type="submit"
-          class="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+          class="inline-flex h-11 w-full items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 sm:h-9 sm:w-auto"
           :disabled="form.processing"
         >
           <svg

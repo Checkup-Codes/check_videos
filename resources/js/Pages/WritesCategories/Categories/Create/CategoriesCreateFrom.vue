@@ -127,18 +127,11 @@
         </div>
       </div>
 
-      <div class="flex justify-end gap-2 pt-2">
-        <button
-          type="button"
-          @click="resetForm"
-          class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-          :disabled="form.processing"
-        >
-          Sıfırla
-        </button>
+      <!-- Aksiyonlar: masaüstünde sola hizalı, mobilde tam genişlikte alt alta -->
+      <div class="flex flex-col gap-2 pt-2 sm:flex-row sm:items-center">
         <button
           type="submit"
-          class="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+          class="inline-flex h-11 w-full items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 sm:h-9 sm:w-auto"
           :disabled="form.processing"
         >
           <svg
@@ -156,6 +149,14 @@
             ></path>
           </svg>
           {{ form.processing ? 'Kaydediliyor...' : 'Kategoriyi Kaydet' }}
+        </button>
+        <button
+          type="button"
+          @click="resetForm"
+          class="inline-flex h-11 w-full items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium text-foreground ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 sm:h-9 sm:w-auto"
+          :disabled="form.processing"
+        >
+          Sıfırla
         </button>
       </div>
     </form>

@@ -1,0 +1,1 @@
+import a from"./RelatedImagesUpload-Dt0peXGz.js";import{e,K as s,L as t,o}from"./ssr-DymzMWNo.js";import"./ZoomableImage-9dJrhKQj.js";const _=Object.assign({inheritAttrs:!1},{__name:"ProjectImagesUpload",setup(c){return(r,n)=>(o(),e(a,s(t(r.$attrs)),null,16))}});export{_ as default};
